@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control de Facturación — Proyecto C-DZP-21-000-A</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --col-primary: #0f2544;
+    --col-secondary: #1a4a8a;
+    --col-accent: #00b4c8;
+    --col-accent2: #f59e0b;
+    --col-bg: #f0f4f9;
+    --col-surface: #ffffff;
+    --col-border: #dde3ed;
+    --col-text: #1a2535;
+    --col-muted: #5c6f8a;
+    --col-success: #059669;
+    --col-success-bg: #d1fae5;
+    --col-warning: #d97706;
+    --col-warning-bg: #fef3c7;
+    --col-danger: #dc2626;
+    --col-danger-bg: #fee2e2;
+    --col-info: #2563eb;
+    --col-info-bg: #dbeafe;
+    --col-pending: #7c3aed;
+    --col-pending-bg: #ede9fe;
+    --sidebar-w: 220px;
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--col-bg); color: var(--col-text); font-size: 14px; min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* ── HEADER ─────────────────────────────── */
+  .app-header {
+    background: linear-gradient(135deg, var(--col-primary) 0%, var(--col-secondary) 100%);
+    color: white; padding: 0;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    position: sticky; top: 0; z-index: 200;
+    flex-shrink: 0;
+  }
+  .header-inner { display: flex; align-items: center; gap: 14px; padding: 12px 20px; }
+  .header-logo { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+  .header-logo span { color: var(--col-accent); }
+  .header-sub { font-size: 11px; opacity: 0.65; margin-top: 2px; }
+  .header-badge {
+    margin-left: auto; background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px; padding: 4px 14px; font-size: 11px; white-space: nowrap;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* ── LAYOUT ──────────────────────────────── */
+  .app-body { display: flex; flex: 1; min-height: 0; }
+
+  /* ── SIDEBAR ─────────────────────────────── */
+  .sidebar {
+    width: var(--sidebar-w); background: var(--col-primary);
+    flex-shrink: 0; display: flex; flex-direction: column;
+    position: sticky; top: 52px; height: calc(100vh - 52px);
+    overflow-y: auto;
+  }
+  .sidebar-section { padding: 12px 0 4px; }
+  .sidebar-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 1.5px; color: rgba(255,255,255,0.35);
+    padding: 0 16px 6px; text-transform: uppercase;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 16px; font-size: 12.5px; font-weight: 500;
+    color: rgba(255,255,255,0.6); cursor: pointer;
+    transition: all 0.18s; user-select: none; border-left: 3px solid transparent;
+    position: relative;
+  }
+  .nav-item:hover { color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.05); }
+  .nav-item.active {
+    color: white; background: rgba(0,180,200,0.15);
+    border-left-color: var(--col-accent);
+  }
+  .nav-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+  .nav-label { flex: 1; line-height: 1.3; }
+  .nav-sub { font-size: 10px; opacity: 0.6; display: block; }
+  .nav-badge {
+    background: rgba(255,255,255,0.15); border-radius: 10px;
+    padding: 1px 7px; font-size: 10px; font-family: 'IBM Plex Mono', monospace;
+  }
+  .nav-item.active .nav-badge { background: var(--col-accent); color: var(--col-primary); font-weight: 700; }
+
+  .sidebar-divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 8px 16px; }
+
+  /* ── MAIN CONTENT ────────────────────────── */
+  .main { flex: 1; padding: 24px; overflow-y: auto; min-width: 0; }
+
+  /* ── PANELS ──────────────────────────────── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── UPLOAD ZONE ─────────────────────────── */
+  .upload-zone {
+    background: var(--col-surface); border-radius: 14px;
+    border: 2.5px dashed var(--col-border); padding: 36px 28px;
+    text-align: center; cursor: pointer; transition: all 0.2s;
+    margin-bottom: 20px;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--col-accent); background: #f0fafc;
+  }
+  .upload-zone.has-files { border-style: solid; border-color: var(--col-success); background: #f0fdf7; }
+  .upload-zone-icon { font-size: 44px; margin-bottom: 10px; }
+  .upload-zone-title { font-size: 15px; font-weight: 700; color: var(--col-primary); margin-bottom: 6px; }
+  .upload-zone-desc { font-size: 12px; color: var(--col-muted); line-height: 1.6; }
+  .file-input-hidden { display: none; }
+
+  .file-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .file-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--col-surface); border: 1px solid var(--col-border);
+    border-radius: 8px; padding: 7px 12px; font-size: 12px;
+  }
+  .file-chip.ok { border-color: var(--col-success); background: #f0fdf7; }
+  .file-chip.err { border-color: var(--col-danger); background: #fef9f9; }
+  .file-chip-icon { font-size: 16px; }
+  .file-chip-name { font-weight: 600; color: var(--col-text); max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .file-chip-meta { font-size: 10px; color: var(--col-muted); }
+
+  /* ── PROCESS BAR ─────────────────────────── */
+  .process-bar {
+    background: var(--col-surface); border-radius: 10px;
+    border: 1px solid var(--col-border); padding: 14px 18px;
+    display: flex; align-items: center; gap: 14px; margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .btn {
+    padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    border: none; cursor: pointer; transition: all 0.18s; display: inline-flex; align-items: center; gap: 7px;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .btn-primary { background: var(--col-secondary); color: white; }
+  .btn-primary:hover { background: var(--col-primary); }
+  .btn-primary:disabled { background: #93c5fd; cursor: not-allowed; opacity: 0.7; }
+  .btn-success { background: var(--col-success); color: white; }
+  .btn-success:hover { background: #047857; }
+  .btn-outline { background: white; color: var(--col-secondary); border: 1.5px solid var(--col-secondary); }
+  .btn-outline:hover { background: #eff6ff; }
+  .btn-danger-outline { background: white; color: var(--col-danger); border: 1.5px solid var(--col-danger); }
+  .btn-danger-outline:hover { background: #fef2f2; }
+  .btn-sm { padding: 5px 12px; font-size: 12px; }
+  .process-info { font-size: 12px; color: var(--col-muted); }
+
+  /* ── SUMMARY CARDS ───────────────────────── */
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .summary-card {
+    background: var(--col-surface); border-radius: 10px; border: 1px solid var(--col-border);
+    padding: 14px 16px; border-left: 4px solid var(--col-border);
+  }
+  .summary-label { font-size: 10px; color: var(--col-muted); font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.6px; }
+  .summary-value { font-size: 26px; font-weight: 700; color: var(--col-primary); line-height: 1; font-family: 'IBM Plex Mono', monospace; }
+  .summary-sub { font-size: 10px; color: var(--col-muted); margin-top: 4px; }
+  .summary-card.s-success { border-left-color: var(--col-success); }
+  .summary-card.s-warning { border-left-color: var(--col-warning); }
+  .summary-card.s-danger { border-left-color: var(--col-danger); }
+  .summary-card.s-info { border-left-color: var(--col-info); }
+  .summary-card.s-pending { border-left-color: var(--col-pending); }
+  .summary-card.s-accent { border-left-color: var(--col-accent); }
+
+  /* ── FILTER BAR ──────────────────────────── */
+  .filter-bar {
+    background: var(--col-surface); border-radius: 10px;
+    border: 1px solid var(--col-border); padding: 10px 14px;
+    display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .filter-bar input, .filter-bar select {
+    border: 1px solid var(--col-border); border-radius: 7px;
+    padding: 6px 10px; font-size: 12.5px; color: var(--col-text); background: var(--col-bg);
+    outline: none; transition: border 0.15s; font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .filter-bar input:focus, .filter-bar select:focus { border-color: var(--col-accent); }
+  .filter-bar input { min-width: 190px; }
+  .filter-label { font-size: 11px; font-weight: 600; color: var(--col-muted); white-space: nowrap; }
+
+  /* ── STATUS FILTER PILLS ─────────────────── */
+  .status-pills { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .status-pill {
+    padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    cursor: pointer; border: 1.5px solid transparent; transition: all 0.15s; white-space: nowrap;
+    background: #f1f5f9; color: var(--col-muted); border-color: var(--col-border);
+  }
+  .status-pill:hover { opacity: 0.85; }
+  .status-pill.active-all { background: var(--col-primary); color: white; border-color: var(--col-primary); }
+  .status-pill.active-success { background: var(--col-success-bg); color: var(--col-success); border-color: var(--col-success); }
+  .status-pill.active-warning { background: var(--col-warning-bg); color: var(--col-warning); border-color: var(--col-warning); }
+  .status-pill.active-danger { background: var(--col-danger-bg); color: var(--col-danger); border-color: var(--col-danger); }
+  .status-pill.active-info { background: var(--col-info-bg); color: var(--col-info); border-color: var(--col-info); }
+
+  /* ── TABLE ───────────────────────────────── */
+  .table-wrap { background: var(--col-surface); border-radius: 10px; border: 1px solid var(--col-border); overflow: hidden; }
+  .table-header { padding: 11px 14px; border-bottom: 1px solid var(--col-border); display: flex; align-items: center; justify-content: space-between; }
+  .table-title { font-size: 13px; font-weight: 700; color: var(--col-primary); }
+  .table-count { font-size: 11px; color: var(--col-muted); font-family: 'IBM Plex Mono', monospace; }
+  .table-scroll { overflow-x: auto; max-height: 480px; overflow-y: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  thead th {
+    background: #f5f8fc; padding: 8px 11px; text-align: left;
+    font-size: 10.5px; font-weight: 700; color: var(--col-muted);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--col-border); position: sticky; top: 0; z-index: 1;
+    white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.1s; }
+  tbody tr:hover { background: #f8fafc; }
+  tbody td { padding: 7px 11px; vertical-align: middle; }
+  .td-mono { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; }
+  .currency { text-align: right; font-family: 'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; }
+  .val-diff { font-size: 11px; font-family: 'IBM Plex Mono', monospace; }
+  .val-diff.ok { color: var(--col-success); }
+  .val-diff.err { color: var(--col-danger); }
+
+  /* ── BADGES ──────────────────────────────── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 2px 8px; border-radius: 12px; font-size: 10.5px; font-weight: 600; white-space: nowrap;
+  }
+  .badge-success { background: var(--col-success-bg); color: var(--col-success); }
+  .badge-warning { background: var(--col-warning-bg); color: var(--col-warning); }
+  .badge-danger { background: var(--col-danger-bg); color: var(--col-danger); }
+  .badge-info { background: var(--col-info-bg); color: var(--col-info); }
+  .badge-pending { background: var(--col-pending-bg); color: var(--col-pending); }
+  .badge-gray { background: #f1f5f9; color: var(--col-muted); }
+
+  /* ── SECTION TITLE ───────────────────────── */
+  .section-title {
+    font-size: 16px; font-weight: 700; color: var(--col-primary);
+    margin-bottom: 16px; padding-bottom: 10px;
+    border-bottom: 2px solid var(--col-accent); display: flex; align-items: center; gap: 8px;
+  }
+
+  /* ── ALERT ───────────────────────────────── */
+  .alert {
+    border-radius: 8px; padding: 10px 14px; font-size: 12.5px;
+    display: flex; align-items: flex-start; gap: 10px; margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .alert-info { background: var(--col-info-bg); color: #1e40af; border: 1px solid #93c5fd; }
+  .alert-warning { background: var(--col-warning-bg); color: #92400e; border: 1px solid #fcd34d; }
+  .alert-success { background: var(--col-success-bg); color: #166534; border: 1px solid #86efac; }
+
+  /* ── LOADING ─────────────────────────────── */
+  .loading-overlay {
+    position: fixed; inset: 0; background: rgba(15,37,68,0.6);
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 9999;
+  }
+  .spinner {
+    width: 42px; height: 42px; border: 4px solid rgba(255,255,255,0.2);
+    border-top-color: var(--col-accent); border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin-bottom: 14px;
+  }
+  .loading-text { color: white; font-size: 14px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── CHARTS (SVG-based) ──────────────────── */
+  .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; margin-bottom: 22px; }
+  .chart-card {
+    background: var(--col-surface); border-radius: 12px; border: 1px solid var(--col-border);
+    padding: 18px; overflow: hidden;
+  }
+  .chart-card-title { font-size: 12px; font-weight: 700; color: var(--col-primary); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .chart-card.wide { grid-column: span 2; }
+  .donut-wrap { display: flex; align-items: center; gap: 20px; }
+  .donut-legend { flex: 1; }
+  .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-val { margin-left: auto; font-weight: 700; font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+  .bar-chart-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 11.5px; }
+  .bar-chart-label { width: 110px; flex-shrink: 0; color: var(--col-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bar-chart-track { flex: 1; height: 16px; background: #f1f5f9; border-radius: 8px; overflow: hidden; }
+  .bar-chart-fill { height: 100%; border-radius: 8px; transition: width 0.5s ease; }
+  .bar-chart-val { width: 80px; text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px; margin-bottom: 22px; }
+  .kpi-card {
+    background: var(--col-surface); border-radius: 10px; padding: 16px;
+    border: 1px solid var(--col-border); text-align: center;
+  }
+  .kpi-icon { font-size: 28px; margin-bottom: 6px; }
+  .kpi-value { font-size: 28px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; color: var(--col-primary); }
+  .kpi-label { font-size: 10px; font-weight: 600; color: var(--col-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+  .kpi-sub { font-size: 11px; color: var(--col-muted); margin-top: 2px; }
+
+  .mora-bar-container { margin-top: 8px; }
+  .mora-range-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .mora-range-label { font-size: 11.5px; width: 130px; flex-shrink: 0; color: var(--col-text); }
+  .mora-range-track { flex: 1; height: 20px; background: #f1f5f9; border-radius: 6px; overflow: hidden; }
+  .mora-range-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 8px; font-size: 11px; font-weight: 700; color: white; }
+  .mora-range-count { width: 30px; text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700; }
+
+  /* ── EMPTY STATE ─────────────────────────── */
+  .empty-state { text-align: center; padding: 50px 20px; color: var(--col-muted); }
+  .empty-state .empty-icon { font-size: 44px; margin-bottom: 10px; }
+
+  /* ── RESPONSIVE ──────────────────────────── */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { padding: 12px; }
+    .chart-card.wide { grid-column: span 1; }
+  }
+
+  .logi-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-top: 10px; }
+  .logi-card { padding: 14px; background: #f8fafc; border-radius: 8px; }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">Procesando archivos...</div>
+</div>
+
+<!-- ══ HEADER ══════════════════════════════════════════════ -->
+<header class="app-header">
+  <div class="header-inner">
+    <div>
+      <div class="header-logo">Control <span>Facturación</span> LM</div>
+      <div class="header-sub">Gestión y seguimiento de actas, recepciones y pagos</div>
+    </div>
+    <div class="header-badge">Proyecto C-DZP-21-000-A</div>
+  </div>
+</header>
+
+<!-- ══ APP BODY ═════════════════════════════════════════════ -->
+<div class="app-body">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Sistema</div>
+      <div class="nav-item active" data-tab="carga" onclick="switchTab('carga')">
+        <span class="nav-icon">📂</span>
+        <span class="nav-label">Carga de Archivos<span class="nav-sub">Importar datos</span></span>
+      </div>
+    </div>
+
+    <hr class="sidebar-divider">
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Módulos</div>
+      <div class="nav-item" data-tab="modulo0" onclick="switchTab('modulo0')">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Módulo 0<span class="nav-sub">Vista Gerencial</span></span>
+        <span class="nav-badge" id="cnt0">—</span>
+      </div>
+      <div class="nav-item" data-tab="modulo1" onclick="switchTab('modulo1')">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label">Módulo 1<span class="nav-sub">Actas & Recepciones</span></span>
+        <span class="nav-badge" id="cnt1">0</span>
+      </div>
+      <div class="nav-item" data-tab="modulo2" onclick="switchTab('modulo2')">
+        <span class="nav-icon">🔄</span>
+        <span class="nav-label">Módulo 2<span class="nav-sub">Contabilización</span></span>
+        <span class="nav-badge" id="cnt2">0</span>
+      </div>
+      <div class="nav-item" data-tab="modulo3" onclick="switchTab('modulo3')">
+        <span class="nav-icon">💰</span>
+        <span class="nav-label">Módulo 3<span class="nav-sub">Pagos</span></span>
+        <span class="nav-badge" id="cnt3">0</span>
+      </div>
+      <div class="nav-item" data-tab="modulo4" onclick="switchTab('modulo4')">
+        <span class="nav-icon">🔍</span>
+        <span class="nav-label">Módulo 4<span class="nav-sub">Análisis Brechas</span></span>
+        <span class="nav-badge" id="cnt4">0</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main class="main">
+
+    <!-- ═══ PANEL: CARGA ═══════════════════════════════════ -->
+    <div class="panel active" id="panel-carga">
+      <div class="section-title">📂 Carga Masiva de Archivos</div>
+
+      <div class="alert alert-info">
+        ℹ️ <div>Cargue <strong>todos los archivos Excel</strong> de una sola vez usando el botón o arrastrándolos al área de carga. El sistema detecta automáticamente el contenido de cada archivo (.xlsx, .xls). Una vez cargados, presione <strong>"Procesar y Cruzar Datos"</strong>.</div>
+      </div>
+
+      <!-- Zona única de carga masiva -->
+      <div class="upload-zone" id="uploadZone"
+           onclick="document.getElementById('fileInputMasivo').click()"
+           ondragover="dragOverZone(event)" ondragleave="dragLeaveZone()" ondrop="dropZone(event)">
+        <input class="file-input-hidden" type="file" id="fileInputMasivo" accept=".xlsx,.xls" multiple onchange="handleMultipleFiles(this)">
+        <div class="upload-zone-icon">📁</div>
+        <div class="upload-zone-title">Haz clic o arrastra todos los archivos aquí</div>
+        <div class="upload-zone-desc">
+          Selecciona múltiples archivos a la vez (Archivo 1, 2 y 3)<br>
+          Formatos aceptados: <strong>.xlsx</strong> · <strong>.xls</strong> — El sistema los identifica automáticamente
+        </div>
+      </div>
+
+      <!-- Lista de archivos cargados -->
+      <div class="file-list" id="fileList"></div>
+
+      <div class="process-bar">
+        <button class="btn btn-primary" id="btnProcess" onclick="processData()" disabled>
+          ⚙️ Procesar y Cruzar Datos
+        </button>
+        <button class="btn btn-danger-outline" onclick="clearAll()">🗑 Limpiar Todo</button>
+        <div class="process-info" id="processInfo">Cargue al menos el Archivo 1 para comenzar</div>
+      </div>
+
+      <div style="background:var(--col-surface);border-radius:10px;border:1px solid var(--col-border);padding:20px;">
+        <div class="section-title" style="font-size:14px">📖 Lógica de Integración</div>
+        <div class="logi-info-grid">
+          <div class="logi-card" style="border-left:4px solid var(--col-info)">
+            <div style="font-size:11px;font-weight:700;color:var(--col-info);margin-bottom:5px">🔗 Archivo 1 ↔ Archivo 2</div>
+            <div style="font-size:11.5px;color:var(--col-muted);line-height:1.6">Cruce por <strong>Orden de Compra (PO)</strong>. Una factura puede tener múltiples recepciones.</div>
+          </div>
+          <div class="logi-card" style="border-left:4px solid var(--col-pending)">
+            <div style="font-size:11px;font-weight:700;color:var(--col-pending);margin-bottom:5px">🔗 Archivo 1 ↔ Archivo 3</div>
+            <div style="font-size:11.5px;color:var(--col-muted);line-height:1.6">Cruce primario por <strong>N° Factura</strong>. Secundario por <strong>Proveedor (NIT/nombre)</strong>.</div>
+          </div>
+          <div class="logi-card" style="border-left:4px solid var(--col-success)">
+            <div style="font-size:11px;font-weight:700;color:var(--col-success);margin-bottom:5px">✅ Estados del Flujo</div>
+            <div style="font-size:11.5px;color:var(--col-muted);line-height:1.6">
+              <span class="badge badge-info">Recepcionado</span> Oracle registró la recepción &nbsp;
+              <span class="badge badge-warning">Aprobado</span> Contabilizada &nbsp;
+              <span class="badge badge-success">Pagado</span> Desembolsado
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PANEL: MÓDULO 0 — GERENCIAL ═══════════════════ -->
+    <div class="panel" id="panel-modulo0">
+      <div class="section-title">📊 Módulo 0 — Vista Gerencial</div>
+
+      <!-- KPI Row -->
+      <div class="kpi-row" id="kpiRow">
+        <div class="kpi-card"><div class="kpi-icon">📄</div><div class="kpi-value" id="kpi-total">—</div><div class="kpi-label">Total Facturas</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-success)"><div class="kpi-icon">✅</div><div class="kpi-value" id="kpi-pagadas">—</div><div class="kpi-label">Pagadas</div><div class="kpi-sub" id="kpi-pagadas-pct">—</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-warning)"><div class="kpi-icon">⏳</div><div class="kpi-value" id="kpi-pendientes">—</div><div class="kpi-label">Pendiente Pago</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-danger)"><div class="kpi-icon">⚠️</div><div class="kpi-value" id="kpi-mora">—</div><div class="kpi-label">En Mora</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-accent)"><div class="kpi-icon">💵</div><div class="kpi-value" id="kpi-val-total" style="font-size:18px">—</div><div class="kpi-label">Valor Total</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-success)"><div class="kpi-icon">💸</div><div class="kpi-value" id="kpi-val-pagado" style="font-size:18px">—</div><div class="kpi-label">Valor Pagado</div></div>
+      </div>
+
+      <!-- Charts Grid -->
+      <div class="charts-grid">
+
+        <!-- Donut: Estado de Facturas -->
+        <div class="chart-card">
+          <div class="chart-card-title">🎯 Estado de Facturas</div>
+          <div class="donut-wrap">
+            <svg id="donut-estados" width="130" height="130" viewBox="0 0 130 130"></svg>
+            <div class="donut-legend" id="legend-estados"></div>
+          </div>
+        </div>
+
+        <!-- Donut: Estado Recepciones -->
+        <div class="chart-card">
+          <div class="chart-card-title">📥 Estado de Recepciones</div>
+          <div class="donut-wrap">
+            <svg id="donut-recepciones" width="130" height="130" viewBox="0 0 130 130"></svg>
+            <div class="donut-legend" id="legend-recepciones"></div>
+          </div>
+        </div>
+
+        <!-- Donut: Flujo Brechas -->
+        <div class="chart-card">
+          <div class="chart-card-title">🔍 Flujo de Brechas</div>
+          <div class="donut-wrap">
+            <svg id="donut-brechas" width="130" height="130" viewBox="0 0 130 130"></svg>
+            <div class="donut-legend" id="legend-brechas"></div>
+          </div>
+        </div>
+
+        <!-- Mora distribución -->
+        <div class="chart-card">
+          <div class="chart-card-title">📅 Distribución Días de Mora</div>
+          <div class="mora-bar-container" id="mora-chart"></div>
+        </div>
+
+        <!-- Top proveedores por valor -->
+        <div class="chart-card wide">
+          <div class="chart-card-title">🏢 Top Proveedores por Valor Facturado</div>
+          <div id="prov-chart"></div>
+        </div>
+
+        <!-- Valores por estado -->
+        <div class="chart-card wide">
+          <div class="chart-card-title">💰 Valores por Estado de Pago</div>
+          <div id="valores-chart"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══ PANEL: MÓDULO 1 ════════════════════════════════ -->
+    <div class="panel" id="panel-modulo1">
+      <div class="section-title">📋 Módulo 1 — Actas en Gestión vs Recepciones Oracle</div>
+      <div class="alert alert-info">ℹ️ Valida que cada acta/factura del Archivo 1 tenga recepción registrada en Oracle (Archivo 2), verificando que el valor recepcionado coincida con el valor del acta.</div>
+
+      <div class="summary-grid" id="sum1"></div>
+
+      <div class="filter-bar">
+        <span class="filter-label">🔍</span>
+        <input type="text" id="f1search" placeholder="Factura, OC, Proveedor..." oninput="renderM1()">
+        <select id="f1year" onchange="renderM1()"><option value="">Todos los años</option></select>
+        <div class="status-pills" id="pills1">
+          <span class="status-pill active-all" data-status="" onclick="setPill('pills1',this,'f1estado',renderM1)">Todos</span>
+          <span class="status-pill" data-status="recepcionado" onclick="setPill('pills1',this,'f1estado',renderM1)">✅ Recepcionado</span>
+          <span class="status-pill" data-status="parcial" onclick="setPill('pills1',this,'f1estado',renderM1)">⚠️ Parcial</span>
+          <span class="status-pill" data-status="sin_recepcion" onclick="setPill('pills1',this,'f1estado',renderM1)">❌ Sin Recepción</span>
+        </div>
+        <input type="hidden" id="f1estado">
+        <button class="btn btn-sm btn-outline" onclick="exportTable('m1data','Modulo1_Recepciones')">⬇ Exportar</button>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-header">
+          <span class="table-title">Actas vs Recepciones Oracle</span>
+          <span class="table-count" id="cnt1table">—</span>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th>Estado</th><th>Año</th><th>Mes</th><th>Orden de Compra</th>
+              <th>Proveedor</th><th>N° Factura</th><th>N° REC (A1)</th>
+              <th>Recepciones Oracle</th><th class="currency">Valor Acta (sin IVA)</th>
+              <th class="currency">Val. Recepcionado</th><th>Diferencia</th>
+              <th>Fecha Recepción</th><th>Recepcionado Por</th>
+            </tr></thead>
+            <tbody id="tbody1"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PANEL: MÓDULO 2 ════════════════════════════════ -->
+    <div class="panel" id="panel-modulo2">
+      <div class="section-title">🔄 Módulo 2 — Contabilización de Facturas</div>
+      <div class="alert alert-info">ℹ️ Verifica que el proveedor haya emitido la factura y que contabilidad la haya registrado con estado <strong>"Aprobado"</strong> en el sistema (Archivo 3).</div>
+
+      <div class="summary-grid" id="sum2"></div>
+
+      <div class="filter-bar">
+        <span class="filter-label">🔍</span>
+        <input type="text" id="f2search" placeholder="Factura, Proveedor, OC..." oninput="renderM2()">
+        <div class="status-pills" id="pills2">
+          <span class="status-pill active-all" data-status="" onclick="setPill('pills2',this,'f2estado',renderM2)">Todos</span>
+          <span class="status-pill" data-status="pagado" onclick="setPill('pills2',this,'f2estado',renderM2)">💸 Pagado</span>
+          <span class="status-pill" data-status="aprobado" onclick="setPill('pills2',this,'f2estado',renderM2)">📊 Aprobado</span>
+          <span class="status-pill" data-status="pendiente" onclick="setPill('pills2',this,'f2estado',renderM2)">⏳ Pendiente</span>
+        </div>
+        <input type="hidden" id="f2estado">
+        <button class="btn btn-sm btn-outline" onclick="exportTable('m2data','Modulo2_Contabilizacion')">⬇ Exportar</button>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-header">
+          <span class="table-title">Estado de Contabilización</span>
+          <span class="table-count" id="cnt2table">—</span>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th>Estado CxP</th><th>Año</th><th>Mes</th><th>Proveedor</th>
+              <th>N° Factura</th><th>Orden de Compra</th>
+              <th class="currency">Valor sin IVA</th><th class="currency">Valor Bruto CxP</th>
+              <th>Fecha Factura</th><th>Fecha Trans. CxP</th><th>Cruce</th>
+            </tr></thead>
+            <tbody id="tbody2"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PANEL: MÓDULO 3 ════════════════════════════════ -->
+    <div class="panel" id="panel-modulo3">
+      <div class="section-title">💰 Módulo 3 — Pagos a Proveedores</div>
+      <div class="alert alert-info">ℹ️ Confirma el desembolso al proveedor validando el estado <strong>"Pagado"</strong> en el Archivo 3.</div>
+
+      <div class="summary-grid" id="sum3"></div>
+
+      <div class="filter-bar">
+        <span class="filter-label">🔍</span>
+        <input type="text" id="f3search" placeholder="Factura, Proveedor..." oninput="renderM3()">
+        <div class="status-pills" id="pills3">
+          <span class="status-pill active-all" data-status="" onclick="setPill('pills3',this,'f3estado',renderM3)">Todos</span>
+          <span class="status-pill" data-status="pagado" onclick="setPill('pills3',this,'f3estado',renderM3)">✅ Pagado</span>
+          <span class="status-pill" data-status="aprobado" onclick="setPill('pills3',this,'f3estado',renderM3)">⏳ Pend. Pago</span>
+          <span class="status-pill" data-status="no_encontrado" onclick="setPill('pills3',this,'f3estado',renderM3)">❌ No en CxP</span>
+        </div>
+        <input type="hidden" id="f3estado">
+        <button class="btn btn-sm btn-outline" onclick="exportTable('m3data','Modulo3_Pagos')">⬇ Exportar</button>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-header">
+          <span class="table-title">Control de Pagos</span>
+          <span class="table-count" id="cnt3table">—</span>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th>Estado Pago</th><th>Año</th><th>Proveedor</th><th>N° Factura</th>
+              <th>Orden de Compra</th><th class="currency">Valor sin IVA</th>
+              <th class="currency">Anticipo</th><th class="currency">Valor Bruto CxP</th>
+              <th>Fecha Vencimiento</th><th>Fecha Pago</th><th>Días Mora</th>
+            </tr></thead>
+            <tbody id="tbody3"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PANEL: MÓDULO 4 ════════════════════════════════ -->
+    <div class="panel" id="panel-modulo4">
+      <div class="section-title">🔍 Módulo 4 — Análisis Integral de Brechas</div>
+      <div class="alert alert-warning">⚠️ Vista consolidada del flujo completo por factura. Identifica brechas en cualquier etapa del proceso.</div>
+
+      <div class="summary-grid" id="sum4"></div>
+
+      <div class="filter-bar">
+        <span class="filter-label">🔍</span>
+        <input type="text" id="f4search" placeholder="Factura, OC, Proveedor..." oninput="renderM4()">
+        <div class="status-pills" id="pills4">
+          <span class="status-pill active-all" data-status="" onclick="setPill('pills4',this,'f4brecha',renderM4)">Todos</span>
+          <span class="status-pill" data-status="completo" onclick="setPill('pills4',this,'f4brecha',renderM4)">✅ Completo</span>
+          <span class="status-pill" data-status="sin_recepcion" onclick="setPill('pills4',this,'f4brecha',renderM4)">❌ Sin Recepción</span>
+          <span class="status-pill" data-status="sin_cxp" onclick="setPill('pills4',this,'f4brecha',renderM4)">❌ Sin CxP</span>
+          <span class="status-pill" data-status="sin_pago" onclick="setPill('pills4',this,'f4brecha',renderM4)">⏳ Sin Pago</span>
+          <span class="status-pill" data-status="con_brecha" onclick="setPill('pills4',this,'f4brecha',renderM4)">⚠️ Con Brecha</span>
+        </div>
+        <input type="hidden" id="f4brecha">
+        <button class="btn btn-sm btn-outline" onclick="exportTable('m4data','Modulo4_Analisis_Brechas')">⬇ Exportar</button>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-header">
+          <span class="table-title">Flujo Completo por Factura</span>
+          <span class="table-count" id="cnt4table">—</span>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th>Flujo</th><th>Proveedor</th><th>N° Factura</th><th>Orden de Compra</th>
+              <th class="currency">Valor sin IVA</th>
+              <th title="Recepción Oracle">📥 Recepción</th>
+              <th title="Valor recepcionado">💲 Val. Rec.</th>
+              <th title="Contabilización">📊 Contabiliz.</th>
+              <th title="Pago">💸 Pago</th>
+              <th>Fecha Pago</th><th>Observaciones</th>
+            </tr></thead>
+            <tbody id="tbody4"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div><!-- end app-body -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+const state = {
+  files: [], // { wb, name, slot }
+  df1: [], df2: [], df3: [],
+  m1data: [], m2data: [], m3data: [], m4data: [],
+  processed: false
+};
+
+// ═══════════════════════════════════════════════════════════════
+// PILL FILTER HELPER
+// ═══════════════════════════════════════════════════════════════
+function setPill(containerID, el, hiddenID, renderFn) {
+  // Remove active from all pills in container
+  document.querySelectorAll('#' + containerID + ' .status-pill').forEach(p => {
+    p.className = 'status-pill';
+  });
+  // Set active class based on status value
+  const status = el.dataset.status;
+  if (!status) el.classList.add('active-all');
+  else if (['recepcionado','pagado','completo'].includes(status)) el.classList.add('active-success');
+  else if (['parcial','aprobado','sin_pago','con_brecha'].includes(status)) el.classList.add('active-warning');
+  else if (['sin_recepcion','no_encontrado','sin_cxp'].includes(status)) el.classList.add('active-danger');
+  else if (['pendiente'].includes(status)) el.classList.add('active-info');
+  else el.classList.add('active-all');
+
+  document.getElementById(hiddenID).value = status;
+  renderFn();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FILE HANDLING — SINGLE MULTI-FILE UPLOAD
+// ═══════════════════════════════════════════════════════════════
+function dragOverZone(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.add('drag-over');
+}
+function dragLeaveZone() {
+  document.getElementById('uploadZone').classList.remove('drag-over');
+}
+function dropZone(e) {
+  e.preventDefault();
+  dragLeaveZone();
+  const files = Array.from(e.dataTransfer.files).filter(f => f.name.match(/\.(xlsx|xls)$/i));
+  loadMultipleFiles(files);
+}
+function handleMultipleFiles(input) {
+  const files = Array.from(input.files);
+  loadMultipleFiles(files);
+  input.value = '';
+}
+
+function loadMultipleFiles(files) {
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const wb = XLSX.read(e.target.result, { type: 'array', cellDates: true });
+        const slot = detectSlot(wb, file.name);
+        // Remove any existing file for this slot
+        state.files = state.files.filter(f => f.slot !== slot);
+        state.files.push({ wb, name: file.name, slot, sheets: wb.SheetNames.length });
+        renderFileList();
+        updateProcessBtn();
+      } catch(err) {
+        state.files.push({ wb: null, name: file.name, slot: 0, error: err.message });
+        renderFileList();
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function detectSlot(wb, filename) {
+  // Try to detect which of the 3 files this is
+  const fnLow = filename.toLowerCase();
+  const sheets = wb.SheetNames.join(' ').toLowerCase();
+
+  // Heuristic 1: filename keywords
+  if (fnLow.includes('seguimiento') || fnLow.includes('compromiso') || fnLow.includes('factura')) return 1;
+  if (fnLow.includes('recep') || fnLow.includes('oracle_rec')) return 2;
+  if (fnLow.includes('cxp') || fnLow.includes('cuenta') || fnLow.includes('pago') || fnLow.includes('ap_')) return 3;
+
+  // Heuristic 2: sheet names
+  if (sheets.includes('factura')) return 1;
+  if (sheets.includes('recep')) return 2;
+  if (sheets.includes('proveedor') && !sheets.includes('factura')) return 3;
+
+  // Heuristic 3: column sniffing in first sheet
+  try {
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
+    for (let i = 0; i < Math.min(8, raw.length); i++) {
+      const rowStr = (raw[i] || []).map(c => String(c||'').toLowerCase()).join(' ');
+      if (rowStr.includes('invoice') || rowStr.includes('numero factura')) return 1;
+      if (rowStr.includes('recepci')) return 2;
+      if (rowStr.includes('nombre proveedor') || rowStr.includes('estado') && rowStr.includes('factura')) return 3;
+    }
+  } catch(e) {}
+
+  // Fallback: assign to next empty slot
+  const used = new Set(state.files.map(f => f.slot));
+  for (const s of [1,2,3]) { if (!used.has(s)) return s; }
+  return state.files.length + 1;
+}
+
+function renderFileList() {
+  const container = document.getElementById('fileList');
+  const zone = document.getElementById('uploadZone');
+  if (!state.files.length) { container.innerHTML = ''; zone.classList.remove('has-files'); return; }
+  zone.classList.add('has-files');
+
+  const slotNames = { 1: 'Archivo 1 — Compromisos', 2: 'Archivo 2 — Recepciones Oracle', 3: 'Archivo 3 — CxP Oracle' };
+  const slotIcons = { 1: '📋', 2: '🔄', 3: '💰' };
+
+  container.innerHTML = state.files.map((f, idx) => {
+    if (f.error) {
+      return `<div class="file-chip err">
+        <span class="file-chip-icon">❌</span>
+        <div><div class="file-chip-name">${f.name}</div><div class="file-chip-meta">Error: ${f.error}</div></div>
+        <button onclick="removeFile(${idx})" style="background:none;border:none;cursor:pointer;color:#dc2626;margin-left:4px">✕</button>
+      </div>`;
+    }
+    return `<div class="file-chip ok">
+      <span class="file-chip-icon">${slotIcons[f.slot] || '📄'}</span>
+      <div>
+        <div class="file-chip-name">${f.name}</div>
+        <div class="file-chip-meta">${slotNames[f.slot] || 'Archivo ' + f.slot} · ${f.sheets} hoja(s)</div>
+      </div>
+      <button onclick="removeFile(${idx})" style="background:none;border:none;cursor:pointer;color:var(--col-muted);margin-left:8px;font-size:14px">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function removeFile(idx) {
+  state.files.splice(idx, 1);
+  renderFileList();
+  updateProcessBtn();
+}
+
+function clearAll() {
+  state.files = [];
+  state.processed = false;
+  state.df1=[]; state.df2=[]; state.df3=[];
+  state.m1data=[]; state.m2data=[]; state.m3data=[]; state.m4data=[];
+  ['1','2','3','4'].forEach(n => {
+    const el = document.getElementById('cnt'+n); if(el) el.textContent='0';
+  });
+  document.getElementById('cnt0').textContent = '—';
+  renderFileList();
+  updateProcessBtn();
+}
+
+function updateProcessBtn() {
+  const validFiles = state.files.filter(f => f.wb && f.slot >= 1 && f.slot <= 3);
+  const ready = validFiles.length > 0;
+  document.getElementById('btnProcess').disabled = !ready;
+  const cnt = validFiles.length;
+  document.getElementById('processInfo').textContent =
+    cnt + '/3 archivos cargados' + (cnt === 3 ? ' — ✅ Listo para procesar' : ' — Puede procesar con los archivos disponibles');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DATA PROCESSING
+// ═══════════════════════════════════════════════════════════════
+function processData() {
+  document.getElementById('loadingOverlay').style.display = 'flex';
+  setTimeout(() => {
+    try {
+      parseFiles();
+      buildModules();
+      renderAll();
+      state.processed = true;
+      document.getElementById('loadingOverlay').style.display = 'none';
+      switchTab('modulo0');
+    } catch(err) {
+      document.getElementById('loadingOverlay').style.display = 'none';
+      alert('Error procesando archivos: ' + err.message + '\n\nVerifique que los archivos sean los correctos.');
+      console.error(err);
+    }
+  }, 100);
+}
+
+function sheetToRows(wb, sheetName, headerRow) {
+  const ws = wb.Sheets[sheetName];
+  if (!ws) return [];
+  const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
+  if (raw.length <= headerRow) return [];
+  const headers = raw[headerRow].map(h => (h != null ? String(h).trim() : ''));
+  const rows = [];
+  for (let i = headerRow + 1; i < raw.length; i++) {
+    const row = raw[i];
+    if (!row || row.every(c => c == null)) continue;
+    const obj = {};
+    headers.forEach((h, j) => { obj[h] = row[j] != null ? row[j] : null; });
+    rows.push(obj);
+  }
+  return rows;
+}
+
+function parseFiles() {
+  // Build slot map
+  const slotMap = {};
+  state.files.forEach(f => { if (f.wb && f.slot >= 1 && f.slot <= 3) slotMap[f.slot] = f.wb; });
+
+  // ── Archivo 1 ──
+  if (slotMap[1]) {
+    const wb = slotMap[1];
+    const sheetName = wb.SheetNames.find(s => s.toLowerCase().includes('factura')) || wb.SheetNames[0];
+    const raw = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, defval: null });
+    let hdr = 0;
+    for (let i = 0; i < Math.min(10, raw.length); i++) {
+      const r = raw[i];
+      if (r && r.some(c => c && String(c).toLowerCase().includes('invoice'))) { hdr = i; break; }
+    }
+    const headers = raw[hdr].map(h => h != null ? String(h).trim() : '');
+    state.df1 = [];
+    for (let i = hdr + 1; i < raw.length; i++) {
+      const row = raw[i]; if (!row || row.every(c => c == null)) continue;
+      const obj = {}; headers.forEach((h, j) => { obj[h] = row[j] != null ? row[j] : null; }); state.df1.push(obj);
+    }
+  }
+
+  // ── Archivo 2 ──
+  if (slotMap[2]) {
+    const wb = slotMap[2];
+    const sheetName = wb.SheetNames.find(s => s.toLowerCase().includes('recep')) || wb.SheetNames[0];
+    const raw = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, defval: null });
+    let hdr = 0;
+    for (let i = 0; i < Math.min(10, raw.length); i++) {
+      const r = raw[i];
+      if (r && r.some(c => c && String(c).toLowerCase().includes('recepci'))) { hdr = i; break; }
+    }
+    const headers = raw[hdr].map(h => h != null ? String(h).trim() : '');
+    state.df2 = [];
+    for (let i = hdr + 1; i < raw.length; i++) {
+      const row = raw[i]; if (!row || row.every(c => c == null)) continue;
+      const obj = {}; headers.forEach((h, j) => { obj[h] = row[j] != null ? row[j] : null; }); state.df2.push(obj);
+    }
+    state.df2 = state.df2.filter(r => {
+      const proj = r['Proyecto'] || r['Número de Proyecto'] || '';
+      return !proj || String(proj).includes('DZP-21');
+    });
+  }
+
+  // ── Archivo 3 ──
+  if (slotMap[3]) {
+    const wb = slotMap[3];
+    const sheetName = wb.SheetNames.find(s => !s.includes('METADATA') && s !== 'XDO_METADATA') || wb.SheetNames[0];
+    const raw = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, defval: null });
+    let hdr = 0;
+    for (let i = 0; i < Math.min(10, raw.length); i++) {
+      const r = raw[i];
+      if (r && r.some(c => c && String(c).toLowerCase().includes('proveedor'))) { hdr = i; break; }
+    }
+    const headers = raw[hdr].map(h => h != null ? String(h).trim() : '');
+    state.df3 = [];
+    for (let i = hdr + 1; i < raw.length; i++) {
+      const row = raw[i]; if (!row || row.every(c => c == null)) continue;
+      const obj = {}; headers.forEach((h, j) => { obj[h] = row[j] != null ? row[j] : null; }); state.df3.push(obj);
+    }
+  }
+}
+
+function normalStr(s) {
+  if (s == null) return '';
+  return String(s).trim().toLowerCase().replace(/\s+/g, ' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+function normalNum(v) {
+  if (v == null || v === '' || v === '---') return null;
+  if (typeof v === 'number') return v;
+  const s = String(v).replace(/[$,\s]/g,'');
+  const n = parseFloat(s); return isNaN(n) ? null : n;
+}
+function fmtCurrency(v) {
+  if (v == null) return '—';
+  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(v);
+}
+function fmtDate(v) {
+  if (!v) return '—';
+  if (v instanceof Date) return v.toLocaleDateString('es-CO');
+  const s = String(v);
+  if (s.match(/\d{4}-\d{2}-\d{2}/)) return s.substring(0,10);
+  return s.substring(0, 10);
+}
+function pct(n, t) { return t ? Math.round(n/t*100) : 0; }
+function emptyRow(cols) {
+  return `<tr><td colspan="${cols}" style="text-align:center;padding:40px;color:var(--col-muted)">
+    <div style="font-size:32px;margin-bottom:8px">📭</div>
+    <div>No hay datos — cargue los archivos y presione Procesar</div>
+  </td></tr>`;
+}
+
+function getA1Field(row, candidates) {
+  for (const c of candidates) {
+    if (row[c] != null && row[c] !== '') return row[c];
+    for (const key of Object.keys(row)) {
+      if (normalStr(key).includes(normalStr(c)) && row[key] != null) return row[key];
+    }
+  }
+  return null;
+}
+
+function buildModules() {
+  const recByOC = {};
+  state.df2.forEach(r => {
+    const oc = normalStr(r['Número de Documento'] || r['Numero de Documento'] || '');
+    if (!oc) return;
+    if (!recByOC[oc]) recByOC[oc] = [];
+    recByOC[oc].push(r);
+  });
+
+  const cxpByInv = {}, cxpByProv = {};
+  state.df3.forEach(r => {
+    const inv = normalStr(r['NUMERO DE FACTURA'] || r['Numero de Factura'] || r['NÚMERO DE FACTURA'] || '');
+    const prov = normalStr(r['NOMBRE PROVEEDOR'] || r['Nombre Proveedor'] || '');
+    if (inv && inv !== 'nan') { if (!cxpByInv[inv]) cxpByInv[inv] = []; cxpByInv[inv].push(r); }
+    if (prov) { if (!cxpByProv[prov]) cxpByProv[prov] = []; cxpByProv[prov].push(r); }
+  });
+
+  state.m1data = []; state.m2data = []; state.m3data = []; state.m4data = [];
+
+  state.df1.forEach(row => {
+    const inv = getA1Field(row, ['Invoice Number','Numero Factura','N° Factura']);
+    const po = getA1Field(row, ['PO','NuevaPO','Orden de Compra','Contract']);
+    const prov = getA1Field(row, ['Supplier Name','Proveedor']);
+    const valSinIva = normalNum(getA1Field(row, ['Vaule without IVA','Value without IVA','Valor sin IVA']));
+    const invDate = getA1Field(row, ['Invoice Date','Fecha Factura']);
+    const dueDate = getA1Field(row, ['Due Date','Fecha Vencimiento']);
+    const payDate = getA1Field(row, ['PAYMENT DATE','Fecha Pago']);
+    const advance = normalNum(getA1Field(row, ['Advance Payment','Anticipo']));
+    const year = getA1Field(row, ['Year','Año']);
+    const month = getA1Field(row, ['Month','Mes']);
+    const rec = getA1Field(row, ['REC']);
+    const lateDays = normalNum(getA1Field(row, ['LATE PAYMENT']));
+    const obs = getA1Field(row, ['OBSERVATIONS','Observaciones']);
+
+    if (!inv && !po) return;
+
+    // M1
+    const poNorm = normalStr(po);
+    const recRows = recByOC[poNorm] || [];
+    const totalRec = recRows.reduce((s, r) => {
+      const v = normalNum(r['Valor Recepcionado por Línea'] || r['Valor Total'] || r['Valor Unitario']);
+      return s + (v || 0);
+    }, 0);
+    const recNums = [...new Set(recRows.map(r => r['Recepción'] || r['Recepcion'] || '').filter(Boolean))].join(', ');
+    const recDate = recRows.length ? fmtDate(recRows[0]['Fecha de Recepción'] || recRows[0]['Fecha Recepcion']) : '—';
+    const recBy = recRows.length ? (recRows[0]['Recepcionado Por'] || '—') : '—';
+    let recStatus = 'sin_recepcion';
+    if (recRows.length > 0) {
+      if (valSinIva && Math.abs(totalRec - valSinIva) / Math.max(valSinIva, 1) > 0.05) recStatus = 'parcial';
+      else recStatus = 'recepcionado';
+    }
+    state.m1data.push({ inv, po, prov, year, month, valSinIva, rec, recRows: recRows.length, recNums, recDate, recBy, totalRec, recStatus, obs });
+
+    // M2 & M3
+    const invNorm = normalStr(inv);
+    let cxpMatch = cxpByInv[invNorm] || [];
+    if (!cxpMatch.length && prov) {
+      const provNorm = normalStr(prov);
+      cxpMatch = (cxpByProv[provNorm] || []).filter(r => {
+        const rinv = normalStr(r['NUMERO DE FACTURA'] || '');
+        return rinv.includes(invNorm.slice(-6)) || invNorm.includes(rinv.slice(-6));
+      });
+    }
+    const hasCxP = cxpMatch.length > 0;
+    const cxpStatus = hasCxP ? normalStr(cxpMatch[0]['ESTADO'] || '') : '';
+    const cxpBruto = hasCxP ? normalNum(cxpMatch[0]['VALOR BRUTO INCLUIDO IVA'] || cxpMatch[0]['Valor Bruto']) : null;
+    const cxpAnticipo = hasCxP ? normalNum(cxpMatch[0]['APLICACIÓN ANTICIPOS'] || 0) : null;
+    const cxpFechaTrans = hasCxP ? fmtDate(cxpMatch[0]['FECHA TRANSACCIÓN'] || cxpMatch[0]['Fecha Transaccion']) : null;
+    const cruceType = cxpByInv[invNorm]?.length > 0 ? 'Factura' : (hasCxP ? 'Proveedor' : 'No encontrado');
+
+    let m2Status = 'pendiente';
+    if (hasCxP) {
+      if (cxpStatus.includes('pagado') || cxpStatus.includes('paid')) m2Status = 'pagado';
+      else if (cxpStatus.includes('aprobado') || cxpStatus.includes('approved')) m2Status = 'aprobado';
+    }
+    state.m2data.push({ inv, po, prov, year, month, valSinIva, invDate, cxpFechaTrans, cxpBruto, m2Status, cruceType, obs });
+
+    let m3Status = 'no_encontrado';
+    if (hasCxP) {
+      if (cxpStatus.includes('pagado') || cxpStatus.includes('paid')) m3Status = 'pagado';
+      else m3Status = 'aprobado';
+    }
+    state.m3data.push({ inv, po, prov, year, month, valSinIva, advance: advance || cxpAnticipo, cxpBruto, dueDate, payDate: payDate || (m3Status==='pagado' ? cxpFechaTrans : null), m3Status, lateDays, obs });
+
+    // M4
+    const brechas = [];
+    if (recStatus === 'sin_recepcion') brechas.push('Sin recepción Oracle');
+    if (recStatus === 'parcial') brechas.push('Recepción parcial');
+    if (!hasCxP) brechas.push('Sin registro en CxP');
+    else if (m2Status === 'pendiente') brechas.push('Factura no contabilizada');
+    if (m3Status !== 'pagado') brechas.push('Pago pendiente');
+    let flujo = 'con_brecha';
+    if (brechas.length === 0) flujo = 'completo';
+    else if (!hasCxP) flujo = 'sin_cxp';
+    else if (recStatus === 'sin_recepcion') flujo = 'sin_recepcion';
+    else if (m3Status !== 'pagado') flujo = 'sin_pago';
+    state.m4data.push({ inv, po, prov, year, valSinIva, recStatus, totalRec, m2Status, m3Status, payDate: payDate || (m3Status==='pagado'?cxpFechaTrans:null), brechas, flujo, obs });
+  });
+
+  ['1','2','3','4'].forEach(n => {
+    const el = document.getElementById('cnt'+n);
+    if (el) el.textContent = state['m'+n+'data']?.length || 0;
+  });
+  document.getElementById('cnt0').textContent = state.m3data.length || 0;
+
+  // Populate year filter
+  const years = [...new Set(state.m1data.map(r=>r.year).filter(Boolean))].sort();
+  const sel = document.getElementById('f1year');
+  sel.innerHTML = '<option value="">Todos los años</option>';
+  years.forEach(y => { const o = document.createElement('option'); o.value=y; o.textContent=y; sel.appendChild(o); });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER FUNCTIONS
+// ═══════════════════════════════════════════════════════════════
+function renderAll() {
+  renderM0(); renderM1(); renderM2(); renderM3(); renderM4();
+}
+
+// ── MODULE 0: GERENCIAL ──────────────────────────────────────
+function renderM0() {
+  const d3 = state.m3data;
+  const d1 = state.m1data;
+  const d4 = state.m4data;
+  if (!d3.length && !d1.length) return;
+
+  const total = d3.length;
+  const pagadas = d3.filter(r => r.m3Status === 'pagado').length;
+  const pendientes = d3.filter(r => r.m3Status === 'aprobado').length;
+  const mora = d3.filter(r => r.lateDays > 0).length;
+  const valTotal = d3.reduce((s,r) => s + (r.valSinIva||0), 0);
+  const valPagado = d3.filter(r => r.m3Status === 'pagado').reduce((s,r) => s + (r.cxpBruto || r.valSinIva||0), 0);
+
+  document.getElementById('kpi-total').textContent = total;
+  document.getElementById('kpi-pagadas').textContent = pagadas;
+  document.getElementById('kpi-pagadas-pct').textContent = pct(pagadas,total) + '% del total';
+  document.getElementById('kpi-pendientes').textContent = pendientes;
+  document.getElementById('kpi-mora').textContent = mora;
+  document.getElementById('kpi-val-total').textContent = fmtCurrency(valTotal);
+  document.getElementById('kpi-val-pagado').textContent = fmtCurrency(valPagado);
+
+  // Donut: Estado pagos
+  renderDonut('donut-estados', 'legend-estados', [
+    { label: 'Pagado', val: pagadas, color: '#059669' },
+    { label: 'Pend. Pago', val: pendientes, color: '#d97706' },
+    { label: 'Sin CxP', val: d3.filter(r=>r.m3Status==='no_encontrado').length, color: '#dc2626' }
+  ]);
+
+  // Donut: Recepciones
+  const recOk = d1.filter(r=>r.recStatus==='recepcionado').length;
+  const recPar = d1.filter(r=>r.recStatus==='parcial').length;
+  const recNo = d1.filter(r=>r.recStatus==='sin_recepcion').length;
+  renderDonut('donut-recepciones', 'legend-recepciones', [
+    { label: 'Recepcionado', val: recOk, color: '#059669' },
+    { label: 'Parcial', val: recPar, color: '#d97706' },
+    { label: 'Sin Recepción', val: recNo, color: '#dc2626' }
+  ]);
+
+  // Donut: Brechas
+  const flujoCompleto = d4.filter(r=>r.flujo==='completo').length;
+  const sinRec4 = d4.filter(r=>r.flujo==='sin_recepcion').length;
+  const sinCxP4 = d4.filter(r=>r.flujo==='sin_cxp').length;
+  const sinPago4 = d4.filter(r=>r.flujo==='sin_pago').length;
+  const conBrecha4 = d4.filter(r=>r.flujo==='con_brecha').length;
+  renderDonut('donut-brechas', 'legend-brechas', [
+    { label: 'Flujo Completo', val: flujoCompleto, color: '#059669' },
+    { label: 'Sin Recepción', val: sinRec4, color: '#dc2626' },
+    { label: 'Sin CxP', val: sinCxP4, color: '#7c3aed' },
+    { label: 'Sin Pago', val: sinPago4, color: '#d97706' },
+    { label: 'Con Brecha', val: conBrecha4, color: '#f59e0b' }
+  ]);
+
+  // Mora chart
+  const moraRanges = [
+    { label: '0 días (a tiempo)', filter: r => r.lateDays != null && r.lateDays <= 0, color: '#059669' },
+    { label: '1 — 15 días', filter: r => r.lateDays > 0 && r.lateDays <= 15, color: '#d97706' },
+    { label: '16 — 30 días', filter: r => r.lateDays > 15 && r.lateDays <= 30, color: '#f59e0b' },
+    { label: '31 — 60 días', filter: r => r.lateDays > 30 && r.lateDays <= 60, color: '#dc2626' },
+    { label: 'Más de 60 días', filter: r => r.lateDays > 60, color: '#7f1d1d' },
+    { label: 'Sin datos mora', filter: r => r.lateDays == null, color: '#94a3b8' }
+  ];
+  const maxMora = Math.max(1, ...moraRanges.map(m => d3.filter(m.filter).length));
+  document.getElementById('mora-chart').innerHTML = moraRanges.map(m => {
+    const cnt = d3.filter(m.filter).length;
+    const w = Math.round(cnt / maxMora * 100);
+    return `<div class="mora-range-row">
+      <div class="mora-range-label">${m.label}</div>
+      <div class="mora-range-track">
+        <div class="mora-range-fill" style="width:${w}%;background:${m.color}">${cnt > 0 ? cnt : ''}</div>
+      </div>
+      <div class="mora-range-count">${cnt}</div>
+    </div>`;
+  }).join('');
+
+  // Top proveedores
+  const provMap = {};
+  d3.forEach(r => {
+    const p = r.prov || 'Sin nombre';
+    if (!provMap[p]) provMap[p] = { val: 0, cnt: 0 };
+    provMap[p].val += (r.valSinIva || 0);
+    provMap[p].cnt++;
+  });
+  const topProvs = Object.entries(provMap).sort((a,b) => b[1].val - a[1].val).slice(0, 10);
+  const maxProv = Math.max(1, topProvs[0]?.[1].val || 1);
+  document.getElementById('prov-chart').innerHTML = topProvs.map(([name, data]) => {
+    const w = Math.round(data.val / maxProv * 100);
+    const shortName = name.length > 30 ? name.substring(0, 28) + '…' : name;
+    return `<div class="bar-chart-row">
+      <div class="bar-chart-label" title="${name}">${shortName}</div>
+      <div class="bar-chart-track">
+        <div class="bar-chart-fill" style="width:${w}%;background:linear-gradient(90deg,#1a4a8a,#00b4c8)"></div>
+      </div>
+      <div class="bar-chart-val">${fmtCurrency(data.val)}</div>
+    </div>`;
+  }).join('');
+
+  // Valores por estado
+  const vPagado = d3.filter(r=>r.m3Status==='pagado').reduce((s,r)=>s+(r.cxpBruto||r.valSinIva||0),0);
+  const vAprobado = d3.filter(r=>r.m3Status==='aprobado').reduce((s,r)=>s+(r.cxpBruto||r.valSinIva||0),0);
+  const vNoFound = d3.filter(r=>r.m3Status==='no_encontrado').reduce((s,r)=>s+(r.valSinIva||0),0);
+  const maxVal = Math.max(1, vPagado, vAprobado, vNoFound);
+  const valBars = [
+    { label: '✅ Pagado', val: vPagado, color: '#059669' },
+    { label: '⏳ Aprobado (Pend. Pago)', val: vAprobado, color: '#d97706' },
+    { label: '❌ Sin registro CxP', val: vNoFound, color: '#dc2626' }
+  ];
+  document.getElementById('valores-chart').innerHTML = valBars.map(b => {
+    const w = Math.round(b.val / maxVal * 100);
+    return `<div class="bar-chart-row" style="margin-bottom:14px">
+      <div class="bar-chart-label" style="width:180px;font-weight:600">${b.label}</div>
+      <div class="bar-chart-track" style="height:22px">
+        <div class="bar-chart-fill" style="width:${w}%;background:${b.color}"></div>
+      </div>
+      <div class="bar-chart-val" style="width:120px">${fmtCurrency(b.val)}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderDonut(svgId, legendId, segments) {
+  const svg = document.getElementById(svgId);
+  const total = segments.reduce((s, seg) => s + seg.val, 0);
+  if (!total) { svg.innerHTML = '<text x="65" y="70" text-anchor="middle" fill="#94a3b8" font-size="11">Sin datos</text>'; document.getElementById(legendId).innerHTML=''; return; }
+
+  const cx=65, cy=65, r=50, r2=30;
+  let angle = -Math.PI / 2;
+  let paths = '';
+  const validSegs = segments.filter(s => s.val > 0);
+  validSegs.forEach(seg => {
+    const theta = (seg.val / total) * 2 * Math.PI;
+    const x1 = cx + r * Math.cos(angle);
+    const y1 = cy + r * Math.sin(angle);
+    const x2 = cx + r * Math.cos(angle + theta);
+    const y2 = cy + r * Math.sin(angle + theta);
+    const ix1 = cx + r2 * Math.cos(angle);
+    const iy1 = cy + r2 * Math.sin(angle);
+    const ix2 = cx + r2 * Math.cos(angle + theta);
+    const iy2 = cy + r2 * Math.sin(angle + theta);
+    const large = theta > Math.PI ? 1 : 0;
+    paths += `<path d="M${ix1},${iy1} L${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} L${ix2},${iy2} A${r2},${r2} 0 ${large},0 ${ix1},${iy1}" fill="${seg.color}" stroke="white" stroke-width="2"/>`;
+    angle += theta;
+  });
+  svg.innerHTML = paths + `<text x="${cx}" y="${cy+5}" text-anchor="middle" font-size="18" font-weight="700" fill="#0f2544">${total}</text>`;
+
+  document.getElementById(legendId).innerHTML = validSegs.map(s => `
+    <div class="legend-item">
+      <div class="legend-dot" style="background:${s.color}"></div>
+      <span style="color:#5c6f8a">${s.label}</span>
+      <span class="legend-val">${s.val}</span>
+    </div>
+  `).join('');
+}
+
+// ── MODULE 1 ──────────────────────────────────────────────────
+function renderM1() {
+  const search = normalStr(document.getElementById('f1search').value);
+  const estado = document.getElementById('f1estado').value;
+  const year = document.getElementById('f1year').value;
+  let data = state.m1data.filter(r => {
+    if (estado && r.recStatus !== estado) return false;
+    if (year && String(r.year) !== String(year)) return false;
+    if (search) { const hay = normalStr(r.inv+' '+r.po+' '+r.prov+' '+r.recNums); if (!hay.includes(search)) return false; }
+    return true;
+  });
+  const total = data.length;
+  const sinRec = data.filter(r=>r.recStatus==='sin_recepcion').length;
+  const parcial = data.filter(r=>r.recStatus==='parcial').length;
+  const recOk = data.filter(r=>r.recStatus==='recepcionado').length;
+  const totalVal = data.reduce((s,r) => s + (r.valSinIva||0), 0);
+  const totalRecVal = data.reduce((s,r) => s + (r.totalRec||0), 0);
+
+  document.getElementById('sum1').innerHTML = `
+    <div class="summary-card s-info"><div class="summary-label">Total Facturas</div><div class="summary-value">${total}</div><div class="summary-sub">en seguimiento</div></div>
+    <div class="summary-card s-success"><div class="summary-label">Con Recepción</div><div class="summary-value">${recOk}</div><div class="summary-sub">${pct(recOk,total)}% del total</div></div>
+    <div class="summary-card s-warning"><div class="summary-label">Parcial</div><div class="summary-value">${parcial}</div></div>
+    <div class="summary-card s-danger"><div class="summary-label">Sin Recepción</div><div class="summary-value">${sinRec}</div></div>
+    <div class="summary-card s-info"><div class="summary-label">Valor Total Actas</div><div class="summary-value" style="font-size:16px">${fmtCurrency(totalVal)}</div><div class="summary-sub">sin IVA</div></div>
+    <div class="summary-card s-success"><div class="summary-label">Valor Recepcionado</div><div class="summary-value" style="font-size:16px">${fmtCurrency(totalRecVal)}</div><div class="summary-sub">Oracle</div></div>
+  `;
+  document.getElementById('cnt1table').textContent = total + ' registros';
+  const tbody = document.getElementById('tbody1');
+  if (!data.length) { tbody.innerHTML = emptyRow(13); return; }
+  tbody.innerHTML = data.map(r => {
+    const badgeRec = r.recStatus==='recepcionado' ? '<span class="badge badge-success">✅ Recepcionado</span>'
+      : r.recStatus==='parcial' ? '<span class="badge badge-warning">⚠️ Parcial</span>'
+      : '<span class="badge badge-danger">❌ Sin Recepción</span>';
+    const diff = r.valSinIva && r.totalRec ? r.totalRec - r.valSinIva : null;
+    const diffStr = diff!=null ? `<div class="val-diff ${Math.abs(diff)<r.valSinIva*0.05?'ok':'err'}">${diff>=0?'+':''}${fmtCurrency(diff)}</div>` : '—';
+    return `<tr>
+      <td>${badgeRec}</td><td>${r.year||'—'}</td><td>${r.month||'—'}</td>
+      <td class="td-mono">${r.po||'—'}</td>
+      <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${r.prov||'—'}</td>
+      <td class="td-mono">${r.inv||'—'}</td><td class="td-mono">${r.rec||'—'}</td>
+      <td class="td-mono" style="font-size:11px">${r.recNums||'—'} <span style="color:var(--col-muted)">(${r.recRows})</span></td>
+      <td class="currency">${fmtCurrency(r.valSinIva)}</td>
+      <td class="currency">${fmtCurrency(r.totalRec||null)}</td>
+      <td class="currency">${diffStr}</td>
+      <td>${r.recDate}</td>
+      <td style="font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis" title="${r.recBy}">${r.recBy}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── MODULE 2 ──────────────────────────────────────────────────
+function renderM2() {
+  const search = normalStr(document.getElementById('f2search').value);
+  const estado = document.getElementById('f2estado').value;
+  let data = state.m2data.filter(r => {
+    if (estado && r.m2Status !== estado) return false;
+    if (search) { const hay = normalStr(r.inv+' '+r.po+' '+r.prov); if (!hay.includes(search)) return false; }
+    return true;
+  });
+  const total = data.length;
+  const aprobado = data.filter(r=>r.m2Status==='aprobado').length;
+  const pagado = data.filter(r=>r.m2Status==='pagado').length;
+  const pendiente = data.filter(r=>r.m2Status==='pendiente').length;
+  const totalContab = data.filter(r=>r.m2Status!=='pendiente').reduce((s,r)=>s+(r.valSinIva||0),0);
+
+  document.getElementById('sum2').innerHTML = `
+    <div class="summary-card s-info"><div class="summary-label">Total Facturas</div><div class="summary-value">${total}</div></div>
+    <div class="summary-card s-warning"><div class="summary-label">Aprobadas</div><div class="summary-value">${aprobado}</div><div class="summary-sub">pendiente de pago</div></div>
+    <div class="summary-card s-success"><div class="summary-label">Pagadas</div><div class="summary-value">${pagado}</div><div class="summary-sub">${pct(pagado,total)}% del total</div></div>
+    <div class="summary-card s-danger"><div class="summary-label">Sin Contabilizar</div><div class="summary-value">${pendiente}</div></div>
+    <div class="summary-card s-accent"><div class="summary-label">Valor Contabilizado</div><div class="summary-value" style="font-size:16px">${fmtCurrency(totalContab)}</div></div>
+  `;
+  document.getElementById('cnt2table').textContent = total + ' registros';
+  const tbody = document.getElementById('tbody2');
+  if (!data.length) { tbody.innerHTML = emptyRow(11); return; }
+  tbody.innerHTML = data.map(r => {
+    const badge = r.m2Status==='pagado' ? '<span class="badge badge-success">💸 Pagado</span>'
+      : r.m2Status==='aprobado' ? '<span class="badge badge-warning">📊 Aprobado</span>'
+      : '<span class="badge badge-danger">⏳ Pendiente</span>';
+    const cruceBadge = r.cruceType==='Factura' ? '<span class="badge badge-success">Por Factura</span>'
+      : r.cruceType==='Proveedor' ? '<span class="badge badge-warning">Por Proveedor</span>'
+      : '<span class="badge badge-gray">No encontrado</span>';
+    return `<tr>
+      <td>${badge}</td><td>${r.year||'—'}</td><td>${r.month||'—'}</td>
+      <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${r.prov||'—'}</td>
+      <td class="td-mono">${r.inv||'—'}</td><td class="td-mono">${r.po||'—'}</td>
+      <td class="currency">${fmtCurrency(r.valSinIva)}</td>
+      <td class="currency">${fmtCurrency(r.cxpBruto)}</td>
+      <td>${fmtDate(r.invDate)}</td><td>${r.cxpFechaTrans||'—'}</td>
+      <td>${cruceBadge}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── MODULE 3 ──────────────────────────────────────────────────
+function renderM3() {
+  const search = normalStr(document.getElementById('f3search').value);
+  const estado = document.getElementById('f3estado').value;
+  let data = state.m3data.filter(r => {
+    if (estado && r.m3Status !== estado) return false;
+    if (search) { const hay = normalStr(r.inv+' '+r.prov+' '+r.po); if (!hay.includes(search)) return false; }
+    return true;
+  });
+  const total = data.length;
+  const pagado = data.filter(r=>r.m3Status==='pagado').length;
+  const aprobado = data.filter(r=>r.m3Status==='aprobado').length;
+  const noFound = data.filter(r=>r.m3Status==='no_encontrado').length;
+  const mora = data.filter(r=>r.lateDays && r.lateDays > 0).length;
+  const totalPagado = data.filter(r=>r.m3Status==='pagado').reduce((s,r)=>s+(r.cxpBruto||r.valSinIva||0),0);
+
+  document.getElementById('sum3').innerHTML = `
+    <div class="summary-card s-info"><div class="summary-label">Total</div><div class="summary-value">${total}</div></div>
+    <div class="summary-card s-success"><div class="summary-label">Pagadas</div><div class="summary-value">${pagado}</div><div class="summary-sub">${pct(pagado,total)}%</div></div>
+    <div class="summary-card s-warning"><div class="summary-label">Pend. Pago (Aprob.)</div><div class="summary-value">${aprobado}</div></div>
+    <div class="summary-card s-danger"><div class="summary-label">Sin Registro CxP</div><div class="summary-value">${noFound}</div></div>
+    <div class="summary-card s-warning"><div class="summary-label">En Mora</div><div class="summary-value">${mora}</div></div>
+    <div class="summary-card s-success"><div class="summary-label">Total Pagado</div><div class="summary-value" style="font-size:14px">${fmtCurrency(totalPagado)}</div></div>
+  `;
+  document.getElementById('cnt3table').textContent = total + ' registros';
+  const tbody = document.getElementById('tbody3');
+  if (!data.length) { tbody.innerHTML = emptyRow(11); return; }
+  tbody.innerHTML = data.map(r => {
+    const badge = r.m3Status==='pagado' ? '<span class="badge badge-success">✅ Pagado</span>'
+      : r.m3Status==='aprobado' ? '<span class="badge badge-warning">⏳ Pend. Pago</span>'
+      : '<span class="badge badge-danger">❌ No en CxP</span>';
+    const moraBadge = r.lateDays > 0 ? `<span class="badge badge-danger">${r.lateDays}d</span>` : r.lateDays < 0 ? `<span class="badge badge-success">-${Math.abs(r.lateDays)}d</span>` : '—';
+    return `<tr>
+      <td>${badge}</td><td>${r.year||'—'}</td>
+      <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${r.prov||'—'}</td>
+      <td class="td-mono">${r.inv||'—'}</td><td class="td-mono">${r.po||'—'}</td>
+      <td class="currency">${fmtCurrency(r.valSinIva)}</td>
+      <td class="currency">${r.advance ? fmtCurrency(r.advance) : '—'}</td>
+      <td class="currency">${fmtCurrency(r.cxpBruto)}</td>
+      <td>${fmtDate(r.dueDate)}</td><td>${fmtDate(r.payDate)}</td>
+      <td style="text-align:center">${moraBadge}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── MODULE 4 ──────────────────────────────────────────────────
+function renderM4() {
+  const search = normalStr(document.getElementById('f4search').value);
+  const brecha = document.getElementById('f4brecha').value;
+  let data = state.m4data.filter(r => {
+    if (brecha && r.flujo !== brecha) return false;
+    if (search) { const hay = normalStr(r.inv+' '+r.po+' '+r.prov); if (!hay.includes(search)) return false; }
+    return true;
+  });
+  const total = data.length;
+  const completo = data.filter(r=>r.flujo==='completo').length;
+  const conBrecha = data.filter(r=>r.flujo!=='completo').length;
+  const sinRec = data.filter(r=>r.recStatus==='sin_recepcion').length;
+  const sinCxP = data.filter(r=>r.flujo==='sin_cxp').length;
+  const sinPago = data.filter(r=>r.m3Status!=='pagado').length;
+
+  document.getElementById('sum4').innerHTML = `
+    <div class="summary-card s-success"><div class="summary-label">Flujo Completo</div><div class="summary-value">${completo}</div><div class="summary-sub">${pct(completo,total)}% del total</div></div>
+    <div class="summary-card s-danger"><div class="summary-label">Con Brechas</div><div class="summary-value">${conBrecha}</div></div>
+    <div class="summary-card s-warning"><div class="summary-label">Sin Recepción</div><div class="summary-value">${sinRec}</div></div>
+    <div class="summary-card s-danger"><div class="summary-label">Sin Registro CxP</div><div class="summary-value">${sinCxP}</div></div>
+    <div class="summary-card s-warning"><div class="summary-label">Pendiente Pago</div><div class="summary-value">${sinPago}</div></div>
+  `;
+  document.getElementById('cnt4table').textContent = total + ' registros';
+  const tbody = document.getElementById('tbody4');
+  if (!data.length) { tbody.innerHTML = emptyRow(11); return; }
+  tbody.innerHTML = data.map(r => {
+    const flujoLabel = r.flujo==='completo' ? '<span class="badge badge-success">✅ Completo</span>'
+      : r.flujo==='sin_recepcion' ? '<span class="badge badge-danger">❌ Sin Rec.</span>'
+      : r.flujo==='sin_cxp' ? '<span class="badge badge-pending">❌ Sin CxP</span>'
+      : r.flujo==='sin_pago' ? '<span class="badge badge-warning">⏳ Sin Pago</span>'
+      : '<span class="badge badge-danger">⚠️ Brecha</span>';
+    const recBadge = r.recStatus==='recepcionado' ? '<span class="badge badge-success">✅</span>' : r.recStatus==='parcial' ? '<span class="badge badge-warning">⚠️</span>' : '<span class="badge badge-danger">❌</span>';
+    const cxpBadge = r.m2Status!=='pendiente' ? '<span class="badge badge-success">✅</span>' : '<span class="badge badge-danger">❌</span>';
+    const pagBadge = r.m3Status==='pagado' ? '<span class="badge badge-success">✅</span>' : r.m3Status==='aprobado' ? '<span class="badge badge-warning">⏳</span>' : '<span class="badge badge-danger">❌</span>';
+    const brechaStr = r.brechas.length ? r.brechas.join(' · ') : '—';
+    return `<tr>
+      <td>${flujoLabel}</td>
+      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${r.prov||'—'}</td>
+      <td class="td-mono">${r.inv||'—'}</td><td class="td-mono">${r.po||'—'}</td>
+      <td class="currency">${fmtCurrency(r.valSinIva)}</td>
+      <td style="text-align:center">${recBadge}</td>
+      <td class="currency" style="font-size:11px">${r.totalRec ? fmtCurrency(r.totalRec) : '—'}</td>
+      <td style="text-align:center">${cxpBadge}</td>
+      <td style="text-align:center">${pagBadge}</td>
+      <td style="font-size:11px">${fmtDate(r.payDate)}</td>
+      <td style="font-size:11px;color:var(--col-danger);max-width:180px">${brechaStr}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════════
+function switchTab(name) {
+  document.querySelectorAll('.nav-item').forEach(t => t.classList.toggle('active', t.dataset.tab===name));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id==='panel-'+name));
+  if (state.processed) {
+    if (name==='modulo0') renderM0();
+    if (name==='modulo1') renderM1();
+    if (name==='modulo2') renderM2();
+    if (name==='modulo3') renderM3();
+    if (name==='modulo4') renderM4();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════════════════════
+function exportTable(dataKey, filename) {
+  const data = state[dataKey];
+  if (!data || !data.length) { alert('No hay datos para exportar. Procese los archivos primero.'); return; }
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(data.map(r => {
+    const out = {};
+    Object.keys(r).forEach(k => { if (Array.isArray(r[k])) out[k] = r[k].length; else out[k] = r[k]; });
+    return out;
+  }));
+  XLSX.utils.book_append_sheet(wb, ws, 'Datos');
+  XLSX.writeFile(wb, filename + '_' + new Date().toISOString().slice(0,10) + '.xlsx');
+}
+</script>
+</body>
+</html>
