@@ -494,11 +494,66 @@
   .ciclo-value { font-size:11px;font-weight:600;color:var(--col-text);text-align:center; }
   .ciclo-sub { font-size:9.5px;color:var(--col-muted);margin-top:2px;text-align:center; }
 
-  /* ── VENCIMIENTO TABLE ──────────────────── */
-  .venc-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .venc-table th { padding: 7px 10px; background: #f5f8fc; font-size: 10px; font-weight: 700; color: var(--col-muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--col-border); }
-  .venc-table td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; }
-  .venc-table tr:last-child td { border-bottom: none; }
+  /* ── AUDIT MODULE ────────────────────────── */
+  .audit-entry {
+    background: var(--col-surface); border: 1px solid var(--col-border);
+    border-radius: 12px; margin-bottom: 14px; overflow: hidden;
+  }
+  .audit-entry-header {
+    display: flex; align-items: center; gap: 12px; padding: 13px 16px;
+    border-bottom: 1px solid var(--col-border); flex-wrap: wrap;
+    cursor: pointer; user-select: none;
+  }
+  .audit-entry-header:hover { background: #f8fafc; }
+  .audit-type-badge {
+    padding: 3px 10px; border-radius: 20px; font-size: 10.5px; font-weight: 700;
+    white-space: nowrap;
+  }
+  .audit-type-carga { background: var(--col-info-bg); color: var(--col-info); }
+  .audit-type-export { background: var(--col-success-bg); color: var(--col-success); }
+  .audit-type-proceso { background: var(--col-pending-bg); color: var(--col-pending); }
+  .audit-entry-ts { font-size: 11px; color: var(--col-muted); font-family: 'IBM Plex Mono', monospace; }
+  .audit-entry-user { font-size: 11px; font-weight: 600; color: var(--col-text); }
+  .audit-entry-chevron { margin-left: auto; font-size: 13px; color: var(--col-muted); transition: transform 0.2s; }
+  .audit-entry.open .audit-entry-chevron { transform: rotate(180deg); }
+  .audit-entry-body { padding: 14px 16px; display: none; }
+  .audit-entry.open .audit-entry-body { display: block; }
+  .audit-files-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .audit-file-tag {
+    display: flex; align-items: center; gap: 6px;
+    background: #f1f5f9; border-radius: 6px; padding: 5px 10px;
+    font-size: 11px; color: var(--col-text); border: 1px solid var(--col-border);
+  }
+  .audit-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 12px; }
+  .audit-kpi {
+    background: #f8fafc; border-radius: 8px; padding: 10px 12px;
+    border-left: 3px solid var(--col-border);
+  }
+  .audit-kpi-label { font-size: 9px; font-weight: 700; color: var(--col-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .audit-kpi-val { font-size: 16px; font-weight: 700; color: var(--col-primary); font-family: 'IBM Plex Mono', monospace; }
+  .audit-kpi-sub { font-size: 10px; color: var(--col-muted); margin-top: 2px; }
+  .audit-diff-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .audit-diff-table th { padding: 6px 10px; background: #f5f8fc; font-size: 10px; font-weight: 700; color: var(--col-muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--col-border); text-align: left; }
+  .audit-diff-table td { padding: 7px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+  .audit-diff-table tr:last-child td { border-bottom: none; }
+  .diff-inc { color: var(--col-success); font-weight: 700; }
+  .diff-dec { color: var(--col-danger); font-weight: 700; }
+  .diff-neu { color: var(--col-muted); }
+  .audit-empty { text-align:center; padding:60px 20px; color:var(--col-muted); }
+  .audit-empty .ae-icon { font-size:48px; margin-bottom:12px; }
+  .audit-timeline-line {
+    display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px;
+  }
+  .audit-timeline-dot {
+    width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 15px; flex-shrink: 0; margin-top: 8px;
+    border: 2px solid var(--col-border);
+  }
+  .audit-timeline-dot.carga { background: var(--col-info-bg); border-color: var(--col-info); }
+  .audit-timeline-dot.export { background: var(--col-success-bg); border-color: var(--col-success); }
+  .audit-type-import { background: #fef3c7; color: #d97706; }
+  .audit-timeline-dot.import { background: #fef3c7; border-color: #d97706; }
+  .audit-timeline-connector { width: 2px; background: var(--col-border); margin: 0 15px; flex-shrink: 0; min-height: 20px; }
 </style>
 </head>
 <body>
@@ -659,6 +714,11 @@
         <span class="nav-label">Módulo 5<span class="nav-sub">Análisis Proveedor</span></span>
         <span class="nav-badge" id="cnt5">0</span>
       </div>
+      <div class="nav-item" data-tab="auditorias" onclick="switchTab('auditorias')">
+        <span class="nav-icon">🗂️</span>
+        <span class="nav-label">Auditorías<span class="nav-sub">Historial de cambios</span></span>
+        <span class="nav-badge" id="cntAudit">0</span>
+      </div>
       <div id="ctrlm-hint" style="display:none"></div>
     </div>
   </aside>
@@ -694,6 +754,13 @@
         <button class="btn btn-primary" id="btnProcess" onclick="processData()" disabled>
           ⚙️ Procesar y Cruzar Datos
         </button>
+        <button class="btn btn-success" id="btnExportJSON" onclick="exportFlawFactJSON()" disabled title="Exporta todos los datos procesados en formato JSON">
+          📦 Exportar JSON
+        </button>
+        <button class="btn btn-outline" onclick="document.getElementById('fileInputJSON').click()" title="Carga un JSON exportado previamente para comparar contra los datos actuales">
+          📂 Cargar JSON
+        </button>
+        <input type="file" id="fileInputJSON" accept=".json" style="display:none" onchange="importFlawFactJSON(this)">
         <button class="btn btn-danger-outline" onclick="clearAll()">🗑 Limpiar Todo</button>
         <div class="process-info" id="processInfo">Cargue al menos el Archivo 1 para comenzar</div>
       </div>
@@ -1039,7 +1106,7 @@
       <!-- Gráfica principal de proveedor -->
       <div class="chart-card" style="margin-bottom:16px;padding:14px 16px">
         <div class="chart-card-title" id="m5-chart-title">📊 Facturación por Proveedor — Período seleccionado</div>
-        <div id="m5-chart-prov" style="overflow-x:auto;max-height:200px"><div style="color:var(--col-muted);font-size:12px;padding:20px 0">Cargue y procese archivos para ver el análisis.</div></div>
+        <div id="m5-chart-prov" style="overflow-x:auto;overflow-y:hidden"><div style="color:var(--col-muted);font-size:12px;padding:20px 0">Cargue y procese archivos para ver el análisis.</div></div>
       </div>
 
       <!-- Comparativo período anterior -->
@@ -1073,6 +1140,20 @@
           </table>
         </div>
       </div>
+    </div>
+
+    <!-- ═══ PANEL: AUDITORÍAS ════════════════════════════════ -->
+    <div class="panel" id="panel-auditorias">
+      <div class="section-title">🗂️ Módulo de Auditorías — Historial de Cambios</div>
+      <div class="alert alert-info">
+        ℹ️ <div>Registro automático de cada carga de archivos y exportación JSON. Compara snapshots sucesivos para detectar <strong>diferencias en conteos, valores y estados</strong> entre sesiones de trabajo.</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap">
+        <button class="btn btn-danger-outline btn-sm" onclick="clearAuditLog()">🗑 Limpiar historial</button>
+        <button class="btn btn-outline btn-sm" onclick="exportAuditLog()">⬇ Exportar log JSON</button>
+        <span id="auditSummaryBadge" style="font-size:11px;color:var(--col-muted);font-family:'IBM Plex Mono',monospace"></span>
+      </div>
+      <div id="auditTimeline"></div>
     </div>
 
   </main>
@@ -2188,6 +2269,10 @@ function loadMultipleFiles(files) {
         state.files.push({ wb, name: file.name, slot, sheets: wb.SheetNames.length });
         renderFileList();
         updateProcessBtn();
+        // Audit: register file load
+        addAuditEntry('carga', `Archivo cargado: ${file.name}`, {
+          files: state.files.filter(f=>f.wb).map(f=>({ nombre:f.name, slot:f.slot, hojas:f.sheets }))
+        });
       } catch(err) {
         state.files.push({ wb: null, name: file.name, slot: 0, error: err.message });
         renderFileList();
@@ -2301,7 +2386,14 @@ function processData() {
         state.processed = true;
         renderAll();
         overlay.style.display = 'none';
+        // Enable JSON export button
+        const btnJ = document.getElementById('btnExportJSON');
+        if (btnJ) btnJ.disabled = false;
         showToast('✅ Datos procesados correctamente', 'success');
+        // Register audit entry
+        addAuditEntry('proceso', `${state.m1data.length} facturas · ${state.m3data.length} registros CxP`, {
+          files: state.files.filter(f=>f.wb).map(f=>({ nombre:f.name, slot:f.slot, hojas:f.sheets }))
+        });
         // After processing, go to modulo0 (always accessible)
         switchTab('modulo0');
       } catch(err) {
@@ -3284,7 +3376,7 @@ function renderM5() {
     xlabs+=`<text x="${cx}" y="${svgH-18}" text-anchor="middle" font-size="9.5" fill="#5c6f8a" transform="rotate(-25,${cx},${svgH-18})">${sn}</text>`;
   });
   const m5chartEl = document.getElementById('m5-chart-prov');
-  if(m5chartEl) m5chartEl.innerHTML=`<svg viewBox="0 0 ${svgW} ${svgH}" style="width:100%;height:auto">
+  if(m5chartEl) m5chartEl.innerHTML=`<svg viewBox="0 0 ${svgW} ${svgH}" style="width:100%;height:${svgH}px;max-height:${svgH}px;display:block">
     ${guides}${bars}${xlabs}
     <line x1="70" y1="${20+chartH}" x2="${svgW-10}" y2="${20+chartH}" stroke="#cbd5e1" stroke-width="2"/>
   </svg>
@@ -3560,6 +3652,7 @@ function switchTab(name) {
   }
   document.querySelectorAll('.nav-item').forEach(t => t.classList.toggle('active', t.dataset.tab===name));
   document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id==='panel-'+name));
+  if (name==='auditorias') { try { renderAuditPanel(); } catch(e) { console.warn(e); } }
   if (state.processed) {
     if (name==='busqueda') { /* quick search — no auto render needed */ }
     if (name==='modulo0') { try { renderM0(); } catch(e) { console.warn(e); } }
@@ -3796,7 +3889,7 @@ function renderProvCard(provName, html) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// EXPORT
+// EXPORT XLSX (por módulo)
 // ═══════════════════════════════════════════════════════════════
 function exportTable(dataKey, filename) {
   const data = state[dataKey];
@@ -3809,6 +3902,419 @@ function exportTable(dataKey, filename) {
   }));
   XLSX.utils.book_append_sheet(wb, ws, 'Datos');
   XLSX.writeFile(wb, filename + '_' + new Date().toISOString().slice(0,10) + '.xlsx');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// AUDIT LOG SYSTEM
+// ═══════════════════════════════════════════════════════════════
+const auditLog = []; // { id, ts, type, user, files, snapshot, diff, label }
+
+function getSnapshot() {
+  return {
+    m1_total: state.m1data.length,
+    m1_recepcionado: state.m1data.filter(r=>r.recStatus==='recepcionado').length,
+    m1_sinRec: state.m1data.filter(r=>r.recStatus==='sin_recepcion').length,
+    m1_parcial: state.m1data.filter(r=>r.recStatus==='parcial').length,
+    m1_valTotal: state.m1data.reduce((s,r)=>s+(r.valSinIva||0),0),
+    m2_total: state.m2data.length,
+    m2_pagado: state.m2data.filter(r=>r.m2Status==='pagado').length,
+    m2_aprobado: state.m2data.filter(r=>r.m2Status==='aprobado').length,
+    m3_total: state.m3data.length,
+    m3_pagado: state.m3data.filter(r=>r.m3Status==='pagado').length,
+    m3_mora: state.m3data.filter(r=>(r.lateDaysCalc||0)>0&&r.m3Status!=='pagado').length,
+    m3_valPagado: state.m3data.filter(r=>r.m3Status==='pagado').reduce((s,r)=>s+(r.cxpBruto||r.valSinIva||0),0),
+    m4_total: state.m4data.length,
+    m4_brechas: state.m4data.filter(r=>r.brechas&&r.brechas.length>0).length,
+    proveedores: [...new Set(state.m1data.map(r=>r.prov).filter(Boolean))].length,
+    archivos: state.files.filter(f=>f.wb).map(f=>({ nombre: f.name, slot: f.slot, hojas: f.sheets }))
+  };
+}
+
+function diffSnapshots(prev, curr) {
+  if (!prev) return null;
+  const fields = [
+    { key:'m1_total', label:'M1 Facturas totales' },
+    { key:'m1_recepcionado', label:'M1 Recepcionadas' },
+    { key:'m1_sinRec', label:'M1 Sin recepción' },
+    { key:'m1_parcial', label:'M1 Parciales' },
+    { key:'m1_valTotal', label:'M1 Valor total', currency:true },
+    { key:'m2_total', label:'M2 Contabilizaciones' },
+    { key:'m2_pagado', label:'M2 Pagadas' },
+    { key:'m2_aprobado', label:'M2 Aprobadas' },
+    { key:'m3_total', label:'M3 Registros CxP' },
+    { key:'m3_pagado', label:'M3 Pagadas' },
+    { key:'m3_mora', label:'M3 En mora', warnInc:true },
+    { key:'m3_valPagado', label:'M3 Valor pagado', currency:true },
+    { key:'m4_brechas', label:'M4 Brechas', warnInc:true },
+    { key:'proveedores', label:'Proveedores únicos' }
+  ];
+  return fields.map(f => {
+    const a = prev[f.key]||0, b = curr[f.key]||0;
+    const delta = b - a;
+    return { ...f, prev:a, curr:b, delta };
+  }).filter(f => f.delta !== 0);
+}
+
+function addAuditEntry(type, label, extraData) {
+  const snap = (type === 'proceso' || type === 'export') ? getSnapshot() : null;
+  const prev = auditLog.length > 0 ? auditLog[auditLog.length-1].snapshot : null;
+  const diff = snap && prev ? diffSnapshots(prev, snap) : null;
+  const entry = {
+    id: Date.now(),
+    ts: new Date().toISOString(),
+    type, // 'carga' | 'proceso' | 'export'
+    user: currentUser || '—',
+    label,
+    snapshot: snap,
+    diff,
+    ...(extraData||{})
+  };
+  auditLog.push(entry);
+  updateAuditBadge();
+  if (document.getElementById('panel-auditorias').classList.contains('active')) {
+    renderAuditPanel();
+  }
+}
+
+function updateAuditBadge() {
+  const el = document.getElementById('cntAudit');
+  if (el) el.textContent = auditLog.length;
+}
+
+function clearAuditLog() {
+  if (!confirm('¿Eliminar todo el historial de auditoría de esta sesión?')) return;
+  auditLog.length = 0;
+  updateAuditBadge();
+  renderAuditPanel();
+}
+
+function exportAuditLog() {
+  if (!auditLog.length) { alert('No hay entradas de auditoría para exportar.'); return; }
+  const blob = new Blob([JSON.stringify(auditLog, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const fecha = new Date().toISOString().slice(0,10);
+  a.href = url; a.download = `FlawFact_AuditLog_${fecha}.json`;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  showToast('📋 Log de auditoría exportado', 'success');
+}
+
+function renderAuditPanel() {
+  const container = document.getElementById('auditTimeline');
+  const badge = document.getElementById('auditSummaryBadge');
+  if (!container) return;
+
+  if (badge) badge.textContent = auditLog.length
+    ? `${auditLog.length} entradas · última: ${new Date(auditLog[auditLog.length-1].ts).toLocaleString('es-CO')}`
+    : '';
+
+  if (!auditLog.length) {
+    container.innerHTML = `<div class="audit-empty"><div class="ae-icon">🗂️</div><div style="font-size:14px;font-weight:600;margin-bottom:6px">Sin registros de auditoría</div><div style="font-size:12px">Los registros se crean automáticamente al cargar archivos, procesar datos o exportar JSON.</div></div>`;
+    return;
+  }
+
+  // Show newest first
+  const entries = [...auditLog].reverse();
+  container.innerHTML = entries.map((e, idx) => {
+    const isLast = idx === entries.length - 1;
+    const tsFormatted = new Date(e.ts).toLocaleString('es-CO', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit' });
+    const typeLabel = e.type === 'carga' ? '📂 Carga de archivos'
+      : e.type === 'proceso' ? '⚙️ Procesamiento'
+      : e.type === 'export'  ? '📦 Export JSON'
+      : '🔍 Import JSON (Comparación)';
+    const typeCls = `audit-type-${e.type}`;
+    const dotCls  = e.type;
+    const dotIcon = e.type==='carga'?'📂':e.type==='proceso'?'⚙️':e.type==='export'?'📦':'🔍';
+
+    // Files section
+    let filesHtml = '';
+    if (e.files && e.files.length) {
+      const slotNames = {1:'Compromisos',2:'Recepciones',3:'CxP Oracle'};
+      filesHtml = `<div style="font-size:10.5px;font-weight:700;color:var(--col-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Archivos en sesión</div>
+        <div class="audit-files-list">${e.files.map(f=>`
+          <div class="audit-file-tag">
+            ${f.slot===1?'📋':f.slot===2?'🔄':'💰'} 
+            <span style="font-weight:600">${f.nombre}</span>
+            <span style="color:var(--col-muted)">${slotNames[f.slot]||'Slot '+f.slot}</span>
+          </div>`).join('')}</div>`;
+    }
+
+    // Snapshot KPIs
+    let snapHtml = '';
+    if (e.snapshot) {
+      const s = e.snapshot;
+      snapHtml = `<div style="font-size:10.5px;font-weight:700;color:var(--col-muted);text-transform:uppercase;letter-spacing:0.5px;margin:12px 0 8px">Snapshot en este momento</div>
+        <div class="audit-kpi-grid">
+          <div class="audit-kpi" style="border-left-color:var(--col-info)"><div class="audit-kpi-label">M1 Facturas</div><div class="audit-kpi-val">${s.m1_total}</div><div class="audit-kpi-sub">${s.m1_recepcionado} recepcionadas</div></div>
+          <div class="audit-kpi" style="border-left-color:var(--col-danger)"><div class="audit-kpi-label">Sin recepción</div><div class="audit-kpi-val">${s.m1_sinRec}</div></div>
+          <div class="audit-kpi" style="border-left-color:var(--col-accent)"><div class="audit-kpi-label">Valor total</div><div class="audit-kpi-val" style="font-size:12px">${fmtCurrency(s.m1_valTotal)}</div></div>
+          <div class="audit-kpi" style="border-left-color:var(--col-success)"><div class="audit-kpi-label">M3 Pagadas</div><div class="audit-kpi-val">${s.m3_pagado}</div><div class="audit-kpi-sub">de ${s.m3_total}</div></div>
+          <div class="audit-kpi" style="border-left-color:var(--col-danger)"><div class="audit-kpi-label">En mora</div><div class="audit-kpi-val">${s.m3_mora}</div></div>
+          <div class="audit-kpi" style="border-left-color:var(--col-warning)"><div class="audit-kpi-label">Brechas</div><div class="audit-kpi-val">${s.m4_brechas}</div></div>
+          <div class="audit-kpi" style="border-left-color:var(--col-pending)"><div class="audit-kpi-label">Proveedores</div><div class="audit-kpi-val">${s.proveedores}</div></div>
+          <div class="audit-kpi" style="border-left-color:var(--col-success)"><div class="audit-kpi-label">Val. pagado</div><div class="audit-kpi-val" style="font-size:12px">${fmtCurrency(s.m3_valPagado)}</div></div>
+        </div>`;
+    }
+
+    // Diff section
+    let diffHtml = '';
+    if (e.diff && e.diff.length) {
+      diffHtml = `<div style="font-size:10.5px;font-weight:700;color:var(--col-muted);text-transform:uppercase;letter-spacing:0.5px;margin:12px 0 8px">⚡ Cambios vs sesión anterior</div>
+        <div style="background:#f8fafc;border-radius:8px;overflow:hidden;border:1px solid var(--col-border)">
+        <table class="audit-diff-table">
+          <thead><tr><th>Indicador</th><th>Anterior</th><th>Actual</th><th>Δ Cambio</th></tr></thead>
+          <tbody>${e.diff.map(d=>{
+            const cls = d.delta > 0 ? (d.warnInc?'diff-dec':'diff-inc') : 'diff-dec';
+            const sign = d.delta > 0 ? '▲ +' : '▼ ';
+            const fmt = v => d.currency ? fmtCurrency(v) : v.toLocaleString('es-CO');
+            return `<tr>
+              <td style="font-weight:600">${d.label}</td>
+              <td class="td-mono">${fmt(d.prev)}</td>
+              <td class="td-mono" style="font-weight:700">${fmt(d.curr)}</td>
+              <td class="${cls}" style="font-family:'IBM Plex Mono',monospace">${sign}${fmt(Math.abs(d.delta))}</td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table></div>`;
+    } else if (e.snapshot) {
+      diffHtml = `<div style="background:var(--col-success-bg);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--col-success);margin-top:10px">✅ Sin cambios detectados respecto al snapshot anterior.</div>`;
+    }
+
+    // Filename if export
+    let exportHtml = '';
+    if (e.type === 'export' && e.filename) {
+      exportHtml = `<div style="display:inline-flex;align-items:center;gap:8px;background:var(--col-success-bg);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--col-success);margin-bottom:10px">
+        📄 <strong>${e.filename}</strong>
+      </div>`;
+    }
+
+    // Import JSON comparison block
+    let importHtml = '';
+    if (e.type === 'import') {
+      const im = e.importedMeta || {};
+      const is = e.importedSnap || {};
+      const diff = e.jsonDiff;
+      const slotNames = {1:'Compromisos',2:'Recepciones',3:'CxP Oracle'};
+
+      // Header: JSON file info
+      importHtml += `<div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:12px 14px;margin-bottom:12px">
+        <div style="font-size:10.5px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">📄 Archivo JSON importado</div>
+        <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:12px">
+          <span><strong>Nombre:</strong> ${e.filename||'—'}</span>
+          <span><strong>Exportado por:</strong> ${im.exportedBy||'—'}</span>
+          <span><strong>Fecha export:</strong> ${im.exportedAt?new Date(im.exportedAt).toLocaleString('es-CO'):'—'}</span>
+        </div>
+      </div>`;
+
+      // Archivos del JSON vs archivos actuales
+      const impFiles = e.importedFiles || [];
+      const curFiles = e.currentFiles || [];
+      importHtml += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div style="background:#f8fafc;border-radius:8px;padding:10px 12px;border:1px solid var(--col-border)">
+          <div style="font-size:10px;font-weight:700;color:var(--col-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">📦 Archivos en el JSON importado</div>
+          ${impFiles.length ? impFiles.map(f=>`<div style="display:flex;align-items:center;gap:6px;font-size:11.5px;margin-bottom:4px">
+            <span>${f.slot===1?'📋':f.slot===2?'🔄':'💰'}</span>
+            <span style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.nombre}</span>
+            <span style="color:var(--col-muted);font-size:10px;flex-shrink:0">${slotNames[f.slot]||''}</span>
+          </div>`).join('') : '<div style="font-size:11px;color:var(--col-muted)">No registrado</div>'}
+        </div>
+        <div style="background:#f8fafc;border-radius:8px;padding:10px 12px;border:1px solid var(--col-border)">
+          <div style="font-size:10px;font-weight:700;color:var(--col-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">📂 Archivos actualmente cargados</div>
+          ${curFiles.length ? curFiles.map(f=>`<div style="display:flex;align-items:center;gap:6px;font-size:11.5px;margin-bottom:4px">
+            <span>${f.slot===1?'📋':f.slot===2?'🔄':'💰'}</span>
+            <span style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.nombre}</span>
+            <span style="color:var(--col-muted);font-size:10px;flex-shrink:0">${slotNames[f.slot]||''}</span>
+          </div>`).join('') : '<div style="font-size:11px;color:var(--col-muted)">Sin archivos cargados</div>'}
+        </div>
+      </div>`;
+
+      // KPIs snapshot del JSON importado
+      importHtml += `<div style="font-size:10.5px;font-weight:700;color:var(--col-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">📊 Snapshot del JSON importado</div>
+        <div class="audit-kpi-grid" style="margin-bottom:12px">
+          <div class="audit-kpi" style="border-left-color:var(--col-info)"><div class="audit-kpi-label">M1 Facturas</div><div class="audit-kpi-val">${is.m1_total||0}</div><div class="audit-kpi-sub">${is.m1_recepcionado||0} recepcionadas</div></div>
+          <div class="audit-kpi" style="border-left-color:var(--col-danger)"><div class="audit-kpi-label">Sin recepción</div><div class="audit-kpi-val">${is.m1_sinRec||0}</div></div>
+          <div class="audit-kpi" style="border-left-color:var(--col-accent)"><div class="audit-kpi-label">Valor total</div><div class="audit-kpi-val" style="font-size:12px">${fmtCurrency(is.m1_valTotal||0)}</div></div>
+          <div class="audit-kpi" style="border-left-color:var(--col-success)"><div class="audit-kpi-label">M3 Pagadas</div><div class="audit-kpi-val">${is.m3_pagado||0}</div><div class="audit-kpi-sub">de ${is.m3_total||0}</div></div>
+          <div class="audit-kpi" style="border-left-color:var(--col-danger)"><div class="audit-kpi-label">En mora</div><div class="audit-kpi-val">${is.m3_mora||0}</div></div>
+          <div class="audit-kpi" style="border-left-color:var(--col-warning)"><div class="audit-kpi-label">Brechas</div><div class="audit-kpi-val">${is.m4_brechas||0}</div></div>
+          <div class="audit-kpi" style="border-left-color:var(--col-pending)"><div class="audit-kpi-label">Proveedores</div><div class="audit-kpi-val">${is.proveedores||0}</div></div>
+          <div class="audit-kpi" style="border-left-color:var(--col-success)"><div class="audit-kpi-label">Val. pagado</div><div class="audit-kpi-val" style="font-size:12px">${fmtCurrency(is.m3_valPagado||0)}</div></div>
+        </div>`;
+
+      // Diff table: JSON vs current
+      if (diff && diff.length) {
+        importHtml += `<div style="font-size:10.5px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">⚡ Diferencias: JSON importado → Datos actuales</div>
+          <div style="background:#f8fafc;border-radius:8px;overflow:hidden;border:1px solid var(--col-border)">
+          <table class="audit-diff-table">
+            <thead><tr>
+              <th>Indicador</th>
+              <th>JSON (anterior)</th>
+              <th>Actual (cargado)</th>
+              <th>Δ Cambio</th>
+            </tr></thead>
+            <tbody>${diff.map(d=>{
+              const cls = d.delta > 0 ? (d.warnInc?'diff-dec':'diff-inc') : 'diff-dec';
+              const sign = d.delta > 0 ? '▲ +' : '▼ ';
+              const fmt = v => d.currency ? fmtCurrency(v) : v.toLocaleString('es-CO');
+              return `<tr>
+                <td style="font-weight:600">${d.label}</td>
+                <td class="td-mono" style="color:var(--col-muted)">${fmt(d.prev)}</td>
+                <td class="td-mono" style="font-weight:700">${fmt(d.curr)}</td>
+                <td class="${cls}" style="font-family:'IBM Plex Mono',monospace">${sign}${fmt(Math.abs(d.delta))}</td>
+              </tr>`;
+            }).join('')}</tbody>
+          </table></div>`;
+      } else if (e.currentFiles && e.currentFiles.length > 0) {
+        importHtml += `<div style="background:var(--col-success-bg);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--col-success)">✅ No se detectaron diferencias entre el JSON importado y los datos actuales.</div>`;
+      } else {
+        importHtml += `<div style="background:#fef3c7;border-radius:8px;padding:10px 14px;font-size:12px;color:#92400e">⚠️ No hay datos procesados actualmente para comparar. Cargue y procese los archivos primero, luego importe el JSON.</div>`;
+      }
+    }
+
+    return `<div class="audit-timeline-line">
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="audit-timeline-dot ${dotCls}">${dotIcon}</div>
+        ${!isLast?`<div class="audit-timeline-connector" style="height:calc(100% - 32px);margin-top:4px"></div>`:''}
+      </div>
+      <div class="audit-entry" style="flex:1" id="audit-entry-${e.id}">
+        <div class="audit-entry-header" onclick="toggleAuditEntry(${e.id})">
+          <span class="audit-type-badge ${typeCls}">${typeLabel}</span>
+          <span class="audit-entry-ts">📅 ${tsFormatted}</span>
+          <span class="audit-entry-user">👤 ${e.user}</span>
+          ${e.label?`<span style="font-size:11px;color:var(--col-text)">${e.label}</span>`:''}
+          <span class="audit-entry-chevron">▼</span>
+        </div>
+        <div class="audit-entry-body">
+          ${exportHtml}${importHtml}${filesHtml}${snapHtml}${diffHtml}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleAuditEntry(id) {
+  const el = document.getElementById(`audit-entry-${id}`);
+  if (el) el.classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXPORT JSON (FlawFact)
+// ═══════════════════════════════════════════════════════════════
+function exportFlawFactJSON() {
+  if (!state.processed) { alert('Procese los archivos antes de exportar.'); return; }
+  const fecha = new Date().toISOString().slice(0,10);
+  const filename = `FlawFact_${fecha}.json`;
+  const payload = {
+    meta: {
+      app: 'FlowFact v1.3',
+      exportedBy: currentUser || '—',
+      exportedAt: new Date().toISOString(),
+      filename,
+      archivos: state.files.filter(f=>f.wb).map(f=>({ nombre:f.name, slot:f.slot, hojas:f.sheets }))
+    },
+    summary: getSnapshot(),
+    modulo1: state.m1data.map(r=>{
+      const out={};
+      Object.keys(r).forEach(k=>{ if(!Array.isArray(r[k]))out[k]=r[k]; else out[k+'_count']=r[k].length; });
+      return out;
+    }),
+    modulo2: state.m2data,
+    modulo3: state.m3data.map(r=>{
+      const out={}; Object.keys(r).forEach(k=>{ out[k]=r[k] instanceof Date?r[k].toISOString().slice(0,10):r[k]; }); return out;
+    }),
+    modulo4: state.m4data.map(r=>{
+      const out={}; Object.keys(r).forEach(k=>{
+        if(Array.isArray(r[k])&&k==='brechas') out[k]=r[k];
+        else if(Array.isArray(r[k])) out[k+'_count']=r[k].length;
+        else out[k]=r[k] instanceof Date?r[k].toISOString().slice(0,10):r[k];
+      }); return out;
+    }),
+    modulo5: state.m5data
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  // Register in audit log
+  addAuditEntry('export', `Exportado: ${filename}`, {
+    filename,
+    recordCounts: {
+      m1: state.m1data.length, m2: state.m2data.length,
+      m3: state.m3data.length, m4: state.m4data.length, m5: state.m5data.length
+    },
+    files: state.files.filter(f=>f.wb).map(f=>({ nombre:f.name, slot:f.slot, hojas:f.sheets }))
+  });
+  showToast(`📦 JSON exportado: ${filename}`, 'success');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// IMPORT JSON (FlawFact) — Comparación de auditoría
+// ═══════════════════════════════════════════════════════════════
+function importFlawFactJSON(input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = '';
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      // Validate it's a FlawFact export
+      if (!data.meta || !data.summary) {
+        alert('⚠️ El archivo no parece ser un export válido de FlawFact.');
+        return;
+      }
+
+      const importedSnap = data.summary;
+      const importedMeta = data.meta;
+      const currentSnap = state.processed ? getSnapshot() : null;
+
+      // Build comparison diff between imported JSON and current state
+      const diffFields = [
+        { key:'m1_total',      label:'M1 Facturas totales' },
+        { key:'m1_recepcionado',label:'M1 Recepcionadas' },
+        { key:'m1_sinRec',     label:'M1 Sin recepción', warnInc:true },
+        { key:'m1_parcial',    label:'M1 Parciales' },
+        { key:'m1_valTotal',   label:'M1 Valor total', currency:true },
+        { key:'m2_total',      label:'M2 Contabilizaciones' },
+        { key:'m2_pagado',     label:'M2 Pagadas' },
+        { key:'m3_total',      label:'M3 Registros CxP' },
+        { key:'m3_pagado',     label:'M3 Pagadas' },
+        { key:'m3_mora',       label:'M3 En mora', warnInc:true },
+        { key:'m3_valPagado',  label:'M3 Valor pagado', currency:true },
+        { key:'m4_brechas',    label:'M4 Brechas', warnInc:true },
+        { key:'proveedores',   label:'Proveedores únicos' }
+      ];
+
+      const diff = currentSnap ? diffFields.map(f => {
+        const prev = importedSnap[f.key]||0;
+        const curr = currentSnap[f.key]||0;
+        return { ...f, prev, curr, delta: curr - prev };
+      }).filter(f => f.delta !== 0) : null;
+
+      // Build extra detail for the audit entry
+      const importedFiles = importedMeta.archivos || [];
+      const currentFiles  = state.files.filter(f=>f.wb).map(f=>({nombre:f.name, slot:f.slot, hojas:f.sheets}));
+
+      addAuditEntry('import', `JSON importado: ${file.name}`, {
+        importedMeta,
+        importedSnap,
+        importedFiles,
+        currentFiles,
+        jsonDiff: diff,
+        filename: file.name,
+        files: currentFiles
+      });
+
+      // Auto-navigate to audit tab
+      switchTab('auditorias');
+      showToast(`📂 JSON comparado: ${file.name}`, 'info');
+    } catch(err) {
+      alert('Error leyendo el JSON: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
 }
 </script>
 </body>
