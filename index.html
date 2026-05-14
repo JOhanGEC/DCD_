@@ -651,7 +651,7 @@
   <div class="header-inner">
     <div>
       <div class="header-logo">Flow<span>Fact</span></div>
-      <div class="header-sub">Plataforma de control financiero · Actas, recepciones y pagos</div>
+      <div class="header-sub">Plataforma de control financiero · Facturas, Recepciones y Pagos</div>
     </div>
     <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
       <span class="login-user-badge" id="userBadge" title="Cerrar sesión" onclick="logout()">
@@ -691,17 +691,17 @@
       </div>
       <div class="nav-item" data-tab="modulo1" id="nav-modulo1" onclick="switchTab('modulo1')">
         <span class="nav-icon">📋</span>
-        <span class="nav-label">Módulo 1<span class="nav-sub">Actas & Recepciones</span></span>
+        <span class="nav-label">Módulo 1<span class="nav-sub">Facturas</span></span>
         <span class="nav-badge" id="cnt1">0</span>
       </div>
       <div class="nav-item" data-tab="modulo2" id="nav-modulo2" onclick="switchTab('modulo2')">
         <span class="nav-icon">🔄</span>
-        <span class="nav-label">Módulo 2<span class="nav-sub">Contabilización</span></span>
+        <span class="nav-label">Módulo 2<span class="nav-sub">Recepciones Oracle</span></span>
         <span class="nav-badge" id="cnt2">0</span>
       </div>
       <div class="nav-item" data-tab="modulo3" id="nav-modulo3" onclick="switchTab('modulo3')">
         <span class="nav-icon">💰</span>
-        <span class="nav-label">Módulo 3<span class="nav-sub">Pagos</span></span>
+        <span class="nav-label">Módulo 3<span class="nav-sub">Cuentas por Pagar</span></span>
         <span class="nav-badge" id="cnt3">0</span>
       </div>
       <div class="nav-item" data-tab="modulo4" id="nav-modulo4" onclick="switchTab('modulo4')">
@@ -839,6 +839,9 @@
         <div class="kpi-card" style="border-top:3px solid var(--col-success)"><div class="kpi-icon">💸</div><div class="kpi-value kpi-val-fit" id="kpi-val-pagado">—</div><div class="kpi-label">Valor Pagado</div></div>
         <div class="kpi-card" style="border-top:3px solid var(--col-danger)"><div class="kpi-icon">🚫</div><div class="kpi-value kpi-val-fit" id="kpi-val-sin-rec">—</div><div class="kpi-label">Val. Sin Rec.</div></div>
         <div class="kpi-card" style="border-top:3px solid var(--col-warning)"><div class="kpi-icon">🕐</div><div class="kpi-value kpi-val-fit" id="kpi-val-pendiente">—</div><div class="kpi-label">Val. Pendiente</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-accent2)"><div class="kpi-icon">📥</div><div class="kpi-value" id="kpi-rec-oracle-cnt">—</div><div class="kpi-label">Líneas Rec. Oracle</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-accent2)"><div class="kpi-icon">💲</div><div class="kpi-value kpi-val-fit" id="kpi-rec-oracle-val">—</div><div class="kpi-label">Val. Recepcionado</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-danger)"><div class="kpi-icon">⏳</div><div class="kpi-value kpi-val-fit" id="kpi-pend-cxp">—</div><div class="kpi-label">Pendiente CxP</div><div class="kpi-sub" id="kpi-pend-cxp-cnt">—</div></div>
       </div>
 
       <!-- ── PANEL DE ALERTAS ── -->
@@ -851,6 +854,34 @@
 
       <!-- ── % AVANCE ── -->
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:20px" id="pctPanel"></div>
+
+      <!-- ── RECEPCIONES ORACLE POR PROVEEDOR ── -->
+      <div class="chart-card" style="margin-bottom:16px;padding:14px 16px">
+        <div class="chart-card-title">📥 Recepciones Oracle por Proveedor · Mes · Factura</div>
+        <div class="filter-bar" style="margin-bottom:10px;padding:8px 0 0 0;background:none;border:none">
+          <span class="filter-label">🔍</span>
+          <input type="text" id="f0recSearch" placeholder="Proveedor, OC..." oninput="renderM0RecTable()" style="min-width:160px">
+          <select id="f0recYear" onchange="renderM0RecTable()" style="border:1px solid var(--col-border);border-radius:7px;padding:6px 10px;font-size:12px"></select>
+          <select id="f0recMonth" onchange="renderM0RecTable()" style="border:1px solid var(--col-border);border-radius:7px;padding:6px 10px;font-size:12px"></select>
+        </div>
+        <div style="overflow-x:auto;max-height:340px;overflow-y:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead style="position:sticky;top:0;background:var(--col-surface);z-index:1">
+              <tr>
+                <th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--col-border);white-space:nowrap">Proveedor</th>
+                <th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--col-border)">OC</th>
+                <th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--col-border)">N° Rec.</th>
+                <th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--col-border)">Mes</th>
+                <th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--col-border)">Año</th>
+                <th style="padding:7px 10px;text-align:right;border-bottom:2px solid var(--col-border)">Val. Recepcionado</th>
+                <th style="padding:7px 10px;text-align:center;border-bottom:2px solid var(--col-border)">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyM0Rec"></tbody>
+          </table>
+        </div>
+        <div id="m0recCount" style="font-size:11px;color:var(--col-muted);margin-top:6px;text-align:right"></div>
+      </div>
 
       <!-- ── ANÁLISIS TRIMESTRAL ── -->
       <div class="chart-card" style="margin-bottom:16px;padding:14px 16px">
@@ -918,8 +949,8 @@
 
     <!-- ═══ PANEL: MÓDULO 1 ════════════════════════════════ -->
     <div class="panel" id="panel-modulo1">
-      <div class="section-title">📋 Módulo 1 — Actas en Gestión vs Recepciones Oracle</div>
-      <div class="alert alert-info">ℹ️ Valida que cada acta/factura del Archivo 1 tenga recepción registrada en Oracle (Archivo 2), verificando que el valor recepcionado coincida con el valor del acta.</div>
+      <div class="section-title">📋 Módulo 1 — Facturas en Gestión</div>
+      <div class="alert alert-info">ℹ️ Seguimiento de facturas (Archivo 1 — hoja Facturas). Cada fila es una factura con su OC y número de recepción, cruzada con Recepciones Oracle (Archivo 2) para confirmar entrega. Con M1 + M2 se determina qué proveedores tienen entrega confirmada para proceder al pago (Archivo 3).</div>
 
       <div class="summary-grid" id="sum1"></div>
 
@@ -927,6 +958,7 @@
         <span class="filter-label">🔍</span>
         <input type="text" id="f1search" placeholder="Factura, OC, Proveedor..." oninput="renderM1()">
         <select id="f1year" onchange="renderM1()"><option value="">Todos los años</option></select>
+        <select id="f1month" onchange="renderM1()"><option value="">Todos los meses</option></select>
         <div class="status-pills" id="pills1">
           <span class="status-pill active-all" data-status="" onclick="setPill('pills1',this,'f1estado',renderM1)">Todos</span>
           <span class="status-pill" data-status="recepcionado" onclick="setPill('pills1',this,'f1estado',renderM1)">✅ Recepcionado</span>
@@ -934,12 +966,12 @@
           <span class="status-pill" data-status="sin_recepcion" onclick="setPill('pills1',this,'f1estado',renderM1)">❌ Sin Recepción</span>
         </div>
         <input type="hidden" id="f1estado">
-        <button class="btn btn-sm btn-outline" onclick="exportTable('m1data','Modulo1_Recepciones')">⬇ Exportar</button>
+        <button class="btn btn-sm btn-outline" onclick="exportTable('m1data','Modulo1_Facturas')">⬇ Exportar</button>
       </div>
 
       <div class="table-wrap">
         <div class="table-header">
-          <span class="table-title">Actas vs Recepciones Oracle</span>
+          <span class="table-title">Facturas en Seguimiento</span>
           <span class="table-count" id="cnt1table">—</span>
         </div>
         <div class="table-scroll">
@@ -959,36 +991,40 @@
 
     <!-- ═══ PANEL: MÓDULO 2 ════════════════════════════════ -->
     <div class="panel" id="panel-modulo2">
-      <div class="section-title">🔄 Módulo 2 — Contabilización de Facturas</div>
-      <div class="alert alert-info">ℹ️ Verifica que el proveedor haya emitido la factura y que contabilidad la haya registrado con estado <strong>"Aprobado"</strong> en el sistema (Archivo 3).</div>
+      <div class="section-title">📥 Módulo 2 — Recepciones Oracle</div>
+      <div class="alert alert-info">ℹ️ Todas las líneas de recepción registradas en Oracle (Archivo 2). Filtrable por mes y año de Fecha de Recepción. El cruce M1 + M2 determina qué proveedor entregó y por cuánto valor, habilitando el pago en Cuentas por Pagar.</div>
 
       <div class="summary-grid" id="sum2"></div>
 
       <div class="filter-bar">
         <span class="filter-label">🔍</span>
-        <input type="text" id="f2search" placeholder="Factura, Proveedor, OC..." oninput="renderM2()">
+        <input type="text" id="f2search" placeholder="OC, Proveedor, Recepción..." oninput="renderM2()">
+        <select id="f2year" onchange="renderM2()"><option value="">Todos los años</option></select>
+        <select id="f2month" onchange="renderM2()"><option value="">Todos los meses</option></select>
         <div class="status-pills" id="pills2">
           <span class="status-pill active-all" data-status="" onclick="setPill('pills2',this,'f2estado',renderM2)">Todos</span>
-          <span class="status-pill" data-status="pagado" onclick="setPill('pills2',this,'f2estado',renderM2)">💸 Pagado</span>
-          <span class="status-pill" data-status="aprobado" onclick="setPill('pills2',this,'f2estado',renderM2)">📊 Aprobado</span>
-          <span class="status-pill" data-status="pendiente" onclick="setPill('pills2',this,'f2estado',renderM2)">⏳ Pendiente</span>
+          <span class="status-pill" data-status="Entregada" onclick="setPill('pills2',this,'f2estado',renderM2)">✅ Entregada</span>
+          <span class="status-pill" data-status="Entregada Parcialmente" onclick="setPill('pills2',this,'f2estado',renderM2)">⚠️ Parcial</span>
         </div>
         <input type="hidden" id="f2estado">
-        <button class="btn btn-sm btn-outline" onclick="exportTable('m2data','Modulo2_Contabilizacion')">⬇ Exportar</button>
+        <button class="btn btn-sm btn-outline" onclick="exportTableRaw('df2rec','Modulo2_Recepciones')">⬇ Exportar</button>
       </div>
 
       <div class="table-wrap">
         <div class="table-header">
-          <span class="table-title">Estado de Contabilización</span>
+          <span class="table-title">Recepciones Oracle</span>
           <span class="table-count" id="cnt2table">—</span>
         </div>
         <div class="table-scroll">
           <table>
             <thead><tr>
-              <th>Estado CxP</th><th>Año</th><th>Mes</th><th>Proveedor</th>
-              <th>N° Factura</th><th>Orden de Compra</th>
-              <th class="currency">Valor sin IVA</th><th class="currency">Valor Bruto CxP</th>
-              <th>Fecha Factura</th><th>Fecha Trans. CxP</th><th>Cruce</th>
+              <th>Estado Línea</th><th>Fecha Recepción</th><th>Año</th><th>Mes</th>
+              <th>N° Recepción</th><th>OC (Nro. Documento)</th>
+              <th>Proveedor (Origen)</th><th>Descripción Artículo</th>
+              <th>Organización</th>
+              <th class="currency">Val. Recepcionado</th>
+              <th class="currency">Val. Total OC</th>
+              <th>Comprador</th>
             </tr></thead>
             <tbody id="tbody2"></tbody>
           </table>
@@ -996,38 +1032,42 @@
       </div>
     </div>
 
-    <!-- ═══ PANEL: MÓDULO 3 ════════════════════════════════ -->
+        <!-- ═══ PANEL: MÓDULO 3 ════════════════════════════════ -->
     <div class="panel" id="panel-modulo3">
-      <div class="section-title">💰 Módulo 3 — Pagos a Proveedores</div>
-      <div class="alert alert-info">ℹ️ Confirma el desembolso al proveedor validando el estado <strong>"Pagado"</strong> en el Archivo 3.</div>
+      <div class="section-title">💰 Módulo 3 — Cuentas por Pagar</div>
+      <div class="alert alert-info">ℹ️ Todos los registros de Cuentas por Pagar registrados en Oracle (Archivo 3). Filtrable por mes y año. Cada fila = 1 registro CxP.</div>
 
       <div class="summary-grid" id="sum3"></div>
 
       <div class="filter-bar">
         <span class="filter-label">🔍</span>
-        <input type="text" id="f3search" placeholder="Factura, Proveedor..." oninput="renderM3()">
+        <input type="text" id="f3search" placeholder="Factura, Proveedor, NIT..." oninput="renderM3()">
+        <select id="f3year" onchange="renderM3()"><option value="">Todos los años</option></select>
+        <select id="f3month" onchange="renderM3()"><option value="">Todos los meses</option></select>
         <div class="status-pills" id="pills3">
           <span class="status-pill active-all" data-status="" onclick="setPill('pills3',this,'f3estado',renderM3)">Todos</span>
-          <span class="status-pill" data-status="pagado" onclick="setPill('pills3',this,'f3estado',renderM3)">✅ Pagado</span>
-          <span class="status-pill" data-status="aprobado" onclick="setPill('pills3',this,'f3estado',renderM3)">⏳ Pend. Pago</span>
-          <span class="status-pill" data-status="no_encontrado" onclick="setPill('pills3',this,'f3estado',renderM3)">❌ No en CxP</span>
+          <span class="status-pill" data-status="Pagado" onclick="setPill('pills3',this,'f3estado',renderM3)">✅ Pagado</span>
+          <span class="status-pill" data-status="Aprobado" onclick="setPill('pills3',this,'f3estado',renderM3)">📊 Aprobado</span>
+          <span class="status-pill" data-status="Cancelado" onclick="setPill('pills3',this,'f3estado',renderM3)">🚫 Cancelado</span>
         </div>
         <input type="hidden" id="f3estado">
-        <button class="btn btn-sm btn-outline" onclick="exportTable('m3data','Modulo3_Pagos')">⬇ Exportar</button>
+        <button class="btn btn-sm btn-outline" onclick="exportTableRaw('df3cxp','Modulo3_CxP')">⬇ Exportar</button>
       </div>
 
       <div class="table-wrap">
         <div class="table-header">
-          <span class="table-title">Control de Pagos</span>
+          <span class="table-title">Cuentas por Pagar Oracle — Archivo 3</span>
           <span class="table-count" id="cnt3table">—</span>
         </div>
         <div class="table-scroll">
           <table>
             <thead><tr>
-              <th>Estado Pago</th><th>Año</th><th>Proveedor</th><th>N° Factura</th>
-              <th>Orden de Compra</th><th class="currency">Valor sin IVA</th>
-              <th class="currency">Anticipo</th><th class="currency">Valor Bruto CxP</th>
-              <th>Fecha Vencimiento</th><th>Fecha Pago</th><th>Días Mora</th>
+              <th>Estado</th><th>Año</th><th>Mes</th>
+              <th>NIT</th><th>Proveedor</th><th>N° Factura</th>
+              <th class="currency">Valor Bruto + IVA</th>
+              <th class="currency">Aplicación Anticipos</th>
+              <th class="currency">Saldo Factura</th>
+              <th>Fecha Transacción</th><th>Fecha Contable</th>
             </tr></thead>
             <tbody id="tbody3"></tbody>
           </table>
@@ -1035,7 +1075,7 @@
       </div>
     </div>
 
-    <!-- ═══ PANEL: MÓDULO 4 ════════════════════════════════ -->
+        <!-- ═══ PANEL: MÓDULO 4 ════════════════════════════════ -->
     <div class="panel" id="panel-modulo4">
       <div class="section-title">🔍 Módulo 4 — Análisis Integral de Brechas</div>
       <div class="alert alert-warning">⚠️ Vista consolidada del flujo completo por factura. Identifica brechas en cualquier etapa del proceso.</div>
@@ -1045,6 +1085,8 @@
       <div class="filter-bar">
         <span class="filter-label">🔍</span>
         <input type="text" id="f4search" placeholder="Factura, OC, Proveedor..." oninput="renderM4()">
+        <select id="f4year" onchange="renderM4()"><option value="">Todos los años</option></select>
+        <select id="f4month" onchange="renderM4()"><option value="">Todos los meses</option></select>
         <div class="status-pills" id="pills4">
           <span class="status-pill active-all" data-status="" onclick="setPill('pills4',this,'f4brecha',renderM4)">Todos</span>
           <span class="status-pill" data-status="completo" onclick="setPill('pills4',this,'f4brecha',renderM4)">✅ Completo</span>
@@ -1069,7 +1111,7 @@
               <th class="currency">Valor sin IVA</th>
               <th title="Recepción Oracle">📥 Recepción</th>
               <th title="Valor recepcionado">💲 Val. Rec.</th>
-              <th title="Contabilización">📊 Contabiliz.</th>
+              <th title="CxP Oracle">📊 CxP.</th>
               <th title="Pago">💸 Pago</th>
               <th>Fecha Pago</th>
               <th title="Verifica que el valor pagado (CxP) corresponda al valor facturado (sin IVA). Alerta si la diferencia supera el 5%.">⚖️ Verif. Pago</th>
@@ -1292,7 +1334,7 @@ function renderFilesResumen() {
   if (!panel || !grid) return;
   if (!state.files.length) { panel.style.display = 'none'; return; }
   panel.style.display = 'block';
-  const slotNames = { 1: 'Archivo 1 — Compromisos', 2: 'Archivo 2 — Recepciones', 3: 'Archivo 3 — CxP Oracle' };
+  const slotNames = { 1: 'Archivo 1 — Facturas', 2: 'Archivo 2 — Recepciones', 3: 'Archivo 3 — CxP Oracle' };
   const slotColors = { 1: '#2563eb', 2: '#7c3aed', 3: '#059669' };
   const slotData = {
     1: state.df1.length,
@@ -1664,7 +1706,7 @@ function exportPDFReport() {
       <div class="kpi danger"><div class="kpi-val">${recNo}</div><div class="kpi-lbl">Sin Recepción</div></div>
     </div>
     <div class="kpi-grid" style="margin-top:10px">
-      <div class="kpi info" style="grid-column:span 2"><div class="kpi-val" style="font-size:14px">${fmtCurrency(valTotal)}</div><div class="kpi-lbl">Valor Total Actas</div></div>
+      <div class="kpi info" style="grid-column:span 2"><div class="kpi-val" style="font-size:14px">${fmtCurrency(valTotal)}</div><div class="kpi-lbl">Valor Total Facturas</div></div>
       <div class="kpi ok" style="grid-column:span 2"><div class="kpi-val" style="font-size:14px">${fmtCurrency(valPagado)}</div><div class="kpi-lbl">Valor Pagado</div></div>
       <div class="kpi warn"><div class="kpi-val" style="font-size:12px">${fmtCurrency(valPendiente)}</div><div class="kpi-lbl">Val. Pendiente</div></div>
     </div>
@@ -1742,8 +1784,8 @@ function openCtrlMPanel() {
   const modules = [
     { id:'busqueda', icon:'🔎', title:'Búsqueda Rápida', sub:'Factura · OC · Proveedor', alwaysOn:true, cnt: (state.m1data?.length||0)+(state.m3data?.length||0) },
     { id:'modulo0', icon:'📊', title:'Módulo 0', sub:'Vista Gerencial Ejecutiva', alwaysOn:true, cnt: state.m3data?.length||0 },
-    { id:'modulo1', icon:'📋', title:'Módulo 1', sub:'Actas & Recepciones Oracle', alwaysOn:false, cnt: m1len },
-    { id:'modulo2', icon:'🔄', title:'Módulo 2', sub:'Contabilización de Facturas', alwaysOn:false, cnt: m2len },
+    { id:'modulo1', icon:'📋', title:'Módulo 1', sub:'Facturas', alwaysOn:false, cnt: m1len },
+    { id:'modulo2', icon:'🔄', title:'Módulo 2', sub:'Recepciones Oracle', alwaysOn:false, cnt: m2len },
     { id:'modulo3', icon:'💰', title:'Módulo 3', sub:'Pagos a Proveedores', alwaysOn:false, cnt: m3len },
     { id:'modulo4', icon:'🔍', title:'Módulo 4', sub:'Análisis de Brechas', alwaysOn:false, cnt: m4len },
     { id:'modulo5', icon:'📈', title:'Módulo 5', sub:'Análisis por Proveedor', alwaysOn:false, cnt: state.m5data?.length||0 },
@@ -1881,6 +1923,7 @@ function buildM1Html() {
       <span class="filter-label">🔍</span>
       <input type="text" id="f1sw_search" placeholder="Factura, OC, Proveedor..." oninput="renderM1inSubwin()">
       <select id="f1sw_year" onchange="renderM1inSubwin()"><option value="">Todos los años</option></select>
+        <select id="f1sw_month" onchange="renderM1inSubwin()"><option value="">Todos los meses</option></select>
       <div class="status-pills" id="pills1sw">
         <span class="status-pill active-all" data-status="" onclick="setPill('pills1sw',this,'f1sw_estado',renderM1inSubwin)">Todos</span>
         <span class="status-pill" data-status="recepcionado" onclick="setPill('pills1sw',this,'f1sw_estado',renderM1inSubwin)">✅ Recepcionado</span>
@@ -1888,10 +1931,10 @@ function buildM1Html() {
         <span class="status-pill" data-status="sin_recepcion" onclick="setPill('pills1sw',this,'f1sw_estado',renderM1inSubwin)">❌ Sin Recepción</span>
       </div>
       <input type="hidden" id="f1sw_estado">
-      <button class="btn btn-sm btn-outline" onclick="exportTable('m1data','Modulo1_Recepciones')">⬇ Exportar</button>
+      <button class="btn btn-sm btn-outline" onclick="exportTable('m1data','Modulo1_Facturas')">⬇ Exportar</button>
     </div>
     <div class="table-wrap">
-      <div class="table-header"><span class="table-title">Actas vs Recepciones Oracle</span><span class="table-count" id="cnt1sw">—</span></div>
+      <div class="table-header"><span class="table-title">Facturas en Seguimiento</span><span class="table-count" id="cnt1sw">—</span></div>
       <div class="table-scroll"><table>
         <thead><tr>
           <th>Estado</th><th>Año</th><th>Mes</th><th>Orden de Compra</th><th>Proveedor</th>
@@ -1911,6 +1954,8 @@ function buildM2Html() {
     <div class="filter-bar">
       <span class="filter-label">🔍</span>
       <input type="text" id="f2sw_search" placeholder="Factura, Proveedor, OC..." oninput="renderM2inSubwin()">
+        <select id="f2sw_year" onchange="renderM2inSubwin()"><option value="">Todos los años</option></select>
+        <select id="f2sw_month" onchange="renderM2inSubwin()"><option value="">Todos los meses</option></select>
       <div class="status-pills" id="pills2sw">
         <span class="status-pill active-all" data-status="" onclick="setPill('pills2sw',this,'f2sw_estado',renderM2inSubwin)">Todos</span>
         <span class="status-pill" data-status="pagado" onclick="setPill('pills2sw',this,'f2sw_estado',renderM2inSubwin)">💸 Pagado</span>
@@ -1918,10 +1963,10 @@ function buildM2Html() {
         <span class="status-pill" data-status="pendiente" onclick="setPill('pills2sw',this,'f2sw_estado',renderM2inSubwin)">⏳ Pendiente</span>
       </div>
       <input type="hidden" id="f2sw_estado">
-      <button class="btn btn-sm btn-outline" onclick="exportTable('m2data','Modulo2_Contabilizacion')">⬇ Exportar</button>
+      <button class="btn btn-sm btn-outline" onclick="exportTable('m2data','Modulo2_Recepciones')">⬇ Exportar</button>
     </div>
     <div class="table-wrap">
-      <div class="table-header"><span class="table-title">Estado de Contabilización</span><span class="table-count" id="cnt2sw">—</span></div>
+      <div class="table-header"><span class="table-title">Recepciones Oracle</span><span class="table-count" id="cnt2sw">—</span></div>
       <div class="table-scroll"><table>
         <thead><tr>
           <th>Estado CxP</th><th>Año</th><th>Mes</th><th>Proveedor</th><th>N° Factura</th>
@@ -1998,9 +2043,11 @@ function renderM1inSubwin() {
   const search = normalStr((document.getElementById('f1sw_search')||{value:''}).value);
   const estado = (document.getElementById('f1sw_estado')||{value:''}).value;
   const year = (document.getElementById('f1sw_year')||{value:''}).value;
+  const month1 = (document.getElementById('f1sw_month')||{value:''}).value;
   let data = state.m1data.filter(r => {
     if (estado && r.recStatus !== estado) return false;
     if (year && String(r.year) !== String(year)) return false;
+    if (month1 && normalStr(r.month) !== month1) return false;
     if (search) { const hay = normalStr(r.inv+' '+r.po+' '+r.prov+' '+r.recNums); if (!hay.includes(search)) return false; }
     return true;
   });
@@ -2042,8 +2089,12 @@ function renderM1inSubwin() {
 function renderM2inSubwin() {
   const search=normalStr((document.getElementById('f2sw_search')||{value:''}).value);
   const estado=(document.getElementById('f2sw_estado')||{value:''}).value;
+  const year2sw=(document.getElementById('f2sw_year')||{value:''}).value;
+  const month2sw=(document.getElementById('f2sw_month')||{value:''}).value;
   let data=state.m2data.filter(r=>{
     if(estado&&r.m2Status!==estado)return false;
+    if(year2sw&&String(r.year)!==String(year2sw))return false;
+    if(month2sw&&normalStr(r.month)!==month2sw)return false;
     if(search){const hay=normalStr(r.inv+' '+r.po+' '+r.prov);if(!hay.includes(search))return false;}
     return true;
   });
@@ -2077,6 +2128,8 @@ function renderM3inSubwin() {
   const today=new Date();today.setHours(0,0,0,0);
   let data=state.m3data.filter(r=>{
     if(estado&&r.m3Status!==estado)return false;
+    if(year3sw&&String(r.year)!==String(year3sw))return false;
+    if(month3sw&&normalStr(r.month)!==month3sw)return false;
     if(search){const hay=normalStr(r.inv+' '+r.prov+' '+r.po);if(!hay.includes(search))return false;}
     return true;
   });
@@ -2120,8 +2173,12 @@ function renderM3inSubwin() {
 function renderM4inSubwin() {
   const search=normalStr((document.getElementById('f4sw_search')||{value:''}).value);
   const brecha=(document.getElementById('f4sw_brecha')||{value:''}).value;
+  const year4sw=(document.getElementById('f4sw_year')||{value:''}).value;
+  const month4sw=(document.getElementById('f4sw_month')||{value:''}).value;
   let data=state.m4data.filter(r=>{
     if(brecha&&r.flujo!==brecha)return false;
+    if(year4sw&&String(r.year)!==String(year4sw))return false;
+    if(month4sw&&normalStr(r.month)!==month4sw)return false;
     if(search){const hay=normalStr(r.inv+' '+r.po+' '+r.prov);if(!hay.includes(search))return false;}
     return true;
   });
@@ -2283,33 +2340,54 @@ function loadMultipleFiles(files) {
 }
 
 function detectSlot(wb, filename) {
-  // Try to detect which of the 3 files this is
+  // ── Detection priority: sheet names + column fingerprints, then filename ──
+  // This ensures ANY file with the right structure is recognized regardless of name.
+
+  const sheetNames = wb.SheetNames.map(s => s.toLowerCase());
   const fnLow = filename.toLowerCase();
-  const sheets = wb.SheetNames.join(' ').toLowerCase();
 
-  // Heuristic 1: filename keywords
-  if (fnLow.includes('seguimiento') || fnLow.includes('compromiso') || fnLow.includes('factura')) return 1;
-  if (fnLow.includes('recep') || fnLow.includes('oracle_rec')) return 2;
-  if (fnLow.includes('cxp') || fnLow.includes('cuenta') || fnLow.includes('pago') || fnLow.includes('ap_')) return 3;
+  // ── ARCHIVO 2 (Recepciones Oracle): has sheet 'Recepciones' ──
+  // Columns: Organización, Fecha de Recepción, Recepción, Número de Documento, Estado de Línea
+  if (sheetNames.includes('recepciones')) return 2;
 
-  // Heuristic 2: sheet names
-  if (sheets.includes('factura')) return 1;
-  if (sheets.includes('recep')) return 2;
-  if (sheets.includes('proveedor') && !sheets.includes('factura')) return 3;
+  // ── ARCHIVO 1 (Seguimiento/Compromisos): has sheets 'Facturas', 'Ordenes Compra LM', 'WBS' ──
+  // Key sheet: 'Facturas' with columns Year, Month, Invoice Number, NuevaPO, REC
+  if (sheetNames.includes('facturas')) return 1;
+  if (sheetNames.includes('ordenes compra lm') || sheetNames.includes('anteriores oc') || sheetNames.includes('wbs')) return 1;
 
-  // Heuristic 3: column sniffing in first sheet
-  try {
-    const ws = wb.Sheets[wb.SheetNames[0]];
+  // ── ARCHIVO 3 (CxP): columns TL, CIA, NIT, NOMBRE PROVEEDOR, NUMERO DE FACTURA ──
+  // Sheet is usually 'Hoja1' — detect by column fingerprint
+  const A3_COLS = ['tl','cia','nit','nombre proveedor','numero de factura','estado','valor bruto incluido iva','mes','año'];
+  const A2_COLS = ['organización','fecha de recepción','recepción','número de documento','estado de línea','recepcionado por'];
+  const A1_COLS = ['invoice number','supplier name','nuevapo','vaule without iva','month','year','rec'];
+
+  for (const sname of wb.SheetNames) {
+    if (sname === 'XDO_METADATA') continue;
+    const ws = wb.Sheets[sname];
     const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
-    for (let i = 0; i < Math.min(8, raw.length); i++) {
-      const rowStr = (raw[i] || []).map(c => String(c||'').toLowerCase()).join(' ');
-      if (rowStr.includes('invoice') || rowStr.includes('numero factura')) return 1;
-      if (rowStr.includes('recepci')) return 2;
-      if (rowStr.includes('nombre proveedor') || rowStr.includes('estado') && rowStr.includes('factura')) return 3;
-    }
-  } catch(e) {}
+    for (let i = 0; i < Math.min(10, raw.length); i++) {
+      const r = raw[i]; if (!r || !r.length) continue;
+      const cells = r.map(c => c != null ? String(c).trim().toLowerCase() : '');
+      const nonEmpty = cells.filter(c => c !== '').length;
+      if (nonEmpty < 2) continue;
 
-  // Fallback: assign to next empty slot
+      // Score each file type
+      const scoreA3 = A3_COLS.filter(k => cells.some(c => c === k || c.startsWith(k.substring(0,6)))).length;
+      const scoreA2 = A2_COLS.filter(k => cells.some(c => c === k || c.includes(k.substring(0,8)))).length;
+      const scoreA1 = A1_COLS.filter(k => cells.some(c => c === k || c.includes(k.substring(0,6)))).length;
+
+      if (scoreA3 >= 4) return 3;
+      if (scoreA2 >= 3) return 2;
+      if (scoreA1 >= 3) return 1;
+    }
+  }
+
+  // ── Filename fallback ──
+  if (fnLow.includes('seguimiento') || fnLow.includes('compromiso') || fnLow.includes('factura')) return 1;
+  if (fnLow.includes('recep')) return 2;
+  if (fnLow.includes('cxp') || fnLow.includes('cuenta') || fnLow.includes('pago')) return 3;
+
+  // ── Assign to next empty slot ──
   const used = new Set(state.files.map(f => f.slot));
   for (const s of [1,2,3]) { if (!used.has(s)) return s; }
   return state.files.length + 1;
@@ -2321,7 +2399,7 @@ function renderFileList() {
   if (!state.files.length) { container.innerHTML = ''; zone.classList.remove('has-files'); return; }
   zone.classList.add('has-files');
 
-  const slotNames = { 1: 'Archivo 1 — Compromisos', 2: 'Archivo 2 — Recepciones Oracle', 3: 'Archivo 3 — CxP Oracle' };
+  const slotNames = { 1: 'Archivo 1 — Facturas', 2: 'Archivo 2 — Recepciones Oracle', 3: 'Archivo 3 — CxP Oracle' };
   const slotIcons = { 1: '📋', 2: '🔄', 3: '💰' };
 
   container.innerHTML = state.files.map((f, idx) => {
@@ -2354,6 +2432,7 @@ function clearAll() {
   state.processed = false;
   state.df1=[]; state.df2=[]; state.df3=[];
   state.m1data=[]; state.m2data=[]; state.m3data=[]; state.m4data=[];
+  state.df2rec=[]; state.df3cxp=[];
   ['1','2','3','4'].forEach(n => {
     const el = document.getElementById('cnt'+n); if(el) el.textContent='0';
   });
@@ -2430,56 +2509,131 @@ function parseFiles() {
   // ── Archivo 1 ──
   if (slotMap[1]) {
     const wb = slotMap[1];
-    const sheetName = wb.SheetNames.find(s => s.toLowerCase().includes('factura')) || wb.SheetNames[0];
+    // A1: prefer 'Facturas' sheet (exact), then any sheet with 'factura', skip metadata/helper sheets
+    const A1_SKIP = ['wbs','meses','anteriores oc','ordenes compra lm','xdo_metadata'];
+    const sheetName = wb.SheetNames.find(s => s.toLowerCase() === 'facturas') ||
+                      wb.SheetNames.find(s => s.toLowerCase().includes('factura') && !A1_SKIP.includes(s.toLowerCase())) ||
+                      wb.SheetNames.find(s => !A1_SKIP.includes(s.toLowerCase()) && !s.toLowerCase().includes('metadata')) ||
+                      wb.SheetNames[0];
     const raw = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, defval: null });
-    let hdr = 0;
-    for (let i = 0; i < Math.min(10, raw.length); i++) {
-      const r = raw[i];
-      if (r && r.some(c => c && String(c).toLowerCase().includes('invoice'))) { hdr = i; break; }
+    const A1_KNOWN_COLS = [
+      'invoice number', 'supplier name', 'year', 'month', 'nuevapo', 'po',
+      'vaule without iva', 'value without iva', 'invoice date', 'due date',
+      'payment date', 'observations', 'nit', 'contract'
+    ];
+    let hdr = -1;
+    for (let i = 0; i < Math.min(15, raw.length); i++) {
+      const r = raw[i]; if (!r || !r.length) continue;
+      const cellStrs = r.map(c => c != null ? String(c).trim().toLowerCase() : '');
+      let hits = 0;
+      for (const known of A1_KNOWN_COLS) {
+        if (cellStrs.some(c => c === known || c.includes(known.substring(0, 7)))) hits++;
+      }
+      if (hits >= 3) { hdr = i; break; }
     }
-    const headers = raw[hdr].map(h => h != null ? String(h).trim() : '');
+    if (hdr === -1) {
+      let maxCells = 0;
+      raw.forEach((r, i) => {
+        if (!r) return;
+        const n = r.filter(c => c != null && String(c).trim() !== '').length;
+        if (n > maxCells) { maxCells = n; hdr = i; }
+      });
+    }
+    if (hdr === -1) hdr = 0;
+    const headers = (raw[hdr] || []).map(h => h != null ? String(h).trim() : '');
     state.df1 = [];
     for (let i = hdr + 1; i < raw.length; i++) {
       const row = raw[i]; if (!row || row.every(c => c == null)) continue;
       const obj = {}; headers.forEach((h, j) => { obj[h] = row[j] != null ? row[j] : null; }); state.df1.push(obj);
     }
+    console.log('[A1] hdr='+hdr+', headers[0..4]='+JSON.stringify(headers.slice(0,5))+', rows='+state.df1.length);
   }
 
-  // ── Archivo 2 ──
+    // ── Archivo 2 ──
   if (slotMap[2]) {
     const wb = slotMap[2];
-    const sheetName = wb.SheetNames.find(s => s.toLowerCase().includes('recep')) || wb.SheetNames[0];
+    // Find sheet: prefer exact 'Recepciones', then any sheet with 'recep', skip metadata
+    const sheetName = wb.SheetNames.find(s => s.toLowerCase() === 'recepciones') ||
+                      wb.SheetNames.find(s => s.toLowerCase().includes('recep') && !s.toLowerCase().includes('metadata')) ||
+                      wb.SheetNames.find(s => s !== 'XDO_METADATA' && !s.toLowerCase().includes('metadata')) ||
+                      wb.SheetNames[0];
     const raw = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, defval: null });
-    let hdr = 0;
-    for (let i = 0; i < Math.min(10, raw.length); i++) {
-      const r = raw[i];
-      if (r && r.some(c => c && String(c).toLowerCase().includes('recepci'))) { hdr = i; break; }
+
+    // ROBUST header detection: look for a row that contains AT LEAST 3 of the known
+    // column names from the Archivo 2 schema. This is immune to title rows.
+    const A2_KNOWN_COLS = [
+      'organización', 'fecha de recepción', 'recepción', 'número de documento',
+      'recepcionado por', 'valor recepcionado por línea', 'estado de línea',
+      'descripción de artículo', 'unidad de negocio', 'valor total'
+    ];
+    let hdr = -1;
+    for (let i = 0; i < Math.min(15, raw.length); i++) {
+      const r = raw[i]; if (!r || !r.length) continue;
+      const cellStrs = r.map(c => c != null ? String(c).trim().toLowerCase() : '');
+      let hits = 0;
+      for (const known of A2_KNOWN_COLS) {
+        if (cellStrs.some(c => c === known || c.includes(known.substring(0, 10)))) hits++;
+      }
+      if (hits >= 3) { hdr = i; break; }
     }
-    const headers = raw[hdr].map(h => h != null ? String(h).trim() : '');
+    if (hdr === -1) {
+      // Fallback: find the row with the most non-empty cells
+      let maxCells = 0;
+      raw.forEach((r, i) => {
+        if (!r) return;
+        const n = r.filter(c => c != null && String(c).trim() !== '').length;
+        if (n > maxCells) { maxCells = n; hdr = i; }
+      });
+    }
+    if (hdr === -1) hdr = 0; // last resort
+
+    const headers = (raw[hdr] || []).map(h => h != null ? String(h).trim() : '');
     state.df2 = [];
     for (let i = hdr + 1; i < raw.length; i++) {
       const row = raw[i]; if (!row || row.every(c => c == null)) continue;
       const obj = {}; headers.forEach((h, j) => { obj[h] = row[j] != null ? row[j] : null; }); state.df2.push(obj);
     }
-    // No project filter — use all reception records
+    console.log('[A2] hdr='+hdr+', sheet='+sheetName+', headers[0..4]='+JSON.stringify(headers.slice(0,5))+', rows='+state.df2.length);
+    if (hdr <= 1) console.warn('[A2] WARNING: hdr='+hdr+' is suspiciously low — header detection may have failed!');
   }
 
   // ── Archivo 3 ──
   if (slotMap[3]) {
     const wb = slotMap[3];
-    const sheetName = wb.SheetNames.find(s => !s.includes('METADATA') && s !== 'XDO_METADATA') || wb.SheetNames[0];
+    const sheetName = wb.SheetNames.find(s => s !== 'XDO_METADATA' && !s.toLowerCase().includes('metadata')) || wb.SheetNames[0];
     const raw = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, defval: null });
-    let hdr = 0;
-    for (let i = 0; i < Math.min(10, raw.length); i++) {
-      const r = raw[i];
-      if (r && r.some(c => c && String(c).toLowerCase().includes('proveedor'))) { hdr = i; break; }
+    const A3_KNOWN_COLS = [
+      'tl', 'cia', 'nit', 'nombre proveedor', 'tipo proveedor',
+      'numero de factura', 'estado', 'fecha transacción',
+      'valor bruto incluido iva', 'aplicación anticipos',
+      'saldo de la factura', 'mes', 'año', 'fecha contable'
+    ];
+    let hdr = -1;
+    for (let i = 0; i < Math.min(15, raw.length); i++) {
+      const r = raw[i]; if (!r || !r.length) continue;
+      const cellStrs = r.map(c => c != null ? String(c).trim().toLowerCase() : '');
+      let hits = 0;
+      for (const known of A3_KNOWN_COLS) {
+        if (cellStrs.some(c => c === known || c.includes(known.substring(0,8)))) hits++;
+      }
+      if (hits >= 3) { hdr = i; break; }
     }
-    const headers = raw[hdr].map(h => h != null ? String(h).trim() : '');
+    if (hdr === -1) {
+      let maxCells = 0;
+      raw.forEach((r, i) => {
+        if (!r) return;
+        const n = r.filter(c => c != null && String(c).trim() !== '').length;
+        if (n > maxCells) { maxCells = n; hdr = i; }
+      });
+    }
+    if (hdr === -1) hdr = 0;
+    const headers = (raw[hdr] || []).map(h => h != null ? String(h).trim() : '');
     state.df3 = [];
     for (let i = hdr + 1; i < raw.length; i++) {
       const row = raw[i]; if (!row || row.every(c => c == null)) continue;
       const obj = {}; headers.forEach((h, j) => { obj[h] = row[j] != null ? row[j] : null; }); state.df3.push(obj);
     }
+    console.log('[A3] hdr='+hdr+', sheet='+sheetName+', headers[0..4]='+JSON.stringify(headers.slice(0,5))+', rows='+state.df3.length);
   }
 }
 
@@ -2552,11 +2706,15 @@ function getA1Field(row, candidates) {
 function buildModules() {
   const recByOC = {};
   state.df2.forEach(r => {
-    const oc = normalStr(r['Número de Documento'] || r['Numero de Documento'] || '');
+    const oc = normalStr(r['Número de Documento'] || r['Numero de Documento'] || r['Número de documento'] || '');
     if (!oc) return;
     if (!recByOC[oc]) recByOC[oc] = [];
     recByOC[oc].push(r);
   });
+  console.log('[buildModules] recByOC keys:', Object.keys(recByOC).length, '— sample:', Object.keys(recByOC).slice(0,3));
+  if (Object.keys(recByOC).length === 0 || Object.keys(recByOC)[0] === '') {
+    console.error('[buildModules] ERROR: recByOC is empty or keyed by "" — A2 header detection failed!');
+  }
 
   const cxpByInv = {}, cxpByProv = {};
   state.df3.forEach(r => {
@@ -2567,6 +2725,7 @@ function buildModules() {
   });
 
   state.m1data = []; state.m2data = []; state.m3data = []; state.m4data = [];
+  state.df2rec = []; state.df3cxp = [];
 
   state.df1.forEach(row => {
     const inv = getA1Field(row, ['Invoice Number','Numero Factura','N° Factura']);
@@ -2645,20 +2804,94 @@ function buildModules() {
     else if (!hasCxP) flujo = 'sin_cxp';
     else if (recStatus === 'sin_recepcion') flujo = 'sin_recepcion';
     else if (m3Status !== 'pagado') flujo = 'sin_pago';
-    state.m4data.push({ inv, po, prov, year, valSinIva, recStatus, totalRec, m2Status, m3Status, cxpBruto, payDate: payDate || (m3Status==='pagado'?cxpFechaTrans:null), brechas, flujo, obs });
+    state.m4data.push({ inv, po, prov, year, month, valSinIva, recStatus, totalRec, m2Status, m3Status, cxpBruto, payDate: payDate || (m3Status==='pagado'?cxpFechaTrans:null), brechas, flujo, obs });
+  });
+
+  // ── Build df2rec: raw A2 with parsed year/month from Fecha de Recepción ──
+  const MONTH_NAMES_ES = ['','enero','febrero','marzo','abril','mayo','junio',
+                           'julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  state.df2rec = state.df2.map(r => {
+    const fechaStr = r['Fecha de Recepción'] || r['Fecha de Recepcion'] || '';
+    let yr2 = '', mo2 = '', mo2num = 0;
+    const parts = String(fechaStr).trim().split('/');
+    if (parts.length === 3) {
+      mo2num = parseInt(parts[1], 10);
+      yr2 = parts[2];
+      mo2 = MONTH_NAMES_ES[mo2num] || '';
+    }
+    return {
+      _yr: yr2, _mo: mo2, _moNum: mo2num,
+      fecha:    r['Fecha de Recepción'] || r['Fecha de Recepcion'] || '—',
+      rec:      r['Recepción'] || r['Recepcion'] || '—',
+      oc:       r['Número de Documento'] || r['Numero de Documento'] || '—',
+      proveedor:r['Origen'] || '—',
+      desc:     r['Descripción de Artículo'] || r['Descripcion de Articulo'] || '—',
+      org:      r['Organización'] || r['Organizacion'] || '—',
+      valRec:   normalNum(r['Valor Recepcionado por Línea'] || r['Valor Recepcionado por Linea']),
+      valTot:   normalNum(r['Valor Total']),
+      estadoLinea: r['Estado de Línea'] || r['Estado de Linea'] || '—',
+      comprador: r['Comprador'] || '—',
+      proyecto:  r['Proyecto'] || '—',
+      cc:        r['Centro de Costo'] || '—',
+    };
+  }).filter(r => r.oc !== '—' && r.oc !== '');
+
+  // ── Build df3cxp: raw A3 ──
+  state.df3cxp = state.df3.map(r => {
+    const mesRaw = String(r['MES'] || r['Mes'] || '').trim().toLowerCase();
+    const anioRaw = r['AÑO'] || r['Año'] || r['AO'] || '';
+    return {
+      _yr: String(anioRaw ? Math.round(parseFloat(anioRaw)) : '').replace('.0',''),
+      _mo: mesRaw,
+      nit:      r['NIT'] || '—',
+      prov:     r['NOMBRE PROVEEDOR'] || r['Nombre Proveedor'] || '—',
+      factura:  r['NUMERO DE FACTURA'] || r['Número de Factura'] || '—',
+      tipo:     r['TIPO'] || r['TIPO '] || '—',
+      estado:   r['ESTADO'] || r['Estado'] || '—',
+      fechaTrans: r['FECHA TRANSACCIÓN'] || r['FECHA TRANSACCION'] || '—',
+      valorBruto: normalNum(r['VALOR BRUTO INCLUIDO IVA']),
+      anticipos:  normalNum(r['APLICACIÓN ANTICIPOS'] || r['APLICACION ANTICIPOS']),
+      saldoFact:  normalNum(r['SALDO DE LA FACTURA']),
+      fechaContable: r['FECHA CONTABLE'] || '—',
+    };
   });
 
   ['1','2','3','4'].forEach(n => {
     const el = document.getElementById('cnt'+n);
     if (el) el.textContent = state['m'+n+'data']?.length || 0;
   });
-  document.getElementById('cnt0').textContent = state.m3data.length || 0;
+  const elCnt2 = document.getElementById('cnt2');
+  if (elCnt2) elCnt2.textContent = state.df2rec.length;
+  const elCnt3 = document.getElementById('cnt3');
+  if (elCnt3) elCnt3.textContent = state.df3cxp.length;
+  document.getElementById('cnt0').textContent = state.m1data.length || 0;
 
-  // Populate year filter
-  const years = [...new Set(state.m1data.map(r=>r.year).filter(Boolean))].sort();
-  const sel = document.getElementById('f1year');
-  sel.innerHTML = '<option value="">Todos los años</option>';
-  years.forEach(y => { const o = document.createElement('option'); o.value=y; o.textContent=y; sel.appendChild(o); });
+  // ── Populate year/month selects ──
+  const monthOrder = {enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,octubre:10,noviembre:11,diciembre:12};
+
+  // M1/M4 filters: from A1 month/year
+  const years1 = [...new Set(state.m1data.map(r=>String(r.year)).filter(Boolean))].sort();
+  const months1 = [...new Set(state.m1data.map(r=>String(r.month||'').toLowerCase()).filter(Boolean))].sort((a,b)=>(monthOrder[a]||99)-(monthOrder[b]||99));
+
+  // M2 filters: from A2 reception dates
+  const years2 = [...new Set(state.df2rec.map(r=>r._yr).filter(Boolean))].sort();
+  const months2 = [...new Set(state.df2rec.map(r=>r._mo).filter(Boolean))].sort((a,b)=>(monthOrder[a]||99)-(monthOrder[b]||99));
+
+  // M3 filters: from A3 MES/AÑO
+  const years3 = [...new Set(state.df3cxp.map(r=>r._yr).filter(Boolean))].sort();
+  const months3 = [...new Set(state.df3cxp.map(r=>r._mo).filter(Boolean))].sort((a,b)=>(monthOrder[a]||99)-(monthOrder[b]||99));
+
+  function fillSel(id, vals, isYear) {
+    const el = document.getElementById(id); if (!el) return;
+    el.innerHTML = '<option value="">' + (isYear ? 'Todos los años' : 'Todos los meses') + '</option>';
+    vals.forEach(v => { const o = document.createElement('option'); o.value=v; o.textContent=isYear?v:(v.charAt(0).toUpperCase()+v.slice(1)); el.appendChild(o); });
+  }
+  fillSel('f1year', years1, true);  fillSel('f1month', months1, false);
+  fillSel('f4year', years1, true);  fillSel('f4month', months1, false);
+  fillSel('f1sw_year', years1, true); fillSel('f1sw_month', months1, false);
+  fillSel('f2year', years2, true);  fillSel('f2month', months2, false);
+  fillSel('f2sw_year', years2, true); fillSel('f2sw_month', months2, false);
+  fillSel('f3year', years3, true);  fillSel('f3month', months3, false);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2678,6 +2911,7 @@ function renderAll() {
   const el5 = document.getElementById('cnt5');
   if (el5) el5.textContent = state.m5data?.length || 0;
   try { renderFilesResumen(); } catch(e) { console.warn('filesResumen error:', e); }
+  try { renderM0RecTable(); } catch(e) { console.warn('M0RecTable error:', e); }
 }
 
 // ── MODULE 0: GERENCIAL ──────────────────────────────────────
@@ -2714,10 +2948,16 @@ function renderM0() {
   const valPagado = d3.filter(r => r.m3Status === 'pagado').reduce((s,r) => s + (r.cxpBruto || r.valSinIva||0), 0);
   const valPendiente = d3.filter(r => r.m3Status !== 'pagado').reduce((s,r) => s + (r.cxpBruto || r.valSinIva||0), 0);
 
-  // Recepcion stats from M1
-  const recOk = d1.filter(r=>r.recStatus==='recepcionado').length;
-  const recNo = d1.filter(r=>r.recStatus==='sin_recepcion').length;
+  // Recepcion stats from M1 (facturas)
+  const recOk     = d1.filter(r=>r.recStatus==='recepcionado').length;
+  const recNo     = d1.filter(r=>r.recStatus==='sin_recepcion').length;
   const valSinRec = d1.filter(r=>r.recStatus==='sin_recepcion').reduce((s,r)=>s+(r.valSinIva||0),0);
+  // Recepciones Oracle from A2 (df2rec)
+  const totalRecOracle  = (state.df2rec||[]).length;
+  const valorRecOracle  = (state.df2rec||[]).reduce((s,r)=>s+(r.valRec||0),0);
+  // Pendiente por pagar from A3 (df3cxp Aprobado)
+  const valPendCxP      = (state.df3cxp||[]).filter(r=>r.estado==='Aprobado').reduce((s,r)=>s+(r.valorBruto||0),0);
+  const cntAprobCxP     = (state.df3cxp||[]).filter(r=>r.estado==='Aprobado').length;
 
   document.getElementById('kpi-total').textContent = total;
   document.getElementById('kpi-pagadas').textContent = pagadas;
@@ -2731,6 +2971,15 @@ function renderM0() {
   document.getElementById('kpi-val-pagado').textContent = fmtCurrency(valPagado);
   document.getElementById('kpi-val-sin-rec').textContent = fmtCurrency(valSinRec);
   document.getElementById('kpi-val-pendiente').textContent = fmtCurrency(valPendiente);
+  // New KPIs
+  const kpiRO = document.getElementById('kpi-rec-oracle-cnt');
+  if (kpiRO) kpiRO.textContent = totalRecOracle.toLocaleString('es-CO');
+  const kpiROV = document.getElementById('kpi-rec-oracle-val');
+  if (kpiROV) kpiROV.textContent = fmtCurrency(valorRecOracle);
+  const kpiPendCxP = document.getElementById('kpi-pend-cxp');
+  if (kpiPendCxP) kpiPendCxP.textContent = fmtCurrency(valPendCxP);
+  const kpiPendCnt = document.getElementById('kpi-pend-cxp-cnt');
+  if (kpiPendCnt) kpiPendCnt.textContent = cntAprobCxP;
 
   // ── Factura mayor mora (no pagadas) ──
   const enMoraList = d3.filter(r => r.lateDaysCalc > 0).sort((a,b) => b.lateDaysCalc - a.lateDaysCalc);
@@ -3041,14 +3290,80 @@ function renderDonut(svgId, legendId, segments) {
   if(leg) leg.innerHTML=segments.filter(s=>s.val>0).map(s=>`<div class="legend-item"><div class="legend-dot" style="background:${s.color}"></div><span style="color:#5c6f8a">${s.label}</span><span class="legend-val">${s.val}</span></div>`).join('');
 }
 
+// ── MODULE 0: Recepciones table helper ──────────────────────────
+function renderM0RecTable() {
+  const search  = normalStr((document.getElementById('f0recSearch')||{value:''}).value);
+  const year0   = (document.getElementById('f0recYear')||{value:''}).value;
+  const month0  = (document.getElementById('f0recMonth')||{value:''}).value;
+  const tbody   = document.getElementById('tbodyM0Rec');
+  const cntEl   = document.getElementById('m0recCount');
+  if (!tbody) return;
+
+  if (!state.df2rec || !state.df2rec.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--col-muted)">Cargue el Archivo 2 (Recepciones Oracle) para ver este análisis</td></tr>';
+    return;
+  }
+
+  // Populate year/month selects for M0 rec table if empty
+  const selY0 = document.getElementById('f0recYear');
+  const selM0 = document.getElementById('f0recMonth');
+  if (selY0 && selY0.options.length <= 1) {
+    const monthOrder = {enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,octubre:10,noviembre:11,diciembre:12};
+    const yrs = [...new Set(state.df2rec.map(r=>r._yr).filter(Boolean))].sort();
+    const mos = [...new Set(state.df2rec.map(r=>r._mo).filter(Boolean))].sort((a,b)=>(monthOrder[a]||99)-(monthOrder[b]||99));
+    selY0.innerHTML = '<option value="">Todos los años</option>';
+    yrs.forEach(y => { const o=document.createElement('option'); o.value=y; o.textContent=y; selY0.appendChild(o); });
+    if (selM0) {
+      selM0.innerHTML = '<option value="">Todos los meses</option>';
+      mos.forEach(m => { const o=document.createElement('option'); o.value=m; o.textContent=m.charAt(0).toUpperCase()+m.slice(1); selM0.appendChild(o); });
+    }
+  }
+
+  let data = state.df2rec.filter(r => {
+    if (year0  && r._yr !== year0)  return false;
+    if (month0 && r._mo !== month0) return false;
+    if (search) {
+      const hay = normalStr(r.proveedor + ' ' + r.oc + ' ' + r.rec);
+      if (!hay.includes(search)) return false;
+    }
+    return true;
+  });
+
+  const total = data.length;
+  const show  = data.slice(0, 500);
+
+  tbody.innerHTML = show.map(r => {
+    const estBadge = r.estadoLinea === 'Entregada'
+      ? '<span class="badge badge-success" style="font-size:10px">✅ Entregada</span>'
+      : '<span class="badge badge-warning" style="font-size:10px">⚠️ Parcial</span>';
+    return `<tr style="border-bottom:1px solid var(--col-border)">
+      <td style="padding:5px 10px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.proveedor}">${r.proveedor}</td>
+      <td style="padding:5px 10px;font-family:monospace;font-size:11px">${r.oc}</td>
+      <td style="padding:5px 10px;font-family:monospace">${r.rec}</td>
+      <td style="padding:5px 10px;text-transform:capitalize">${r._mo||'—'}</td>
+      <td style="padding:5px 10px">${r._yr||'—'}</td>
+      <td style="padding:5px 10px;text-align:right;font-weight:600">${fmtCurrency(r.valRec)}</td>
+      <td style="padding:5px 10px;text-align:center">${estBadge}</td>
+    </tr>`;
+  }).join('');
+
+  if (total > 500) {
+    tbody.innerHTML += `<tr><td colspan="7" style="text-align:center;padding:8px;font-size:11px;color:var(--col-muted)">Mostrando 500 de ${total.toLocaleString('es-CO')} filas. Usa los filtros para reducir.</td></tr>`;
+  }
+  if (cntEl) cntEl.textContent = `${total.toLocaleString('es-CO')} líneas · ${fmtCurrency(data.reduce((s,r)=>s+(r.valRec||0),0))} recepcionado`;
+}
+
+
 // ── MODULE 1 ──────────────────────────────────────────────────
 function renderM1() {
   const search = normalStr(document.getElementById('f1search').value);
   const estado = document.getElementById('f1estado').value;
-  const year = document.getElementById('f1year').value;
+  const year1  = document.getElementById('f1year')?.value  || '';
+  const month1 = document.getElementById('f1month')?.value || '';
   let data = state.m1data.filter(r => {
-    if (estado && r.recStatus !== estado) return false;
-    if (year && String(r.year) !== String(year)) return false;
+    if (estado  && r.recStatus !== estado)                  return false;
+    if (year1   && String(r.year) !== String(year1))        return false;
+    if (month1  && normalStr(r.month) !== month1)           return false;
     if (search) { const hay = normalStr(r.inv+' '+r.po+' '+r.prov+' '+r.recNums); if (!hay.includes(search)) return false; }
     return true;
   });
@@ -3064,7 +3379,7 @@ function renderM1() {
     <div class="summary-card s-success"><div class="summary-label">Con Recepción</div><div class="summary-value">${recOk}</div><div class="summary-sub">${pct(recOk,total)}% del total</div></div>
     <div class="summary-card s-warning"><div class="summary-label">Parcial</div><div class="summary-value">${parcial}</div></div>
     <div class="summary-card s-danger"><div class="summary-label">Sin Recepción</div><div class="summary-value">${sinRec}</div></div>
-    <div class="summary-card s-info"><div class="summary-label">Valor Total Actas</div><div class="summary-value" style="font-size:16px">${fmtCurrency(totalVal)}</div><div class="summary-sub">sin IVA</div></div>
+    <div class="summary-card s-info"><div class="summary-label">Valor Total Facturas</div><div class="summary-value" style="font-size:16px">${fmtCurrency(totalVal)}</div><div class="summary-sub">sin IVA</div></div>
     <div class="summary-card s-success"><div class="summary-label">Valor Recepcionado</div><div class="summary-value" style="font-size:16px">${fmtCurrency(totalRecVal)}</div><div class="summary-sub">Oracle</div></div>
   `;
   document.getElementById('cnt1table').textContent = total + ' registros';
@@ -3091,128 +3406,161 @@ function renderM1() {
   }).join('');
 }
 
-// ── MODULE 2 ──────────────────────────────────────────────────
+// ── MODULE 2: Recepciones Oracle (A2) ─────────────────────────
 function renderM2() {
-  const search = normalStr(document.getElementById('f2search').value);
-  const estado = document.getElementById('f2estado').value;
-  let data = state.m2data.filter(r => {
-    if (estado && r.m2Status !== estado) return false;
-    if (search) { const hay = normalStr(r.inv+' '+r.po+' '+r.prov); if (!hay.includes(search)) return false; }
+  const search  = normalStr(document.getElementById('f2search').value);
+  const estado  = document.getElementById('f2estado').value;
+  const year2   = document.getElementById('f2year')?.value  || '';
+  const month2  = document.getElementById('f2month')?.value || '';
+
+  if (!state.df2rec || !state.df2rec.length) {
+    const tbody = document.getElementById('tbody2');
+    if (tbody) tbody.innerHTML = emptyRow(12);
+    return;
+  }
+
+  let data = state.df2rec.filter(r => {
+    if (estado  && r.estadoLinea !== estado)              return false;
+    if (year2   && r._yr !== year2)                       return false;
+    if (month2  && r._mo !== month2)                      return false;
+    if (search) {
+      const hay = normalStr(r.oc + ' ' + r.proveedor + ' ' + r.rec + ' ' + r.desc + ' ' + r.org);
+      if (!hay.includes(search)) return false;
+    }
     return true;
   });
-  const total = data.length;
-  const aprobado = data.filter(r=>r.m2Status==='aprobado').length;
-  const pagado = data.filter(r=>r.m2Status==='pagado').length;
-  const pendiente = data.filter(r=>r.m2Status==='pendiente').length;
-  const totalContab = data.filter(r=>r.m2Status!=='pendiente').reduce((s,r)=>s+(r.valSinIva||0),0);
+
+  const total      = data.length;
+  const entregadas = data.filter(r => r.estadoLinea === 'Entregada').length;
+  const parciales  = data.filter(r => r.estadoLinea === 'Entregada Parcialmente').length;
+  const totalValRec = data.reduce((s,r) => s + (r.valRec || 0), 0);
+  const uniqs_oc   = new Set(data.map(r=>r.oc)).size;
 
   document.getElementById('sum2').innerHTML = `
-    <div class="summary-card s-info"><div class="summary-label">Total Facturas</div><div class="summary-value">${total}</div></div>
-    <div class="summary-card s-warning"><div class="summary-label">Aprobadas</div><div class="summary-value">${aprobado}</div><div class="summary-sub">pendiente de pago</div></div>
-    <div class="summary-card s-success"><div class="summary-label">Pagadas</div><div class="summary-value">${pagado}</div><div class="summary-sub">${pct(pagado,total)}% del total</div></div>
-    <div class="summary-card s-danger"><div class="summary-label">Sin Contabilizar</div><div class="summary-value">${pendiente}</div></div>
-    <div class="summary-card s-accent"><div class="summary-label">Valor Contabilizado</div><div class="summary-value" style="font-size:16px">${fmtCurrency(totalContab)}</div></div>
+    <div class="summary-card s-info"><div class="summary-label">Total Líneas</div><div class="summary-value">${total.toLocaleString('es-CO')}</div><div class="summary-sub">en el período</div></div>
+    <div class="summary-card s-accent"><div class="summary-label">OCs Únicas</div><div class="summary-value">${uniqs_oc.toLocaleString('es-CO')}</div></div>
+    <div class="summary-card s-success"><div class="summary-label">Entregadas</div><div class="summary-value">${entregadas.toLocaleString('es-CO')}</div><div class="summary-sub">${pct(entregadas,total)}%</div></div>
+    <div class="summary-card s-warning"><div class="summary-label">Parciales</div><div class="summary-value">${parciales.toLocaleString('es-CO')}</div><div class="summary-sub">${pct(parciales,total)}%</div></div>
+    <div class="summary-card s-success"><div class="summary-label">Valor Recepcionado</div><div class="summary-value" style="font-size:14px">${fmtCurrency(totalValRec)}</div></div>
   `;
-  document.getElementById('cnt2table').textContent = total + ' registros';
+  document.getElementById('cnt2table').textContent = total.toLocaleString('es-CO') + ' líneas';
   const tbody = document.getElementById('tbody2');
-  if (!data.length) { tbody.innerHTML = emptyRow(11); return; }
-  tbody.innerHTML = data.map(r => {
-    const badge = r.m2Status==='pagado' ? '<span class="badge badge-success">💸 Pagado</span>'
-      : r.m2Status==='aprobado' ? '<span class="badge badge-warning">📊 Aprobado</span>'
-      : '<span class="badge badge-danger">⏳ Pendiente</span>';
-    const cruceBadge = r.cruceType==='Factura' ? '<span class="badge badge-success">Por Factura</span>'
-      : r.cruceType==='Proveedor' ? '<span class="badge badge-warning">Por Proveedor</span>'
-      : '<span class="badge badge-gray">No encontrado</span>';
+  if (!data.length) { tbody.innerHTML = emptyRow(12); return; }
+
+  // Show up to 2000 rows for performance
+  const slice = data.slice(0, 2000);
+  tbody.innerHTML = slice.map(r => {
+    const badge = r.estadoLinea === 'Entregada'
+      ? '<span class="badge badge-success">✅ Entregada</span>'
+      : r.estadoLinea === 'Entregada Parcialmente'
+      ? '<span class="badge badge-warning">⚠️ Parcial</span>'
+      : `<span class="badge badge-info">${r.estadoLinea}</span>`;
     return `<tr>
-      <td>${badge}</td><td>${r.year||'—'}</td><td>${r.month||'—'}</td>
-      <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${r.prov||'—'}</td>
-      <td class="td-mono">${r.inv||'—'}</td><td class="td-mono">${r.po||'—'}</td>
-      <td class="currency">${fmtCurrency(r.valSinIva)}</td>
-      <td class="currency">${fmtCurrency(r.cxpBruto)}</td>
-      <td>${fmtDate(r.invDate)}</td><td>${r.cxpFechaTrans||'—'}</td>
-      <td>${cruceBadge}</td>
+      <td>${badge}</td>
+      <td>${r.fecha}</td><td>${r._yr||'—'}</td><td style="text-transform:capitalize">${r._mo||'—'}</td>
+      <td class="td-mono">${r.rec}</td>
+      <td class="td-mono" style="font-size:11px">${r.oc}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.proveedor}">${r.proveedor}</td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.desc}">${r.desc}</td>
+      <td style="font-size:11px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.org}</td>
+      <td class="currency">${fmtCurrency(r.valRec)}</td>
+      <td class="currency">${fmtCurrency(r.valTot)}</td>
+      <td style="font-size:11px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.comprador}</td>
     </tr>`;
   }).join('');
+  if (data.length > 2000) {
+    tbody.innerHTML += `<tr><td colspan="12" style="text-align:center;padding:12px;color:var(--col-muted);font-size:12px">
+      ⚠️ Mostrando 2.000 de ${data.length.toLocaleString('es-CO')} líneas. Usa los filtros para reducir el resultado o usa Exportar.
+    </td></tr>`;
+  }
 }
 
-// ── MODULE 3 ──────────────────────────────────────────────────
+// ── MODULE 3: Cuentas por Pagar Oracle (A3) ───────────────────
 function renderM3() {
-  const search = normalStr(document.getElementById('f3search').value);
-  const estado = document.getElementById('f3estado').value;
-  const today = new Date(); today.setHours(0,0,0,0);
+  const search  = normalStr(document.getElementById('f3search').value);
+  const estado  = document.getElementById('f3estado').value;
+  const year3   = document.getElementById('f3year')?.value  || '';
+  const month3  = document.getElementById('f3month')?.value || '';
 
-  let data = state.m3data.filter(r => {
-    if (estado && r.m3Status !== estado) return false;
-    if (search) { const hay = normalStr(r.inv+' '+r.prov+' '+r.po); if (!hay.includes(search)) return false; }
+  if (!state.df3cxp || !state.df3cxp.length) {
+    const tbody = document.getElementById('tbody3');
+    if (tbody) tbody.innerHTML = emptyRow(11);
+    return;
+  }
+
+  let data = state.df3cxp.filter(r => {
+    if (estado && r.estado !== estado)          return false;
+    if (year3  && r._yr  !== year3)             return false;
+    if (month3 && r._mo  !== month3)            return false;
+    if (search) {
+      const hay = normalStr(r.factura + ' ' + r.prov + ' ' + r.nit);
+      if (!hay.includes(search)) return false;
+    }
     return true;
   });
 
-  // Recalculate lateDaysCalc for each row
-  data.forEach(r => {
-    if (r.m3Status === 'pagado') {
-      r.lateDaysCalc = 0;
-    } else if (r.dueDate) {
-      const due = parseAnyDate(r.dueDate);
-      if (due) {
-        const diff = Math.floor((today - due) / 86400000);
-        r.lateDaysCalc = diff > 0 ? diff : 0;
-      } else {
-        r.lateDaysCalc = r.lateDays && r.lateDays > 0 ? r.lateDays : 0;
-      }
-    } else {
-      r.lateDaysCalc = 0;
-    }
-  });
-
-  const total = data.length;
-  const pagado = data.filter(r=>r.m3Status==='pagado').length;
-  const aprobado = data.filter(r=>r.m3Status==='aprobado').length;
-  const noFound = data.filter(r=>r.m3Status==='no_encontrado').length;
-  const mora = data.filter(r=>r.lateDaysCalc > 0).length;
-  const totalPagado = data.filter(r=>r.m3Status==='pagado').reduce((s,r)=>s+(r.cxpBruto||r.valSinIva||0),0);
+  const total     = data.length;
+  const pagado    = data.filter(r => r.estado === 'Pagado').length;
+  const aprobado  = data.filter(r => r.estado === 'Aprobado').length;
+  const cancelado = data.filter(r => r.estado === 'Cancelado').length;
+  const totalPagado   = data.filter(r=>r.estado==='Pagado').reduce((s,r)=>s+(r.valorBruto||0),0);
+  const valorAprobado = data.filter(r=>r.estado==='Aprobado').reduce((s,r)=>s+(r.valorBruto||0),0);
+  const valorPendiente= data.filter(r=>r.estado==='Aprobado').reduce((s,r)=>s+(r.saldoFact||r.valorBruto||0),0);
+  const totalBruto = totalPagado;
 
   document.getElementById('sum3').innerHTML = `
-    <div class="summary-card s-info"><div class="summary-label">Total</div><div class="summary-value">${total}</div></div>
-    <div class="summary-card s-success"><div class="summary-label">Pagadas</div><div class="summary-value">${pagado}</div><div class="summary-sub">${pct(pagado,total)}%</div></div>
-    <div class="summary-card s-warning"><div class="summary-label">Pend. Pago (Aprob.)</div><div class="summary-value">${aprobado}</div></div>
-    <div class="summary-card s-danger"><div class="summary-label">Sin Registro CxP</div><div class="summary-value">${noFound}</div></div>
-    <div class="summary-card s-warning"><div class="summary-label">En Mora</div><div class="summary-value">${mora}</div><div class="summary-sub">no pagadas vencidas</div></div>
-    <div class="summary-card s-success"><div class="summary-label">Total Pagado</div><div class="summary-value" style="font-size:14px">${fmtCurrency(totalPagado)}</div></div>
+    <div class="summary-card s-info"><div class="summary-label">Total Registros</div><div class="summary-value">${total.toLocaleString('es-CO')}</div></div>
+    <div class="summary-card s-success"><div class="summary-label">Pagados</div><div class="summary-value">${pagado.toLocaleString('es-CO')}</div><div class="summary-sub">${pct(pagado,total)}%</div></div>
+    <div class="summary-card s-warning"><div class="summary-label">Aprobados</div><div class="summary-value">${aprobado.toLocaleString('es-CO')}</div><div class="summary-sub">Pend. de pago</div></div>
+    <div class="summary-card s-danger"><div class="summary-label">Cancelados</div><div class="summary-value">${cancelado.toLocaleString('es-CO')}</div></div>
+    <div class="summary-card s-success"><div class="summary-label">💰 Total Pagado</div><div class="summary-value" style="font-size:13px">${fmtCurrency(totalBruto)}</div></div>
+    <div class="summary-card s-warning"><div class="summary-label">📋 Aprobado para Pagar</div><div class="summary-value" style="font-size:13px">${fmtCurrency(valorAprobado)}</div><div class="summary-sub">${aprobado} facturas</div></div>
+    <div class="summary-card s-danger"><div class="summary-label">⏳ Saldo Pendiente</div><div class="summary-value" style="font-size:13px">${fmtCurrency(valorPendiente)}</div><div class="summary-sub">Aprobadas por pagar</div></div>
   `;
-  document.getElementById('cnt3table').textContent = total + ' registros';
+  document.getElementById('cnt3table').textContent = total.toLocaleString('es-CO') + ' registros';
   const tbody = document.getElementById('tbody3');
   if (!data.length) { tbody.innerHTML = emptyRow(11); return; }
-  tbody.innerHTML = data.map(r => {
-    const badge = r.m3Status==='pagado' ? '<span class="badge badge-success">✅ Pagado</span>'
-      : r.m3Status==='aprobado' ? '<span class="badge badge-warning">⏳ Pend. Pago</span>'
-      : '<span class="badge badge-danger">❌ No en CxP</span>';
-    let moraBadge;
-    if (r.m3Status === 'pagado') {
-      moraBadge = '<span class="badge badge-success">Pagado</span>';
-    } else if (r.lateDaysCalc > 0) {
-      moraBadge = `<span class="badge badge-danger">${r.lateDaysCalc}d</span>`;
-    } else {
-      moraBadge = '<span class="badge badge-success">Al día</span>';
-    }
+
+  const slice = data.slice(0, 2000);
+  tbody.innerHTML = slice.map(r => {
+    const badge = r.estado === 'Pagado'
+      ? '<span class="badge badge-success">✅ Pagado</span>'
+      : r.estado === 'Aprobado'
+      ? '<span class="badge badge-warning">📊 Aprobado</span>'
+      : r.estado === 'Cancelado'
+      ? '<span class="badge badge-danger">🚫 Cancelado</span>'
+      : `<span class="badge badge-gray">${r.estado||'—'}</span>`;
     return `<tr>
-      <td>${badge}</td><td>${r.year||'—'}</td>
-      <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${r.prov||'—'}</td>
-      <td class="td-mono">${r.inv||'—'}</td><td class="td-mono">${r.po||'—'}</td>
-      <td class="currency">${fmtCurrency(r.valSinIva)}</td>
-      <td class="currency">${r.advance ? fmtCurrency(r.advance) : '—'}</td>
-      <td class="currency">${fmtCurrency(r.cxpBruto)}</td>
-      <td>${fmtDate(r.dueDate)}</td><td>${fmtDate(r.payDate)}</td>
-      <td style="text-align:center">${moraBadge}</td>
+      <td>${badge}</td>
+      <td>${r._yr||'—'}</td>
+      <td style="text-transform:capitalize">${r._mo||'—'}</td>
+      <td class="td-mono" style="font-size:11px">${r.nit}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov}">${r.prov}</td>
+      <td class="td-mono" style="font-size:11px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.factura}">${r.factura}</td>
+      <td class="currency">${fmtCurrency(r.valorBruto)}</td>
+      <td class="currency">${r.anticipos ? fmtCurrency(r.anticipos) : '—'}</td>
+      <td class="currency">${fmtCurrency(r.saldoFact)}</td>
+      <td style="font-size:11px">${r.fechaTrans !== '—' ? fmtDate(r.fechaTrans) : '—'}</td>
+      <td style="font-size:11px">${r.fechaContable !== '—' ? fmtDate(r.fechaContable) : '—'}</td>
     </tr>`;
   }).join('');
+  if (data.length > 2000) {
+    tbody.innerHTML += `<tr><td colspan="11" style="text-align:center;padding:12px;color:var(--col-muted);font-size:12px">
+      ⚠️ Mostrando 2.000 de ${data.length.toLocaleString('es-CO')} registros. Usa los filtros para reducir el resultado.
+    </td></tr>`;
+  }
 }
 
 // ── MODULE 4 ──────────────────────────────────────────────────
 function renderM4() {
   const search = normalStr(document.getElementById('f4search').value);
   const brecha = document.getElementById('f4brecha').value;
+  const year4 = document.getElementById('f4year')?.value || '';
+  const month4 = document.getElementById('f4month')?.value || '';
   let data = state.m4data.filter(r => {
     if (brecha && r.flujo !== brecha) return false;
+    if (year4 && String(r.year) !== String(year4)) return false;
+    if (month4 && normalStr(r.month) !== month4) return false;
     if (search) { const hay = normalStr(r.inv+' '+r.po+' '+r.prov); if (!hay.includes(search)) return false; }
     return true;
   });
@@ -3337,13 +3685,15 @@ function renderM5() {
   const totalFact = data.reduce((s,r)=>s+r.facturas,0);
   const totalFacV = data.reduce((s,r)=>s+r.facturado,0);
   const totalPagV = data.reduce((s,r)=>s+r.pagado,0);
+  const totalPendV = (state.df3cxp||[]).filter(r=>r.estado==='Aprobado').reduce((s,r)=>s+(r.valorBruto||0),0);
   const s5 = document.getElementById('sum5');
   if (s5) s5.innerHTML = `
     <div class="summary-card s-info"><div class="summary-label">Proveedores</div><div class="summary-value">${totalProv}</div></div>
     <div class="summary-card s-info"><div class="summary-label">Total Facturas</div><div class="summary-value">${totalFact}</div></div>
     <div class="summary-card s-accent"><div class="summary-label">Val. Facturado</div><div class="summary-value" style="font-size:14px">${fmtCurrency(totalFacV)}</div></div>
     <div class="summary-card s-success"><div class="summary-label">Val. Pagado</div><div class="summary-value" style="font-size:14px">${fmtCurrency(totalPagV)}</div></div>
-    <div class="summary-card s-warning"><div class="summary-label">% Pagado</div><div class="summary-value">${pct(totalPagV,totalFacV)}%</div></div>`;
+    <div class="summary-card s-warning"><div class="summary-label">% Pagado</div><div class="summary-value">${pct(totalPagV,totalFacV)}%</div></div>
+    <div class="summary-card s-danger"><div class="summary-label">⏳ Pendiente por Pagar</div><div class="summary-value" style="font-size:13px">${fmtCurrency(totalPendV)}</div><div class="summary-sub">Aprobadas en CxP</div></div>`;
 
   // Chart: top 12 providers stacked bar by period
   const provMap = {};
@@ -3809,7 +4159,7 @@ function renderCicloCard(r1, html) {
         <div class="ciclo-arrow">→</div>
         <div class="ciclo-step ${step2ok?'ok':'err'}">
           <div class="ciclo-icon">${step2ok?'✅':'❌'}</div>
-          <div class="ciclo-label">Contabilización</div>
+          <div class="ciclo-label">Recepciones</div>
           <div class="ciclo-value">${step2ok?'En CxP':'Sin CxP'}</div>
           <div class="ciclo-sub">${fmtCurrency(r3.cxpBruto||null)}</div>
         </div>
@@ -3909,6 +4259,53 @@ function exportTable(dataKey, filename) {
 // ═══════════════════════════════════════════════════════════════
 const auditLog = []; // { id, ts, type, user, files, snapshot, diff, label }
 
+function exportTableRaw(dataKey, filename) {
+  // Export from state.df2rec or state.df3cxp (flat filtered view)
+  let data;
+  if (dataKey === 'df2rec') {
+    const year2 = document.getElementById('f2year')?.value || '';
+    const month2 = document.getElementById('f2month')?.value || '';
+    const estado = document.getElementById('f2estado')?.value || '';
+    const search = normalStr(document.getElementById('f2search')?.value || '');
+    data = state.df2rec.filter(r => {
+      if (estado && r.estadoLinea !== estado) return false;
+      if (year2  && r._yr !== year2)          return false;
+      if (month2 && r._mo !== month2)         return false;
+      if (search) { const hay = normalStr(r.oc+' '+r.proveedor+' '+r.rec+' '+r.desc); if (!hay.includes(search)) return false; }
+      return true;
+    }).map(r => ({
+      'Estado Línea': r.estadoLinea, 'Fecha Recepción': r.fecha,
+      'N° Recepción': r.rec, 'OC / Nro. Documento': r.oc,
+      'Proveedor': r.proveedor, 'Descripción': r.desc, 'Organización': r.org,
+      'Valor Recepcionado': r.valRec, 'Valor Total OC': r.valTot,
+      'Comprador': r.comprador, 'Proyecto': r.proyecto, 'C. Costo': r.cc,
+    }));
+  } else if (dataKey === 'df3cxp') {
+    const year3 = document.getElementById('f3year')?.value || '';
+    const month3 = document.getElementById('f3month')?.value || '';
+    const estado = document.getElementById('f3estado')?.value || '';
+    const search = normalStr(document.getElementById('f3search')?.value || '');
+    data = state.df3cxp.filter(r => {
+      if (estado && r.estado !== estado) return false;
+      if (year3  && r._yr !== year3)     return false;
+      if (month3 && r._mo !== month3)    return false;
+      if (search) { const hay = normalStr(r.factura+' '+r.prov+' '+r.nit); if (!hay.includes(search)) return false; }
+      return true;
+    }).map(r => ({
+      'Estado': r.estado, 'Año': r._yr, 'Mes': r._mo,
+      'NIT': r.nit, 'Proveedor': r.prov, 'N° Factura': r.factura,
+      'Valor Bruto + IVA': r.valorBruto, 'Anticipos': r.anticipos,
+      'Saldo Factura': r.saldoFact, 'Fecha Transacción': r.fechaTrans,
+      'Fecha Contable': r.fechaContable,
+    }));
+  }
+  if (!data || !data.length) { alert('No hay datos para exportar.'); return; }
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(data);
+  XLSX.utils.book_append_sheet(wb, ws, 'Datos');
+  XLSX.writeFile(wb, filename + '_' + new Date().toISOString().slice(0,10) + '.xlsx');
+}
+
 function getSnapshot() {
   return {
     m1_total: state.m1data.length,
@@ -3938,7 +4335,7 @@ function diffSnapshots(prev, curr) {
     { key:'m1_sinRec', label:'M1 Sin recepción' },
     { key:'m1_parcial', label:'M1 Parciales' },
     { key:'m1_valTotal', label:'M1 Valor total', currency:true },
-    { key:'m2_total', label:'M2 Contabilizaciones' },
+    { key:'m2_total', label:'M2 Recepciones' },
     { key:'m2_pagado', label:'M2 Pagadas' },
     { key:'m2_aprobado', label:'M2 Aprobadas' },
     { key:'m3_total', label:'M3 Registros CxP' },
@@ -4030,7 +4427,7 @@ function renderAuditPanel() {
     // Files section
     let filesHtml = '';
     if (e.files && e.files.length) {
-      const slotNames = {1:'Compromisos',2:'Recepciones',3:'CxP Oracle'};
+      const slotNames = {1:'Facturas',2:'Recepciones',3:'CxP Oracle'};
       filesHtml = `<div style="font-size:10.5px;font-weight:700;color:var(--col-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Archivos en sesión</div>
         <div class="audit-files-list">${e.files.map(f=>`
           <div class="audit-file-tag">
@@ -4094,7 +4491,7 @@ function renderAuditPanel() {
       const im = e.importedMeta || {};
       const is = e.importedSnap || {};
       const diff = e.jsonDiff;
-      const slotNames = {1:'Compromisos',2:'Recepciones',3:'CxP Oracle'};
+      const slotNames = {1:'Facturas',2:'Recepciones',3:'CxP Oracle'};
 
       // Header: JSON file info
       importHtml += `<div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:12px 14px;margin-bottom:12px">
@@ -4277,7 +4674,7 @@ function importFlawFactJSON(input) {
         { key:'m1_sinRec',     label:'M1 Sin recepción', warnInc:true },
         { key:'m1_parcial',    label:'M1 Parciales' },
         { key:'m1_valTotal',   label:'M1 Valor total', currency:true },
-        { key:'m2_total',      label:'M2 Contabilizaciones' },
+        { key:'m2_total',      label:'M2 Recepciones' },
         { key:'m2_pagado',     label:'M2 Pagadas' },
         { key:'m3_total',      label:'M3 Registros CxP' },
         { key:'m3_pagado',     label:'M3 Pagadas' },
