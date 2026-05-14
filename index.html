@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FlowFact v1.0</title>
+<title>FlowFact v1.0 — Build 10</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -274,10 +274,10 @@
   .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
   .legend-val { margin-left: auto; font-weight: 700; font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
   .bar-chart-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 11.5px; }
-  .bar-chart-label { width: 110px; flex-shrink: 0; color: var(--col-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bar-chart-label { width: 160px; flex-shrink: 0; color: var(--col-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11.5px; }
   .bar-chart-track { flex: 1; height: 16px; background: #f1f5f9; border-radius: 8px; overflow: hidden; }
   .bar-chart-fill { height: 100%; border-radius: 8px; transition: width 0.5s ease; }
-  .bar-chart-val { width: 80px; text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+  .bar-chart-val { width: 130px; text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; flex-shrink: 0; }
 
   .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 18px; }
   .kpi-card {
@@ -444,6 +444,56 @@
   .pct-bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
   .pct-bar-label { font-size: 11px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; white-space: nowrap; }
 
+  /* ── BÚSQUEDA RÁPIDA ─────────────────────── */
+  .qs-hero {
+    background: linear-gradient(135deg, var(--col-primary) 0%, var(--col-secondary) 100%);
+    border-radius: 14px; padding: 28px 28px 22px; margin-bottom: 20px;
+    box-shadow: 0 4px 24px rgba(15,37,68,0.18);
+  }
+  .qs-hero-title { font-size: 17px; font-weight: 700; color: white; margin-bottom: 4px; }
+  .qs-hero-sub { font-size: 12px; color: rgba(255,255,255,0.55); margin-bottom: 18px; }
+  .qs-input-wrap { display: flex; gap: 10px; }
+  .qs-input {
+    flex: 1; padding: 13px 18px; border-radius: 10px;
+    background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.2);
+    color: white; font-size: 14px; font-family: 'IBM Plex Sans', sans-serif;
+    outline: none; transition: border 0.2s;
+  }
+  .qs-input::placeholder { color: rgba(255,255,255,0.4); }
+  .qs-input:focus { border-color: var(--col-accent); background: rgba(0,180,200,0.12); }
+  .qs-btn {
+    padding: 13px 24px; border-radius: 10px; background: var(--col-accent);
+    color: var(--col-primary); border: none; font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: opacity 0.18s; font-family: 'IBM Plex Sans', sans-serif;
+    white-space: nowrap;
+  }
+  .qs-btn:hover { opacity: 0.88; }
+  .qs-pills { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .qs-pill {
+    padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.7); cursor: pointer; transition: all 0.15s;
+  }
+  .qs-pill:hover, .qs-pill.active { background: var(--col-accent); color: var(--col-primary); border-color: var(--col-accent); }
+  .qs-result-area { min-height: 120px; }
+  .qs-no-data { text-align:center;padding:50px 20px;color:var(--col-muted); }
+  .qs-no-data .qs-icon { font-size:44px;margin-bottom:10px; }
+  /* Ciclo de factura */
+  .ciclo-wrap { display:flex;align-items:center;gap:0;margin:18px 0;overflow-x:auto;padding-bottom:6px; }
+  .ciclo-step {
+    display:flex;flex-direction:column;align-items:center;min-width:110px;
+    background:var(--col-surface);border:1px solid var(--col-border);
+    border-radius:10px;padding:14px 10px;position:relative;
+  }
+  .ciclo-step.ok { border-color:var(--col-success);background:#f0fdf7; }
+  .ciclo-step.warn { border-color:var(--col-warning);background:#fffbeb; }
+  .ciclo-step.err { border-color:var(--col-danger);background:#fef2f2; }
+  .ciclo-arrow { font-size:18px;color:var(--col-muted);flex-shrink:0;padding:0 4px; }
+  .ciclo-icon { font-size:22px;margin-bottom:6px; }
+  .ciclo-label { font-size:9px;font-weight:700;color:var(--col-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;text-align:center; }
+  .ciclo-value { font-size:11px;font-weight:600;color:var(--col-text);text-align:center; }
+  .ciclo-sub { font-size:9.5px;color:var(--col-muted);margin-top:2px;text-align:center; }
+
   /* ── VENCIMIENTO TABLE ──────────────────── */
   .venc-table { width: 100%; border-collapse: collapse; font-size: 12px; }
   .venc-table th { padding: 7px 10px; background: #f5f8fc; font-size: 10px; font-weight: 700; color: var(--col-muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--col-border); }
@@ -489,7 +539,7 @@
   <div class="subwin" style="max-width:600px">
     <div class="subwin-header">
       <span style="font-size:16px">⌨️</span>
-      <span class="subwin-title">Activación de Módulos — FlowFact v1.0</span>
+      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · FlowFact v1.0</span>
       <button class="subwin-close" onclick="closeSubwin('sw-ctrlm')">✕</button>
     </div>
     <div class="subwin-body" id="sw-ctrlm-body" style="padding:24px">
@@ -501,7 +551,7 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" id="ctrlm-modules">
       </div>
       <div style="margin-top:20px;padding:12px 16px;background:#f8fafc;border-radius:8px;font-size:11px;color:var(--col-muted);text-align:center">
-        Acceso completo habilitado tras autenticación · Datos procesados: <strong id="ctrlm-records">0</strong> registros
+        Todos los módulos están activos por defecto · Usa este panel para ocultar/mostrar · Datos procesados: <strong id="ctrlm-records">0</strong> registros
       </div>
     </div>
   </div>
@@ -574,32 +624,37 @@
 
     <div class="sidebar-section">
       <div class="sidebar-label">Módulos</div>
+      <div class="nav-item" data-tab="busqueda" onclick="switchTab('busqueda')">
+        <span class="nav-icon">🔎</span>
+        <span class="nav-label">Búsqueda Rápida<span class="nav-sub">Factura · OC · Proveedor</span></span>
+        <span class="nav-badge" style="background:var(--col-accent);color:var(--col-primary)">NEW</span>
+      </div>
       <div class="nav-item" data-tab="modulo0" onclick="switchTab('modulo0')">
         <span class="nav-icon">📊</span>
         <span class="nav-label">Módulo 0<span class="nav-sub">Vista Gerencial</span></span>
         <span class="nav-badge" id="cnt0">—</span>
       </div>
-      <div class="nav-item" data-tab="modulo1" id="nav-modulo1" onclick="switchTab('modulo1')" style="display:none">
+      <div class="nav-item" data-tab="modulo1" id="nav-modulo1" onclick="switchTab('modulo1')">
         <span class="nav-icon">📋</span>
         <span class="nav-label">Módulo 1<span class="nav-sub">Actas & Recepciones</span></span>
         <span class="nav-badge" id="cnt1">0</span>
       </div>
-      <div class="nav-item" data-tab="modulo2" id="nav-modulo2" onclick="switchTab('modulo2')" style="display:none">
+      <div class="nav-item" data-tab="modulo2" id="nav-modulo2" onclick="switchTab('modulo2')">
         <span class="nav-icon">🔄</span>
         <span class="nav-label">Módulo 2<span class="nav-sub">Contabilización</span></span>
         <span class="nav-badge" id="cnt2">0</span>
       </div>
-      <div class="nav-item" data-tab="modulo3" id="nav-modulo3" onclick="switchTab('modulo3')" style="display:none">
+      <div class="nav-item" data-tab="modulo3" id="nav-modulo3" onclick="switchTab('modulo3')">
         <span class="nav-icon">💰</span>
         <span class="nav-label">Módulo 3<span class="nav-sub">Pagos</span></span>
         <span class="nav-badge" id="cnt3">0</span>
       </div>
-      <div class="nav-item" data-tab="modulo4" id="nav-modulo4" onclick="switchTab('modulo4')" style="display:none">
+      <div class="nav-item" data-tab="modulo4" id="nav-modulo4" onclick="switchTab('modulo4')">
         <span class="nav-icon">🔍</span>
         <span class="nav-label">Módulo 4<span class="nav-sub">Análisis Brechas</span></span>
         <span class="nav-badge" id="cnt4">0</span>
       </div>
-      <div class="nav-item" data-tab="modulo5" id="nav-modulo5" onclick="switchTab('modulo5')" style="display:none">
+      <div class="nav-item" data-tab="modulo5" id="nav-modulo5" onclick="switchTab('modulo5')">
         <span class="nav-icon">📈</span>
         <span class="nav-label">Módulo 5<span class="nav-sub">Análisis Proveedor</span></span>
         <span class="nav-badge" id="cnt5">0</span>
@@ -666,6 +721,32 @@
       </div>
     </div>
 
+    <!-- ═══ PANEL: BÚSQUEDA RÁPIDA ══════════════════════════ -->
+    <div class="panel" id="panel-busqueda">
+      <div class="section-title">🔎 Búsqueda Rápida — Factura · OC · Proveedor</div>
+      <div class="qs-hero">
+        <div class="qs-hero-title">Búsqueda inteligente de documentos</div>
+        <div class="qs-hero-sub">Busca por número de factura, orden de compra o nombre de proveedor para ver su ciclo completo e historial.</div>
+        <div class="qs-input-wrap">
+          <input class="qs-input" id="qsInput" placeholder="Ej: FESR786 · AMM_OC_15188 · SRK CONSULTING..." onkeydown="if(event.key==='Enter')doQuickSearch()" oninput="liveQuickSearch(this.value)" autocomplete="off">
+          <button class="qs-btn" onclick="doQuickSearch()">🔍 Buscar</button>
+        </div>
+        <div class="qs-pills">
+          <span class="qs-pill" id="qsFilterAll" onclick="setQsFilter('all')">📋 Todo</span>
+          <span class="qs-pill" id="qsFilterFact" onclick="setQsFilter('factura')">🧾 Solo Facturas</span>
+          <span class="qs-pill" id="qsFilterOC" onclick="setQsFilter('oc')">📦 Solo OC</span>
+          <span class="qs-pill" id="qsFilterProv" onclick="setQsFilter('proveedor')">🏢 Solo Proveedores</span>
+        </div>
+      </div>
+      <div class="qs-result-area" id="qsResults">
+        <div class="qs-no-data">
+          <div class="qs-icon">🔍</div>
+          <div style="font-size:14px;font-weight:600;color:var(--col-primary);margin-bottom:6px">Ingrese un término de búsqueda</div>
+          <div style="font-size:12px">Puede buscar por número de factura, OC o nombre de proveedor</div>
+        </div>
+      </div>
+    </div>
+
     <!-- ═══ PANEL: MÓDULO 0 — GERENCIAL ═══════════════════ -->
     <div class="panel" id="panel-modulo0">
       <div class="section-title" style="justify-content:space-between">
@@ -705,22 +786,22 @@
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:20px" id="pctPanel"></div>
 
       <!-- ── ANÁLISIS TRIMESTRAL ── -->
-      <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-card" style="margin-bottom:16px;padding:14px 16px">
         <div class="chart-card-title">📊 Comportamiento Trimestral — Valor Facturado vs Pagado</div>
-        <div id="chart-trimestral"><div style="color:var(--col-muted);font-size:12px;padding:20px 0">Cargue y procese archivos para ver el análisis trimestral.</div></div>
+        <div id="chart-trimestral" style="max-height:280px;overflow:hidden"><div style="color:var(--col-muted);font-size:12px;padding:20px 0">Cargue y procese archivos para ver el análisis trimestral.</div></div>
       </div>
 
       <!-- ── DIAGRAMA DE PARETO ── -->
-      <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-card" style="margin-bottom:16px;padding:14px 16px">
         <div class="chart-card-title">📉 Diagrama de Pareto — Proveedores Críticos por Valor</div>
-        <div id="chart-pareto"><div style="color:var(--col-muted);font-size:12px;padding:20px 0">Sin datos.</div></div>
+        <div id="chart-pareto" style="max-height:320px;overflow:hidden"><div style="color:var(--col-muted);font-size:12px;padding:20px 0">Sin datos.</div></div>
       </div>
 
       <!-- ── TENDENCIA ── -->
-      <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-card" style="margin-bottom:16px;padding:14px 16px">
         <div class="chart-card-title">📈 Tendencia y Pronóstico — ¿Voy al día o me sigo retrasando?</div>
-        <div style="font-size:11px;color:var(--col-muted);margin-bottom:10px">Muestra si el ritmo de pagos mejora, empeora o se mantiene. La línea roja es la tendencia real; si baja → te estás atrasando más. El pronóstico azul punteado proyecta los próximos 3 meses.</div>
-        <div id="chart-tendencia"><div style="color:var(--col-muted);font-size:12px;padding:20px 0">Sin datos.</div></div>
+        <div style="font-size:11px;color:var(--col-muted);margin-bottom:8px">Muestra si el ritmo de pagos mejora, empeora o se mantiene. La línea roja es la tendencia real; si baja → te estás atrasando más. El pronóstico azul punteado proyecta los próximos 3 meses.</div>
+        <div id="chart-tendencia" style="max-height:300px;overflow:hidden"><div style="color:var(--col-muted);font-size:12px;padding:20px 0">Sin datos.</div></div>
       </div>
 
       <!-- ── CHARTS SECTION ── -->
@@ -954,9 +1035,9 @@
       <div class="summary-grid" id="sum5"></div>
 
       <!-- Gráfica principal de proveedor -->
-      <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-card" style="margin-bottom:16px;padding:14px 16px">
         <div class="chart-card-title" id="m5-chart-title">📊 Facturación por Proveedor — Período seleccionado</div>
-        <div id="m5-chart-prov" style="overflow-x:auto"><div style="color:var(--col-muted);font-size:12px;padding:20px 0">Cargue y procese archivos para ver el análisis.</div></div>
+        <div id="m5-chart-prov" style="overflow-x:auto;max-height:300px"><div style="color:var(--col-muted);font-size:12px;padding:20px 0">Cargue y procese archivos para ver el análisis.</div></div>
       </div>
 
       <!-- Comparativo período anterior -->
@@ -982,7 +1063,8 @@
             <thead><tr>
               <th>Proveedor</th><th>Período</th><th>Facturas</th>
               <th class="currency">Val. Facturado</th><th class="currency">Val. Pagado</th>
-              <th class="currency">Val. Pendiente</th><th>Pagadas</th><th>En Mora</th>
+              <th class="currency">Val. Pendiente</th><th>Pagadas</th>
+              <th title="Facturas no pagadas cuya fecha de vencimiento ya pasó — ordenadas de mayor a menor">En Mora ↓</th>
               <th>Var. vs Anterior</th>
             </tr></thead>
             <tbody id="tbody5"></tbody>
@@ -1013,8 +1095,8 @@ const USERS = {
 };
 let currentUser = null;
 
-// Tracks which modules user has activated via Ctrl+M
-const activatedModules = new Set(['modulo0']);
+// Tracks which modules user has activated via Ctrl+M (all active by default)
+const activatedModules = new Set(['modulo0','modulo1','modulo2','modulo3','modulo4','modulo5','busqueda']);
 
 function doLogin() {
   const u = (document.getElementById('loginUser').value || '').trim().toUpperCase();
@@ -1195,7 +1277,7 @@ function renderTrimestral() {
   if (!quarters.length) { el.innerHTML='<div style="color:var(--col-muted);font-size:12px;padding:20px 0">Sin datos trimestrales suficientes.</div>'; return; }
 
   const maxVal = Math.max(1, ...quarters.map(q=>q.facturado));
-  const svgH = 280, svgW = 900;
+  const svgH = 240, svgW = 860;
   const chartW = svgW - 90, chartH = svgH - 60;
   const barGroup = chartW / quarters.length;
   const barW = Math.min(70, barGroup * 0.35);
@@ -1205,7 +1287,7 @@ function renderTrimestral() {
     const yg = 20 + chartH - i*(chartH/4);
     const vg = maxVal*i/4;
     guides += `<line x1="70" y1="${yg}" x2="${svgW-10}" y2="${yg}" stroke="#e2e8f0" stroke-width="1"/>`;
-    const lbl = vg>1e9?(vg/1e9).toFixed(1)+'B':vg>1e6?(vg/1e6).toFixed(0)+'M':vg>1e3?(vg/1e3).toFixed(0)+'K':vg.toFixed(0);
+    const lbl = vg>=1e9?(vg/1e9).toFixed(2).replace('.',',')+'MM':vg>1e6?(vg/1e6).toFixed(0)+'M':vg>1e3?(vg/1e3).toFixed(0)+'K':vg.toFixed(0);
     guides += `<text x="65" y="${yg+4}" text-anchor="end" font-size="10" fill="#94a3b8">${lbl}</text>`;
   }
 
@@ -1255,7 +1337,7 @@ function renderPareto() {
 
   const totalAll = items.reduce((s,[,v])=>s+v,0);
   let cumPct = 0;
-  const svgH = 300, svgW = 900;
+  const svgH = 260, svgW = 860;
   const chartW = svgW - 90, chartH = svgH - 80;
   const barW = Math.floor(chartW / items.length) - 6;
   const maxV = items[0][1];
@@ -1266,7 +1348,7 @@ function renderPareto() {
     const yg = 20 + chartH - i*(chartH/4);
     const vg = maxV*i/4;
     guides += `<line x1="70" y1="${yg}" x2="${svgW-10}" y2="${yg}" stroke="#e2e8f0" stroke-width="1"/>`;
-    const lbl = vg>1e9?(vg/1e9).toFixed(1)+'B':vg>1e6?(vg/1e6).toFixed(0)+'M':vg>1e3?(vg/1e3).toFixed(0)+'K':vg.toFixed(0);
+    const lbl = vg>=1e9?(vg/1e9).toFixed(2).replace('.',',')+'MM':vg>1e6?(vg/1e6).toFixed(0)+'M':vg>1e3?(vg/1e3).toFixed(0)+'K':vg.toFixed(0);
     guides += `<text x="65" y="${yg+4}" text-anchor="end" font-size="10" fill="#94a3b8">${lbl}</text>`;
   }
 
@@ -1360,7 +1442,7 @@ function renderTendencia() {
   const allRatios = [...ratios, ...forecastRatios];
   const maxR = Math.max(1.1, ...allRatios)*1.05;
 
-  const svgH=260, svgW=900, chartH=svgH-60, chartW=svgW-90;
+  const svgH=220, svgW=860, chartH=svgH-60, chartW=svgW-90;
   const xStep = chartW/(allLabels.length-1);
   let realPts=[], forecastPts=[], guides='', xlabs='', dots='', fDots='';
 
@@ -1575,6 +1657,7 @@ function openCtrlMPanel() {
   document.getElementById('ctrlm-records').textContent = totalRec;
 
   const modules = [
+    { id:'busqueda', icon:'🔎', title:'Búsqueda Rápida', sub:'Factura · OC · Proveedor', alwaysOn:true, cnt: (state.m1data?.length||0)+(state.m3data?.length||0) },
     { id:'modulo0', icon:'📊', title:'Módulo 0', sub:'Vista Gerencial Ejecutiva', alwaysOn:true, cnt: state.m3data?.length||0 },
     { id:'modulo1', icon:'📋', title:'Módulo 1', sub:'Actas & Recepciones Oracle', alwaysOn:false, cnt: m1len },
     { id:'modulo2', icon:'🔄', title:'Módulo 2', sub:'Contabilización de Facturas', alwaysOn:false, cnt: m2len },
@@ -1585,9 +1668,9 @@ function openCtrlMPanel() {
 
   document.getElementById('ctrlm-modules').innerHTML = modules.map(m => {
     const isActive = activatedModules.has(m.id);
-    const bg = m.alwaysOn ? '#f0f9ff' : isActive ? '#f0fdf7' : '#f8fafc';
-    const border = m.alwaysOn ? '#bae6fd' : isActive ? '#86efac' : '#e2e8f0';
-    const statusIcon = m.alwaysOn ? '🔒' : isActive ? '✅' : '⭕';
+    const bg = m.alwaysOn ? '#f0f9ff' : isActive ? '#f0fdf7' : '#fef2f2';
+    const border = m.alwaysOn ? '#bae6fd' : isActive ? '#86efac' : '#fca5a5';
+    const statusIcon = m.alwaysOn ? '🔒' : isActive ? '✅' : '🚫';
     const cntBadge = m.cnt > 0 ? `<div style="font-size:10px;color:#059669;font-weight:700;margin-bottom:8px">📊 ${m.cnt} registros</div>` : '';
     let buttons = '';
     if (m.alwaysOn) {
@@ -1595,10 +1678,10 @@ function openCtrlMPanel() {
     } else if (isActive) {
       buttons = `<div style="display:flex;gap:6px">
         <button onclick="closeSubwin('sw-ctrlm');switchTab('${m.id}')" style="flex:1;padding:7px;border-radius:7px;border:none;background:#059669;color:white;font-size:11px;font-weight:700;cursor:pointer">→ Abrir</button>
-        <button onclick="toggleModuleActivation('${m.id}',false)" style="padding:7px 10px;border-radius:7px;border:1.5px solid #dc2626;background:white;color:#dc2626;font-size:11px;cursor:pointer">✕</button>
+        <button onclick="toggleModuleActivation('${m.id}',false)" style="padding:7px 10px;border-radius:7px;border:1.5px solid #dc2626;background:white;color:#dc2626;font-size:11px;cursor:pointer" title="Ocultar módulo">🚫 Ocultar</button>
       </div>`;
     } else {
-      buttons = `<button onclick="toggleModuleActivation('${m.id}',false)" style="width:100%;padding:7px;border-radius:7px;border:none;background:#1a4a8a;color:white;font-size:11px;font-weight:700;cursor:pointer">+ Activar</button>`;
+      buttons = `<button onclick="toggleModuleActivation('${m.id}',false)" style="width:100%;padding:7px;border-radius:7px;border:1.5px solid #059669;background:white;color:#059669;font-size:11px;font-weight:700;cursor:pointer">+ Mostrar</button>`;
     }
     return `<div style="background:${bg};border:2px solid ${border};border-radius:12px;padding:14px;transition:all 0.2s">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
@@ -2721,13 +2804,13 @@ function renderM0() {
   const maxProv = Math.max(1, topProvs[0]?.[1].val || 1);
   document.getElementById('prov-chart').innerHTML = topProvs.map(([name, data]) => {
     const w = Math.round(data.val / maxProv * 100);
-    const shortName = name.length > 30 ? name.substring(0, 28) + '…' : name;
+    const shortName = name.length > 38 ? name.substring(0, 36) + '…' : name;
     return `<div class="bar-chart-row">
-      <div class="bar-chart-label" title="${name}">${shortName}</div>
+      <div class="bar-chart-label" title="${name}" style="width:200px">${shortName}</div>
       <div class="bar-chart-track">
         <div class="bar-chart-fill" style="width:${w}%;background:linear-gradient(90deg,#1a4a8a,#00b4c8)"></div>
       </div>
-      <div class="bar-chart-val">${fmtCurrency(data.val)}</div>
+      <div class="bar-chart-val" style="width:145px">${fmtCurrency(data.val)}</div>
     </div>`;
   }).join('');
 
@@ -3162,7 +3245,7 @@ function renderM5() {
   });
   const topProvs = Object.entries(provMap).sort((a,b)=>b[1].facturado-a[1].facturado).slice(0,12);
   const maxV = Math.max(1,...topProvs.map(([,v])=>v.facturado));
-  const svgH=320, svgW=900, chartH=svgH-80, chartW=svgW-90;
+  const svgH=240, svgW=780, chartH=svgH-80, chartW=svgW-90;
   const barGroup = chartW/topProvs.length;
   const barW = Math.min(55, barGroup*0.6);
   let bars='', guides='', xlabs='';
@@ -3170,7 +3253,7 @@ function renderM5() {
     const yg=20+chartH-i*(chartH/4);
     const vg=maxV*i/4;
     guides+=`<line x1="70" y1="${yg}" x2="${svgW-10}" y2="${yg}" stroke="#e2e8f0" stroke-width="1"/>`;
-    const lbl=vg>1e9?(vg/1e9).toFixed(1)+'B':vg>1e6?(vg/1e6).toFixed(0)+'M':vg>1e3?(vg/1e3).toFixed(0)+'K':vg.toFixed(0);
+    const lbl=vg>=1e9?(vg/1e9).toFixed(2).replace('.',',')+'MM':vg>1e6?(vg/1e6).toFixed(0)+'M':vg>1e3?(vg/1e3).toFixed(0)+'K':vg.toFixed(0);
     guides+=`<text x="65" y="${yg+4}" text-anchor="end" font-size="10" fill="#94a3b8">${lbl}</text>`;
   }
   topProvs.forEach(([name,vals],i)=>{
@@ -3257,6 +3340,9 @@ function renderM5() {
       </div>`;}).join('');
   }
 
+  // Sort: most mora first, then highest value
+  data.sort((a,b) => (b.mora - a.mora) || (b.facturado - a.facturado));
+
   // Table
   document.getElementById('cnt5table').textContent = data.length + ' registros';
   const tbody5 = document.getElementById('tbody5');
@@ -3272,7 +3358,9 @@ function renderM5() {
     const prev = getPrev(r.prov, r.period);
     const varPct = prev && prev.facturado>0 ? ((r.facturado-prev.facturado)/prev.facturado*100).toFixed(1) : null;
     const varBadge = varPct===null?'—':+varPct>=0?`<span class="badge badge-success">▲ ${varPct}%</span>`:`<span class="badge badge-danger">▼ ${Math.abs(varPct)}%</span>`;
-    const moraBadge = r.mora>0?`<span class="badge badge-danger">${r.mora}</span>`:'<span class="badge badge-success">0</span>';
+    const moraBadge = r.mora>0
+      ? `<span class="badge badge-danger" title="${r.mora} factura(s) con días vencidos sin pagar">⚠️ ${r.mora} venc.</span>`
+      : '<span class="badge badge-success">✅ Al día</span>';
     const pagPct = r.facturado>0?Math.round(r.pagado/r.facturado*100):0;
     return `<tr>
       <td style="font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;color:var(--col-secondary)" title="${r.prov}" onclick="openProviderDetail('${r.prov.replace(/'/g,"\\'")}')">${r.prov}</td>
@@ -3410,6 +3498,7 @@ function switchTab(name) {
   document.querySelectorAll('.nav-item').forEach(t => t.classList.toggle('active', t.dataset.tab===name));
   document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id==='panel-'+name));
   if (state.processed) {
+    if (name==='busqueda') { /* quick search — no auto render needed */ }
     if (name==='modulo0') { try { renderM0(); } catch(e) { console.warn(e); } }
     if (name==='modulo1') { try { renderM1(); } catch(e) { console.warn(e); } }
     if (name==='modulo2') { try { renderM2(); } catch(e) { console.warn(e); } }
@@ -3426,6 +3515,221 @@ function showToast(msg, type='info') {
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(() => { t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 2500);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BÚSQUEDA RÁPIDA — Quick Search Module
+// ═══════════════════════════════════════════════════════════════
+let qsFilter = 'all';
+
+function setQsFilter(f) {
+  qsFilter = f;
+  ['All','Fact','OC','Prov'].forEach(k => {
+    const el = document.getElementById('qsFilter'+k);
+    if (el) el.classList.remove('active');
+  });
+  const map = { all:'All', factura:'Fact', oc:'OC', proveedor:'Prov' };
+  const el = document.getElementById('qsFilter' + map[f]);
+  if (el) el.classList.add('active');
+  doQuickSearch();
+}
+
+function liveQuickSearch(val) {
+  if (val.trim().length >= 2) doQuickSearch();
+  else if (!val.trim()) {
+    document.getElementById('qsResults').innerHTML = `<div class="qs-no-data"><div class="qs-icon">🔍</div><div style="font-size:14px;font-weight:600;color:var(--col-primary);margin-bottom:6px">Ingrese un término de búsqueda</div><div style="font-size:12px">Puede buscar por número de factura, OC o nombre de proveedor</div></div>`;
+  }
+}
+
+function doQuickSearch() {
+  if (!state.processed) {
+    document.getElementById('qsResults').innerHTML = `<div class="alert alert-warning">⚠️ Cargue y procese los archivos primero para poder realizar búsquedas.</div>`;
+    return;
+  }
+  const raw = (document.getElementById('qsInput').value || '').trim();
+  if (!raw) return;
+  const term = normalStr(raw);
+
+  // Always search across ALL fields — filter controls which SECTION to show results
+  const matchedInvRows = [];
+  const matchedOCRows = [];
+  const matchedProvNames = new Set();
+
+  state.m1data.forEach(r => {
+    const invN = normalStr(r.inv||''), poN = normalStr(r.po||''), provN = normalStr(r.prov||'');
+    if (invN && invN.includes(term)) matchedInvRows.push(r);
+    else if (poN && poN.includes(term)) matchedOCRows.push(r);
+    if (provN && provN.includes(term)) matchedProvNames.add(r.prov);
+  });
+
+  // Deduplicate invoice rows (same invoice from different OC match paths)
+  const seenInv = new Set();
+  const cycleRowsFact = matchedInvRows.filter(r => { if(seenInv.has(r.inv)) return false; seenInv.add(r.inv); return true; }).slice(0, 20);
+  const seenOC = new Set();
+  const cycleRowsOC = matchedOCRows.filter(r => { if(seenOC.has(r.po)) return false; seenOC.add(r.po); return true; }).slice(0, 20);
+  const uniqueProvs = [...matchedProvNames].slice(0, 8);
+
+  const html = [];
+
+  // Determine what sections to show based on filter
+  const showFact = (qsFilter === 'all' || qsFilter === 'factura');
+  const showOC   = (qsFilter === 'all' || qsFilter === 'oc');
+  const showProv = (qsFilter === 'all' || qsFilter === 'proveedor');
+
+  // If filter is 'factura' but term matches a provider name, show provider section anyway
+  const forceShowProv = uniqueProvs.length > 0 && cycleRowsFact.length === 0 && cycleRowsOC.length === 0;
+
+  // --- Invoice matches ---
+  if (showFact && cycleRowsFact.length > 0) {
+    html.push(`<div class="section-title" style="font-size:14px;margin-bottom:14px">🧾 Facturas encontradas — ${cycleRowsFact.length} resultado(s)</div>`);
+    cycleRowsFact.forEach(r1 => renderCicloCard(r1, html));
+  }
+
+  // --- OC matches ---
+  if (showOC && cycleRowsOC.length > 0) {
+    html.push(`<div class="section-title" style="font-size:14px;margin-bottom:14px;${html.length?'margin-top:24px':''}">📦 Órdenes de Compra encontradas — ${cycleRowsOC.length} resultado(s)</div>`);
+    cycleRowsOC.forEach(r1 => renderCicloCard(r1, html));
+  }
+
+  // --- Provider matches ---
+  if ((showProv || forceShowProv) && uniqueProvs.length > 0) {
+    html.push(`<div class="section-title" style="font-size:14px;margin-bottom:14px;${html.length?'margin-top:24px':''}">🏢 Proveedores encontrados — ${uniqueProvs.length} resultado(s)</div>`);
+    uniqueProvs.forEach(provName => renderProvCard(provName, html));
+  }
+
+  if (!html.length) {
+    document.getElementById('qsResults').innerHTML = `<div class="qs-no-data"><div class="qs-icon">🔎</div><div style="font-size:14px;font-weight:600;color:var(--col-primary);margin-bottom:6px">Sin resultados para "<em>${raw}</em>"</div><div style="font-size:12px">Verifique el término o intente con otro número/nombre</div></div>`;
+  } else {
+    document.getElementById('qsResults').innerHTML = html.join('');
+  }
+}
+
+function renderCicloCard(r1, html) {
+  const r3 = state.m3data.find(r => r.inv === r1.inv) || {};
+  const r4 = state.m4data.find(r => r.inv === r1.inv) || {};
+  const lateDays = r3.lateDaysCalc || 0;
+  const step1ok = r1.recStatus === 'recepcionado';
+  const step1warn = r1.recStatus === 'parcial';
+  const step2ok = r3.m3Status !== 'no_encontrado' && r3.m3Status !== undefined;
+  const step3ok = r3.m3Status === 'pagado';
+  const step3warn = r3.m3Status === 'aprobado';
+  const pagPct = r1.valSinIva>0 ? Math.round((r3.cxpBruto||r1.valSinIva||0)/r1.valSinIva*100) : 0;
+
+  html.push(`
+    <div style="background:var(--col-surface);border-radius:12px;border:1px solid var(--col-border);padding:18px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+        <div style="font-size:14px;font-weight:700;color:var(--col-primary)">${r1.prov||'—'}</div>
+        <span class="badge badge-gray" style="font-family:'IBM Plex Mono',monospace">${r1.inv||'—'}</span>
+        <span class="badge badge-gray" style="font-family:'IBM Plex Mono',monospace">OC: ${r1.po||'—'}</span>
+        <span class="badge ${step3ok?'badge-success':lateDays>0?'badge-danger':'badge-warning'}">${step3ok?'✅ Pagado':lateDays>0?'⚠️ En mora '+lateDays+'d':'⏳ Pendiente'}</span>
+        <button class="btn btn-sm btn-outline" onclick="openProviderDetail('${(r1.prov||'').replace(/'/g,"\\'")}')">👤 Ver proveedor</button>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+        <div style="flex:1;min-width:120px;background:#f8fafc;border-radius:8px;padding:10px 12px">
+          <div style="font-size:9.5px;color:#5c6f8a;font-weight:700;text-transform:uppercase">Valor sin IVA</div>
+          <div style="font-size:15px;font-weight:700;color:#0f2544;font-family:'IBM Plex Mono',monospace">${fmtCurrency(r1.valSinIva)}</div>
+        </div>
+        <div style="flex:1;min-width:120px;background:#f8fafc;border-radius:8px;padding:10px 12px">
+          <div style="font-size:9.5px;color:#5c6f8a;font-weight:700;text-transform:uppercase">Val. Pagado (CxP)</div>
+          <div style="font-size:15px;font-weight:700;color:#059669;font-family:'IBM Plex Mono',monospace">${fmtCurrency(r3.cxpBruto||null)}</div>
+        </div>
+        <div style="flex:1;min-width:100px;background:#f8fafc;border-radius:8px;padding:10px 12px">
+          <div style="font-size:9.5px;color:#5c6f8a;font-weight:700;text-transform:uppercase">% Pagado</div>
+          <div style="font-size:15px;font-weight:700;color:${pagPct>=80?'#059669':pagPct>=50?'#d97706':'#dc2626'};font-family:'IBM Plex Mono',monospace">${pagPct}%</div>
+        </div>
+        <div style="flex:1;min-width:100px;background:#f8fafc;border-radius:8px;padding:10px 12px">
+          <div style="font-size:9.5px;color:#5c6f8a;font-weight:700;text-transform:uppercase">Vencimiento</div>
+          <div style="font-size:13px;font-weight:600;color:#0f2544">${fmtDate(r3.dueDate||r1.dueDate)}</div>
+        </div>
+      </div>
+      <div style="font-size:10px;font-weight:700;color:#5c6f8a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">⚡ Ciclo del documento</div>
+      <div class="ciclo-wrap">
+        <div class="ciclo-step ${step1ok?'ok':step1warn?'warn':'err'}">
+          <div class="ciclo-icon">${step1ok?'✅':step1warn?'⚠️':'❌'}</div>
+          <div class="ciclo-label">Recepción</div>
+          <div class="ciclo-value">${step1ok?'Oracle OK':step1warn?'Parcial':'Sin Rec.'}</div>
+          <div class="ciclo-sub">${fmtCurrency(r1.totalRec||null)}</div>
+        </div>
+        <div class="ciclo-arrow">→</div>
+        <div class="ciclo-step ${step2ok?'ok':'err'}">
+          <div class="ciclo-icon">${step2ok?'✅':'❌'}</div>
+          <div class="ciclo-label">Contabilización</div>
+          <div class="ciclo-value">${step2ok?'En CxP':'Sin CxP'}</div>
+          <div class="ciclo-sub">${fmtCurrency(r3.cxpBruto||null)}</div>
+        </div>
+        <div class="ciclo-arrow">→</div>
+        <div class="ciclo-step ${step3ok?'ok':step3warn?'warn':'err'}">
+          <div class="ciclo-icon">${step3ok?'💸':step3warn?'⏳':'❌'}</div>
+          <div class="ciclo-label">Pago</div>
+          <div class="ciclo-value">${step3ok?'Pagado':step3warn?'Aprobado':'Sin pago'}</div>
+          <div class="ciclo-sub">${fmtDate(r3.payDate)}</div>
+        </div>
+        ${lateDays>0?`<div class="ciclo-arrow">→</div><div class="ciclo-step err"><div class="ciclo-icon">🔴</div><div class="ciclo-label">Mora</div><div class="ciclo-value">${lateDays} días</div><div class="ciclo-sub">vencido</div></div>`:''}
+      </div>
+      ${r4.brechas&&r4.brechas.length?`<div style="background:#fef2f2;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:12px;color:#dc2626"><strong>⚠️ Brechas detectadas:</strong> ${r4.brechas.join(' · ')}</div>`:''}
+    </div>`);
+}
+
+function renderProvCard(provName, html) {
+  const d1p = state.m1data.filter(r=>r.prov===provName);
+  const d3p = state.m3data.filter(r=>r.prov===provName);
+  const totalVal = d1p.reduce((s,r)=>s+(r.valSinIva||0),0);
+  const totalPag = d3p.filter(r=>r.m3Status==='pagado').reduce((s,r)=>s+(r.cxpBruto||r.valSinIva||0),0);
+  const mora = d3p.filter(r=>(r.lateDaysCalc||0)>0).length;
+  const pagPct = totalVal>0?Math.round(totalPag/totalVal*100):0;
+  // Monthly billing chart
+  const mMap = {};
+  d1p.forEach(r=>{ const my=getMonthYear(r); if(!my)return; const k=`${my.y}-${String(my.m).padStart(2,'0')}`; if(!mMap[k])mMap[k]={f:0,p:0}; mMap[k].f+=(r.valSinIva||0); });
+  d3p.forEach(r=>{ const my=getMonthYear(r); if(!my)return; const k=`${my.y}-${String(my.m).padStart(2,'0')}`; if(!mMap[k])mMap[k]={f:0,p:0}; if(r.m3Status==='pagado') mMap[k].p+=(r.cxpBruto||r.valSinIva||0); });
+  const mKeys = Object.keys(mMap).sort();
+  const maxMV = Math.max(1,...mKeys.map(k=>mMap[k].f));
+  const mBars = mKeys.map(k=>{
+    const hf=Math.round(mMap[k].f/maxMV*80), hp=Math.round(mMap[k].p/maxMV*80);
+    return `<div style="display:flex;flex-direction:column;align-items:center;gap:3px;min-width:44px">
+      <div style="font-size:8px;color:#5c6f8a">${k.slice(2)}</div>
+      <div style="display:flex;gap:1px;align-items:flex-end;height:80px">
+        <div style="width:14px;height:${hf}px;background:#1a4a8a;border-radius:2px 2px 0 0;min-height:2px" title="Facturado: ${fmtCurrency(mMap[k].f)}"></div>
+        <div style="width:14px;height:${hp}px;background:#059669;border-radius:2px 2px 0 0;min-height:${mMap[k].p>0?2:0}px" title="Pagado: ${fmtCurrency(mMap[k].p)}"></div>
+      </div>
+    </div>`;}).join('');
+
+  html.push(`
+    <div style="background:var(--col-surface);border-radius:12px;border:1px solid var(--col-border);padding:18px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div style="font-size:15px;font-weight:700;color:var(--col-primary)">${provName}</div>
+        <button class="btn btn-sm btn-outline" onclick="openProviderDetail('${provName.replace(/'/g,"\\'")}')">📊 Ver detalle completo</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:14px">
+        <div style="background:#f8fafc;border-radius:8px;padding:10px;text-align:center;border-top:3px solid #2563eb">
+          <div style="font-size:9px;color:#5c6f8a;font-weight:700;text-transform:uppercase">Facturas</div>
+          <div style="font-size:20px;font-weight:700;color:#0f2544">${d1p.length}</div>
+        </div>
+        <div style="background:#f8fafc;border-radius:8px;padding:10px;text-align:center;border-top:3px solid #00b4c8">
+          <div style="font-size:9px;color:#5c6f8a;font-weight:700;text-transform:uppercase">Facturado</div>
+          <div style="font-size:12px;font-weight:700;color:#0f2544;font-family:'IBM Plex Mono',monospace">${fmtCurrency(totalVal)}</div>
+        </div>
+        <div style="background:#f8fafc;border-radius:8px;padding:10px;text-align:center;border-top:3px solid #059669">
+          <div style="font-size:9px;color:#5c6f8a;font-weight:700;text-transform:uppercase">Pagado</div>
+          <div style="font-size:12px;font-weight:700;color:#059669;font-family:'IBM Plex Mono',monospace">${fmtCurrency(totalPag)}</div>
+        </div>
+        <div style="background:${mora>0?'#fef2f2':'#f0fdf7'};border-radius:8px;padding:10px;text-align:center;border-top:3px solid ${mora>0?'#dc2626':'#059669'}">
+          <div style="font-size:9px;color:#5c6f8a;font-weight:700;text-transform:uppercase">En Mora</div>
+          <div style="font-size:20px;font-weight:700;color:${mora>0?'#dc2626':'#059669'}">${mora}</div>
+          <div style="font-size:9px;color:#5c6f8a">${mora>0?'facturas vencidas':'al día'}</div>
+        </div>
+        <div style="background:${pagPct>=80?'#f0fdf7':pagPct>=50?'#fffbeb':'#fef2f2'};border-radius:8px;padding:10px;text-align:center;border-top:3px solid ${pagPct>=80?'#059669':pagPct>=50?'#d97706':'#dc2626'}">
+          <div style="font-size:9px;color:#5c6f8a;font-weight:700;text-transform:uppercase">% Pagado</div>
+          <div style="font-size:20px;font-weight:700;color:${pagPct>=80?'#059669':pagPct>=50?'#d97706':'#dc2626'}">${pagPct}%</div>
+        </div>
+      </div>
+      ${mKeys.length>0?`
+      <div style="font-size:10px;font-weight:700;color:#5c6f8a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">📈 Facturado vs Pagado por mes</div>
+      <div style="display:flex;gap:4px;align-items:flex-end;overflow-x:auto;padding-bottom:4px;min-height:90px">${mBars}</div>
+      <div style="display:flex;gap:12px;margin-top:6px;font-size:11px">
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#1a4a8a;display:inline-block;border-radius:2px"></span>Facturado</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#059669;display:inline-block;border-radius:2px"></span>Pagado</span>
+      </div>`:''}
+    </div>`);
 }
 
 // ═══════════════════════════════════════════════════════════════
