@@ -769,6 +769,7 @@
         </button>
         <input type="file" id="fileInputJSON" accept=".json" style="display:none" onchange="importCashCallJSON(this)">
         <button class="btn btn-danger-outline" onclick="clearAll()">🗑 Limpiar Todo</button>
+        <button class="btn btn-outline btn-sm" onclick="limpiarCacheArchivos()" title="Elimina los archivos Excel en caché. Útil cuando cambia el contenido de un archivo con el mismo nombre." style="font-size:11px;opacity:0.75">🗄 Limpiar Caché</button>
         <div class="process-info" id="processInfo">Cargue al menos el Archivo 1 para comenzar</div>
       </div>
 
@@ -1006,6 +1007,7 @@
       <div class="filter-bar">
         <span class="filter-label">🔍</span>
         <input type="text" id="f2search" placeholder="OC, Proveedor, Recepción..." oninput="renderM2()">
+        <input type="text" id="f2proyecto" placeholder="🗂 Buscar Proyecto..." oninput="renderM2()" style="min-width:170px">
         <select id="f2year" onchange="renderM2()"><option value="">Todos los años</option></select>
         <select id="f2month" onchange="renderM2()"><option value="">Todos los meses</option></select>
         <div class="status-pills" id="pills2">
@@ -1029,6 +1031,7 @@
               <th>N° Recepción</th><th>OC (Nro. Documento)</th>
               <th>Proveedor (Origen)</th><th>Descripción Artículo</th>
               <th>Organización</th>
+              <th>Proyecto</th>
               <th class="currency">Val. Recepcionado</th>
               <th class="currency">Val. Total OC</th>
               <th>Comprador</th>
@@ -2321,22 +2324,151 @@ function handleMultipleFiles(input) {
   input.value = '';
 }
 
-// ── Worker blob para leer XLSX sin congelar el hilo principal ─────────────
+// ═══════════════════════════════════════════════════════════════
+// CACHÉ IndexedDB — evita re-parsear archivos ya cargados
+// ═══════════════════════════════════════════════════════════════
+const CACHE_DB = 'CashCallFileCache_v1';
+const CACHE_STORE = 'files';
+
+function _abrirCacheDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open(CACHE_DB, 1);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(CACHE_STORE))
+        db.createObjectStore(CACHE_STORE, { keyPath: 'cacheKey' });
+    };
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = () => res(null); // silencio si no disponible
+  });
+}
+
+function _cacheGet(db, key) {
+  if (!db) return Promise.resolve(null);
+  return new Promise(res => {
+    const tx  = db.transaction(CACHE_STORE, 'readonly');
+    const req = tx.objectStore(CACHE_STORE).get(key);
+    req.onsuccess = e => res(e.target.result || null);
+    req.onerror   = () => res(null);
+  });
+}
+
+function _cachePut(db, record) {
+  if (!db) return;
+  const tx = db.transaction(CACHE_STORE, 'readwrite');
+  tx.objectStore(CACHE_STORE).put(record);
+}
+
+// Genera una clave de caché basada en nombre + tamaño + primeros bytes (evita colisiones)
+function _cacheKey(buf, name) {
+  const view = new Uint8Array(buf, 0, Math.min(256, buf.byteLength));
+  let hash = 0;
+  for (let i = 0; i < view.length; i++) hash = ((hash << 5) - hash + view[i]) | 0;
+  return `${name}_${buf.byteLength}_${(hash >>> 0).toString(16)}`;
+}
+
+// ── Worker inteligente: detecta hojas grandes y sólo extrae filas/columnas con datos ──
 function _crearWorkerExcel() {
   const code = `
-    self.onmessage = function(ev) {
-      var files = ev.data; // [{buffer, name}]
-      try {
-        // SheetJS debe estar en el scope global — lo importamos del mismo CDN
-        importScripts('https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js');
-      } catch(e) {
-        // fallback: intentar con la URL alternativa cdnjs (puede estar bloqueada en algunas redes)
-        try { importScripts('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'); }
-        catch(e2) { self.postMessage({ error: 'No se pudo cargar SheetJS en el Worker: ' + e.message }); return; }
+    // ── Helpers internos del Worker ──────────────────────────────
+    function _getCellRange(ws) {
+      var ref = ws['!ref'];
+      if (!ref) return null;
+      return XLSX.utils.decode_range(ref);
+    }
+
+    // Extrae sólo las columnas que tienen al menos 1 valor en las primeras N filas del header
+    function _detectUsedCols(ws, range, headerRows, maxScanRows) {
+      var usedCols = new Set();
+      var scanEnd = Math.min(range.e.r, headerRows + maxScanRows - 1);
+      for (var r = range.s.r; r <= scanEnd; r++) {
+        for (var c = range.s.c; c <= range.e.c; c++) {
+          var cell = ws[XLSX.utils.encode_cell({r:r, c:c})];
+          if (cell && cell.v != null) usedCols.add(c);
+        }
       }
+      return usedCols;
+    }
+
+    // Para hojas GRANDES (>500 cols o >5000 rows según ref): extracción quirúrgica
+    function _smartSheetToJson(ws, sheetName) {
+      var range = _getCellRange(ws);
+      if (!range) return [];
+
+      var totalRows = range.e.r - range.s.r + 1;
+      var totalCols = range.e.c - range.s.c + 1;
+
+      // Hoja pequeña: usar la ruta rápida de SheetJS
+      if (totalRows <= 5000 && totalCols <= 200) {
+        return XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: true });
+      }
+
+      // ── HOJA GRANDE: extracción inteligente ────────────────────
+      // Paso 1: buscar la fila de cabeceras (primeras 15 filas, la que tenga más valores no-nulos)
+      var hdrRow = range.s.r;
+      var maxHits = 0;
+      for (var ri = range.s.r; ri < Math.min(range.s.r + 15, range.e.r); ri++) {
+        var hits = 0;
+        for (var ci = range.s.c; ci <= Math.min(range.s.c + 60, range.e.c); ci++) {
+          var cell = ws[XLSX.utils.encode_cell({r:ri, c:ci})];
+          if (cell && cell.v != null && String(cell.v).trim() !== '') hits++;
+        }
+        if (hits > maxHits) { maxHits = hits; hdrRow = ri; }
+      }
+
+      // Paso 2: detectar columnas usadas escaneando header + primeras 100 filas de datos
+      var usedCols = [];
+      var scanEnd2 = Math.min(hdrRow + 100, range.e.r);
+      for (var c2 = range.s.c; c2 <= range.e.c; c2++) {
+        for (var r2 = hdrRow; r2 <= scanEnd2; r2++) {
+          var cell2 = ws[XLSX.utils.encode_cell({r:r2, c:c2})];
+          if (cell2 && cell2.v != null) { usedCols.push(c2); break; }
+        }
+      }
+
+      // Paso 3: extraer SÓLO las columnas usadas, máximo 150000 filas desde hdrRow
+      var MAX_ROWS = 150000;
+      var endRow = Math.min(range.e.r, hdrRow + MAX_ROWS);
+      var rows = [];
+      for (var ri2 = hdrRow; ri2 <= endRow; ri2++) {
+        // Verificar si la fila tiene al menos 1 valor en las columnas usadas
+        var hasData = false;
+        for (var k = 0; k < usedCols.length; k++) {
+          var cell3 = ws[XLSX.utils.encode_cell({r:ri2, c:usedCols[k]})];
+          if (cell3 && cell3.v != null) { hasData = true; break; }
+        }
+        if (!hasData && ri2 > hdrRow) continue; // saltar filas vacías (excepto header)
+
+        var row = new Array(usedCols.length).fill(null);
+        for (var k2 = 0; k2 < usedCols.length; k2++) {
+          var cell4 = ws[XLSX.utils.encode_cell({r:ri2, c:usedCols[k2]})];
+          if (cell4) {
+            if (cell4.t === 'd' && cell4.v instanceof Date) {
+              row[k2] = cell4.v.toISOString ? cell4.v.toISOString().slice(0,10) : String(cell4.v);
+            } else {
+              row[k2] = (cell4.v != null) ? cell4.v : null;
+            }
+          }
+        }
+        rows.push(row);
+      }
+      return rows;
+    }
+
+    // ── Entry point del Worker ────────────────────────────────────
+    self.onmessage = function(ev) {
+      var files = ev.data;
+      try {
+        importScripts('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+      } catch(e) {
+        try { importScripts('https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js'); }
+        catch(e2) { self.postMessage({ error: 'No se pudo cargar SheetJS: ' + e.message }); return; }
+      }
+
       var results = [];
       for (var i = 0; i < files.length; i++) {
         var f = files[i];
+        self.postMessage({ progress: Math.round(((i)/files.length)*20 + 5), step: 'Parseando: ' + f.name });
         try {
           var wb = XLSX.read(new Uint8Array(f.buffer), {
             type: 'array',
@@ -2346,18 +2478,28 @@ function _crearWorkerExcel() {
             cellNF: false,
             cellStyles: false,
             sheetStubs: false,
-            dense: false
+            dense: false   // sparse es más eficiente en memoria para hojas grandes
           });
-          // Serializar wb a formato transferible (SheetNames + hojas en JSON)
+
           var sheets = {};
-          wb.SheetNames.forEach(function(sn) {
-            sheets[sn] = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, defval: null, raw: true });
+          var totalSheets = wb.SheetNames.length;
+          wb.SheetNames.forEach(function(sn, si) {
+            self.postMessage({
+              progress: Math.round(((i)/files.length)*40 + (si/totalSheets)*40 + 5),
+              step: 'Extrayendo hoja "' + sn + '" de ' + f.name + '...'
+            });
+            try {
+              sheets[sn] = _smartSheetToJson(wb.Sheets[sn], sn);
+            } catch(sheetErr) {
+              sheets[sn] = [];
+            }
           });
+
           results.push({ name: f.name, sheetNames: wb.SheetNames, sheets: sheets, error: null });
         } catch(err) {
           results.push({ name: f.name, sheetNames: [], sheets: {}, error: err.message });
         }
-        self.postMessage({ progress: Math.round(((i+1)/files.length)*60), step: 'Leyendo: ' + f.name });
+        self.postMessage({ progress: Math.round(((i+1)/files.length)*80), step: 'Listo: ' + f.name });
       }
       self.postMessage({ done: true, results: results });
     };
@@ -2386,14 +2528,12 @@ function _setProgress(pct, sub) {
 function loadMultipleFiles(files) {
   if (!files.length) return;
 
-  // Mostrar overlay de progreso inmediatamente
   const overlay = document.getElementById('loadingOverlay');
   const mainTxt = document.getElementById('loadingText');
   overlay.style.display = 'flex';
   if (mainTxt) mainTxt.textContent = 'Cargando archivos Excel...';
-  _setProgress(5, 'Leyendo archivos del disco...');
+  _setProgress(5, 'Verificando caché...');
 
-  // Leer todos como ArrayBuffer en paralelo
   const readers = files.map(file => new Promise((res, rej) => {
     const r = new FileReader();
     r.onload  = ev => res({ buffer: ev.target.result, name: file.name });
@@ -2401,8 +2541,56 @@ function loadMultipleFiles(files) {
     r.readAsArrayBuffer(file);
   }));
 
-  Promise.all(readers).then(fileBuffers => {
-    _setProgress(15, 'Iniciando procesamiento optimizado...');
+  Promise.all(readers).then(async fileBuffers => {
+    _setProgress(10, 'Comprobando archivos en caché...');
+
+    // Abrir (o crear) la base de datos de caché
+    const cacheDB = await _abrirCacheDB();
+
+    const fromCache   = [];   // { buffer, name, cacheKey, cached: true, ser }
+    const toProcess   = [];   // { buffer, name, cacheKey } — necesitan el Worker
+
+    for (const fb of fileBuffers) {
+      const key = _cacheKey(fb.buffer, fb.name);
+      const hit = await _cacheGet(cacheDB, key);
+      if (hit) {
+        fromCache.push({ ...fb, cacheKey: key, ser: hit.data });
+      } else {
+        toProcess.push({ ...fb, cacheKey: key });
+      }
+    }
+
+    // Aplicar los que vienen de caché de inmediato
+    if (fromCache.length) {
+      _setProgress(20, `✅ ${fromCache.length} archivo(s) cargado(s) desde caché`);
+      fromCache.forEach(fc => {
+        const wb = _wbDesdeSerializado(fc.ser);
+        const slot = detectSlot(wb, fc.name);
+        state.files = state.files.filter(s => s.slot !== slot);
+        state.files.push({ wb, name: fc.name, slot, sheets: fc.ser.sheetNames.length, fromCache: true });
+        addAuditEntry('carga', `Archivo cargado (caché): ${fc.name}`, {
+          files: state.files.filter(f=>f.wb).map(f=>({ nombre:f.name, slot:f.slot, hojas:f.sheets }))
+        });
+      });
+    }
+
+    // Si todos vinieron de caché, terminar sin lanzar Worker
+    if (!toProcess.length) {
+      _setProgress(100, '✅ Todos los archivos desde caché');
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        _setProgress(0, '');
+        if (mainTxt) mainTxt.textContent = 'Procesando archivos...';
+        renderFileList();
+        updateProcessBtn();
+        showToast(`📦 ${fromCache.length} archivo(s) cargados desde caché`, 'success');
+      }, 400);
+      return;
+    }
+
+    // Lanzar Worker para los archivos nuevos
+    if (mainTxt) mainTxt.textContent = 'Procesando archivos Excel...';
+    _setProgress(25, `Analizando ${toProcess.length} archivo(s) nuevo(s)...`);
 
     const worker = _crearWorkerExcel();
 
@@ -2410,23 +2598,23 @@ function loadMultipleFiles(files) {
       const msg = ev.data;
 
       if (msg.progress !== undefined) {
-        _setProgress(msg.progress, msg.step || '');
+        // Escalar el progreso del worker al rango 25-95
+        _setProgress(25 + Math.round(msg.progress * 0.70), msg.step || '');
         return;
       }
 
       if (msg.error) {
         worker.terminate();
         overlay.style.display = 'none';
-        // Fallback: procesar en hilo principal con flags optimizadas
-        _cargarFallbackMainThread(fileBuffers);
+        _cargarFallbackMainThread(toProcess);
         return;
       }
 
       if (msg.done) {
         worker.terminate();
-        _setProgress(80, 'Registrando archivos detectados...');
+        _setProgress(95, 'Registrando archivos...');
 
-        msg.results.forEach(ser => {
+        msg.results.forEach((ser, idx) => {
           if (ser.error) {
             state.files.push({ wb: null, name: ser.name, slot: 0, error: ser.error });
           } else {
@@ -2437,6 +2625,11 @@ function loadMultipleFiles(files) {
             addAuditEntry('carga', `Archivo cargado: ${ser.name}`, {
               files: state.files.filter(f=>f.wb).map(f=>({ nombre:f.name, slot:f.slot, hojas:f.sheets }))
             });
+            // Guardar en caché para próxima vez
+            const cacheKey = toProcess[idx]?.cacheKey;
+            if (cacheKey) {
+              try { _cachePut(cacheDB, { cacheKey, data: ser }); } catch(e) {}
+            }
           }
         });
 
@@ -2447,6 +2640,7 @@ function loadMultipleFiles(files) {
           if (mainTxt) mainTxt.textContent = 'Procesando archivos...';
           renderFileList();
           updateProcessBtn();
+          if (fromCache.length) showToast(`📦 ${fromCache.length} desde caché + ${toProcess.length} nuevos procesados`, 'success');
         }, 300);
       }
     };
@@ -2454,12 +2648,12 @@ function loadMultipleFiles(files) {
     worker.onerror = function(e) {
       worker.terminate();
       console.warn('Worker error, usando fallback:', e.message);
-      _cargarFallbackMainThread(fileBuffers);
+      _cargarFallbackMainThread(toProcess);
     };
 
     // Transferir buffers al worker (zero-copy)
-    const transferables = fileBuffers.map(f => f.buffer);
-    worker.postMessage(fileBuffers, transferables);
+    const transferables = toProcess.map(f => f.buffer);
+    worker.postMessage(toProcess, transferables);
 
   }).catch(err => {
     overlay.style.display = 'none';
@@ -2493,11 +2687,34 @@ function _cargarFallbackMainThread(fileBuffers) {
       try {
         const wb = XLSX.read(new Uint8Array(f.buffer), {
           type: 'array', cellDates: true,
-          cellFormula: false, cellHTML: false, cellNF: false, cellStyles: false, sheetStubs: false
+          cellFormula: false, cellHTML: false, cellNF: false, cellStyles: false,
+          sheetStubs: false, dense: false
         });
-        const slot = detectSlot(wb, f.name);
+        // Usar extracción inteligente para hojas grandes
+        const sheets = {};
+        wb.SheetNames.forEach(sn => {
+          try {
+            const ws = wb.Sheets[sn];
+            const ref = ws['!ref'] ? XLSX.utils.decode_range(ws['!ref']) : null;
+            if (ref) {
+              const rows = ref.e.r - ref.s.r + 1;
+              const cols = ref.e.c - ref.s.c + 1;
+              // Hoja grande: sólo extraer columnas usadas
+              if (rows > 5000 || cols > 200) {
+                sheets[sn] = _extractSmartMainThread(ws, ref);
+              } else {
+                sheets[sn] = XLSX.utils.sheet_to_json(ws, { header:1, defval:null, raw:true });
+              }
+            } else {
+              sheets[sn] = [];
+            }
+          } catch(e) { sheets[sn] = []; }
+        });
+        const ser = { name: f.name, sheetNames: wb.SheetNames, sheets };
+        const wbLite = _wbDesdeSerializado(ser);
+        const slot = detectSlot(wbLite, f.name);
         state.files = state.files.filter(s => s.slot !== slot);
-        state.files.push({ wb, name: f.name, slot, sheets: wb.SheetNames.length });
+        state.files.push({ wb: wbLite, name: f.name, slot, sheets: wb.SheetNames.length });
         addAuditEntry('carga', `Archivo cargado: ${f.name}`, {
           files: state.files.filter(x=>x.wb).map(x=>({ nombre:x.name, slot:x.slot, hojas:x.sheets }))
         });
@@ -2508,6 +2725,47 @@ function _cargarFallbackMainThread(fileBuffers) {
     }, 30);
   }
   next();
+}
+
+// Extracción inteligente de hojas grandes en el hilo principal
+function _extractSmartMainThread(ws, range) {
+  // Encontrar fila de headers (máx 15 filas iniciales)
+  let hdrRow = range.s.r, maxHits = 0;
+  for (let ri = range.s.r; ri < Math.min(range.s.r + 15, range.e.r); ri++) {
+    let hits = 0;
+    for (let ci = range.s.c; ci <= Math.min(range.s.c + 60, range.e.c); ci++) {
+      const cell = ws[XLSX.utils.encode_cell({r:ri, c:ci})];
+      if (cell && cell.v != null && String(cell.v).trim() !== '') hits++;
+    }
+    if (hits > maxHits) { maxHits = hits; hdrRow = ri; }
+  }
+  // Detectar columnas usadas (escanear 100 filas desde header)
+  const usedCols = [];
+  const scanEnd = Math.min(hdrRow + 100, range.e.r);
+  for (let c = range.s.c; c <= range.e.c; c++) {
+    for (let r = hdrRow; r <= scanEnd; r++) {
+      const cell = ws[XLSX.utils.encode_cell({r, c})];
+      if (cell && cell.v != null) { usedCols.push(c); break; }
+    }
+  }
+  // Extraer filas (máx 150k)
+  const rows = [];
+  const endRow = Math.min(range.e.r, hdrRow + 150000);
+  for (let ri = hdrRow; ri <= endRow; ri++) {
+    let hasData = false;
+    for (let k = 0; k < usedCols.length; k++) {
+      const cell = ws[XLSX.utils.encode_cell({r:ri, c:usedCols[k]})];
+      if (cell && cell.v != null) { hasData = true; break; }
+    }
+    if (!hasData && ri > hdrRow) continue;
+    const row = new Array(usedCols.length).fill(null);
+    for (let k = 0; k < usedCols.length; k++) {
+      const cell = ws[XLSX.utils.encode_cell({r:ri, c:usedCols[k]})];
+      if (cell) row[k] = (cell.t === 'd' && cell.v instanceof Date) ? cell.v.toISOString().slice(0,10) : cell.v ?? null;
+    }
+    rows.push(row);
+  }
+  return rows;
 }
 
 function detectSlot(wb, filename) {
@@ -2581,15 +2839,31 @@ function renderFileList() {
         <button onclick="removeFile(${idx})" style="background:none;border:none;cursor:pointer;color:#dc2626;margin-left:4px">✕</button>
       </div>`;
     }
+    const cacheBadge = f.fromCache
+      ? `<span style="font-size:9px;background:#dbeafe;color:#1e40af;border-radius:8px;padding:1px 6px;font-weight:700;margin-left:4px">⚡ CACHÉ</span>`
+      : '';
     return `<div class="file-chip ok">
       <span class="file-chip-icon">${slotIcons[f.slot] || '📄'}</span>
       <div>
-        <div class="file-chip-name">${f.name}</div>
+        <div class="file-chip-name">${f.name}${cacheBadge}</div>
         <div class="file-chip-meta">${slotNames[f.slot] || 'Archivo ' + f.slot} · ${f.sheets} hoja(s)</div>
       </div>
       <button onclick="removeFile(${idx})" style="background:none;border:none;cursor:pointer;color:var(--col-muted);margin-left:8px;font-size:14px">✕</button>
     </div>`;
   }).join('');
+}
+
+async function limpiarCacheArchivos() {
+  try {
+    await new Promise((res, rej) => {
+      const req = indexedDB.deleteDatabase(CACHE_DB);
+      req.onsuccess = res;
+      req.onerror = rej;
+    });
+    showToast('🗄 Caché de archivos eliminada. Los próximos archivos se re-procesarán.', 'info');
+  } catch(e) {
+    showToast('No se pudo limpiar la caché: ' + e.message, 'warning');
+  }
 }
 
 function removeFile(idx) {
@@ -3613,21 +3887,23 @@ function renderM1() {
 
 // ── MODULE 2: Recepciones Oracle (A2) ─────────────────────────
 function renderM2() {
-  const search  = normalStr(document.getElementById('f2search').value);
-  const estado  = document.getElementById('f2estado').value;
-  const year2   = document.getElementById('f2year')?.value  || '';
-  const month2  = document.getElementById('f2month')?.value || '';
+  const search   = normalStr(document.getElementById('f2search').value);
+  const proyecto = normalStr(document.getElementById('f2proyecto')?.value || '');
+  const estado   = document.getElementById('f2estado').value;
+  const year2    = document.getElementById('f2year')?.value  || '';
+  const month2   = document.getElementById('f2month')?.value || '';
 
   if (!state.df2rec || !state.df2rec.length) {
     const tbody = document.getElementById('tbody2');
-    if (tbody) tbody.innerHTML = emptyRow(12);
+    if (tbody) tbody.innerHTML = emptyRow(13);
     return;
   }
 
   let data = state.df2rec.filter(r => {
-    if (estado  && r.estadoLinea !== estado)              return false;
-    if (year2   && r._yr !== year2)                       return false;
-    if (month2  && r._mo !== month2)                      return false;
+    if (estado   && r.estadoLinea !== estado)              return false;
+    if (year2    && r._yr !== year2)                       return false;
+    if (month2   && r._mo !== month2)                      return false;
+    if (proyecto && !normalStr(r.proyecto).includes(proyecto)) return false;
     if (search) {
       const hay = normalStr(r.oc + ' ' + r.proveedor + ' ' + r.rec + ' ' + r.desc + ' ' + r.org);
       if (!hay.includes(search)) return false;
@@ -3650,7 +3926,7 @@ function renderM2() {
   `;
   document.getElementById('cnt2table').textContent = total.toLocaleString('es-CO') + ' líneas';
   const tbody = document.getElementById('tbody2');
-  if (!data.length) { tbody.innerHTML = emptyRow(12); return; }
+  if (!data.length) { tbody.innerHTML = emptyRow(13); return; }
 
   tbody.innerHTML = data.map(r => {
     const badge = r.estadoLinea === 'Entregada'
@@ -3666,6 +3942,7 @@ function renderM2() {
       <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.proveedor}">${r.proveedor}</td>
       <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.desc}">${r.desc}</td>
       <td style="font-size:11px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.org}</td>
+      <td style="font-size:11px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.proyecto||''}">${r.proyecto||'—'}</td>
       <td class="currency">${fmtCurrency(r.valRec)}</td>
       <td class="currency">${fmtCurrency(r.valTot)}</td>
       <td style="font-size:11px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.comprador}</td>
