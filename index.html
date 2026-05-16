@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cash Call v1.3 — Build 13</title>
+<title>Cash Call v1.4 — Build 14</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -308,10 +308,53 @@
     backdrop-filter: blur(12px);
     box-shadow: 0 24px 80px rgba(0,0,0,0.5);
     text-align: center;
+    animation: cashCallSlideIn 0.55s cubic-bezier(0.34,1.56,0.64,1) both;
   }
-  .login-logo { font-size: 32px; font-weight: 700; color: white; letter-spacing: -0.5px; margin-bottom: 4px; }
-  .login-logo span { color: var(--col-accent); }
-  .login-version { font-size: 11px; color: rgba(255,255,255,0.35); margin-bottom: 32px; font-family: 'IBM Plex Mono', monospace; }
+  /* ── LOGIN ANIMATED LOGO ─────────────────── */
+  @keyframes cashCallSlideIn {
+    0%   { opacity: 0; transform: translateY(-28px) scale(0.85); }
+    60%  { opacity: 1; transform: translateY(4px) scale(1.04); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes cashCallGlow {
+    0%, 100% { text-shadow: 0 0 12px rgba(0,180,200,0.0); }
+    50%       { text-shadow: 0 0 28px rgba(0,180,200,0.65), 0 0 8px rgba(0,180,200,0.4); }
+  }
+  @keyframes accentPulse {
+    0%, 100% { color: var(--col-accent); opacity: 1; }
+    50%       { color: #00d8f0; opacity: 0.82; }
+  }
+  @keyframes versionFadeIn {
+    0%   { opacity: 0; letter-spacing: 4px; }
+    100% { opacity: 1; letter-spacing: 0.5px; }
+  }
+  @keyframes dotBlink {
+    0%, 100% { opacity: 1; } 50% { opacity: 0.2; }
+  }
+  .login-logo {
+    font-size: 32px; font-weight: 700; color: white; letter-spacing: -0.5px; margin-bottom: 4px;
+    animation: cashCallSlideIn 0.7s cubic-bezier(0.34,1.56,0.64,1) both,
+               cashCallGlow 3s ease-in-out 0.8s infinite;
+  }
+  .login-logo span {
+    color: var(--col-accent);
+    animation: accentPulse 2.5s ease-in-out 1s infinite;
+    display: inline-block;
+  }
+  .login-logo .login-logo-dot {
+    display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--col-accent); margin: 0 2px 2px;
+    vertical-align: middle;
+    animation: dotBlink 1.4s ease-in-out 0.4s infinite;
+  }
+  .login-version {
+    font-size: 11px; color: rgba(255,255,255,0.35); margin-bottom: 32px;
+    font-family: 'IBM Plex Mono', monospace;
+    animation: versionFadeIn 1s ease 0.5s both;
+  }
+  .login-box {
+    animation: cashCallSlideIn 0.55s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
   .login-field { margin-bottom: 14px; text-align: left; }
   .login-field label { display: block; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
   .login-field input {
@@ -574,8 +617,8 @@
 <div class="login-overlay" id="loginOverlay">
   <canvas id="loginCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></canvas>
   <div class="login-box" style="position:relative;z-index:1">
-    <div class="login-logo">Cash <span>Call</span></div>
-    <div class="login-version">v1.3 · Control Financiero</div>
+    <div class="login-logo">Cash<span class="login-logo-dot"></span><span>Call</span></div>
+    <div class="login-version">v1.4 · Control Financiero</div>
     <div class="login-field">
       <label>Usuario</label>
       <input type="text" id="loginUser" placeholder="usuario.nombre" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
@@ -601,7 +644,7 @@
   <div class="subwin" style="max-width:600px">
     <div class="subwin-header">
       <span style="font-size:16px">⌨️</span>
-      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v1.3</span>
+      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v1.4</span>
       <button class="subwin-close" onclick="closeSubwin('sw-ctrlm')">✕</button>
     </div>
     <div class="subwin-body" id="sw-ctrlm-body" style="padding:24px">
@@ -664,7 +707,7 @@
       <span class="login-user-badge" id="userBadge" title="Cerrar sesión" onclick="logout()">
         <span>👤</span><span id="userBadgeText">—</span><span style="font-size:10px;opacity:0.6">✕</span>
       </span>
-      <div class="header-badge" id="headerBadge">v1.3</div>
+      <div class="header-badge" id="headerBadge">v1.4</div>
     </div>
   </div>
 </header>
@@ -1701,7 +1744,7 @@ function exportPDFReport() {
   </style></head><body>
   <div class="cover">
     <div class="cover-logo">Cash <span>Call</span></div>
-    <div class="cover-title">Informe Gerencial Ejecutivo · v1.3</div>
+    <div class="cover-title">Informe Gerencial Ejecutivo · v1.4</div>
     <div class="cover-meta">Generado: ${today.toLocaleDateString('es-CO',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} · ${today.toLocaleTimeString('es-CO')}<br>
     Usuario: ${currentUser||'—'} · Período analizado: ${[...new Set(d1.map(r=>r.year).filter(Boolean))].sort().join(', ')||'N/D'}</div>
   </div>
@@ -1760,7 +1803,7 @@ function exportPDFReport() {
   </div>`:''}
 
   <div class="footer">
-    Cash Call v1.3 · Desarrollado por Ing. Johan Manuel Cárdenas Leal, MSc · Todos los derechos reservados © 2026<br>
+    Cash Call v1.4 · Desarrollado por Ing. Johan Manuel Cárdenas Leal, MSc · Todos los derechos reservados © 2026<br>
     Informe generado automáticamente — ${today.toISOString()}
   </div>
   <script>window.onload=function(){window.print();}<\/script>
@@ -2081,8 +2124,8 @@ function renderM1inSubwin() {
   }
   const tbody=document.getElementById('tbodysw1');
   if(!tbody) return;
-  if(!data.length){tbody.innerHTML=emptyRow(13);return;}
-  tbody.innerHTML=data.map(r=>{
+  if(!data.length){tbody.innerHTML=emptyRow(13);_cleanPager('tbodysw1');return;}
+  const rowFnSW1 = r => {
     const badgeRec=r.recStatus==='recepcionado'?'<span class="badge badge-success">✅ Recepcionado</span>':r.recStatus==='parcial'?'<span class="badge badge-warning">⚠️ Parcial</span>':'<span class="badge badge-danger">❌ Sin Recepción</span>';
     const diff=r.valSinIva&&r.totalRec?r.totalRec-r.valSinIva:null;
     const diffStr=diff!=null?`<div class="val-diff ${Math.abs(diff)<r.valSinIva*0.05?'ok':'err'}">${diff>=0?'+':''}${fmtCurrency(diff)}</div>`:'—';
@@ -2093,7 +2136,8 @@ function renderM1inSubwin() {
       <td class="currency">${fmtCurrency(r.valSinIva)}</td><td class="currency">${fmtCurrency(r.totalRec||null)}</td>
       <td class="currency">${diffStr}</td><td>${r.recDate}</td>
       <td style="font-size:11px">${r.recBy}</td></tr>`;
-  }).join('');
+  };
+  _renderTablePaged('tbodysw1', 'cnt1sw', data, rowFnSW1, 13);
 }
 
 function renderM2inSubwin() {
@@ -2120,8 +2164,8 @@ function renderM2inSubwin() {
     <div class="summary-card s-accent"><div class="summary-label">Val. Contabilizado</div><div class="summary-value" style="font-size:15px">${fmtCurrency(totalContab)}</div></div>`;
   const cntEl=document.getElementById('cnt2sw');if(cntEl)cntEl.textContent=total+' registros';
   const tbody=document.getElementById('tbodysw2');if(!tbody)return;
-  if(!data.length){tbody.innerHTML=emptyRow(11);return;}
-  tbody.innerHTML=data.map(r=>{
+  if(!data.length){tbody.innerHTML=emptyRow(11);_cleanPager('tbodysw2');return;}
+  const rowFnSW2 = r => {
     const badge=r.m2Status==='pagado'?'<span class="badge badge-success">💸 Pagado</span>':r.m2Status==='aprobado'?'<span class="badge badge-warning">📊 Aprobado</span>':'<span class="badge badge-danger">⏳ Pendiente</span>';
     const cruceBadge=r.cruceType==='Factura'?'<span class="badge badge-success">Por Factura</span>':r.cruceType==='Proveedor'?'<span class="badge badge-warning">Por Proveedor</span>':'<span class="badge badge-gray">No encontrado</span>';
     return `<tr><td>${badge}</td><td>${r.year||'—'}</td><td>${r.month||'—'}</td>
@@ -2129,7 +2173,8 @@ function renderM2inSubwin() {
       <td class="td-mono">${r.inv||'—'}</td><td class="td-mono">${r.po||'—'}</td>
       <td class="currency">${fmtCurrency(r.valSinIva)}</td><td class="currency">${fmtCurrency(r.cxpBruto)}</td>
       <td>${fmtDate(r.invDate)}</td><td>${r.cxpFechaTrans||'—'}</td><td>${cruceBadge}</td></tr>`;
-  }).join('');
+  };
+  _renderTablePaged('tbodysw2', 'cnt2sw', data, rowFnSW2, 11);
 }
 
 function renderM3inSubwin() {
@@ -2161,9 +2206,9 @@ function renderM3inSubwin() {
     <div class="summary-card s-warning"><div class="summary-label">En Mora</div><div class="summary-value">${mora}</div></div>
     <div class="summary-card s-success"><div class="summary-label">Total Pagado</div><div class="summary-value" style="font-size:14px">${fmtCurrency(totalPagado)}</div></div>`;
   const cntEl=document.getElementById('cnt3sw');if(cntEl)cntEl.textContent=total+' registros';
-  const tbody=document.getElementById('tbodysw3');if(!tbody)return;
-  if(!data.length){tbody.innerHTML=emptyRow(11);return;}
-  tbody.innerHTML=data.map(r=>{
+  const tbody3sw=document.getElementById('tbodysw3');if(!tbody3sw)return;
+  if(!data.length){tbody3sw.innerHTML=emptyRow(11);_cleanPager('tbodysw3');return;}
+  const rowFnSW3 = r => {
     const badge=r.m3Status==='pagado'?'<span class="badge badge-success">✅ Pagado</span>':r.m3Status==='aprobado'?'<span class="badge badge-warning">⏳ Pend. Pago</span>':'<span class="badge badge-danger">❌ No en CxP</span>';
     let moraBadge;
     if(r.m3Status==='pagado') moraBadge='<span class="badge badge-success">Pagado</span>';
@@ -2177,7 +2222,8 @@ function renderM3inSubwin() {
       <td class="currency">${fmtCurrency(r.cxpBruto)}</td>
       <td>${fmtDate(r.dueDate)}</td><td>${fmtDate(r.payDate)}</td>
       <td style="text-align:center">${moraBadge}</td></tr>`;
-  }).join('');
+  };
+  _renderTablePaged('tbodysw3', 'cnt3sw', data, rowFnSW3, 11);
 }
 
 function renderM4inSubwin() {
@@ -2203,9 +2249,9 @@ function renderM4inSubwin() {
     <div class="summary-card s-danger"><div class="summary-label">Sin CxP</div><div class="summary-value">${sinCxP}</div></div>
     <div class="summary-card s-warning"><div class="summary-label">Pend. Pago</div><div class="summary-value">${sinPago}</div></div>`;
   const cntEl=document.getElementById('cnt4sw');if(cntEl)cntEl.textContent=total+' registros';
-  const tbody=document.getElementById('tbodysw4');if(!tbody)return;
-  if(!data.length){tbody.innerHTML=emptyRow(11);return;}
-  tbody.innerHTML=data.map(r=>{
+  const tbody4sw=document.getElementById('tbodysw4');if(!tbody4sw)return;
+  if(!data.length){tbody4sw.innerHTML=emptyRow(11);_cleanPager('tbodysw4');return;}
+  const rowFnSW4 = r => {
     const flujoLabel=r.flujo==='completo'?'<span class="badge badge-success">✅ Completo</span>':r.flujo==='sin_recepcion'?'<span class="badge badge-danger">❌ Sin Rec.</span>':r.flujo==='sin_cxp'?'<span class="badge badge-pending">❌ Sin CxP</span>':r.flujo==='sin_pago'?'<span class="badge badge-warning">⏳ Sin Pago</span>':'<span class="badge badge-danger">⚠️ Brecha</span>';
     const recBadge=r.recStatus==='recepcionado'?'<span class="badge badge-success">✅</span>':r.recStatus==='parcial'?'<span class="badge badge-warning">⚠️</span>':'<span class="badge badge-danger">❌</span>';
     const cxpBadge=r.m2Status!=='pendiente'?'<span class="badge badge-success">✅</span>':'<span class="badge badge-danger">❌</span>';
@@ -2220,7 +2266,8 @@ function renderM4inSubwin() {
       <td style="text-align:center">${pagBadge}</td>
       <td>${fmtDate(r.payDate)}</td>
       <td style="font-size:11px;color:var(--col-danger)">${r.brechas.length?r.brechas.join(' · '):'—'}</td></tr>`;
-  }).join('');
+  };
+  _renderTablePaged('tbodysw4', 'cnt4sw', data, rowFnSW4, 11);
 }
 
 function renderChartsInSubwin(container) {
@@ -3125,6 +3172,96 @@ function normalStr(s) {
   if (s == null) return '';
   return String(s).trim().toLowerCase().replace(/\s+/g, ' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 }
+
+// ── VIRTUAL PAGINATION ─────────────────────────────────────────
+// Limita el DOM a PAGE_SIZE filas; el resto se carga solo si el usuario lo pide.
+// Esto evita que tablas de miles de filas congelen el navegador.
+const PAGE_SIZE = 200;
+const _pageState = {}; // { tableId: { data, pageRowFn, page, total } }
+
+function _renderTablePaged(tbodyId, counterId, data, pageRowFn, cols) {
+  const tbody = document.getElementById(tbodyId);
+  if (!tbody) return;
+  if (!data.length) { tbody.innerHTML = emptyRow(cols); _cleanPager(tbodyId); return; }
+
+  _pageState[tbodyId] = { data, pageRowFn, page: 0, total: data.length };
+
+  const slice = data.slice(0, PAGE_SIZE);
+  tbody.innerHTML = slice.map(pageRowFn).join('');
+  _renderPager(tbodyId, counterId, data.length);
+}
+
+function _renderPager(tbodyId, counterId, total) {
+  const ps = _pageState[tbodyId];
+  if (!ps) return;
+  const shown = Math.min((ps.page + 1) * PAGE_SIZE, total);
+  const pagerId = tbodyId + '_pager';
+
+  // Update counter
+  const cntEl = counterId ? document.getElementById(counterId) : null;
+
+  // Find or create pager row
+  let pagerTr = document.getElementById(pagerId);
+  if (!pagerTr) {
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+    const table = tbody.closest('table');
+    if (!table) return;
+    // Inject pager AFTER the table's parent scroll container
+    const wrap = table.closest('.table-scroll') || table.parentElement;
+    let pagerDiv = document.getElementById(pagerId);
+    if (!pagerDiv) {
+      pagerDiv = document.createElement('div');
+      pagerDiv.id = pagerId;
+      pagerDiv.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 14px;border-top:1px solid var(--col-border);background:#f8fafc;border-radius:0 0 10px 10px;font-size:12px;flex-wrap:wrap';
+      if (wrap && wrap.parentElement) wrap.parentElement.insertBefore(pagerDiv, wrap.nextSibling);
+    }
+    pagerTr = pagerDiv;
+  }
+
+  if (shown >= total) {
+    pagerTr.innerHTML = `<span style="color:var(--col-muted)">📊 ${total.toLocaleString('es-CO')} registros totales</span>`;
+    if (cntEl) cntEl.textContent = total + ' registros';
+    return;
+  }
+
+  pagerTr.innerHTML = `
+    <span style="color:var(--col-muted)">Mostrando <strong>${shown.toLocaleString('es-CO')}</strong> de <strong>${total.toLocaleString('es-CO')}</strong></span>
+    <button onclick="_loadMoreRows('${tbodyId}','${counterId||''}')" class="btn btn-outline btn-sm" style="padding:4px 14px;font-size:11.5px">
+      ⬇️ Cargar ${Math.min(PAGE_SIZE, total - shown).toLocaleString('es-CO')} más
+    </button>
+    <button onclick="_loadAllRows('${tbodyId}','${counterId||''}')" class="btn btn-outline btn-sm" style="padding:4px 14px;font-size:11.5px;opacity:0.75">
+      📋 Ver todos (${total.toLocaleString('es-CO')})
+    </button>`;
+  if (cntEl) cntEl.textContent = shown + ' / ' + total + ' registros';
+}
+
+function _loadMoreRows(tbodyId, counterId) {
+  const ps = _pageState[tbodyId];
+  if (!ps) return;
+  ps.page++;
+  const start = ps.page * PAGE_SIZE;
+  const slice = ps.data.slice(start, start + PAGE_SIZE);
+  const tbody = document.getElementById(tbodyId);
+  if (tbody) tbody.innerHTML += slice.map(ps.pageRowFn).join('');
+  _renderPager(tbodyId, counterId, ps.total);
+}
+
+function _loadAllRows(tbodyId, counterId) {
+  const ps = _pageState[tbodyId];
+  if (!ps) return;
+  const shown = (ps.page + 1) * PAGE_SIZE;
+  const rest = ps.data.slice(shown);
+  const tbody = document.getElementById(tbodyId);
+  if (tbody) tbody.innerHTML += rest.map(ps.pageRowFn).join('');
+  ps.page = Math.ceil(ps.total / PAGE_SIZE);
+  _renderPager(tbodyId, counterId, ps.total);
+}
+
+function _cleanPager(tbodyId) {
+  const pagerDiv = document.getElementById(tbodyId + '_pager');
+  if (pagerDiv) pagerDiv.innerHTML = '';
+}
 function normalNum(v) {
   if (v == null || v === '' || v === '---') return null;
   if (typeof v === 'number') return v;
@@ -3225,6 +3362,10 @@ function buildModules() {
     const rec = getA1Field(row, ['REC']);
     const lateDays = normalNum(getA1Field(row, ['LATE PAYMENT']));
     const obs = getA1Field(row, ['OBSERVATIONS','Observaciones']);
+    const nit = getA1Field(row, ['Nit','NIT','N° Nit']);
+    const afe = getA1Field(row, ['AFE','afe']);
+    const wbs = getA1Field(row, ['WBS','wbs']);
+    const currency = getA1Field(row, ['Currency','Moneda']);
 
     if (!inv && !po) return;
 
@@ -3243,7 +3384,7 @@ function buildModules() {
       if (valSinIva && Math.abs(totalRec - valSinIva) / Math.max(valSinIva, 1) > 0.05) recStatus = 'parcial';
       else recStatus = 'recepcionado';
     }
-    state.m1data.push({ inv, po, prov, year, month, valSinIva, rec, recRows: recRows.length, recNums, recDate, recBy, totalRec, recStatus, obs });
+    state.m1data.push({ inv, po, prov, year, month, valSinIva, rec, recRows: recRows.length, recNums, recDate, recBy, totalRec, recStatus, obs, nit, afe, wbs, currency });
 
     // M2 & M3
     const invNorm = normalStr(inv);
@@ -3814,7 +3955,14 @@ function renderM0RecTable() {
   });
 
   const total = data.length;
-  tbody.innerHTML = data.map(r => {
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--col-muted)">Sin datos para el filtro seleccionado</td></tr>';
+    _cleanPager('tbodyM0Rec');
+    if (cntEl) cntEl.textContent = '0 líneas';
+    return;
+  }
+  const totalValRec0 = data.reduce((s,r)=>s+(r.valRec||0),0);
+  const rowFnM0Rec = r => {
     const estBadge = r.estadoLinea === 'Entregada'
       ? '<span class="badge badge-success" style="font-size:10px">✅ Entregada</span>'
       : '<span class="badge badge-warning" style="font-size:10px">⚠️ Parcial</span>';
@@ -3827,9 +3975,9 @@ function renderM0RecTable() {
       <td style="padding:5px 10px;text-align:right;font-weight:600">${fmtCurrency(r.valRec)}</td>
       <td style="padding:5px 10px;text-align:center">${estBadge}</td>
     </tr>`;
-  }).join('');
-
-  if (cntEl) cntEl.textContent = `${total.toLocaleString('es-CO')} líneas · ${fmtCurrency(data.reduce((s,r)=>s+(r.valRec||0),0))} recepcionado`;
+  };
+  _renderTablePaged('tbodyM0Rec', null, data, rowFnM0Rec, 7);
+  if (cntEl) cntEl.textContent = `${total.toLocaleString('es-CO')} líneas · ${fmtCurrency(totalValRec0)} recepcionado`;
 }
 
 
@@ -3863,8 +4011,8 @@ function renderM1() {
   `;
   document.getElementById('cnt1table').textContent = total + ' registros';
   const tbody = document.getElementById('tbody1');
-  if (!data.length) { tbody.innerHTML = emptyRow(13); return; }
-  tbody.innerHTML = data.map(r => {
+  if (!data.length) { tbody.innerHTML = emptyRow(13); _cleanPager('tbody1'); return; }
+  const rowFn1 = r => {
     const badgeRec = r.recStatus==='recepcionado' ? '<span class="badge badge-success">✅ Recepcionado</span>'
       : r.recStatus==='parcial' ? '<span class="badge badge-warning">⚠️ Parcial</span>'
       : '<span class="badge badge-danger">❌ Sin Recepción</span>';
@@ -3882,7 +4030,8 @@ function renderM1() {
       <td>${r.recDate}</td>
       <td style="font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis" title="${r.recBy}">${r.recBy}</td>
     </tr>`;
-  }).join('');
+  };
+  _renderTablePaged('tbody1', 'cnt1table', data, rowFn1, 13);
 }
 
 // ── MODULE 2: Recepciones Oracle (A2) ─────────────────────────
@@ -3925,10 +4074,10 @@ function renderM2() {
     <div class="summary-card s-success"><div class="summary-label">Valor Recepcionado</div><div class="summary-value" style="font-size:14px">${fmtCurrency(totalValRec)}</div></div>
   `;
   document.getElementById('cnt2table').textContent = total.toLocaleString('es-CO') + ' líneas';
-  const tbody = document.getElementById('tbody2');
-  if (!data.length) { tbody.innerHTML = emptyRow(13); return; }
+  const tbody2 = document.getElementById('tbody2');
+  if (!data.length) { tbody2.innerHTML = emptyRow(13); _cleanPager('tbody2'); return; }
 
-  tbody.innerHTML = data.map(r => {
+  const rowFn2 = r => {
     const badge = r.estadoLinea === 'Entregada'
       ? '<span class="badge badge-success">✅ Entregada</span>'
       : r.estadoLinea === 'Entregada Parcialmente'
@@ -3947,7 +4096,8 @@ function renderM2() {
       <td class="currency">${fmtCurrency(r.valTot)}</td>
       <td style="font-size:11px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.comprador}</td>
     </tr>`;
-  }).join('');
+  };
+  _renderTablePaged('tbody2', 'cnt2table', data, rowFn2, 13);
 }
 
 // ── MODULE 3: Cuentas por Pagar Oracle (A3) ───────────────────
@@ -3993,10 +4143,10 @@ function renderM3() {
     <div class="summary-card s-danger"><div class="summary-label">⏳ Saldo Pendiente</div><div class="summary-value" style="font-size:13px">${fmtCurrency(valorPendiente)}</div><div class="summary-sub">Aprobadas por pagar</div></div>
   `;
   document.getElementById('cnt3table').textContent = total.toLocaleString('es-CO') + ' registros';
-  const tbody = document.getElementById('tbody3');
-  if (!data.length) { tbody.innerHTML = emptyRow(11); return; }
+  const tbody3 = document.getElementById('tbody3');
+  if (!data.length) { tbody3.innerHTML = emptyRow(11); _cleanPager('tbody3'); return; }
 
-  tbody.innerHTML = data.map(r => {
+  const rowFn3 = r => {
     const badge = r.estado === 'Pagado'
       ? '<span class="badge badge-success">✅ Pagado</span>'
       : r.estado === 'Aprobado'
@@ -4017,7 +4167,8 @@ function renderM3() {
       <td style="font-size:11px">${r.fechaTrans !== '—' ? fmtDate(r.fechaTrans) : '—'}</td>
       <td style="font-size:11px">${r.fechaContable !== '—' ? fmtDate(r.fechaContable) : '—'}</td>
     </tr>`;
-  }).join('');
+  };
+  _renderTablePaged('tbody3', 'cnt3table', data, rowFn3, 11);
 }
 
 // ── MODULE 4 ──────────────────────────────────────────────────
@@ -4048,9 +4199,9 @@ function renderM4() {
     <div class="summary-card s-warning"><div class="summary-label">Pendiente Pago</div><div class="summary-value">${sinPago}</div></div>
   `;
   document.getElementById('cnt4table').textContent = total + ' registros';
-  const tbody = document.getElementById('tbody4');
-  if (!data.length) { tbody.innerHTML = emptyRow(11); return; }
-  tbody.innerHTML = data.map(r => {
+  const tbody4 = document.getElementById('tbody4');
+  if (!data.length) { tbody4.innerHTML = emptyRow(11); _cleanPager('tbody4'); return; }
+  const rowFn4 = r => {
     const flujoLabel = r.flujo==='completo' ? '<span class="badge badge-success">✅ Completo</span>'
       : r.flujo==='sin_recepcion' ? '<span class="badge badge-danger">❌ Sin Rec.</span>'
       : r.flujo==='sin_cxp' ? '<span class="badge badge-pending">❌ Sin CxP</span>'
@@ -4060,7 +4211,6 @@ function renderM4() {
     const cxpBadge = r.m2Status!=='pendiente' ? '<span class="badge badge-success">✅</span>' : '<span class="badge badge-danger">❌</span>';
     const pagBadge = r.m3Status==='pagado' ? '<span class="badge badge-success">✅</span>' : r.m3Status==='aprobado' ? '<span class="badge badge-warning">⏳</span>' : '<span class="badge badge-danger">❌</span>';
     const brechaStr = r.brechas.length ? r.brechas.join(' · ') : '—';
-    // Verificación: ¿lo pagado corresponde a lo facturado?
     let verifBadge = '—';
     if (r.m3Status === 'pagado' && r.cxpBruto != null && r.valSinIva > 0) {
       const diff = Math.abs((r.cxpBruto - r.valSinIva) / r.valSinIva * 100);
@@ -4087,7 +4237,8 @@ function renderM4() {
       <td style="text-align:center">${verifBadge}</td>
       <td style="font-size:11px;color:var(--col-danger);max-width:180px">${brechaStr}</td>
     </tr>`;
-  }).join('');
+  };
+  _renderTablePaged('tbody4', 'cnt4table', data, rowFn4, 11);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -4326,9 +4477,9 @@ function renderM5() {
     if (idx<=0) return null;
     return state.m5data.find(r=>r.prov===prov&&r.period===periodsSorted[idx-1]);
   };
-  tbody5.innerHTML = data.map(r => {
+  if (!data.length) { tbody5.innerHTML = emptyRow(8); _cleanPager('tbody5'); return; }
+  const rowFn5 = r => {
     const pagPct = r.facturado>0?Math.round(r.pagado/r.facturado*100):0;
-    // Alerta especial si se pagó MÁS de lo facturado (>105%)
     const overpaid = pagPct > 105;
     const pagBadgeColor = overpaid ? 'badge-danger' : pagPct>=80?'badge-success':pagPct>=50?'badge-warning':'badge-danger';
     const pagBadgeIcon = overpaid ? '🚨' : pagPct>=100?'✅':pagPct>=80?'📊':pagPct>=50?'⏳':'🔴';
@@ -4347,7 +4498,8 @@ function renderM5() {
       <td style="text-align:center">${moraBadge}</td>
       <td style="text-align:center">${pagBadge}</td>
     </tr>`;
-  }).join('');
+  };
+  _renderTablePaged('tbody5', 'cnt5table', data, rowFn5, 8);
 }
 
 // ── PROVIDER DETAIL POPUP ────────────────────────────────────
@@ -4509,11 +4661,15 @@ function setQsFilter(f) {
   doQuickSearch();
 }
 
+let _qsDebounce = null;
 function liveQuickSearch(val) {
-  if (val.trim().length >= 2) doQuickSearch();
-  else if (!val.trim()) {
-    document.getElementById('qsResults').innerHTML = `<div class="qs-no-data"><div class="qs-icon">🔍</div><div style="font-size:14px;font-weight:600;color:var(--col-primary);margin-bottom:6px">Ingrese un término de búsqueda</div><div style="font-size:12px">Puede buscar por número de factura, OC o nombre de proveedor</div></div>`;
+  clearTimeout(_qsDebounce);
+  if (!val.trim()) {
+    document.getElementById('qsResults').innerHTML = `<div class="qs-no-data"><div class="qs-icon">🔍</div><div style="font-size:14px;font-weight:600;color:var(--col-primary);margin-bottom:6px">Ingrese un término de búsqueda</div><div style="font-size:12px;color:var(--col-muted)">Busca en: factura · OC · proveedor · NIT · proyecto · mes · año · observaciones · estado · receptor</div></div>`;
+    return;
   }
+  if (val.trim().length < 2) return;
+  _qsDebounce = setTimeout(() => doQuickSearch(), 280);
 }
 
 function doQuickSearch() {
@@ -4525,55 +4681,82 @@ function doQuickSearch() {
   if (!raw) return;
   const term = normalStr(raw);
 
-  // Always search across ALL fields — filter controls which SECTION to show results
-  const matchedInvRows = [];
-  const matchedOCRows = [];
+  // ── Búsqueda comodín: match en CUALQUIER campo relevante ──────────────────
+  // Para cada registro construimos una cadena de búsqueda con TODOS los campos
+  const buildHay1 = r => normalStr([
+    r.inv, r.po, r.prov, r.rec, r.recNums, r.recBy,
+    r.year, r.month, r.obs, r.recStatus,
+    r.nit, r.afe, r.wbs, r.currency, r.recDate
+  ].filter(Boolean).join(' '));
+
+  const matchedInvRows  = [];
+  const matchedOCRows   = [];
   const matchedProvNames = new Set();
+  const seenInvForProv  = new Set();
 
   state.m1data.forEach(r => {
-    const invN = normalStr(r.inv||''), poN = normalStr(r.po||''), provN = normalStr(r.prov||'');
-    if (invN && invN.includes(term)) matchedInvRows.push(r);
-    else if (poN && poN.includes(term)) matchedOCRows.push(r);
-    if (provN && provN.includes(term)) matchedProvNames.add(r.prov);
+    const hay = buildHay1(r);
+    if (!hay.includes(term)) return;
+
+    // Determinar la "razón" del match para clasificar en sección
+    const invN  = normalStr(r.inv  || '');
+    const poN   = normalStr(r.po   || '');
+    const provN = normalStr(r.prov || '');
+
+    if (invN && invN.includes(term))       { matchedInvRows.push(r); seenInvForProv.add(r.inv); }
+    else if (poN && poN.includes(term))    { matchedOCRows.push(r);  seenInvForProv.add(r.inv); }
+    else                                   { matchedInvRows.push(r); seenInvForProv.add(r.inv); } // cualquier otro campo → sección facturas
+
+    if (provN && provN.includes(term))     { matchedProvNames.add(r.prov); }
+    // Si el term coincide con NIT/proyecto pero no con nombre, igual incluir proveedor
+    const nitN = normalStr(r.nit || '');
+    if (nitN && nitN.includes(term))       { matchedProvNames.add(r.prov); }
   });
 
-  // Deduplicate invoice rows (same invoice from different OC match paths)
+  // Deduplicate
   const seenInv = new Set();
-  const cycleRowsFact = matchedInvRows.filter(r => { if(seenInv.has(r.inv)) return false; seenInv.add(r.inv); return true; }).slice(0, 20);
+  const cycleRowsFact = matchedInvRows.filter(r => {
+    if (seenInv.has(r.inv)) return false; seenInv.add(r.inv); return true;
+  }).slice(0, 30);
+
   const seenOC = new Set();
-  const cycleRowsOC = matchedOCRows.filter(r => { if(seenOC.has(r.po)) return false; seenOC.add(r.po); return true; }).slice(0, 20);
-  const uniqueProvs = [...matchedProvNames].slice(0, 8);
+  const cycleRowsOC = matchedOCRows.filter(r => {
+    if (seenOC.has(r.po)) return false; seenOC.add(r.po); return true;
+  }).slice(0, 30);
+
+  const uniqueProvs = [...matchedProvNames].slice(0, 10);
 
   const html = [];
-
-  // Determine what sections to show based on filter
   const showFact = (qsFilter === 'all' || qsFilter === 'factura');
   const showOC   = (qsFilter === 'all' || qsFilter === 'oc');
   const showProv = (qsFilter === 'all' || qsFilter === 'proveedor');
-
-  // If filter is 'factura' but term matches a provider name, show provider section anyway
   const forceShowProv = uniqueProvs.length > 0 && cycleRowsFact.length === 0 && cycleRowsOC.length === 0;
 
-  // --- Invoice matches ---
+  const totalHits = cycleRowsFact.length + cycleRowsOC.length + uniqueProvs.length;
+  if (totalHits > 0) {
+    html.push(`<div style="font-size:11px;color:var(--col-muted);margin-bottom:12px;padding:6px 12px;background:#f8fafc;border-radius:8px;border:1px solid var(--col-border)">
+      🔎 <strong>${totalHits}</strong> resultado(s) para "<em>${raw}</em>"
+      ${cycleRowsFact.length ? ` · 🧾 ${cycleRowsFact.length} factura(s)` : ''}
+      ${cycleRowsOC.length   ? ` · 📦 ${cycleRowsOC.length} OC(s)` : ''}
+      ${uniqueProvs.length   ? ` · 🏢 ${uniqueProvs.length} proveedor(es)` : ''}
+    </div>`);
+  }
+
   if (showFact && cycleRowsFact.length > 0) {
     html.push(`<div class="section-title" style="font-size:14px;margin-bottom:14px">🧾 Facturas encontradas — ${cycleRowsFact.length} resultado(s)</div>`);
     cycleRowsFact.forEach(r1 => renderCicloCard(r1, html));
   }
-
-  // --- OC matches ---
   if (showOC && cycleRowsOC.length > 0) {
     html.push(`<div class="section-title" style="font-size:14px;margin-bottom:14px;${html.length?'margin-top:24px':''}">📦 Órdenes de Compra encontradas — ${cycleRowsOC.length} resultado(s)</div>`);
     cycleRowsOC.forEach(r1 => renderCicloCard(r1, html));
   }
-
-  // --- Provider matches ---
   if ((showProv || forceShowProv) && uniqueProvs.length > 0) {
     html.push(`<div class="section-title" style="font-size:14px;margin-bottom:14px;${html.length?'margin-top:24px':''}">🏢 Proveedores encontrados — ${uniqueProvs.length} resultado(s)</div>`);
     uniqueProvs.forEach(provName => renderProvCard(provName, html));
   }
 
   if (!html.length) {
-    document.getElementById('qsResults').innerHTML = `<div class="qs-no-data"><div class="qs-icon">🔎</div><div style="font-size:14px;font-weight:600;color:var(--col-primary);margin-bottom:6px">Sin resultados para "<em>${raw}</em>"</div><div style="font-size:12px">Verifique el término o intente con otro número/nombre</div></div>`;
+    document.getElementById('qsResults').innerHTML = `<div class="qs-no-data"><div class="qs-icon">🔎</div><div style="font-size:14px;font-weight:600;color:var(--col-primary);margin-bottom:6px">Sin resultados para "<em>${raw}</em>"</div><div style="font-size:12px;color:var(--col-muted)">Puede buscar por: factura, OC, proveedor, NIT, proyecto, mes, año, observaciones, estado, receptor…</div></div>`;
   } else {
     document.getElementById('qsResults').innerHTML = html.join('');
   }
@@ -5072,7 +5255,7 @@ function exportCashCallJSON() {
   const filename = `CashCall_${fecha}.json`;
   const payload = {
     meta: {
-      app: 'Cash Call v1.3',
+      app: 'Cash Call v1.4',
       exportedBy: currentUser || '—',
       exportedAt: new Date().toISOString(),
       filename,
