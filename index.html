@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cash Call v1.6 — Build 16</title>
+<title>⛏ Cash Call v1.7 — Control Financiero Minero</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -389,36 +389,157 @@
     cursor: pointer; transition: background 0.15s; user-select: none;
   }
   .login-user-badge:hover { background: rgba(255,255,255,0.16); }
-
-  /* ── SUBWINDOW (modal flotante) ──────────── */
+  /* ── INFO BUTTON & INSTRUCTIVE MODAL ──────── */
+  .info-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: linear-gradient(135deg, #00b4c8, #0891b2);
+    color: white; font-size: 12px; font-weight: 800;
+    border: none; cursor: pointer; flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,180,200,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-style: italic; font-family: Georgia, serif;
+  }
+  .info-btn:hover {
+    transform: scale(1.15);
+    box-shadow: 0 4px 16px rgba(0,180,200,0.6);
+  }
+  /* Instructive modal */
+  #instructive-backdrop {
+    position: fixed; inset: 0; background: rgba(10,22,40,0.6);
+    z-index: 8000; display: none; align-items: center; justify-content: center;
+    backdrop-filter: blur(3px);
+  }
+  #instructive-backdrop.open { display: flex; }
+  #instructive-modal {
+    background: white; border-radius: 16px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.3);
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(700px, 94vw);
+    height: min(88vh, 680px);
+    display: flex; flex-direction: column;
+    overflow: hidden; resize: both;
+    min-width: 380px; min-height: 300px;
+    z-index: 8001;
+  }
+  #instructive-header {
+    background: linear-gradient(135deg, #0f2544, #1a4a8a);
+    color: white; padding: 16px 20px;
+    display: flex; align-items: center; gap: 12px;
+    flex-shrink: 0; cursor: move; user-select: none;
+    border-radius: 16px 16px 0 0;
+  }
+  #instructive-icon { font-size: 22px; }
+  #instructive-title { font-size: 15px; font-weight: 700; flex: 1; }
+  #instructive-close {
+    background: rgba(255,255,255,0.15); border: none; color: white;
+    border-radius: 50%; width: 30px; height: 30px; cursor: pointer;
+    font-size: 15px; display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s; flex-shrink: 0;
+  }
+  #instructive-close:hover { background: rgba(220,38,38,0.7); }
+  #instructive-body {
+    flex: 1; overflow-y: auto; padding: 24px 24px 20px;
+    font-size: 13px; line-height: 1.6; color: #1e293b;
+  }
+  #instructive-modal::after {
+    content: ''; position: absolute; bottom: 5px; right: 5px;
+    width: 10px; height: 10px; pointer-events: none;
+    border-right: 2px solid #cbd5e1; border-bottom: 2px solid #cbd5e1;
+    border-radius: 0 0 3px 0;
+  }
+  .inst-step {
+    display: flex; gap: 14px; margin-bottom: 18px; align-items: flex-start;
+  }
+  .inst-step-num {
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, #00b4c8, #0891b2);
+    color: white; font-weight: 800; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+  .inst-step-body { flex: 1; }
+  .inst-step-title { font-weight: 700; font-size: 13px; color: #0f2544; margin-bottom: 3px; }
+  .inst-step-desc { color: #475569; font-size: 12.5px; }
+  .inst-tip {
+    background: linear-gradient(135deg, #eff6ff, #e0f2fe);
+    border-left: 3px solid #00b4c8; border-radius: 0 8px 8px 0;
+    padding: 10px 14px; margin: 14px 0; font-size: 12px; color: #0f4c75;
+  }
+  .inst-warn {
+    background: #fffbeb; border-left: 3px solid #f59e0b;
+    border-radius: 0 8px 8px 0; padding: 10px 14px; margin: 14px 0;
+    font-size: 12px; color: #78350f;
+  }
+  .inst-section-title {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; color: #64748b; margin: 20px 0 10px;
+    padding-bottom: 6px; border-bottom: 1.5px solid #f1f5f9;
+  }
+  .inst-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 12px;
+    font-size: 11px; font-weight: 700; margin: 0 2px;
+  }
+  /* ── SUBWINDOW (modal flotante — draggable + resizable) ─── */
   .subwin-backdrop {
     position: fixed; inset: 0; background: rgba(10,22,40,0.55);
-    z-index: 4000; display: none; align-items: center; justify-content: center;
+    z-index: 4000; display: none;
     backdrop-filter: blur(2px);
+    /* NO flex centering — subwins are fixed-positioned inside */
   }
-  .subwin-backdrop.open { display: flex; }
+  .subwin-backdrop.open { display: block; }
   .subwin {
     background: var(--col-surface); border-radius: 14px;
     border: 1px solid var(--col-border);
     box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-    width: 92vw; max-width: 1200px;
-    max-height: 88vh; display: flex; flex-direction: column;
-    overflow: hidden;
+    /* Fixed positioned — required for resize:both to work */
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(92vw, 1100px);
+    height: min(85vh, 800px);
+    min-width: 380px; min-height: 260px;
+    display: flex; flex-direction: column;
+    resize: both; overflow: hidden;
+    z-index: 4001;
   }
+  /* After first drag, transform is cleared and left/top set explicitly */
   .subwin-header {
     display: flex; align-items: center; gap: 12px;
     padding: 14px 18px; background: var(--col-primary);
-    flex-shrink: 0;
+    flex-shrink: 0; cursor: move; user-select: none;
+    border-radius: 14px 14px 0 0;
   }
   .subwin-title { color: white; font-size: 13px; font-weight: 700; flex: 1; }
+  .subwin-count { background: rgba(255,255,255,0.15); border-radius: 20px; padding: 2px 10px; font-size: 11px; font-weight: 700; color: white; }
   .subwin-close {
     background: rgba(255,255,255,0.12); border: none; color: white;
     border-radius: 50%; width: 28px; height: 28px; cursor: pointer;
     font-size: 14px; display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s;
+    transition: background 0.15s; flex-shrink: 0;
   }
   .subwin-close:hover { background: rgba(220,38,38,0.7); }
-  .subwin-body { flex: 1; overflow-y: auto; padding: 20px; }
+  .subwin-body { flex: 1; overflow-y: auto; padding: 20px; min-height: 0; }
+  /* Resize handle hint */
+  .subwin::after {
+    content: ''; position: absolute; bottom: 5px; right: 5px;
+    width: 12px; height: 12px; pointer-events: none;
+    border-right: 2.5px solid #94a3b8; border-bottom: 2.5px solid #94a3b8;
+    border-radius: 0 0 3px 0;
+  }
+  /* Month popup resizable */
+  #m1-month-popup {
+    resize: both; overflow: auto;
+    min-width: 260px; min-height: 160px;
+  }
+  #m1-month-popup::after {
+    content: ''; position: absolute; bottom: 4px; right: 4px;
+    width: 10px; height: 10px; pointer-events: none;
+    border-right: 2px solid #94a3b8; border-bottom: 2px solid #94a3b8;
+    border-radius: 0 0 3px 0;
+  }
 
   /* ── M0 SUBWINDOW TRIGGERS ───────────────── */
   .m0-sw-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 14px; margin-bottom: 20px; }
@@ -622,8 +743,22 @@
 <div class="login-overlay" id="loginOverlay">
   <canvas id="loginCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></canvas>
   <div class="login-box" style="position:relative;z-index:1">
-    <div class="login-logo">Cash<span class="login-logo-dot"></span><span>Call</span></div>
-    <div class="login-version">v1.6 · Control Financiero</div>
+    <div class="login-logo" style="display:flex;align-items:center;justify-content:center"><svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:8px;filter:drop-shadow(0 0 8px rgba(0,180,200,0.5))">
+  <!-- Helmet dome -->
+  <path d="M6 20 C6 11 11.5 6 17 6 C22.5 6 28 11 28 20 Z" fill="#00b4c8" opacity="0.95"/>
+  <!-- Helmet brim -->
+  <rect x="3.5" y="20" width="27" height="3.2" rx="1.6" fill="#00b4c8"/>
+  <!-- Lamp -->
+  <circle cx="17" cy="10.5" r="2.2" fill="white" opacity="0.95"/>
+  <circle cx="17" cy="10.5" r="1.1" fill="#00b4c8"/>
+  <!-- Pickaxe handle -->
+  <line x1="7" y1="29" x2="21" y2="15" stroke="white" stroke-width="2.2" stroke-linecap="round" opacity="0.85"/>
+  <!-- Pickaxe head left -->
+  <path d="M20 14 L27 11 L24.5 18 Z" fill="white" opacity="0.85"/>
+  <!-- Pickaxe head right -->
+  <path d="M20 14 L15 10 L22 13 Z" fill="white" opacity="0.75"/>
+</svg>Cash<span class="login-logo-dot"></span><span>Call</span></div>
+    <div class="login-version">v1.7 · Control Financiero</div>
     <div class="login-field">
       <label>Usuario</label>
       <input type="text" id="loginUser" placeholder="usuario.nombre" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
@@ -649,7 +784,7 @@
   <div class="subwin" style="max-width:600px">
     <div class="subwin-header">
       <span style="font-size:16px">⌨️</span>
-      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v1.6</span>
+      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v1.7</span>
       <button class="subwin-close" onclick="closeSubwin('sw-ctrlm')">✕</button>
     </div>
     <div class="subwin-body" id="sw-ctrlm-body" style="padding:24px">
@@ -727,17 +862,51 @@
 </div>
 
 
+
+<!-- M1 chart month popup -->
+<div id="m1-month-popup" style="display:none;position:fixed;z-index:9500;background:white;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.18);border:1.5px solid #e2e8f0;min-width:280px;max-width:380px;padding:0;overflow:hidden">
+  <div style="background:#0f2544;color:white;padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+    <span id="m1-popup-title" style="font-weight:700;font-size:13px"></span>
+    <button onclick="document.getElementById('m1-month-popup').style.display='none'" style="background:rgba(255,255,255,0.2);border:none;color:white;cursor:pointer;border-radius:6px;padding:2px 8px;font-size:12px">✕</button>
+  </div>
+  <div id="m1-popup-body" style="padding:12px 14px;max-height:340px;overflow-y:auto"></div>
+</div>
+
+<!-- ══ INSTRUCTIVE MODAL ════════════════════════════════════ -->
+<div id="instructive-backdrop">
+  <div id="instructive-modal">
+    <div id="instructive-header">
+      <span id="instructive-icon">ℹ️</span>
+      <span id="instructive-title">Instructivo</span>
+      <button id="instructive-close" onclick="closeInstructive()">✕</button>
+    </div>
+    <div id="instructive-body"></div>
+  </div>
+</div>
+
 <header class="app-header">
   <div class="header-inner">
     <div>
-      <div class="header-logo">Cash <span>Call</span></div>
-      <div class="header-sub">Plataforma de control financiero · Facturas, Recepciones y Pagos</div>
+      <div class="header-logo" style="display:flex;align-items:center"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:5px;flex-shrink:0">
+  <!-- Helmet dome -->
+  <path d="M4 13 C4 7.5 8 4 11 4 C14 4 18 7.5 18 13 Z" fill="#00b4c8" opacity="0.9"/>
+  <!-- Helmet brim -->
+  <rect x="2.5" y="13" width="17" height="2.2" rx="1.1" fill="#00b4c8"/>
+  <!-- Lamp on helmet -->
+  <circle cx="11" cy="7" r="1.5" fill="white" opacity="0.9"/>
+  <!-- Pickaxe handle -->
+  <line x1="5" y1="19" x2="14" y2="10" stroke="#0f2544" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- Pickaxe head -->
+  <path d="M13 9 L17 7 L15.5 11.5 Z" fill="#0f2544"/>
+  <path d="M13 9 L10 6.5 L14.5 8 Z" fill="#0f2544"/>
+</svg>Cash <span style="margin-left:4px">Call</span></div>
+      <div class="header-sub">Plataforma de control financiero minero · Facturas, Recepciones y Pagos</div>
     </div>
     <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
       <span class="login-user-badge" id="userBadge" title="Cerrar sesión" onclick="logout()">
         <span>👤</span><span id="userBadgeText">—</span><span style="font-size:10px;opacity:0.6">✕</span>
       </span>
-      <div class="header-badge" id="headerBadge">v1.6</div>
+      <div class="header-badge" id="headerBadge">v1.7</div>
     </div>
   </div>
 </header>
@@ -790,11 +959,11 @@
         <span class="nav-badge" id="cnt4">0</span>
       </div>
       <div class="nav-item" data-tab="modulo5" id="nav-modulo5" onclick="switchTab('modulo5')">
-        <span class="nav-icon">📈</span>
-        <span class="nav-label">Módulo 5<span class="nav-sub">Análisis Proveedor</span></span>
+        <span class="nav-icon">🏢</span>
+        <span class="nav-label">Módulo 5<span class="nav-sub">Ficha Proveedor</span></span>
         <span class="nav-badge" id="cnt5">0</span>
       </div>
-      <div class="nav-item" data-tab="auditorias" onclick="switchTab('auditorias')">
+            <div class="nav-item" data-tab="auditorias" onclick="switchTab('auditorias')">
         <span class="nav-icon">🗂️</span>
         <span class="nav-label">Auditorías<span class="nav-sub">Historial de cambios</span></span>
         <span class="nav-badge" id="cntAudit">0</span>
@@ -871,7 +1040,7 @@
 
     <!-- ═══ PANEL: BÚSQUEDA RÁPIDA ══════════════════════════ -->
     <div class="panel" id="panel-busqueda">
-      <div class="section-title">🔎 Búsqueda Rápida — Factura · OC · Proveedor</div>
+      <div class="section-title" style="justify-content:space-between"><span>🔎 Búsqueda Rápida — Factura · OC · Proveedor</span><button class="info-btn" onclick="showInstructive('busqueda')" title="Ver instructivo">i</button></div>
       <div class="qs-hero">
         <div class="qs-hero-title">Búsqueda inteligente de documentos</div>
         <div class="qs-hero-sub">Busca por número de factura, orden de compra o nombre de proveedor para ver su ciclo completo e historial.</div>
@@ -900,7 +1069,7 @@
     <div class="panel" id="panel-modulo0">
       <div class="section-title" style="justify-content:space-between">
         <span>📊 Módulo 0 — Vista Gerencial Ejecutiva</span>
-        <button class="btn btn-sm btn-outline" onclick="exportPDFReport()" style="font-size:11px">📄 Exportar Informe PDF</button>
+        <div style="display:flex;gap:8px;align-items:center"><button class="btn btn-sm btn-outline" onclick="exportPDFReport()" style="font-size:11px">📄 Exportar Informe PDF</button><button class="info-btn" onclick="showInstructive('modulo0')" title="Ver instructivo">i</button></div>
       </div>
 
       <!-- ── RESUMEN ARCHIVOS CARGADOS ── -->
@@ -1031,7 +1200,7 @@
 
     <!-- ═══ PANEL: MÓDULO 1 ════════════════════════════════ -->
     <div class="panel" id="panel-modulo1">
-      <div class="section-title">📋 Módulo 1 — Facturas en Gestión</div>
+      <div class="section-title" style="justify-content:space-between"><span>📋 Módulo 1 — Facturas en Gestión</span><button class="info-btn" onclick="showInstructive('modulo1')" title="Ver instructivo">i</button></div>
       <div class="alert alert-info">ℹ️ Seguimiento de facturas (Archivo 1 — hoja Facturas). Cada fila es una factura con su OC y número de recepción, cruzada con Recepciones Oracle (Archivo 2) para confirmar entrega. Con M1 + M2 se determina qué proveedores tienen entrega confirmada para proceder al pago (Archivo 3).</div>
 
       <div class="summary-grid" id="sum1"></div>
@@ -1079,7 +1248,7 @@
 
     <!-- ═══ PANEL: MÓDULO 2 ════════════════════════════════ -->
     <div class="panel" id="panel-modulo2">
-      <div class="section-title">📥 Módulo 2 — Recepciones Oracle</div>
+      <div class="section-title" style="justify-content:space-between"><span>📥 Módulo 2 — Recepciones Oracle</span><button class="info-btn" onclick="showInstructive('modulo2')" title="Ver instructivo">i</button></div>
       <div class="alert alert-info">ℹ️ Todas las líneas de recepción registradas en Oracle (Archivo 2). Filtrable por mes y año de Fecha de Recepción. El cruce M1 + M2 determina qué proveedor entregó y por cuánto valor, habilitando el pago en Cuentas por Pagar.</div>
 
       <div class="summary-grid" id="sum2"></div>
@@ -1124,7 +1293,7 @@
 
         <!-- ═══ PANEL: MÓDULO 3 ════════════════════════════════ -->
     <div class="panel" id="panel-modulo3">
-      <div class="section-title">💰 Módulo 3 — Cuentas por Pagar</div>
+      <div class="section-title" style="justify-content:space-between"><span>💰 Módulo 3 — Cuentas por Pagar</span><button class="info-btn" onclick="showInstructive('modulo3')" title="Ver instructivo">i</button></div>
       <div class="alert alert-info">ℹ️ Todos los registros de Cuentas por Pagar registrados en Oracle (Archivo 3). Filtrable por mes y año. Cada fila = 1 registro CxP.</div>
 
       <div class="summary-grid" id="sum3"></div>
@@ -1167,7 +1336,7 @@
 
         <!-- ═══ PANEL: MÓDULO 4 ════════════════════════════════ -->
     <div class="panel" id="panel-modulo4">
-      <div class="section-title">🔍 Módulo 4 — Análisis Integral de Brechas</div>
+      <div class="section-title" style="justify-content:space-between"><span>🔍 Módulo 4 — Análisis Integral de Brechas</span><button class="info-btn" onclick="showInstructive('modulo4')" title="Ver instructivo">i</button></div>
       <div class="alert alert-warning">⚠️ Vista consolidada del flujo completo por factura. Identifica brechas en cualquier etapa del proceso.</div>
 
       <div class="summary-grid" id="sum4"></div>
@@ -1216,72 +1385,85 @@
         </div>
       </div>
     </div>
-
-    <!-- ═══ PANEL: MÓDULO 5 — ANÁLISIS POR PROVEEDOR ═══════ -->
+<!-- ═══ PANEL: MÓDULO 5 — FICHA PROVEEDOR ══════════════════ -->
     <div class="panel" id="panel-modulo5">
-      <div class="section-title">📈 Módulo 5 — Análisis por Proveedor</div>
-      <div class="alert alert-info">ℹ️ Analiza el comportamiento de facturación y pagos por proveedor con comparativos periódicos. Filtra por período y proveedor para ver tendencias.</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><h2 class="panel-title" style="margin:0">🏢 Módulo 5 — Ficha Análisis por Proveedor</h2><button class="info-btn" onclick="showInstructive('modulo5')" title="Ver instructivo">i</button></div>
+      <div class="alert alert-info" style="margin-bottom:14px">🔍 Selecciona un proveedor para ver su análisis integral: facturas, recepciones, pagos, mora y tendencias.</div>
 
-      <!-- Filtros -->
-      <div class="filter-bar" style="flex-wrap:wrap;gap:10px">
-        <span class="filter-label">🔍</span>
-        <input type="text" id="f5search" placeholder="Buscar proveedor..." oninput="renderM5()" style="min-width:200px">
-        <select id="f5periodo" onchange="renderM5()">
-          <option value="mensual">📅 Mensual</option>
-          <option value="trimestral" selected>📊 Trimestral</option>
-          <option value="semestral">📆 Semestral</option>
-          <option value="anual">📅 Anual</option>
+      <!-- Selector -->
+      <div class="filter-bar" style="flex-wrap:wrap;gap:10px;margin-bottom:16px">
+        <span class="filter-label">🏢</span>
+        <select id="m5prov-select" onchange="renderM5()" style="min-width:320px;max-width:480px;font-size:13px;padding:7px 10px;border:1.5px solid var(--col-border);border-radius:8px;background:white">
+          <option value="">— Selecciona un proveedor —</option>
         </select>
-        <select id="f5year" onchange="renderM5()"><option value="">Todos los años</option></select>
-        <button class="btn btn-sm btn-outline" onclick="exportTable('m5data','Modulo5_Proveedores')">⬇ Exportar CSV</button>
-        <button class="btn btn-sm btn-danger-outline" onclick="exportBreachasPDF()" title="Informe PDF de brechas priorizando por mora">📄 Informe PDF Brechas</button>
+        <select id="m5year-select" onchange="renderM5()" style="font-size:13px;padding:7px 10px;border:1.5px solid var(--col-border);border-radius:8px;background:white">
+          <option value="">Todos los años</option>
+        </select>
+        <button class="btn btn-sm btn-outline" onclick="renderM5Pdf()" title="Exportar ficha en PDF">📄 Exportar PDF</button>
       </div>
 
-      <!-- KPIs periodo -->
-      <div class="summary-grid" id="sum5"></div>
+      <!-- KPIs del proveedor -->
+      <div class="summary-grid" id="m5-kpis" style="margin-bottom:16px"></div>
 
-      <!-- Gráfica principal de proveedor -->
-      <div class="chart-card" style="margin-bottom:16px;padding:14px 16px">
-        <div class="chart-card-title" id="m5-chart-title">📊 Facturación por Proveedor — Período seleccionado</div>
-        <div id="m5-chart-prov" style="overflow-x:auto;overflow-y:hidden"><div style="color:var(--col-muted);font-size:12px;padding:20px 0">Cargue y procese archivos para ver el análisis.</div></div>
-      </div>
-
-      <!-- Comparativo período anterior -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-        <div class="chart-card">
-          <div class="chart-card-title">📅 Facturado vs Pagado — Mes a mes (12 meses)</div>
-          <div id="m5-chart-comp"><div style="color:var(--col-muted);font-size:12px;padding:20px 0">Sin datos.</div></div>
+      <!-- Fila de gráficas: timeline + estado pagos -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div class="chart-card" style="padding:14px 16px">
+          <div class="chart-card-title">📅 Facturado por Mes</div>
+          <div id="m5-timeline" style="overflow-x:auto"></div>
         </div>
-        <div class="chart-card">
-          <div class="chart-card-title">🔢 Conteo: Facturas Registradas vs Pagadas</div>
-          <div id="m5-chart-cnt"><div style="color:var(--col-muted);font-size:12px;padding:20px 0">Sin datos.</div></div>
+        <div class="chart-card" style="padding:14px 16px">
+          <div class="chart-card-title">💳 Estado de Pagos</div>
+          <div id="m5-payment-status"></div>
         </div>
       </div>
 
-      <!-- Tabla detalle -->
-      <div class="table-wrap">
-        <div class="table-header">
-          <span class="table-title">Detalle por Proveedor y Período</span>
-          <span class="table-count" id="cnt5table">—</span>
+      <!-- Fila: OCs y contratos + Recepciones -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div class="chart-card" style="padding:14px 16px">
+          <div class="chart-card-title">📦 Órdenes de Compra del Proveedor</div>
+          <div id="m5-ocs" style="overflow-x:auto"></div>
         </div>
-        <div class="table-scroll">
-          <table>
-            <thead><tr>
-              <th>Proveedor</th><th>Período</th><th>Facturas</th>
-              <th class="currency">Val. Facturado</th><th class="currency">Val. Pagado</th>
-              <th class="currency">Val. Pendiente</th>
-              <th title="Facturas no pagadas cuya fecha de vencimiento ya pasó — ordenadas de mayor a menor">En Mora ↓</th>
-              <th title="Porcentaje del valor pagado sobre el valor facturado en ese período">% Pago / Facturado</th>
+        <div class="chart-card" style="padding:14px 16px">
+          <div class="chart-card-title">📥 Recepciones Oracle</div>
+          <div id="m5-recs"></div>
+        </div>
+      </div>
+
+      <!-- Detalle de facturas -->
+      <div class="chart-card" style="padding:14px 16px;margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div class="chart-card-title" style="margin:0">📋 Detalle de Facturas</div>
+          <span id="m5-inv-count" style="font-size:11px;color:var(--col-muted)"></span>
+        </div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:11.5px">
+            <thead><tr style="background:#0f2544;color:white">
+              <th style="padding:7px 8px;text-align:left;font-weight:600;font-size:10px">N° FACTURA</th>
+              <th style="padding:7px 8px;text-align:left;font-weight:600;font-size:10px">OC</th>
+              <th style="padding:7px 8px;text-align:left;font-weight:600;font-size:10px">MES</th>
+              <th style="padding:7px 8px;text-align:right;font-weight:600;font-size:10px">VALOR SIN IVA</th>
+              <th style="padding:7px 8px;text-align:center;font-weight:600;font-size:10px">RECEPCIÓN</th>
+              <th style="padding:7px 8px;text-align:center;font-weight:600;font-size:10px">CxP</th>
+              <th style="padding:7px 8px;text-align:center;font-weight:600;font-size:10px">PAGO</th>
+              <th style="padding:7px 8px;text-align:center;font-weight:600;font-size:10px">MORA</th>
+              <th style="padding:7px 8px;text-align:left;font-weight:600;font-size:10px">OBSERVACIONES</th>
             </tr></thead>
-            <tbody id="tbody5"></tbody>
+            <tbody id="m5-tbody"></tbody>
           </table>
         </div>
       </div>
+
+      <!-- Placeholder when no provider selected -->
+      <div id="m5-placeholder" style="text-align:center;padding:60px 20px;color:var(--col-muted)">
+        <div style="font-size:48px;margin-bottom:12px">🏢</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:6px">Selecciona un proveedor</div>
+        <div style="font-size:12px">Usa el filtro de arriba para ver el análisis completo</div>
+      </div>
     </div>
 
-    <!-- ═══ PANEL: AUDITORÍAS ════════════════════════════════ -->
+<!-- ═══ PANEL: AUDITORÍAS ════════════════════════════════ -->
     <div class="panel" id="panel-auditorias">
-      <div class="section-title">🗂️ Módulo de Auditorías — Historial de Cambios</div>
+      <div class="section-title" style="justify-content:space-between"><span>🗂️ Módulo de Auditorías — Historial de Cambios</span><button class="info-btn" onclick="showInstructive('auditorias')" title="Ver instructivo">i</button></div>
       <div class="alert alert-info">
         ℹ️ <div>Registro automático de cada carga de archivos y exportación JSON. Compara snapshots sucesivos para detectar <strong>diferencias en conteos, valores y estados</strong> entre sesiones de trabajo.</div>
       </div>
@@ -1303,7 +1485,7 @@
 const state = {
   files: [], // { wb, name, slot }
   df1: [], df2: [], df3: [],
-  m1data: [], m2data: [], m3data: [], m4data: [], m5data: [],
+  m1data: [], m2data: [], m3data: [], m4data: [],
   processed: false
 };
 
@@ -1795,7 +1977,7 @@ function exportPDFReport() {
   </style></head><body>
   <div class="cover">
     <div class="cover-logo">Cash <span>Call</span></div>
-    <div class="cover-title">Informe Gerencial Ejecutivo · v1.6</div>
+    <div class="cover-title">Informe Gerencial Ejecutivo · v1.7</div>
     <div class="cover-meta">Generado: ${today.toLocaleDateString('es-CO',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} · ${today.toLocaleTimeString('es-CO')}<br>
     Usuario: ${currentUser||'—'} · Período analizado: ${[...new Set(d1.map(r=>r.year).filter(Boolean))].sort().join(', ')||'N/D'}</div>
   </div>
@@ -1854,7 +2036,7 @@ function exportPDFReport() {
   </div>`:''}
 
   <div class="footer">
-    Cash Call v1.6 · Desarrollado por Ing. Johan Manuel Cárdenas Leal, MSc · Todos los derechos reservados © 2026<br>
+    Cash Call v1.7 · Desarrollado por Ing. Johan Manuel Cárdenas Leal, MSc · Todos los derechos reservados © 2026<br>
     Informe generado automáticamente — ${today.toISOString()}
   </div>
   <script>window.onload=function(){window.print();}<\/script>
@@ -1892,7 +2074,8 @@ function openCtrlMPanel() {
     { id:'modulo2', icon:'🔄', title:'Módulo 2', sub:'Recepciones Oracle', alwaysOn:false, cnt: m2len },
     { id:'modulo3', icon:'💰', title:'Módulo 3', sub:'Pagos a Proveedores', alwaysOn:false, cnt: m3len },
     { id:'modulo4', icon:'🔍', title:'Módulo 4', sub:'Análisis de Brechas', alwaysOn:false, cnt: m4len },
-    { id:'modulo5', icon:'📈', title:'Módulo 5', sub:'Análisis por Proveedor', alwaysOn:false, cnt: state.m5data?.length||0 },
+    { id:'modulo5', icon:'🏢', title:'Módulo 5', sub:'Ficha Proveedor', alwaysOn:false, cnt: state.m1data ? [...new Set(state.m1data.map(r=>r.prov).filter(Boolean))].length : 0 },
+
   ];
 
   document.getElementById('ctrlm-modules').innerHTML = modules.map(m => {
@@ -1925,7 +2108,7 @@ function openCtrlMPanel() {
   }).join('');
 
   document.getElementById('sw-ctrlm').classList.add('open');
-  document.getElementById('sw-ctrlm').onclick = function(e){ if(e.target===this) closeSubwin('sw-ctrlm'); };
+  // sw-ctrlm — close only via X button
 }
 
 function toggleModuleActivation(moduleId, alwaysOn) {
@@ -1957,7 +2140,7 @@ function toggleModuleActivation(moduleId, alwaysOn) {
       if (moduleId === 'modulo2') renderM2();
       if (moduleId === 'modulo3') renderM3();
       if (moduleId === 'modulo4') renderM4();
-      if (moduleId === 'modulo5') renderM5();
+      if (moduleId === 'modulo5') initM5Selectors();
     }
   }
   openCtrlMPanel(); // refresh the modal
@@ -2010,7 +2193,7 @@ function openSubwin(swId, moduleKey) {
   }
 
   backdrop.classList.add('open');
-  backdrop.onclick = function(e) { if (e.target === backdrop) closeSubwin(swId); };
+  // Backdrop click does NOT close — use the X button
 }
 
 function closeSubwin(swId) {
@@ -2148,7 +2331,7 @@ function showKpiDrill(type) {
   // Open modal
   const modal = document.getElementById('sw-kpi-drill');
   modal.classList.add('open');
-  modal.onclick = e => { if (e.target === modal) closeSubwin('sw-kpi-drill'); };
+  // kpi-drill — close only via X button
 }
 
 function _renderDrillTable(rows, cols) {
@@ -2292,8 +2475,7 @@ function applyGlobalSearchSync(term, filterType) {
   if (f4) { f4.value = term.trim(); renderM4(); }
 
   // M5: set proveedor search
-  const f5 = document.getElementById('f5search');
-  if (f5) { f5.value = term.trim(); renderM5(); }
+  if (f5) { f5.value = term.trim(); }
 
   showGlobalSyncBanner(`Todos los módulos filtrados por: "${term.trim()}"`);
 }
@@ -2313,7 +2495,7 @@ function clearGlobalFilter() {
   _globalFilterTerm   = '';
 
   // Reset all module filters
-  ['f2search','f3search','f4search','f5search'].forEach(id => {
+  ['f2search','f3search','f4search'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
@@ -2329,8 +2511,7 @@ function clearGlobalFilter() {
     if (hiddenEl3) hiddenEl3.value = '';
   }
 
-  renderM2(); renderM3(); renderM4(); renderM5();
-
+  renderM2(); renderM3(); renderM4(); 
   const b = document.getElementById('global-sync-banner');
   if (b) b.style.display = 'none';
   showToast('Filtros sincronizados limpiados', 'info');
@@ -2559,7 +2740,7 @@ function renderM3inSubwin() {
   });
   data.forEach(r=>{
     if(r.m3Status==='pagado'){r.lateDaysCalc=0;}
-    else if(r.dueDate){const due=parseAnyDate(r.dueDate);if(due&&due.getFullYear()>=2000){const diff=Math.floor((today-due)/86400000);r.lateDaysCalc=diff>0?diff:0;}else r.lateDaysCalc=(r.lateDays&&r.lateDays>0&&r.lateDays<3650)?r.lateDays:0;}
+    else if(r.dueDate){const due=parseAnyDate(r.dueDate);if(due&&due.getFullYear()>=2000){const diff=Math.floor((today-due)/86400000);r.lateDaysCalc=diff>0?diff:0;}else r.lateDaysCalc=0;}
     else r.lateDaysCalc=0;
   });
   const total=data.length,pagado=data.filter(r=>r.m3Status==='pagado').length;
@@ -2661,7 +2842,7 @@ function renderChartsInSubwin(container) {
   const moraEl=container.querySelector('#mora-chart');
   if(moraEl){
     const today=new Date();today.setHours(0,0,0,0);
-    d3.forEach(r=>{if(r.m3Status==='pagado'){r.lateDaysCalc=0;}else if(r.dueDate){const due=parseAnyDate(r.dueDate);if(due&&due.getFullYear()>=2000){const diff=Math.floor((today-due)/86400000);r.lateDaysCalc=diff>0?diff:0;}else r.lateDaysCalc=(r.lateDays&&r.lateDays>0&&r.lateDays<3650)?r.lateDays:0;}else r.lateDaysCalc=0;});
+    d3.forEach(r=>{if(r.m3Status==='pagado'){r.lateDaysCalc=0;}else if(r.dueDate){const due=parseAnyDate(r.dueDate);if(due&&due.getFullYear()>=2000){const diff=Math.floor((today-due)/86400000);r.lateDaysCalc=diff>0?diff:0;}else r.lateDaysCalc=0;}else r.lateDaysCalc=0;});
     const ranges=[{label:'0 días (pagado/a tiempo)',f:r=>r.lateDaysCalc===0,color:'#059669'},{label:'1–15 días',f:r=>r.lateDaysCalc>0&&r.lateDaysCalc<=15,color:'#d97706'},{label:'16–30 días',f:r=>r.lateDaysCalc>15&&r.lateDaysCalc<=30,color:'#f59e0b'},{label:'31–60 días',f:r=>r.lateDaysCalc>30&&r.lateDaysCalc<=60,color:'#dc2626'},{label:'>60 días',f:r=>r.lateDaysCalc>60,color:'#7f1d1d'}];
     const mx=Math.max(1,...ranges.map(m=>d3.filter(m.f).length));
     moraEl.innerHTML=ranges.map(m=>{const cnt=d3.filter(m.f).length;const w=Math.round(cnt/mx*100);return`<div class="mora-range-row"><div class="mora-range-label">${m.label}</div><div class="mora-range-track"><div class="mora-range-fill" style="width:${w}%;background:${m.color}">${cnt>0?cnt:''}</div></div><div class="mora-range-count">${cnt}</div></div>`;}).join('');
@@ -3468,7 +3649,7 @@ function parseFiles() {
     state.df1 = [];
     for (let i = hdr + 1; i < raw.length; i++) {
       const row = raw[i]; if (!row || row.every(c => c == null)) continue;
-      const obj = {}; headers.forEach((h, j) => { obj[h] = row[j] != null ? row[j] : null; }); state.df1.push(obj);
+      const obj = {}; headers.forEach((h, j) => { if (!h) return; if (obj[h] == null) obj[h] = row[j] != null ? row[j] : null; else if (row[j] != null && obj[h] == null) obj[h] = row[j]; }); state.df1.push(obj);
     }
     console.log('[A1] hdr='+hdr+', headers[0..4]='+JSON.stringify(headers.slice(0,5))+', rows='+state.df1.length);
   }
@@ -3483,33 +3664,37 @@ function parseFiles() {
                       wb.SheetNames[0];
     const raw = _getRaw(wb, sheetName);
 
-    // ROBUST header detection: look for a row that contains AT LEAST 3 of the known
-    // column names from the Archivo 2 schema. This is immune to title rows.
+    // ROBUST header detection for A2 — handles XLS files with metadata rows at top
+    // Uses normalStr-compatible matching (strips accents via normalize)
     const A2_KNOWN_COLS = [
-      'organización', 'fecha de recepción', 'recepción', 'número de documento',
-      'recepcionado por', 'valor recepcionado por línea', 'estado de línea',
-      'descripción de artículo', 'unidad de negocio', 'valor total'
+      'organizacion', 'fecha de recepcion', 'recepcion', 'numero de documento',
+      'recepcionado por', 'valor recepcionado por linea', 'estado de linea',
+      'descripcion de articulo', 'unidad de negocio', 'valor total',
+      'organizaci', 'fecha de recepcio', 'numero de documen', 'recepcionado'
     ];
+    const normalCell = c => c != null ? String(c).trim().toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ') : '';
     let hdr = -1;
-    for (let i = 0; i < Math.min(15, raw.length); i++) {
+    // Pass 1: look for row where most non-null cells are strings matching known A2 headers
+    for (let i = 0; i < Math.min(20, raw.length); i++) {
       const r = raw[i]; if (!r || !r.length) continue;
-      const cellStrs = r.map(c => c != null ? String(c).trim().toLowerCase() : '');
+      const cellStrs = r.map(normalCell);
       let hits = 0;
       for (const known of A2_KNOWN_COLS) {
-        if (cellStrs.some(c => c === known || c.includes(known.substring(0, 10)))) hits++;
+        if (cellStrs.some(c => c === known || c.startsWith(known.substring(0,8)))) hits++;
       }
       if (hits >= 3) { hdr = i; break; }
     }
+    // Pass 2: find row with most STRING cells (header rows are all strings, data rows mix types)
     if (hdr === -1) {
-      // Fallback: find the row with the most non-empty cells
-      let maxCells = 0;
+      let maxStrCells = 0;
       raw.forEach((r, i) => {
         if (!r) return;
-        const n = r.filter(c => c != null && String(c).trim() !== '').length;
-        if (n > maxCells) { maxCells = n; hdr = i; }
+        const n = r.filter(c => c != null && typeof c === 'string' && c.trim() !== '').length;
+        if (n > maxStrCells) { maxStrCells = n; hdr = i; }
       });
     }
-    if (hdr === -1) hdr = 0; // last resort
+    if (hdr === -1) hdr = 0;
 
     const headers = (raw[hdr] || []).map(h => h != null ? String(h).trim() : '');
     state.df2 = [];
@@ -3517,8 +3702,8 @@ function parseFiles() {
       const row = raw[i]; if (!row || row.every(c => c == null)) continue;
       const obj = {}; headers.forEach((h, j) => { obj[h] = row[j] != null ? row[j] : null; }); state.df2.push(obj);
     }
-    console.log('[A2] hdr='+hdr+', sheet='+sheetName+', headers[0..4]='+JSON.stringify(headers.slice(0,5))+', rows='+state.df2.length);
-    if (hdr <= 1) console.warn('[A2] WARNING: hdr='+hdr+' is suspiciously low — header detection may have failed!');
+    console.log('[A2] hdr='+hdr+', sheet='+sheetName+', headers:', JSON.stringify(headers.filter(h=>h).slice(0,5)), 'rows='+state.df2.length);
+    if (hdr <= 1) console.warn('[A2] WARNING: hdr='+hdr+' suspiciously low — metadata header rows may have tricked detection!');
   }
 
   // ── Archivo 3 ──
@@ -3528,26 +3713,30 @@ function parseFiles() {
     const raw = _getRaw(wb, sheetName);
     const A3_KNOWN_COLS = [
       'tl', 'cia', 'nit', 'nombre proveedor', 'tipo proveedor',
-      'numero de factura', 'estado', 'fecha transacción',
-      'valor bruto incluido iva', 'aplicación anticipos',
-      'saldo de la factura', 'mes', 'año', 'fecha contable'
+      'numero de factura', 'estado', 'fecha transaccion',
+      'valor bruto incluido iva', 'aplicacion anticipos',
+      'saldo de la factura', 'mes', 'ano', 'fecha contable'
     ];
+    const normalCell3 = c => c != null ? String(c).trim().toUpperCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase() : '';
     let hdr = -1;
-    for (let i = 0; i < Math.min(15, raw.length); i++) {
+    // Pass 1: match against known A3 column names (accent-normalized)
+    for (let i = 0; i < Math.min(20, raw.length); i++) {
       const r = raw[i]; if (!r || !r.length) continue;
-      const cellStrs = r.map(c => c != null ? String(c).trim().toLowerCase() : '');
+      const cellStrs = r.map(normalCell3);
       let hits = 0;
       for (const known of A3_KNOWN_COLS) {
-        if (cellStrs.some(c => c === known || c.includes(known.substring(0,8)))) hits++;
+        if (cellStrs.some(c => c === known || c.startsWith(known.substring(0,6)))) hits++;
       }
       if (hits >= 3) { hdr = i; break; }
     }
+    // Pass 2: row with most all-caps string cells (A3 headers are uppercase)
     if (hdr === -1) {
-      let maxCells = 0;
+      let maxStrCells = 0;
       raw.forEach((r, i) => {
         if (!r) return;
-        const n = r.filter(c => c != null && String(c).trim() !== '').length;
-        if (n > maxCells) { maxCells = n; hdr = i; }
+        const n = r.filter(c => c != null && typeof c === 'string' && c === c.toUpperCase() && c.trim() !== '').length;
+        if (n > maxStrCells) { maxStrCells = n; hdr = i; }
       });
     }
     if (hdr === -1) hdr = 0;
@@ -3682,36 +3871,43 @@ function emptyRow(cols) {
 
 function parseAnyDate(v) {
   if (!v) return null;
-  if (v instanceof Date) return isNaN(v) ? null : v;
+  if (v instanceof Date) { return (isNaN(v) || v.getFullYear() < 2000) ? null : v; }
   if (typeof v === 'number') {
-    // Excel serial date
+    // Excel serial date: must be > 25569 (= 1970-01-01) to be a real date
+    // Serials < 25569 produce dates before 1970, and < ~36526 before 2000 — all invalid for us
+    if (v < 36526) return null; // 36526 = 2000-01-01 in Excel serial
     const d = new Date(Math.round((v - 25569) * 86400 * 1000));
-    return isNaN(d) ? null : d;
+    return (isNaN(d) || d.getFullYear() < 2000) ? null : d;
   }
   const s = String(v).trim();
+  if (!s || s === '0' || s === 'null' || s === 'undefined') return null;
   // Try ISO yyyy-mm-dd
   let m = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
-  if (m) return new Date(+m[1], +m[2]-1, +m[3]);
+  if (m) { const yr = +m[1]; if (yr < 2000 || yr > 2100) return null; return new Date(yr, +m[2]-1, +m[3]); }
   // Try dd/mm/yyyy
   m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
-  if (m) return new Date(+m[3], +m[2]-1, +m[1]);
-  // Try "1-ago-25" style (Spanish abbreviated months)
+  if (m) { const yr = +m[3]; if (yr < 2000 || yr > 2100) return null; return new Date(yr, +m[2]-1, +m[1]); }
+  // Try "1-ago-25" or "9-ene-25" style (Spanish abbreviated months)
   const months = {ene:0,feb:1,mar:2,abr:3,may:4,jun:5,jul:6,ago:7,sep:8,oct:9,nov:10,dic:11};
   m = s.toLowerCase().match(/^(\d{1,2})[\/\-]([a-záéíóú]{3})[\/\-](\d{2,4})$/);
   if (m) {
     const yr = +m[3] < 100 ? 2000 + +m[3] : +m[3];
+    if (yr < 2000 || yr > 2100) return null;
     const mo = months[m[2].substring(0,3)] ?? null;
     if (mo != null) return new Date(yr, mo, +m[1]);
   }
   const d = new Date(s);
-  return isNaN(d) ? null : d;
+  return (isNaN(d) || d.getFullYear() < 2000 || d.getFullYear() > 2100) ? null : d;
 }
 
 function getA1Field(row, candidates) {
   for (const c of candidates) {
+    // Direct key match first (first non-null wins due to df1 build logic)
     if (row[c] != null && row[c] !== '') return row[c];
+    // Fuzzy match — take first non-null key that contains the candidate string
     for (const key of Object.keys(row)) {
-      if (normalStr(key).includes(normalStr(c)) && row[key] != null) return row[key];
+      if (key === c) continue; // already checked
+      if (normalStr(key).includes(normalStr(c)) && row[key] != null && row[key] !== '') return row[key];
     }
   }
   return null;
@@ -3720,10 +3916,20 @@ function getA1Field(row, candidates) {
 function buildModules() {
   const recByOC = {};
   state.df2.forEach(r => {
-    const oc = normalStr(r['Número de Documento'] || r['Numero de Documento'] || r['Número de documento'] || '');
+    // Try all possible OC field name variants (with/without accents)
+    const rawOC = r['Número de Documento'] || r['Numero de Documento'] || r['Número de documento'] ||
+                  r['numero de documento'] || r['NUMERO DE DOCUMENTO'] || '';
+    const oc = normalStr(rawOC);
     if (!oc) return;
     if (!recByOC[oc]) recByOC[oc] = [];
     recByOC[oc].push(r);
+    // Also index by Recepción number for cross-matching
+    const recNum = r['Recepción'] || r['Recepcion'] || r['recepcion'] || '';
+    if (recNum) {
+      const recKey = 'REC_' + normalStr(String(recNum));
+      if (!recByOC[recKey]) recByOC[recKey] = [];
+      recByOC[recKey].push(r);
+    }
   });
   console.log('[buildModules] recByOC keys:', Object.keys(recByOC).length, '— sample:', Object.keys(recByOC).slice(0,3));
   if (Object.keys(recByOC).length === 0 || Object.keys(recByOC)[0] === '') {
@@ -3745,7 +3951,7 @@ function buildModules() {
     const inv = getA1Field(row, ['Invoice Number','Numero Factura','N° Factura']);
     const po = getA1Field(row, ['PO','NuevaPO','Orden de Compra','Contract']);
     const prov = getA1Field(row, ['Supplier Name','Proveedor']);
-    const valSinIva = normalNum(getA1Field(row, ['Vaule without IVA','Value without IVA','Valor sin IVA']));
+    const valSinIva = normalNum(getA1Field(row, ['Vaule without IVA','Value without IVA','Valor sin IVA'])) || normalNum(getA1Field(row, ['Invoice Value','Valor Factura']));
     const invDate = getA1Field(row, ['Invoice Date','Fecha Factura']);
     const dueDate = getA1Field(row, ['Due Date','Fecha Vencimiento']);
     const payDate = getA1Field(row, ['PAYMENT DATE','Fecha Pago']);
@@ -3764,9 +3970,14 @@ function buildModules() {
 
     if (!inv && !po) return;
 
-    // M1
+    // M1 — try OC match first, then REC number match
     const poNorm = normalStr(po);
-    const recRows = recByOC[poNorm] || [];
+    let recRows = recByOC[poNorm] || [];
+    // If no OC match, try matching by REC number (some files link by reception #)
+    if (!recRows.length && rec) {
+      const recKey = 'REC_' + normalStr(String(rec));
+      recRows = recByOC[recKey] || [];
+    }
     const totalRec = recRows.reduce((s, r) => {
       const v = normalNum(r['Valor Recepcionado por Línea'] || r['Valor Total'] || r['Valor Unitario']);
       return s + (v || 0);
@@ -3936,14 +4147,12 @@ function renderAll() {
   try { renderM2(); } catch(e) { console.warn('renderM2 error:', e); }
   try { renderM3(); } catch(e) { console.warn('renderM3 error:', e); }
   try { renderM4(); } catch(e) { console.warn('renderM4 error:', e); }
-  try { buildM5Data(); } catch(e) { console.warn('buildM5 error:', e); }
-  try { renderM5(); } catch(e) { console.warn('renderM5 error:', e); }
-  ['1','2','3','4'].forEach(n => {
+  try { initM5Selectors(); } catch(e) { console.warn('m5 init error:', e); }
+['1','2','3','4'].forEach(n => {
     const el = document.getElementById('cnt'+n);
     if (el) el.textContent = state['m'+n+'data']?.length || 0;
   });
-  const el5 = document.getElementById('cnt5');
-  if (el5) el5.textContent = state.m5data?.length || 0;
+
   try { renderFilesResumen(); } catch(e) { console.warn('filesResumen error:', e); }
   try { renderM0RecTable(); } catch(e) { console.warn('M0RecTable error:', e); }
 }
@@ -4456,21 +4665,24 @@ function renderM1() {
         guides += `<line x1="70" y1="${yg}" x2="${svgW - 5}" y2="${yg}" stroke="#e2e8f0" stroke-width="1"/>`;
         guides += `<text x="65" y="${yg + 3}" text-anchor="end" font-size="9" fill="#94a3b8">${vg}</text>`;
       }
+      // Store chart data for click handling
+      window._m1ChartData = { monthMap, byPersonMap, persons, allRec };
       months.forEach((k, mi) => {
         const cx = 75 + mi * bGroup + bGroup / 2;
+        const bW = Math.min(20, bGroup * 0.45);
         let stackY = 15 + chartH;
         persons.forEach((p, pi) => {
           const cnt = (byPersonMap[p] && byPersonMap[p][k]) || 0;
           if (!cnt) return;
           const bH = Math.max(2, Math.round((cnt / maxV) * chartH));
           stackY -= bH;
-          bars += `<rect x="${cx - Math.min(20, bGroup * 0.45)}" y="${stackY}" width="${Math.min(40, bGroup * 0.9)}" height="${bH}" fill="${colors[pi % colors.length]}" rx="2" opacity="0.88"><title>${p}: ${cnt} en ${k}</title></rect>`;
-          if (bH >= 12) bars += `<text x="${cx}" y="${stackY + bH / 2 + 3}" text-anchor="middle" font-size="8" fill="white" font-weight="700">${cnt}</text>`;
+          bars += `<rect x="${cx - bW}" y="${stackY}" width="${bW*2}" height="${bH}" fill="${colors[pi % colors.length]}" rx="2" opacity="0.88" style="cursor:pointer" onclick="showM1MonthPopup('${k}',event)"><title>${p}: ${cnt} en ${k}</title></rect>`;
+          if (bH >= 12) bars += `<text x="${cx}" y="${stackY + bH / 2 + 3}" text-anchor="middle" font-size="8" fill="white" font-weight="700" style="pointer-events:none">${cnt}</text>`;
         });
         const total_k = monthMap[k];
-        bars += `<text x="${cx}" y="${15 + chartH - Math.round((total_k / maxV) * chartH) - 4}" text-anchor="middle" font-size="8.5" fill="#1e293b" font-weight="700">${total_k}</text>`;
+        bars += `<text x="${cx}" y="${15 + chartH - Math.round((total_k / maxV) * chartH) - 4}" text-anchor="middle" font-size="8.5" fill="#1e293b" font-weight="700" style="cursor:pointer" onclick="showM1MonthPopup('${k}',event)">${total_k}</text>`;
         const shortK = k.slice(2);
-        xlabs += `<text x="${cx}" y="${svgH - 6}" text-anchor="middle" font-size="8.5" fill="#5c6f8a">${shortK}</text>`;
+        xlabs += `<text x="${cx}" y="${svgH - 6}" text-anchor="middle" font-size="8.5" fill="#5c6f8a" style="cursor:pointer;font-weight:600" onclick="showM1MonthPopup('${k}',event)">${shortK}</text>`;
       });
       persons.slice(0, 8).forEach((p, pi) => {
         const sn = p.length > 22 ? p.substring(0, 21) + '…' : p;
@@ -4721,570 +4933,6 @@ function renderM4() {
 // ═══════════════════════════════════════════════════════════════
 // MODULE 5 — ANÁLISIS POR PROVEEDOR
 // ═══════════════════════════════════════════════════════════════
-function buildM5DataEmergency() {
-  // Direct build from m1data fields (already parsed) or raw df1
-  const periodo = document.getElementById('f5periodo')?.value || 'trimestral';
-  const emergMap = {};
-  const src = state.m1data.length > 0 ? state.m1data : [];
-  src.forEach(r => {
-    const prov = r.prov || 'Sin nombre';
-    // Try year and monthNum from already-parsed m1data
-    const yr = r.year ? parseInt(String(r.year).replace('.0','')) : 0;
-    let mInt = r.monthNum ? parseInt(String(r.monthNum)) : 0;
-    if (!mInt && r.month) {
-      const mm = {enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,octubre:10,noviembre:11,diciembre:12,january:1,february:2,march:3,april:4,may:5,june:6,july:7,august:8,september:9,october:10,november:11,december:12};
-      mInt = mm[String(r.month).toLowerCase().trim()] || parseInt(String(r.month)) || 0;
-    }
-    // Also try invDate
-    if ((!yr || !mInt) && r.invDate) {
-      const d = parseAnyDate(r.invDate);
-      if (d && d.getFullYear() >= 2000) { const y2=d.getFullYear(), m2=d.getMonth()+1; if (!yr || yr<1990) {} }
-    }
-    const useYr = (yr >= 1990 && yr <= 2100) ? yr : 0;
-    const useMInt = (mInt >= 1 && mInt <= 12) ? mInt : 0;
-    if (!useYr || !useMInt) return;
-    let pk;
-    if (periodo==='mensual') pk=`${useYr}-${String(useMInt).padStart(2,'0')}`;
-    else if (periodo==='trimestral') pk=`${useYr} Q${Math.ceil(useMInt/3)}`;
-    else if (periodo==='semestral') pk=`${useYr} S${useMInt<=6?1:2}`;
-    else pk=String(useYr);
-    const k=`${prov}||${pk}`;
-    if (!emergMap[k]) emergMap[k]={prov,period:pk,facturas:0,facturado:0,pagado:0,pendiente:0,mora:0};
-    emergMap[k].facturas++;
-    emergMap[k].facturado += (r.valSinIva||0);
-  });
-  // Also try raw df1
-  if (Object.keys(emergMap).length === 0 && state.df1 && state.df1.length > 0) {
-    state.df1.forEach(row => {
-      const prov = String(getA1Field(row,['Supplier Name','Proveedor'])||'').trim()||'Sin nombre';
-      const yr = parseInt(String(getA1Field(row,['Year','Año'])||0).replace('.0',''))||0;
-      let mInt = parseInt(String(getA1Field(row,['Num Month','NumMonth'])||0))||0;
-      if (!mInt) {
-        const mm={enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,octubre:10,noviembre:11,diciembre:12};
-        mInt = mm[String(getA1Field(row,['Month','Mes'])||'').toLowerCase().trim()]||0;
-      }
-      if (!yr||yr<1990||!mInt) return;
-      let pk;
-      if (periodo==='mensual') pk=`${yr}-${String(mInt).padStart(2,'0')}`;
-      else if (periodo==='trimestral') pk=`${yr} Q${Math.ceil(mInt/3)}`;
-      else if (periodo==='semestral') pk=`${yr} S${mInt<=6?1:2}`;
-      else pk=String(yr);
-      const k=`${prov}||${pk}`;
-      if (!emergMap[k]) emergMap[k]={prov,period:pk,facturas:0,facturado:0,pagado:0,pendiente:0,mora:0};
-      emergMap[k].facturas++;
-      const val = parseFloat(String(getA1Field(row,[' Vaule without IVA ','Vaule without IVA','Value without IVA'])||0).replace(/[^0-9.-]/g,''))||0;
-      emergMap[k].facturado += val;
-      const st = String(getA1Field(row,['STATUS','Estado'])||'').toLowerCase();
-      if (st.includes('paid')||st.includes('pagado')) emergMap[k].pagado+=val; else emergMap[k].pendiente+=val;
-    });
-  }
-  if (Object.keys(emergMap).length > 0) {
-    state.m5data = Object.values(emergMap).sort((a,b)=>a.prov.localeCompare(b.prov)||a.period.localeCompare(b.period));
-    console.info('[M5 Emergency] Built', state.m5data.length, 'records');
-  }
-}
-
-function buildM5Data() {
-  // SAFETY: if m1data is empty but df1 has data, there was a parse issue
-  // Try to directly use df1 fields
-  if (state.m1data.length === 0 && state.df1 && state.df1.length > 0) {
-    console.warn('[M5] m1data is empty but df1 has', state.df1.length, 'rows — attempting direct df1 build');
-    const today2 = new Date(); today2.setHours(0,0,0,0);
-    const directMap = {};
-    const periodo2 = document.getElementById('f5periodo')?.value || 'trimestral';
-    state.df1.forEach(row => {
-      const prov = String(row['Supplier Name'] || row['Proveedor'] || '').trim() || 'Sin nombre';
-      const yr = row['Year'] != null ? parseInt(String(row['Year']).replace('.0','')) : 0;
-      const mNum = row['Num Month'] != null ? parseInt(String(row['Num Month'])) : 0;
-      const mTxt = row['Month'] != null ? String(row['Month']).toLowerCase() : '';
-      const mInt = mNum || {enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,octubre:10,noviembre:11,diciembre:12}[mTxt] || 0;
-      if (!yr || yr < 1990 || yr > 2100 || !mInt) return;
-      let pk;
-      if (periodo2==='mensual') pk=`${yr}-${String(mInt).padStart(2,'0')}`;
-      else if (periodo2==='trimestral') pk=`${yr} Q${Math.ceil(mInt/3)}`;
-      else if (periodo2==='semestral') pk=`${yr} S${mInt<=6?1:2}`;
-      else pk=String(yr);
-      const k=`${prov}||${pk}`;
-      if (!directMap[k]) directMap[k]={prov,period:pk,facturas:0,facturado:0,pagado:0,pendiente:0,mora:0};
-      directMap[k].facturas++;
-      const val = parseFloat(String(row[' Vaule without IVA ']||row['Vaule without IVA']||row['Value without IVA']||0).replace(/[^0-9.-]/g,'')) || 0;
-      directMap[k].facturado += val;
-      const st = String(row['STATUS']||'').toLowerCase();
-      if (st.includes('paid')||st.includes('pagado')) directMap[k].pagado += val;
-      else directMap[k].pendiente += val;
-    });
-    if (Object.keys(directMap).length > 0) {
-      state.m5data = Object.values(directMap).sort((a,b)=>a.prov.localeCompare(b.prov)||a.period.localeCompare(b.period));
-      console.info('[M5] Direct df1 build succeeded:', state.m5data.length, 'records');
-      return;
-    }
-  }
-  // Ensure lateDaysCalc is computed on m3data before using it
-  const today = new Date(); today.setHours(0,0,0,0);
-  state.m3data.forEach(r => {
-    if (r.m3Status === 'pagado') { r.lateDaysCalc = 0; }
-    else if (r.dueDate) {
-      const due = parseAnyDate(r.dueDate);
-      if (due && due.getFullYear() >= 2000) {
-        r.lateDaysCalc = Math.max(0, Math.floor((today - due) / 86400000));
-      } else {
-        r.lateDaysCalc = (r.lateDays && r.lateDays > 0 && r.lateDays < 3650) ? r.lateDays : 0;
-      }
-    } else { r.lateDaysCalc = 0; }
-  });
-  // Build per-provider period data from m1 + m3
-  const d1 = state.m1data, d3 = state.m3data;
-  const map = {}; // key: prov|period
-  const getPeriodKey = (r, periodo) => {
-    // Try standard getMonthYear first
-    let my = getMonthYear(r);
-    // Fallback: extract from invDate
-    if (!my && r.invDate) {
-      const d = parseAnyDate(r.invDate);
-      if (d && d.getFullYear() >= 2000) my = { y: d.getFullYear(), m: d.getMonth()+1 };
-    }
-    // Fallback: extract from dueDate
-    if (!my && r.dueDate) {
-      const d = parseAnyDate(r.dueDate);
-      if (d && d.getFullYear() >= 2000) my = { y: d.getFullYear(), m: d.getMonth()+1 };
-    }
-    if (!my) return null;
-    const y = my.y, m = my.m;
-    if (periodo==='mensual') return `${y}-${String(m).padStart(2,'0')}`;
-    if (periodo==='trimestral') return `${y} Q${Math.ceil(m/3)}`;
-    if (periodo==='semestral') return `${y} S${m<=6?1:2}`;
-    return String(y);
-  };
-  const periodo = document.getElementById('f5periodo')?.value || 'trimestral';
-  let dbgNullPeriod = 0;
-  d1.forEach(r => {
-    const pk = getPeriodKey(r, periodo);
-    const prov = r.prov||'Sin nombre';
-    if (!pk) { dbgNullPeriod++; return; }
-    const k = `${prov}||${pk}`;
-    if (!map[k]) map[k] = { prov, period:pk, facturas:0, facturado:0, pagado:0, pendiente:0, mora:0 };
-    map[k].facturas++;
-    map[k].facturado += (r.valSinIva||0);
-  });
-  d3.forEach(r => {
-    const pk = getPeriodKey(r, periodo);
-    const prov = r.prov||'Sin nombre';
-    if (!pk) return;
-    const k = `${prov}||${pk}`;
-    if (!map[k]) map[k] = { prov, period:pk, facturas:0, facturado:0, pagado:0, pendiente:0, mora:0 };
-    if (r.m3Status==='pagado') map[k].pagado += (r.cxpBruto||r.valSinIva||0);
-    else map[k].pendiente += (r.valSinIva||0);
-    if ((r.lateDaysCalc||0)>0) map[k].mora++;
-  });
-  state.m5data = Object.values(map).sort((a,b)=>a.prov.localeCompare(b.prov)||a.period.localeCompare(b.period));
-
-  // Last-resort: if map is completely empty but m1data has records, group by invDate
-  if (state.m5data.length === 0 && d1.length > 0) {
-    const fallbackMap = {};
-    d1.forEach(r => {
-      const prov = r.prov||'Sin nombre';
-      // try invDate year
-      let pk = null;
-      if (r.invDate) {
-        const d = parseAnyDate(r.invDate);
-        if (d && d.getFullYear() >= 2000) {
-          const y = d.getFullYear(), m = d.getMonth()+1;
-          if (periodo==='mensual') pk = `${y}-${String(m).padStart(2,'0')}`;
-          else if (periodo==='trimestral') pk = `${y} Q${Math.ceil(m/3)}`;
-          else if (periodo==='semestral') pk = `${y} S${m<=6?1:2}`;
-          else pk = String(y);
-        }
-      }
-      if (!pk) pk = 'Sin período';
-      const k = `${prov}||${pk}`;
-      if (!fallbackMap[k]) fallbackMap[k] = { prov, period:pk, facturas:0, facturado:0, pagado:0, pendiente:0, mora:0 };
-      fallbackMap[k].facturas++;
-      fallbackMap[k].facturado += (r.valSinIva||0);
-    });
-    d3.forEach(r => {
-      const prov = r.prov||'Sin nombre';
-      let pk = null;
-      if (r.invDate) {
-        const d = parseAnyDate(r.invDate);
-        if (d && d.getFullYear() >= 2000) {
-          const y = d.getFullYear(), m = d.getMonth()+1;
-          if (periodo==='mensual') pk = `${y}-${String(m).padStart(2,'0')}`;
-          else if (periodo==='trimestral') pk = `${y} Q${Math.ceil(m/3)}`;
-          else if (periodo==='semestral') pk = `${y} S${m<=6?1:2}`;
-          else pk = String(y);
-        }
-      }
-      if (!pk) pk = 'Sin período';
-      const k = `${prov}||${pk}`;
-      if (!fallbackMap[k]) fallbackMap[k] = { prov, period:pk, facturas:0, facturado:0, pagado:0, pendiente:0, mora:0 };
-      if (r.m3Status==='pagado') fallbackMap[k].pagado += (r.cxpBruto||r.valSinIva||0);
-      else fallbackMap[k].pendiente += (r.valSinIva||0);
-      if ((r.lateDaysCalc||0)>0) fallbackMap[k].mora++;
-    });
-    state.m5data = Object.values(fallbackMap).sort((a,b)=>a.prov.localeCompare(b.prov)||a.period.localeCompare(b.period));
-    console.info(`[M5] Fallback mode: built ${state.m5data.length} records from invDate`);
-  }
-
-  if (state.m5data.length === 0 && dbgNullPeriod > 0) {
-    console.warn(`[M5] buildM5Data: ${dbgNullPeriod}/${d1.length} registros sin período válido.`,
-      d1.slice(0,3).map(r=>({year:r.year, month:r.month, monthNum:r.monthNum, invDate:r.invDate})));
-  }
-}
-
-function renderM5() {
-  if (!state.processed) return;
-  buildM5Data();
-  // If still no data but we have raw invoice data, force a direct rebuild
-  if (state.m5data.length === 0 && (state.m1data.length > 0 || (state.df1 && state.df1.length > 0))) {
-    console.warn('[renderM5] m5data still empty after buildM5Data — trying emergency rebuild from m1data/df1');
-    buildM5DataEmergency();
-  }
-  const search = normalStr(document.getElementById('f5search')?.value||'');
-  const year = document.getElementById('f5year')?.value||'';
-  const periodo = document.getElementById('f5periodo')?.value||'trimestral';
-
-  let data = state.m5data.filter(r => {
-    if (search && !normalStr(r.prov).includes(search)) return false;
-    if (year && !r.period.startsWith(year)) return false;
-    return true;
-  });
-
-  // Populate year filter
-  const yrSel = document.getElementById('f5year');
-  if (yrSel && yrSel.options.length<=1) {
-    const years=[...new Set(state.m1data.map(r=>r.year).filter(Boolean))].sort();
-    years.forEach(y=>{const o=document.createElement('option');o.value=String(y);o.textContent=y;yrSel.appendChild(o);});
-  }
-
-  // Summary
-  const totalProv = new Set(data.map(r=>r.prov)).size;
-  const totalFact = data.reduce((s,r)=>s+r.facturas,0);
-  const totalFacV = data.reduce((s,r)=>s+r.facturado,0);
-  const totalPagV = data.reduce((s,r)=>s+r.pagado,0);
-  const totalPendV = (state.df3cxp||[]).filter(r=>r.estado==='Aprobado').reduce((s,r)=>s+(r.valorBruto||0),0);
-  const s5 = document.getElementById('sum5');
-  if (s5) s5.innerHTML = `
-    <div class="summary-card s-info"><div class="summary-label">Proveedores</div><div class="summary-value">${totalProv}</div></div>
-    <div class="summary-card s-info"><div class="summary-label">Total Facturas</div><div class="summary-value">${totalFact}</div></div>
-    <div class="summary-card s-accent"><div class="summary-label">Val. Facturado</div><div class="summary-value" style="font-size:14px">${fmtCurrency(totalFacV)}</div></div>
-    <div class="summary-card s-success"><div class="summary-label">Val. Pagado</div><div class="summary-value" style="font-size:14px">${fmtCurrency(totalPagV)}</div></div>
-    <div class="summary-card s-warning"><div class="summary-label">% Pagado</div><div class="summary-value">${pct(totalPagV,totalFacV)}%</div></div>
-    <div class="summary-card s-danger"><div class="summary-label">⏳ Pendiente por Pagar</div><div class="summary-value" style="font-size:13px">${fmtCurrency(totalPendV)}</div><div class="summary-sub">Aprobadas en CxP</div></div>`;
-
-  // Chart: top 12 providers stacked bar by period
-  const provMap = {};
-  data.forEach(r => {
-    if (!provMap[r.prov]) provMap[r.prov] = { facturado:0, pagado:0 };
-    provMap[r.prov].facturado += r.facturado;
-    provMap[r.prov].pagado += r.pagado;
-  });
-  const topProvs = Object.entries(provMap).sort((a,b)=>b[1].facturado-a[1].facturado).slice(0,12);
-  const m5chartEl = document.getElementById('m5-chart-prov');
-  if (m5chartEl) {
-    if (!topProvs.length) {
-      // Last-resort: build from m1data using invDate only
-      let debugInfo = '';
-      if (state.m1data.length > 0) {
-        const sample = state.m1data[0];
-        debugInfo = `<div style="font-size:10px;color:#94a3b8;margin-top:8px">Debug: year="${sample.year}" month="${sample.month}" monthNum="${sample.monthNum}" invDate="${sample.invDate}"</div>`;
-      }
-      m5chartEl.innerHTML = `<div style="color:var(--col-muted);font-size:13px;padding:30px;text-align:center">
-        ${state.m1data.length ? `📊 Sin datos para el filtro. Intente "Todos los años" o borre el filtro de proveedor.<br><span style="font-size:11px">m5data: ${state.m5data.length} · m1data: ${state.m1data.length}</span>${debugInfo}` : 'Cargue y procese archivos para ver el análisis.'}
-      </div>`;
-    } else {
-      const maxV = Math.max(1,...topProvs.map(([,v])=>v.facturado));
-      const svgH=180, svgW=780, chartH=svgH-60, chartW=svgW-90;
-      const barGroup = chartW/topProvs.length;
-      const barW = Math.min(55, barGroup*0.6);
-      let bars='', guides='', xlabs='';
-      for(let i=0;i<=4;i++){
-        const yg=20+chartH-i*(chartH/4);
-        const vg=maxV*i/4;
-        guides+=`<line x1="70" y1="${yg}" x2="${svgW-10}" y2="${yg}" stroke="#e2e8f0" stroke-width="1"/>`;
-        const lbl=vg>=1e9?(vg/1e9).toFixed(2).replace('.',',')+'MM':vg>1e6?(vg/1e6).toFixed(0)+'M':vg>1e3?(vg/1e3).toFixed(0)+'K':vg.toFixed(0);
-        guides+=`<text x="65" y="${yg+4}" text-anchor="end" font-size="10" fill="#94a3b8">${lbl}</text>`;
-      }
-      topProvs.forEach(([name,vals],i)=>{
-        const cx=80+i*barGroup+barGroup/2;
-        const hF=Math.max(2,Math.round((vals.facturado/maxV)*chartH));
-        const hP=Math.max(0,Math.round((vals.pagado/maxV)*chartH));
-        const yF=20+chartH-hF, yP=20+chartH-hP;
-        bars+=`<rect x="${cx-barW/2-1}" y="${yF}" width="${barW*0.5}" height="${hF}" fill="#1a4a8a" rx="3" opacity="0.8" style="cursor:pointer" onclick="openProviderDetail('${name.replace(/'/g,"\\'")}')"><title>${name}: Facturado ${fmtCurrency(vals.facturado)}</title></rect>`;
-        if(hP>0) bars+=`<rect x="${cx+1}" y="${yP}" width="${barW*0.5}" height="${hP}" fill="#059669" rx="3" opacity="0.85" style="cursor:pointer" onclick="openProviderDetail('${name.replace(/'/g,"\\'")}')"><title>${name}: Pagado ${fmtCurrency(vals.pagado)}</title></rect>`;
-        const sn=name.length>12?name.substring(0,11)+'…':name;
-        xlabs+=`<text x="${cx}" y="${svgH-18}" text-anchor="middle" font-size="9.5" fill="#5c6f8a" transform="rotate(-25,${cx},${svgH-18})">${sn}</text>`;
-      });
-      m5chartEl.innerHTML=`<svg viewBox="0 0 ${svgW} ${svgH}" style="width:100%;height:${svgH}px;max-height:${svgH}px;display:block">
-        ${guides}${bars}${xlabs}
-        <line x1="70" y1="${20+chartH}" x2="${svgW-10}" y2="${20+chartH}" stroke="#cbd5e1" stroke-width="2"/>
-      </svg>
-      <div style="display:flex;gap:16px;margin-top:8px;font-size:12px;padding-left:80px">
-        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:#1a4a8a;border-radius:2px;display:inline-block"></span>Facturado</span>
-        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:#059669;border-radius:2px;display:inline-block"></span>Pagado</span>
-        <span style="font-size:11px;color:var(--col-muted)">💡 Clic en barra → análisis detallado del proveedor</span>
-      </div>`;
-    }
-  }
-
-  // Comparativo: diagrama de barras MES A MES (últimos 12 meses)
-  const compEl = document.getElementById('m5-chart-comp');
-  if (compEl) {
-    // Build monthly map from ALL m1/m3 data (not filtered by provider)
-    const allD1 = state.m1data, allD3 = state.m3data;
-    const mMonthMap = {};
-    allD1.forEach(r => {
-      const my = getMonthYear(r); if(!my) return;
-      const k = `${my.y}-${String(my.m).padStart(2,'0')}`;
-      if(!mMonthMap[k]) mMonthMap[k]={f:0,p:0,cnt:0};
-      mMonthMap[k].f += (r.valSinIva||0);
-      mMonthMap[k].cnt++;
-    });
-    allD3.forEach(r => {
-      const my = getMonthYear(r); if(!my) return;
-      const k = `${my.y}-${String(my.m).padStart(2,'0')}`;
-      if(!mMonthMap[k]) mMonthMap[k]={f:0,p:0,cnt:0};
-      if(r.m3Status==='pagado') mMonthMap[k].p += (r.cxpBruto||r.valSinIva||0);
-    });
-    const sortedMonths = Object.keys(mMonthMap).sort().slice(-12); // últimos 12 meses
-    if (sortedMonths.length < 2) {
-      compEl.innerHTML='<div style="color:var(--col-muted);font-size:12px;padding:12px 0">Se necesitan ≥2 meses para comparar.</div>';
-    } else {
-      const maxMV = Math.max(1, ...sortedMonths.map(k=>mMonthMap[k].f));
-      const cSvgW=580, cSvgH=160, cChartH=cSvgH-50, cChartW=cSvgW-70;
-      const bGroup = cChartW/sortedMonths.length;
-      const bW = Math.min(28, bGroup*0.5);
-      let cBars='', cGuides='', cXlabs='';
-      for(let i=0;i<=3;i++){
-        const yg=15+cChartH-i*(cChartH/3);
-        const vg=maxMV*i/3;
-        cGuides+=`<line x1="55" y1="${yg}" x2="${cSvgW-5}" y2="${yg}" stroke="#e2e8f0" stroke-width="1"/>`;
-        const lbl=vg>=1e9?(vg/1e9).toFixed(1)+'MM':vg>=1e6?(vg/1e6).toFixed(1)+'M':vg>=1e3?(vg/1e3).toFixed(0)+'K':vg.toFixed(0);
-        cGuides+=`<text x="50" y="${yg+3}" text-anchor="end" font-size="9" fill="#94a3b8">${lbl}</text>`;
-      }
-      sortedMonths.forEach((k,i)=>{
-        const cx=60+i*bGroup+bGroup/2;
-        const v=mMonthMap[k];
-        const hF=Math.max(1,Math.round((v.f/maxMV)*cChartH));
-        const hP=Math.max(0,Math.round((v.p/maxMV)*cChartH));
-        const yF=15+cChartH-hF, yP=15+cChartH-hP;
-        const pct=v.f>0?Math.round(v.p/v.f*100):0;
-        const isOverpaid = pct>105;
-        // Facturado bar
-        cBars+=`<rect x="${cx-bW-1}" y="${yF}" width="${bW}" height="${hF}" fill="#1a4a8a" rx="2" opacity="0.85"><title>${k} · Facturado: ${fmtCurrency(v.f)}</title></rect>`;
-        // Pagado bar
-        cBars+=`<rect x="${cx+1}" y="${yP}" width="${bW}" height="${hP}" fill="${isOverpaid?'#dc2626':'#059669'}" rx="2" opacity="0.85"><title>${k} · Pagado: ${fmtCurrency(v.p)}${isOverpaid?' ⚠️ EXCEDE FACTURADO':''}</title></rect>`;
-        // % label on top
-        if(v.f>0) cBars+=`<text x="${cx}" y="${yF-4}" text-anchor="middle" font-size="8" fill="${isOverpaid?'#dc2626':pct>=80?'#059669':'#d97706'}" font-weight="700">${pct}%</text>`;
-        // X label
-        const shortK=k.slice(2); // "25-09" style
-        cXlabs+=`<text x="${cx}" y="${cSvgH-6}" text-anchor="middle" font-size="9" fill="#5c6f8a">${shortK}</text>`;
-      });
-      // Resumen numérico del último mes vs penúltimo
-      const lastK = sortedMonths[sortedMonths.length-1];
-      const prevK = sortedMonths[sortedMonths.length-2];
-      const lastV = mMonthMap[lastK], prevV = mMonthMap[prevK];
-      const diffF = lastV.f - prevV.f;
-      const diffPctF = prevV.f>0?((diffF/prevV.f)*100).toFixed(1):0;
-      const diffColor = diffF>=0?'#059669':'#dc2626';
-      compEl.innerHTML=`
-        <div style="font-size:10px;font-weight:700;color:#5c6f8a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">📅 Facturación mensual — últimos 12 meses</div>
-        <svg viewBox="0 0 ${cSvgW} ${cSvgH}" style="width:100%;height:auto">${cGuides}${cBars}${cXlabs}
-          <line x1="55" y1="${15+cChartH}" x2="${cSvgW-5}" y2="${15+cChartH}" stroke="#cbd5e1" stroke-width="1.5"/>
-        </svg>
-        <div style="display:flex;gap:14px;margin-top:6px;font-size:11px">
-          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#1a4a8a;border-radius:2px;display:inline-block"></span>Facturado</span>
-          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#059669;border-radius:2px;display:inline-block"></span>Pagado</span>
-          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#dc2626;border-radius:2px;display:inline-block"></span>Pago excede factura</span>
-        </div>
-        <div style="margin-top:10px;padding:10px 14px;background:${diffF>=0?'#f0fdf7':'#fef2f2'};border-radius:8px;display:flex;align-items:center;gap:12px">
-          <span style="font-size:16px;font-weight:700;color:${diffColor}">${diffF>=0?'▲':'▼'} ${Math.abs(diffPctF)}%</span>
-          <span style="font-size:11px;color:#5c6f8a">facturado en <strong>${lastK}</strong> vs <strong>${prevK}</strong> · ${fmtCurrency(lastV.f)} vs ${fmtCurrency(prevV.f)}</span>
-        </div>`;
-    }
-  }
-
-  // Conteo facturas registradas vs pagadas
-  const cntEl = document.getElementById('m5-chart-cnt');
-  if (cntEl) {
-    if (!topProvs.length) {
-      cntEl.innerHTML = '<div style="color:var(--col-muted);font-size:12px;padding:20px 0">Sin datos.</div>';
-    } else {
-      const provCntMap = {};
-      data.forEach(r=>{
-        if(!provCntMap[r.prov]) provCntMap[r.prov]={reg:0,pag:0};
-        provCntMap[r.prov].reg += r.facturas;
-        provCntMap[r.prov].pag += Math.round(r.pagado>0 ? r.facturas*(r.pagado/Math.max(1,r.facturado)) : 0);
-      });
-      const top8 = topProvs.slice(0,8).map(([n])=>({ name:n, reg:provCntMap[n]?.reg||0, pag:provCntMap[n]?.pag||0 }));
-      const mx = Math.max(1,...top8.map(r=>r.reg));
-      cntEl.innerHTML=top8.map(r=>{
-        const sn=r.name.length>18?r.name.substring(0,17)+'…':r.name;
-        const wr=Math.round(r.reg/mx*100), wp=Math.round(r.pag/mx*100);
-        return `<div style="margin-bottom:10px">
-          <div style="font-size:11px;color:#1a2535;margin-bottom:3px;font-weight:500">${sn}</div>
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
-            <div style="width:70px;font-size:9.5px;color:#5c6f8a;text-align:right;flex-shrink:0">Registradas</div>
-            <div style="flex:1;height:12px;background:#e2e8f0;border-radius:3px;overflow:hidden"><div style="width:${wr}%;height:100%;background:#1a4a8a;border-radius:3px"></div></div>
-            <div style="width:25px;font-size:10px;font-weight:700;color:#1a4a8a">${r.reg}</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px">
-            <div style="width:70px;font-size:9.5px;color:#5c6f8a;text-align:right;flex-shrink:0">Pagadas</div>
-            <div style="flex:1;height:12px;background:#e2e8f0;border-radius:3px;overflow:hidden"><div style="width:${wp}%;height:100%;background:#059669;border-radius:3px"></div></div>
-            <div style="width:25px;font-size:10px;font-weight:700;color:#059669">${r.pag}</div>
-          </div>
-        </div>`;}).join('');
-    }
-  }
-
-  // Sort: most mora first, then highest value
-  data.sort((a,b) => (b.mora - a.mora) || (b.facturado - a.facturado));
-
-  // Table
-  document.getElementById('cnt5table').textContent = data.length + ' registros';
-  const tbody5 = document.getElementById('tbody5');
-  if (!tbody5) return;
-  // Compute variation vs previous period
-  const periodsSorted = [...new Set(state.m5data.map(r=>r.period))].sort();
-  const getPrev = (prov, period) => {
-    const idx = periodsSorted.indexOf(period);
-    if (idx<=0) return null;
-    return state.m5data.find(r=>r.prov===prov&&r.period===periodsSorted[idx-1]);
-  };
-  if (!data.length) { tbody5.innerHTML = emptyRow(8); _cleanPager('tbody5'); return; }
-  const rowFn5 = r => {
-    const pagPct = r.facturado>0?Math.round(r.pagado/r.facturado*100):0;
-    const overpaid = pagPct > 105;
-    const pagBadgeColor = overpaid ? 'badge-danger' : pagPct>=80?'badge-success':pagPct>=50?'badge-warning':'badge-danger';
-    const pagBadgeIcon = overpaid ? '🚨' : pagPct>=100?'✅':pagPct>=80?'📊':pagPct>=50?'⏳':'🔴';
-    const pagBadge = `<span class="badge ${pagBadgeColor}" title="Pagado: ${fmtCurrency(r.pagado)} / Facturado: ${fmtCurrency(r.facturado)}${overpaid?' — ⚠️ PAGO EXCEDE LO FACTURADO':''}">${pagBadgeIcon} ${pagPct}%</span>${overpaid?'<div style="font-size:9px;color:#dc2626;font-weight:700;margin-top:2px">Exceso: '+fmtCurrency(r.pagado-r.facturado)+'</div>':''}`;
-    const rowStyle = overpaid ? 'background:#fff1f2;border-left:3px solid #dc2626;' : '';
-    const moraBadge = r.mora>0
-      ? `<span class="badge badge-danger" title="${r.mora} factura(s) con días vencidos sin pagar">⚠️ ${r.mora} venc.</span>`
-      : '<span class="badge badge-success">✅ Al día</span>';
-    return `<tr style="${rowStyle}">
-      <td style="font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;color:var(--col-secondary)" title="${r.prov}" onclick="openProviderDetail('${r.prov.replace(/'/g,"\\'")}')">${r.prov}${overpaid?'<span title="Pago excede lo facturado" style="margin-left:5px">🚨</span>':''}</td>
-      <td class="td-mono">${r.period}</td>
-      <td style="text-align:center;font-weight:700">${r.facturas}</td>
-      <td class="currency">${fmtCurrency(r.facturado)}</td>
-      <td class="currency">${fmtCurrency(r.pagado)}</td>
-      <td class="currency">${fmtCurrency(r.pendiente)}</td>
-      <td style="text-align:center">${moraBadge}</td>
-      <td style="text-align:center">${pagBadge}</td>
-    </tr>`;
-  };
-  _renderTablePaged('tbody5', 'cnt5table', data, rowFn5, 8);
-}
-
-// ── PROVIDER DETAIL POPUP ────────────────────────────────────
-function openProviderDetail(provName) {
-  const d1 = state.m1data.filter(r=>r.prov===provName);
-  const d3 = state.m3data.filter(r=>r.prov===provName);
-  const d4 = state.m4data.filter(r=>r.prov===provName);
-  if (!d1.length && !d3.length) { showToast('Sin datos para este proveedor', 'warn'); return; }
-
-  document.getElementById('sw-prov-title').textContent = `🏢 ${provName}`;
-  const today = new Date(); today.setHours(0,0,0,0);
-  const totalFact = d1.length;
-  const totalVal = d1.reduce((s,r)=>s+(r.valSinIva||0),0);
-  const totalPag = d3.filter(r=>r.m3Status==='pagado').reduce((s,r)=>s+(r.cxpBruto||r.valSinIva||0),0);
-  const totalPend = d3.filter(r=>r.m3Status!=='pagado').reduce((s,r)=>s+(r.valSinIva||0),0);
-  const recOk = d1.filter(r=>r.recStatus==='recepcionado').length;
-  const mora = d3.filter(r=>(r.lateDaysCalc||0)>0).length;
-  const maxMoraFact = d3.filter(r=>(r.lateDaysCalc||0)>0).sort((a,b)=>b.lateDaysCalc-a.lateDaysCalc)[0];
-  const flujoComp = d4.filter(r=>r.flujo==='completo').length;
-  const pagPct = totalVal>0?Math.round(totalPag/totalVal*100):0;
-  const recPct = totalFact>0?Math.round(recOk/totalFact*100):0;
-
-  // History by period
-  const histMap = {};
-  d1.forEach(r => {
-    const my = getMonthYear(r); if(!my)return;
-    const k=`${my.y} Q${Math.ceil(my.m/3)}`;
-    if(!histMap[k])histMap[k]={facturado:0,pagado:0};
-    histMap[k].facturado+=(r.valSinIva||0);
-  });
-  d3.forEach(r => {
-    const my = getMonthYear(r); if(!my)return;
-    const k=`${my.y} Q${Math.ceil(my.m/3)}`;
-    if(!histMap[k])histMap[k]={facturado:0,pagado:0};
-    if(r.m3Status==='pagado') histMap[k].pagado+=(r.cxpBruto||r.valSinIva||0);
-  });
-  const periods = Object.keys(histMap).sort();
-  const maxHV = Math.max(1,...periods.map(k=>histMap[k].facturado));
-  const histBars = periods.map((k,i)=>{
-    const v=histMap[k]; const hF=Math.round(v.facturado/maxHV*100); const hP=Math.round(v.pagado/maxHV*100);
-    return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px">
-      <div style="font-size:9px;color:#5c6f8a;text-align:center">${k}</div>
-      <div style="display:flex;gap:2px;align-items:flex-end;height:80px">
-        <div style="width:18px;height:${hF*0.8}%;background:#1a4a8a;border-radius:2px 2px 0 0;min-height:2px" title="Facturado: ${fmtCurrency(v.facturado)}"></div>
-        <div style="width:18px;height:${hP*0.8}%;background:#059669;border-radius:2px 2px 0 0;min-height:${v.pagado>0?2:0}px" title="Pagado: ${fmtCurrency(v.pagado)}"></div>
-      </div>
-    </div>`;}).join('');
-
-  // Last 5 facturas
-  const lastFacts = d3.slice(-5).reverse();
-
-  document.getElementById('sw-prov-body').innerHTML = `
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px">
-      <div style="background:#f0fdf7;border-radius:8px;padding:12px;border-left:3px solid #059669">
-        <div style="font-size:9.5px;font-weight:700;color:#5c6f8a;text-transform:uppercase;margin-bottom:4px">Total Facturas</div>
-        <div style="font-size:22px;font-weight:700;color:#0f2544">${totalFact}</div>
-      </div>
-      <div style="background:#dbeafe;border-radius:8px;padding:12px;border-left:3px solid #2563eb">
-        <div style="font-size:9.5px;font-weight:700;color:#5c6f8a;text-transform:uppercase;margin-bottom:4px">Valor Facturado</div>
-        <div style="font-size:14px;font-weight:700;color:#0f2544;font-family:'IBM Plex Mono',monospace">${fmtCurrency(totalVal)}</div>
-      </div>
-      <div style="background:${pagPct>=80?'#f0fdf7':pagPct>=50?'#fffbeb':'#fef2f2'};border-radius:8px;padding:12px;border-left:3px solid ${pagPct>=80?'#059669':pagPct>=50?'#d97706':'#dc2626'}">
-        <div style="font-size:9.5px;font-weight:700;color:#5c6f8a;text-transform:uppercase;margin-bottom:4px">% Pagado</div>
-        <div style="font-size:22px;font-weight:700;color:${pagPct>=80?'#059669':pagPct>=50?'#d97706':'#dc2626'}">${pagPct}%</div>
-        <div style="font-size:11px;color:#5c6f8a">${fmtCurrency(totalPag)} de ${fmtCurrency(totalVal)}</div>
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px">
-      <div style="background:#f8fafc;border-radius:8px;padding:12px;border-left:3px solid #7c3aed">
-        <div style="font-size:9.5px;font-weight:700;color:#5c6f8a;text-transform:uppercase;margin-bottom:4px">Recepcionadas</div>
-        <div style="font-size:22px;font-weight:700;color:#7c3aed">${recPct}%</div>
-        <div style="font-size:11px;color:#5c6f8a">${recOk}/${totalFact} facturas</div>
-      </div>
-      <div style="background:${mora>0?'#fef2f2':'#f0fdf7'};border-radius:8px;padding:12px;border-left:3px solid ${mora>0?'#dc2626':'#059669'}">
-        <div style="font-size:9.5px;font-weight:700;color:#5c6f8a;text-transform:uppercase;margin-bottom:4px">En Mora</div>
-        <div style="font-size:22px;font-weight:700;color:${mora>0?'#dc2626':'#059669'}">${mora}</div>
-        ${maxMoraFact?`<div style="font-size:11px;color:#dc2626">Max: ${maxMoraFact.lateDaysCalc}d · ${maxMoraFact.inv||'—'}</div>`:''}
-      </div>
-      <div style="background:#f0fdf7;border-radius:8px;padding:12px;border-left:3px solid #059669">
-        <div style="font-size:9.5px;font-weight:700;color:#5c6f8a;text-transform:uppercase;margin-bottom:4px">Flujo Completo</div>
-        <div style="font-size:22px;font-weight:700;color:#059669">${pct(flujoComp,d4.length)}%</div>
-        <div style="font-size:11px;color:#5c6f8a">${flujoComp}/${d4.length} facturas</div>
-      </div>
-    </div>
-    <div style="background:#f8fafc;border-radius:10px;padding:16px;margin-bottom:16px">
-      <div style="font-size:12px;font-weight:700;color:#0f2544;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">📊 Historial por Trimestre</div>
-      <div style="display:flex;gap:6px;align-items:flex-end;min-height:100px;overflow-x:auto;padding-bottom:4px">${histBars||'<div style="color:#94a3b8;font-size:12px">Sin datos por período</div>'}</div>
-      <div style="display:flex;gap:14px;margin-top:8px;font-size:11px">
-        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#1a4a8a;display:inline-block;border-radius:2px"></span>Facturado</span>
-        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#059669;display:inline-block;border-radius:2px"></span>Pagado</span>
-      </div>
-    </div>
-    <div style="font-size:12px;font-weight:700;color:#0f2544;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">📋 Últimas Facturas</div>
-    <table style="width:100%;border-collapse:collapse;font-size:11.5px">
-      <thead><tr style="background:#f5f8fc">
-        <th style="padding:7px 10px;text-align:left;font-size:9.5px;font-weight:700;color:#5c6f8a;text-transform:uppercase;border-bottom:1px solid #dde3ed">Estado</th>
-        <th style="padding:7px 10px;text-align:left;font-size:9.5px;font-weight:700;color:#5c6f8a;text-transform:uppercase;border-bottom:1px solid #dde3ed">N° Factura</th>
-        <th style="padding:7px 10px;text-align:left;font-size:9.5px;font-weight:700;color:#5c6f8a;text-transform:uppercase;border-bottom:1px solid #dde3ed">OC</th>
-        <th style="padding:7px 10px;text-align:right;font-size:9.5px;font-weight:700;color:#5c6f8a;text-transform:uppercase;border-bottom:1px solid #dde3ed">Valor sin IVA</th>
-        <th style="padding:7px 10px;text-align:center;font-size:9.5px;font-weight:700;color:#5c6f8a;text-transform:uppercase;border-bottom:1px solid #dde3ed">Mora</th>
-      </tr></thead>
-      <tbody>${lastFacts.map(r=>{
-        const badge=r.m3Status==='pagado'?'<span class="badge badge-success">✅ Pagado</span>':r.m3Status==='aprobado'?'<span class="badge badge-warning">⏳ Pend.</span>':'<span class="badge badge-danger">❌ Sin CxP</span>';
-        const moraBadge=(r.lateDaysCalc||0)>0?`<span class="badge badge-danger">${r.lateDaysCalc}d</span>`:'<span class="badge badge-success">Al día</span>';
-        return`<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:8px 10px">${badge}</td><td style="padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px">${r.inv||'—'}</td><td style="padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px">${r.po||'—'}</td><td style="padding:8px 10px;text-align:right">${fmtCurrency(r.valSinIva)}</td><td style="padding:8px 10px;text-align:center">${moraBadge}</td></tr>`;
-      }).join('')||'<tr><td colspan="5" style="padding:16px;text-align:center;color:#94a3b8">Sin facturas registradas</td></tr>'}
-      </tbody>
-    </table>`;
-
-  document.getElementById('sw-prov-detail').classList.add('open');
-  document.getElementById('sw-prov-detail').onclick = e => { if(e.target===document.getElementById('sw-prov-detail')) closeSubwin('sw-prov-detail'); };
-}
 
 // ═══════════════════════════════════════════════════════════════
 // NAVIGATION
@@ -5304,8 +4952,7 @@ function switchTab(name) {
     if (name==='modulo2') { try { renderM2(); } catch(e) { console.warn(e); } }
     if (name==='modulo3') { try { renderM3(); } catch(e) { console.warn(e); } }
     if (name==='modulo4') { try { renderM4(); } catch(e) { console.warn(e); } }
-    if (name==='modulo5') { try { renderM5(); } catch(e) { console.warn(e); } }
-  }
+}
 }
 
 function showToast(msg, type='info') {
@@ -5609,8 +5256,576 @@ function renderProvCard(provName, html) {
 // ═══════════════════════════════════════════════════════════════
 
 // ═══════════════════════════════════════════════════════════════
+// M1 CHART — Month click popup
+// ═══════════════════════════════════════════════════════════════
+function showM1MonthPopup(monthKey, evt) {
+  evt && evt.stopPropagation();
+  const popup = document.getElementById('m1-month-popup');
+  const title = document.getElementById('m1-popup-title');
+  const body  = document.getElementById('m1-popup-body');
+  if (!popup || !title || !body) return;
+  const d = window._m1ChartData;
+  if (!d) return;
+
+  const total = d.monthMap[monthKey] || 0;
+  const [yr, mn] = monthKey.split('-');
+  const mNames = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  title.textContent = `📅 ${mNames[+mn]} ${yr} — ${total} recepciones`;
+
+  // Per-person breakdown
+  const persons = Object.keys(d.byPersonMap).sort();
+  const colors = ['#1a4a8a','#059669','#d97706','#7c3aed','#dc2626','#0891b2','#65a30d','#ea580c','#8b5cf6','#0284c7'];
+  const personRows = persons.map((p,pi) => {
+    const cnt = (d.byPersonMap[p] && d.byPersonMap[p][monthKey]) || 0;
+    if (!cnt) return '';
+    const pct = Math.round(cnt/total*100);
+    return `<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+        <span style="font-size:11px;font-weight:600;color:#1e293b">${p.length>32?p.substring(0,31)+'…':p}</span>
+        <span style="font-size:11px;font-weight:700;color:${colors[pi%colors.length]}">${cnt}</span>
+      </div>
+      <div style="height:8px;background:#f1f5f9;border-radius:4px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:${colors[pi%colors.length]};border-radius:4px"></div>
+      </div>
+    </div>`;
+  }).filter(Boolean).join('');
+
+  // Facturas detail for that month
+  const facts = state.m1data.filter(r => {
+    const my = getMonthYear(r); if (!my) return false;
+    const k = `${my.y}-${String(my.m).padStart(2,'0')}`;
+    return k === monthKey && (r.recStatus === 'recepcionado' || r.recStatus === 'parcial');
+  });
+  const totalVal = facts.reduce((s,r) => s+(r.totalRec||r.valSinIva||0), 0);
+
+  body.innerHTML = `
+    <div style="background:#f8fafc;border-radius:8px;padding:8px 10px;margin-bottom:12px;display:flex;gap:16px">
+      <div><div style="font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase">Total</div><div style="font-size:16px;font-weight:700;color:#1a4a8a">${total}</div></div>
+      <div><div style="font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase">Valor Recep.</div><div style="font-size:14px;font-weight:700;color:#059669">${fmtCurrency(totalVal)}</div></div>
+    </div>
+    <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;margin-bottom:8px;letter-spacing:.5px">Por Responsable</div>
+    ${personRows}
+    ${facts.length ? `<div style="border-top:1px solid #f1f5f9;padding-top:10px;margin-top:4px">
+      <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;margin-bottom:6px">Facturas recepcionadas</div>
+      ${facts.slice(0,10).map(r => `<div style="display:flex;justify-content:space-between;font-size:10.5px;padding:3px 0;border-bottom:1px solid #f8fafc">
+        <span style="font-family:monospace;color:#1a4a8a;font-weight:600">${r.inv||'—'}</span>
+        <span style="color:#64748b">${r.prov?(r.prov.length>20?r.prov.substring(0,19)+'…':r.prov):'—'}</span>
+        <span style="font-weight:600">${fmtCurrency(r.totalRec||r.valSinIva||0)}</span>
+      </div>`).join('')}
+      ${facts.length>10?`<div style="font-size:10px;color:#94a3b8;text-align:center;margin-top:6px">+${facts.length-10} más</div>`:''}
+    </div>` : ''}
+  `;
+
+  // Position popup near click
+  popup.style.display = 'block';
+  const rect = popup.getBoundingClientRect();
+  let x = evt ? evt.clientX + 12 : window.innerWidth/2;
+  let y = evt ? evt.clientY - 20 : window.innerHeight/2;
+  if (x + 380 > window.innerWidth) x = window.innerWidth - 390;
+  if (y + 400 > window.innerHeight) y = window.innerHeight - 410;
+  popup.style.left = Math.max(10,x) + 'px';
+  popup.style.top  = Math.max(10,y) + 'px';
+}
+// Close popup when clicking outside
+document.addEventListener('click', e => {
+  const popup = document.getElementById('m1-month-popup');
+  if (popup && !popup.contains(e.target)) popup.style.display = 'none';
+});
+
+
+// ═══════════════════════════════════════════════════════════════
+// OPEN PROVIDER DETAIL — navigate to M5 with provider selected
+// ═══════════════════════════════════════════════════════════════
+function openProviderDetail(provName) {
+  if (!provName) return;
+  // Switch to M5
+  switchTab('modulo5');
+  // Wait for panel to be active, then select the provider
+  setTimeout(() => {
+    const sel = document.getElementById('m5prov-select');
+    if (!sel) return;
+    // Find option by data-prov attribute
+    let found = false;
+    for (const opt of sel.options) {
+      if (opt.getAttribute('data-prov') && 
+          opt.getAttribute('data-prov').trim().toLowerCase() === provName.trim().toLowerCase()) {
+        sel.value = opt.value;
+        found = true;
+        break;
+      }
+    }
+    // Fallback: if selectors not yet populated, init then retry
+    if (!found && state.m1data.length > 0) {
+      initM5Selectors();
+      setTimeout(() => {
+        for (const opt of sel.options) {
+          if (opt.getAttribute('data-prov') && 
+              opt.getAttribute('data-prov').trim().toLowerCase() === provName.trim().toLowerCase()) {
+            sel.value = opt.value;
+            break;
+          }
+        }
+        renderM5();
+      }, 100);
+      return;
+    }
+    renderM5();
+    // Scroll to top of M5 panel
+    const panel = document.getElementById('panel-modulo5');
+    if (panel) panel.scrollTop = 0;
+  }, 80);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
 // INFORME PDF — BRECHAS (MÓDULO 4)
 // ═══════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════
+// MÓDULO 5 — FICHA ANÁLISIS POR PROVEEDOR
+// ═══════════════════════════════════════════════════════════════
+
+function initM5Selectors() {
+  // Build provider list from m1data — use exact string from data
+  const provSet = new Set();
+  state.m1data.forEach(r => { if (r.prov && String(r.prov).trim()) provSet.add(String(r.prov).trim()); });
+  state.m3data.forEach(r => { if (r.prov && String(r.prov).trim()) provSet.add(String(r.prov).trim()); });
+  const sorted = [...provSet].sort((a,b) => a.localeCompare(b,'es'));
+  const sel = document.getElementById('m5prov-select');
+  if (!sel) return;
+  const cur = sel.value;
+  // Use index as value to avoid encoding issues, store actual name in data-name
+  sel.innerHTML = '<option value="">— Selecciona un proveedor —</option>' +
+    sorted.map((p, i) => `<option value="${i}" data-prov="${p.replace(/"/g,'&quot;')}">${p}</option>`).join('');
+  // Restore selection by matching name
+  if (cur) {
+    const prevName = sel.getAttribute('data-last-prov') || '';
+    for (const opt of sel.options) {
+      if (opt.dataset.prov === prevName) { opt.selected = true; break; }
+    }
+  }
+  // Year selector
+  const years = [...new Set(state.m1data.map(r => r.year ? parseInt(String(r.year).replace('.0','')) : null).filter(Boolean))].sort();
+  const ySel = document.getElementById('m5year-select');
+  if (ySel) {
+    const cy = ySel.value;
+    ySel.innerHTML = '<option value="">Todos los años</option>' +
+      years.map(y => `<option value="${y}"${String(y)===cy?' selected':''}>${y}</option>`).join('');
+  }
+  const el5 = document.getElementById('cnt5');
+  if (el5) el5.textContent = sorted.length;
+  console.info('[M5] Selectors init: providers='+sorted.length+', sample:', sorted.slice(0,3));
+}
+
+function renderM5() {
+  if (!state.processed) return;
+  // Get provider name from data-prov attribute (avoids encoding issues with index-based value)
+  const sel5 = document.getElementById('m5prov-select');
+  const selOpt = sel5 && sel5.selectedIndex > 0 ? sel5.options[sel5.selectedIndex] : null;
+  const provName = selOpt ? (selOpt.getAttribute('data-prov') || '') : '';
+  if (sel5) sel5.setAttribute('data-last-prov', provName);
+  const yearSel  = document.getElementById('m5year-select')?.value  || '';
+  console.info('[M5] renderM5 called — prov:', JSON.stringify(provName), 'year:', yearSel,
+    'total m1data:', state.m1data.length, 'm3data:', state.m3data.length, 'm4data:', state.m4data.length);
+  const placeholder = document.getElementById('m5-placeholder');
+  const kpisEl   = document.getElementById('m5-kpis');
+
+  if (!provName) {
+    if (placeholder) placeholder.style.display = 'block';
+    ['m5-kpis','m5-timeline','m5-payment-status','m5-ocs','m5-recs','m5-tbody'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.innerHTML = '';
+    });
+    return;
+  }
+  if (placeholder) placeholder.style.display = 'none';
+
+  // ── Get all records for this provider ──
+  const provNorm = provName.trim().toLowerCase();
+  const m1rows = state.m1data.filter(r => r.prov && String(r.prov).trim().toLowerCase() === provNorm && (!yearSel || parseInt(String(r.year).replace('.0','')) === parseInt(yearSel)));
+  const m3rows = state.m3data.filter(r => r.prov && String(r.prov).trim().toLowerCase() === provNorm && (!yearSel || parseInt(String(r.year).replace('.0','')) === parseInt(yearSel)));
+  const m4rows = state.m4data.filter(r => r.prov && String(r.prov).trim().toLowerCase() === provNorm && (!yearSel || parseInt(String(r.year).replace('.0','')) === parseInt(yearSel)));
+  console.info('[M5] Filtered — provNorm:', JSON.stringify(provNorm), 'm1:', m1rows.length, 'm3:', m3rows.length, 'm4:', m4rows.length);
+  // If no rows found, show debug info
+  if (m1rows.length === 0 && state.m1data.length > 0) {
+    const sample = state.m1data.slice(0,3).map(r => JSON.stringify(r.prov));
+    console.warn('[M5] No match! Sample m1data provs:', sample.join(', '));
+    if (kpisEl) kpisEl.innerHTML = `<div style="padding:12px;background:#fef2f2;border-radius:8px;color:#dc2626;font-size:12px">⚠️ Sin datos para "<b>${provName}</b>" en ${yearSel||'todos los años'}. Verifique que los archivos hayan sido procesados correctamente.</div>`;
+    return;
+  }
+
+  // ── KPIs ──
+  const totalFacturas  = m1rows.length;
+  const totalValor     = m1rows.reduce((s,r) => s+(r.valSinIva||0), 0);
+  const totalRecVal    = m1rows.reduce((s,r) => s+(r.totalRec||0), 0);
+  const pagadas        = m3rows.filter(r => r.m3Status === 'pagado').length;
+  const pendientes     = m3rows.filter(r => r.m3Status === 'aprobado').length;
+  const sinCxP         = m3rows.filter(r => r.m3Status === 'no_encontrado').length;
+  const valPagado      = m3rows.filter(r => r.m3Status==='pagado').reduce((s,r)=>s+(r.cxpBruto||r.valSinIva||0),0);
+  const today          = new Date(); today.setHours(0,0,0,0);
+  const enMora         = m3rows.filter(r => r.m3Status !== 'pagado' && r.dueDate && (() => { const d = parseAnyDate(r.dueDate); return d && d < today; })()).length;
+  const maxMora        = Math.max(0, ...m3rows.filter(r => r.m3Status !== 'pagado' && r.dueDate).map(r => { const d = parseAnyDate(r.dueDate); return d ? Math.max(0, Math.floor((today-d)/86400000)) : 0; }));
+  const recOk          = m1rows.filter(r => r.recStatus === 'recepcionado').length;
+  const recParcial     = m1rows.filter(r => r.recStatus === 'parcial').length;
+  const pctPago        = totalValor > 0 ? Math.round(valPagado/totalValor*100) : 0;
+  const ocs            = [...new Set(m1rows.map(r => r.po).filter(Boolean))];
+  const contratos      = [...new Set(m1rows.map(r => r.contract||'').filter(Boolean))];
+
+  if (kpisEl) kpisEl.innerHTML = `
+    <div class="summary-card s-info"><div class="summary-label">Facturas</div><div class="summary-value">${totalFacturas}</div><div class="summary-sub">${ocs.length} OC(s)</div></div>
+    <div class="summary-card s-info" style="border-left-color:#1a4a8a"><div class="summary-label">Val. Facturado</div><div class="summary-value" style="font-size:15px">${fmtCurrency(totalValor)}</div><div class="summary-sub">sin IVA</div></div>
+    <div class="summary-card s-success"><div class="summary-label">Val. Pagado</div><div class="summary-value" style="font-size:15px">${fmtCurrency(valPagado)}</div><div class="summary-sub">${pctPago}% del facturado</div></div>
+    <div class="summary-card ${enMora>0?'s-danger':'s-success'}"><div class="summary-label">En Mora</div><div class="summary-value">${enMora}</div><div class="summary-sub">${maxMora>0?'Máx: '+maxMora+'d':'Al día'}</div></div>
+    <div class="summary-card s-success"><div class="summary-label">Recepcionadas</div><div class="summary-value">${recOk+recParcial}</div><div class="summary-sub">${recOk} completas · ${recParcial} parciales</div></div>
+    <div class="summary-card ${pagadas>0?'s-success':'s-danger'}"><div class="summary-label">Estado CxP</div><div class="summary-value" style="font-size:13px">${pagadas}✅ ${pendientes}⏳ ${sinCxP}❌</div><div class="summary-sub">Pag · Aprobadas · Sin CxP</div></div>
+  `;
+
+  // ── Timeline: facturado por mes ──
+  const monthMap = {};
+  m1rows.forEach(r => {
+    const my = getMonthYear(r); if (!my) return;
+    const k = `${my.y}-${String(my.m).padStart(2,'0')}`;
+    if (!monthMap[k]) monthMap[k] = { facturado:0, pagado:0, facturas:0, pagadas:0 };
+    monthMap[k].facturado += (r.valSinIva||0);
+    monthMap[k].facturas++;
+  });
+  m3rows.forEach(r => {
+    const my = getMonthYear(r); if (!my) return;
+    const k = `${my.y}-${String(my.m).padStart(2,'0')}`;
+    if (monthMap[k] && r.m3Status === 'pagado') {
+      monthMap[k].pagado += (r.cxpBruto||r.valSinIva||0);
+      monthMap[k].pagadas++;
+    }
+  });
+  const months = Object.keys(monthMap).sort();
+  const tlEl = document.getElementById('m5-timeline');
+  if (tlEl && months.length) {
+    const svgW = Math.max(300, months.length * 45 + 80);
+    const svgH = 160;
+    const chartH = svgH - 45;
+    const bGrp = (svgW - 80) / months.length;
+    const maxV = Math.max(1, ...months.map(k => monthMap[k].facturado));
+    let bars = '', guides = '', xlabs = '';
+    for (let i = 0; i <= 3; i++) {
+      const yg = 10 + chartH - i*(chartH/3);
+      guides += `<line x1="70" y1="${yg}" x2="${svgW-5}" y2="${yg}" stroke="#e2e8f0" stroke-width="1"/>`;
+      guides += `<text x="64" y="${yg+3}" text-anchor="end" font-size="8" fill="#94a3b8">${fmtMillones(maxV*i/3)}</text>`;
+    }
+    months.forEach((k,mi) => {
+      const d = monthMap[k];
+      const cx = 75 + mi*bGrp + bGrp/2;
+      const bW = Math.min(22, bGrp*0.45);
+      const hF = Math.max(2, Math.round((d.facturado/maxV)*chartH));
+      const hP = d.pagado > 0 ? Math.max(2, Math.round((d.pagado/maxV)*chartH)) : 0;
+      bars += `<rect x="${cx-bW}" y="${10+chartH-hF}" width="${bW}" height="${hF}" fill="#1a4a8a" rx="2" opacity="0.85"><title>Facturado ${k}: ${fmtCurrency(d.facturado)}</title></rect>`;
+      if (hP) bars += `<rect x="${cx+1}" y="${10+chartH-hP}" width="${bW}" height="${hP}" fill="#059669" rx="2" opacity="0.85"><title>Pagado ${k}: ${fmtCurrency(d.pagado)}</title></rect>`;
+      bars += `<text x="${cx}" y="${10+chartH-hF-3}" text-anchor="middle" font-size="7.5" fill="#1e293b" font-weight="700">${d.facturas}</text>`;
+      xlabs += `<text x="${cx}" y="${svgH-4}" text-anchor="middle" font-size="7.5" fill="#5c6f8a">${k.slice(2)}</text>`;
+    });
+    tlEl.innerHTML = `<svg viewBox="0 0 ${svgW} ${svgH}" style="width:100%;height:auto;display:block">
+      ${guides}${bars}${xlabs}
+      <line x1="70" y1="${10+chartH}" x2="${svgW-5}" y2="${10+chartH}" stroke="#cbd5e1" stroke-width="1.5"/>
+    </svg>
+    <div style="margin-top:6px;font-size:10px;display:flex;gap:12px">
+      <span><span style="display:inline-block;width:10px;height:10px;background:#1a4a8a;border-radius:2px;vertical-align:middle;margin-right:3px"></span>Facturado</span>
+      <span><span style="display:inline-block;width:10px;height:10px;background:#059669;border-radius:2px;vertical-align:middle;margin-right:3px"></span>Pagado</span>
+    </div>`;
+  } else if (tlEl) tlEl.innerHTML = '<div style="color:var(--col-muted);padding:20px;font-size:12px">Sin datos de facturación mensual.</div>';
+
+  // ── Estado de Pagos (donut-like bars) ──
+  const psEl = document.getElementById('m5-payment-status');
+  if (psEl) {
+    const total3 = m3rows.length || 1;
+    const valTotal3 = m3rows.reduce((s,r)=>s+(r.cxpBruto||r.valSinIva||0),0)||1;
+    const valPend = m3rows.filter(r=>r.m3Status==='aprobado').reduce((s,r)=>s+(r.cxpBruto||r.valSinIva||0),0);
+    const valSin = m3rows.filter(r=>r.m3Status==='no_encontrado').reduce((s,r)=>s+(r.valSinIva||0),0);
+    const rows3 = [
+      { label:'✅ Pagadas', count:pagadas, val:valPagado, color:'#059669', bg:'#d1fae5' },
+      { label:'⏳ Pend. Pago', count:pendientes, val:valPend, color:'#d97706', bg:'#fef3c7' },
+      { label:'❌ Sin CxP', count:sinCxP, val:valSin, color:'#dc2626', bg:'#fee2e2' },
+    ];
+    psEl.innerHTML = rows3.map(r => {
+      const pct2 = Math.round(r.count/total3*100);
+      const pctV = Math.round(r.val/valTotal3*100);
+      return `<div style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span style="font-size:11.5px;font-weight:600">${r.label}</span>
+          <span style="font-size:11px;color:${r.color};font-weight:700">${r.count} · ${fmtCurrency(r.val)}</span>
+        </div>
+        <div style="height:10px;background:#f1f5f9;border-radius:5px;overflow:hidden">
+          <div style="height:100%;width:${pctV}%;background:${r.color};border-radius:5px;transition:width 0.4s"></div>
+        </div>
+        <div style="font-size:10px;color:var(--col-muted);margin-top:2px">${pct2}% de facturas · ${pctV}% del valor</div>
+      </div>`;
+    }).join('');
+    // Mora detail
+    if (enMora > 0) {
+      const moraRows = m3rows.filter(r => r.m3Status !== 'pagado' && r.dueDate && (() => { const d=parseAnyDate(r.dueDate); return d && d<today; })());
+      const moraVals = [
+        moraRows.filter(r => { const d=parseAnyDate(r.dueDate); return d && Math.floor((today-d)/86400000)<=15; }),
+        moraRows.filter(r => { const d=parseAnyDate(r.dueDate); const days=d?Math.floor((today-d)/86400000):0; return days>15&&days<=30; }),
+        moraRows.filter(r => { const d=parseAnyDate(r.dueDate); const days=d?Math.floor((today-d)/86400000):0; return days>30&&days<=60; }),
+        moraRows.filter(r => { const d=parseAnyDate(r.dueDate); const days=d?Math.floor((today-d)/86400000):0; return days>60; }),
+      ];
+      const moraLabels = ['1-15d','16-30d','31-60d','>60d'];
+      const moraColors = ['#f59e0b','#ea580c','#dc2626','#7f1d1d'];
+      psEl.innerHTML += `<div style="border-top:1px solid #f1f5f9;padding-top:10px;margin-top:4px">
+        <div style="font-size:11px;font-weight:700;color:#dc2626;margin-bottom:8px">🔴 Facturas en Mora (${enMora})</div>
+        ${moraVals.map((arr,i) => arr.length ? `<div style="display:flex;justify-content:space-between;font-size:10.5px;margin-bottom:4px;padding:3px 6px;background:#fef2f2;border-radius:4px"><span style="color:${moraColors[i]};font-weight:600">${moraLabels[i]}</span><span>${arr.length} fact. · ${fmtCurrency(arr.reduce((s,r)=>s+(r.valSinIva||0),0))}</span></div>` : '').join('')}
+      </div>`;
+    }
+  }
+
+  // ── OCs del proveedor ──
+  const ocsEl = document.getElementById('m5-ocs');
+  if (ocsEl) {
+    const ocMap = {};
+    m1rows.forEach(r => {
+      const oc = r.po || '—';
+      if (!ocMap[oc]) ocMap[oc] = { oc, facturas:0, valor:0, recOk:0, contrato: r.contract||'' };
+      ocMap[oc].facturas++;
+      ocMap[oc].valor += (r.valSinIva||0);
+      if (r.recStatus === 'recepcionado') ocMap[oc].recOk++;
+    });
+    const ocList = Object.values(ocMap).sort((a,b) => b.valor-a.valor).slice(0,12);
+    if (ocList.length) {
+      ocsEl.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead><tr style="background:#f8fafc"><th style="padding:5px 7px;text-align:left;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0">OC / PO</th><th style="padding:5px 7px;text-align:center;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0">FACT.</th><th style="padding:5px 7px;text-align:right;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0">VALOR</th><th style="padding:5px 7px;text-align:center;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0">REC.</th></tr></thead>
+        <tbody>${ocList.map((r,i) => `<tr style="background:${i%2?'#f8fafc':'white'};border-bottom:1px solid #f1f5f9">
+          <td style="padding:5px 7px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#1a4a8a;font-weight:600">${r.oc}</td>
+          <td style="padding:5px 7px;text-align:center">${r.facturas}</td>
+          <td style="padding:5px 7px;text-align:right;font-weight:600">${fmtCurrency(r.valor)}</td>
+          <td style="padding:5px 7px;text-align:center">${r.recOk>0?'<span style="color:#059669">✅'+r.recOk+'</span>':'<span style="color:#94a3b8">—</span>'}</td>
+        </tr>`).join('')}</tbody>
+      </table>`;
+    } else ocsEl.innerHTML = '<div style="color:var(--col-muted);padding:14px;font-size:12px">Sin OCs registradas.</div>';
+  }
+
+  // ── Recepciones Oracle ──
+  const recsEl = document.getElementById('m5-recs');
+  if (recsEl) {
+    const recRows2 = state.df2.filter(r => {
+      const oc = normalStr(r['Número de Documento']||r['Numero de Documento']||'');
+      return m1rows.some(m => normalStr(m.po||'') === oc || normalStr(m.po||'').includes(oc));
+    }).slice(0, 20);
+    // Use m1rows recepcionados data
+    const recData = m1rows.filter(r => r.recStatus !== 'sin_recepcion' && r.recNums);
+    if (recData.length) {
+      recsEl.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead><tr style="background:#f8fafc"><th style="padding:5px 7px;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0;text-align:left">N° REC</th><th style="padding:5px 7px;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0;text-align:left">OC</th><th style="padding:5px 7px;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0;text-align:right">VAL. REC.</th><th style="padding:5px 7px;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0;text-align:center">RECEP. POR</th></tr></thead>
+        <tbody>${recData.slice(0,15).map((r,i) => `<tr style="background:${i%2?'#f8fafc':'white'};border-bottom:1px solid #f1f5f9">
+          <td style="padding:5px 7px;font-family:'IBM Plex Mono',monospace;font-size:10px">${r.recNums||'—'}</td>
+          <td style="padding:5px 7px;font-family:'IBM Plex Mono',monospace;font-size:10px">${r.po||'—'}</td>
+          <td style="padding:5px 7px;text-align:right;font-weight:600">${r.totalRec?fmtCurrency(r.totalRec):'—'}</td>
+          <td style="padding:5px 7px;text-align:center;font-size:9.5px;color:#6b7280">${r.recBy&&r.recBy!=='—'?r.recBy.split(' ').slice(0,2).join(' '):'—'}</td>
+        </tr>`).join('')}</tbody>
+      </table>`;
+    } else recsEl.innerHTML = '<div style="color:var(--col-muted);padding:14px;font-size:12px">Sin recepciones Oracle vinculadas.</div>';
+  }
+
+  // ── Detalle facturas ──
+  const tbody5 = document.getElementById('m5-tbody');
+  const cntEl5 = document.getElementById('m5-inv-count');
+  if (tbody5) {
+    if (cntEl5) cntEl5.textContent = m4rows.length + ' facturas';
+    const rows4 = m4rows.length ? m4rows : m1rows.map(r => ({ ...r, flujo: r.recStatus==='recepcionado'?'sin_pago':'sin_recepcion' }));
+    tbody5.innerHTML = rows4.slice(0,50).map((r,i) => {
+      const d = parseAnyDate(r.dueDate);
+      const days = d ? Math.floor((today-d)/86400000) : 0;
+      const moraStr = r.m3Status !== 'pagado' && days > 0
+        ? `<span style="background:#fee2e2;color:#dc2626;padding:1px 6px;border-radius:4px;font-size:9.5px;font-weight:700">${days}d</span>`
+        : r.m3Status === 'pagado' ? '<span style="color:#059669;font-size:10px">—</span>' : '<span style="color:#94a3b8;font-size:10px">0d</span>';
+      const recB = r.recStatus==='recepcionado'?'<span style="color:#059669;font-size:11px">✅</span>':r.recStatus==='parcial'?'<span style="color:#d97706;font-size:11px">⚠️</span>':'<span style="color:#dc2626;font-size:11px">❌</span>';
+      const cxpB = r.m3Status==='pagado'||r.m3Status==='aprobado'?'<span style="color:#059669;font-size:11px">✅</span>':'<span style="color:#dc2626;font-size:11px">❌</span>';
+      const pagB = r.m3Status==='pagado'?'<span style="color:#059669;font-size:11px">✅</span>':r.m3Status==='aprobado'?'<span style="color:#d97706;font-size:11px">⏳</span>':'<span style="color:#dc2626;font-size:11px">❌</span>';
+      const mes = r.month ? String(r.month).substring(0,3) + (r.year?String(r.year).slice(2):'') : '—';
+      return `<tr style="background:${i%2===0?'white':'#f8fafc'};border-bottom:1px solid #f1f5f9">
+        <td style="padding:5px 8px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#1a4a8a;font-weight:600">${r.inv||'—'}</td>
+        <td style="padding:5px 8px;font-family:'IBM Plex Mono',monospace;font-size:10px">${r.po||'—'}</td>
+        <td style="padding:5px 8px;font-size:10.5px">${mes}</td>
+        <td style="padding:5px 8px;text-align:right;font-weight:600">${fmtCurrency(r.valSinIva)}</td>
+        <td style="padding:5px 8px;text-align:center">${recB}</td>
+        <td style="padding:5px 8px;text-align:center">${cxpB}</td>
+        <td style="padding:5px 8px;text-align:center">${pagB}</td>
+        <td style="padding:5px 8px;text-align:center">${moraStr}</td>
+        <td style="padding:5px 8px;font-size:9.5px;color:#6b7280;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.obs||''}">${r.obs||'—'}</td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--col-muted)">Sin datos de facturas.</td></tr>';
+  }
+}
+
+function fmtMillones(v) {
+  if (!v) return '0';
+  if (Math.abs(v) >= 1e9) return (v/1e9).toFixed(1)+'B';
+  if (Math.abs(v) >= 1e6) return (v/1e6).toFixed(1)+'M';
+  if (Math.abs(v) >= 1e3) return (v/1e3).toFixed(0)+'K';
+  return Math.round(v).toString();
+}
+
+function renderM5Pdf() {
+  const sel5 = document.getElementById('m5prov-select');
+  const selOpt = sel5 && sel5.selectedIndex > 0 ? sel5.options[sel5.selectedIndex] : null;
+  const provName = selOpt ? (selOpt.getAttribute('data-prov') || '') : '';
+  if (!provName) { showToast('Selecciona un proveedor primero', 'warn'); return; }
+  const yearSel = document.getElementById('m5year-select')?.value || '';
+  const provNorm = provName.trim().toLowerCase();
+  const m1rows = state.m1data.filter(r => r.prov && r.prov.trim().toLowerCase() === provNorm && (!yearSel || parseInt(String(r.year).replace('.0','')) === parseInt(yearSel)));
+  const m3rows = state.m3data.filter(r => r.prov && r.prov.trim().toLowerCase() === provNorm && (!yearSel || parseInt(String(r.year).replace('.0','')) === parseInt(yearSel)));
+  const today = new Date(); today.setHours(0,0,0,0);
+  const totalValor = m1rows.reduce((s,r)=>s+(r.valSinIva||0),0);
+  const valPagado  = m3rows.filter(r=>r.m3Status==='pagado').reduce((s,r)=>s+(r.cxpBruto||r.valSinIva||0),0);
+  const pagadas    = m3rows.filter(r=>r.m3Status==='pagado').length;
+  const pendientes = m3rows.filter(r=>r.m3Status==='aprobado').length;
+  const sinCxP     = m3rows.filter(r=>r.m3Status==='no_encontrado').length;
+  const m4rows     = state.m4data.filter(r => r.prov && r.prov.trim().toLowerCase() === provNorm && (!yearSel || parseInt(String(r.year).replace('.0','')) === parseInt(yearSel)));
+  const enMora     = m3rows.filter(r => r.m3Status !== 'pagado' && r.dueDate && (() => { const d=parseAnyDate(r.dueDate); return d && d < today; })()).length;
+  const ocs        = [...new Set(m1rows.map(r=>r.po).filter(Boolean))];
+  const fmt = v => '$ ' + Math.round(v).toLocaleString('es-CO');
+  const fechaHoy = today.toLocaleDateString('es-CO', {day:'2-digit', month:'long', year:'numeric'});
+  const recOk    = m1rows.filter(r => r.recStatus === 'recepcionado').length;
+  const recPar   = m1rows.filter(r => r.recStatus === 'parcial').length;
+  const pctPago  = totalValor > 0 ? Math.round(valPagado/totalValor*100) : 0;
+  const maxMora  = Math.max(0, ...m3rows.filter(r => r.m3Status !== 'pagado' && r.dueDate).map(r => { const d=parseAnyDate(r.dueDate); return d ? Math.max(0,Math.floor((today-d)/86400000)) : 0; }));
+
+  // ── Monthly breakdown ──
+  const monthMap2 = {};
+  m1rows.forEach(r => {
+    const my = getMonthYear(r); if (!my) return;
+    const k = `${my.y}-${String(my.m).padStart(2,'0')}`;
+    if (!monthMap2[k]) monthMap2[k] = { fac:0, pag:0, n:0 };
+    monthMap2[k].fac += (r.valSinIva||0); monthMap2[k].n++;
+  });
+  m3rows.forEach(r => {
+    if (r.m3Status !== 'pagado') return;
+    const my = getMonthYear(r); if (!my) return;
+    const k = `${my.y}-${String(my.m).padStart(2,'0')}`;
+    if (monthMap2[k]) monthMap2[k].pag += (r.cxpBruto||r.valSinIva||0);
+  });
+  const months2 = Object.keys(monthMap2).sort();
+  const monthRowsHtml = months2.map((k,i) => {
+    const d = monthMap2[k];
+    const pct2 = d.fac > 0 ? Math.round(d.pag/d.fac*100) : 0;
+    return `<tr style="background:${i%2?'#f8fafc':'white'};border-bottom:1px solid #e2e8f0">
+      <td style="padding:5px 8px;font-size:9px;font-family:monospace;font-weight:700">${k}</td>
+      <td style="padding:5px 8px;font-size:9px;text-align:center">${d.n}</td>
+      <td style="padding:5px 8px;font-size:9px;text-align:right;font-weight:600">${fmt(d.fac)}</td>
+      <td style="padding:5px 8px;font-size:9px;text-align:right;color:#059669;font-weight:600">${fmt(d.pag)}</td>
+      <td style="padding:5px 8px;font-size:9px;text-align:center;color:${pct2>=90?'#059669':pct2>=50?'#d97706':'#dc2626'};font-weight:700">${pct2}%</td>
+    </tr>`;
+  }).join('');
+
+  // ── OCs ──
+  const ocMap2 = {};
+  m1rows.forEach(r => {
+    const oc = r.po||'—';
+    if (!ocMap2[oc]) ocMap2[oc] = { n:0, val:0, rec:0 };
+    ocMap2[oc].n++; ocMap2[oc].val += (r.valSinIva||0);
+    if (r.recStatus === 'recepcionado') ocMap2[oc].rec++;
+  });
+  const ocRowsHtml = Object.entries(ocMap2).sort((a,b)=>b[1].val-a[1].val).map(([oc,d],i) =>
+    `<tr style="background:${i%2?'#f8fafc':'white'};border-bottom:1px solid #e2e8f0">
+      <td style="padding:5px 8px;font-size:9px;font-family:monospace;color:#1a4a8a;font-weight:700">${oc}</td>
+      <td style="padding:5px 8px;font-size:9px;text-align:center">${d.n}</td>
+      <td style="padding:5px 8px;font-size:9px;text-align:right;font-weight:600">${fmt(d.val)}</td>
+      <td style="padding:5px 8px;font-size:9px;text-align:center">${d.rec>0?'<span style="color:#059669">✅ '+d.rec+'</span>':'—'}</td>
+    </tr>`).join('');
+
+  // ── Facturas detail ──
+  const allRows = m4rows.length ? m4rows : m1rows;
+  const rowsHtml = allRows.map((r,i) => {
+    const d = parseAnyDate(r.dueDate);
+    const days = d ? Math.max(0,Math.floor((today-d)/86400000)) : 0;
+    const mora = r.m3Status!=='pagado'&&days>0?`<b style="color:#dc2626">${days}d</b>`:'—';
+    const recB = r.recStatus==='recepcionado'?'✅':r.recStatus==='parcial'?'⚠️':'❌';
+    const cxpB = r.m3Status==='pagado'||r.m3Status==='aprobado'?'✅':'❌';
+    const pagB = r.m3Status==='pagado'?'✅ Pagado':r.m3Status==='aprobado'?'⏳ Aprobado':'❌ Sin CxP';
+    const mes = r.month ? String(r.month).substring(0,3)+(r.year?' '+String(r.year).slice(2):'') : '—';
+    return `<tr style="background:${i%2?'#f8fafc':'white'};border-bottom:1px solid #e2e8f0">
+      <td style="padding:4px 6px;font-size:8.5px;font-family:monospace;color:#1a4a8a;font-weight:600">${r.inv||'—'}</td>
+      <td style="padding:4px 6px;font-size:8.5px;font-family:monospace">${r.po||'—'}</td>
+      <td style="padding:4px 6px;font-size:8.5px">${mes}</td>
+      <td style="padding:4px 6px;font-size:8.5px;text-align:right;font-weight:600">${fmt(r.valSinIva||0)}</td>
+      <td style="padding:4px 6px;font-size:8.5px;text-align:center">${recB}</td>
+      <td style="padding:4px 6px;font-size:8.5px;text-align:center">${cxpB}</td>
+      <td style="padding:4px 6px;font-size:8.5px">${pagB}</td>
+      <td style="padding:4px 6px;font-size:8.5px;text-align:center">${mora}</td>
+      <td style="padding:4px 6px;font-size:8.5px;color:#6b7280;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.obs||'—'}</td>
+    </tr>`;
+  }).join('');
+
+  const CSS = `body{font-family:'Segoe UI',sans-serif;margin:0;color:#1e293b;font-size:11px}
+    @media print{@page{margin:10mm;size:A4 landscape} .noprint{display:none}}
+    .hdr{background:linear-gradient(135deg,#0f2544,#1a4a8a);color:white;padding:18px 24px;display:flex;justify-content:space-between;align-items:flex-start}
+    .kgrid{display:grid;grid-template-columns:repeat(6,1fr);border-bottom:2px solid #e2e8f0}
+    .kpi{padding:10px 14px;border-right:1px solid #e2e8f0}
+    .kpi-l{font-size:8px;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.6px;margin-bottom:2px}
+    .kpi-v{font-size:16px;font-weight:700}
+    .kpi-s{font-size:8.5px;color:#94a3b8}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid #f1f5f9}
+    .sec{padding:12px 18px;border-bottom:1px solid #f1f5f9}
+    .sec-t{font-size:11px;font-weight:700;color:#0f2544;margin-bottom:8px;padding-bottom:5px;border-bottom:1.5px solid #e2e8f0}
+    table{width:100%;border-collapse:collapse}
+    thead th{background:#0f2544;color:white;padding:5px 6px;font-size:8.5px;text-align:left;font-weight:600}
+    .btn-p{background:#0f2544;color:white;border:none;padding:8px 20px;border-radius:6px;cursor:pointer;margin:16px auto;display:block;font-size:12px}`;
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>Ficha Proveedor — ${provName}</title>
+  <style>${CSS}</style></head><body>
+  <div class="hdr">
+    <div>
+      <div style="font-size:20px;font-weight:700">Cash <span style="color:#00b4c8">Call</span> · Ficha de Proveedor</div>
+      <div style="font-size:14px;font-weight:600;margin-top:4px">${provName}</div>
+      <div style="font-size:10px;opacity:.6;margin-top:3px">${ocs.length} OC(s) · ${yearSel||'Todos los años'}</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:10px;opacity:.6">${currentUser||'Usuario'}</div>
+      <div style="font-size:10px;opacity:.6;margin-top:2px">${fechaHoy}</div>
+      <div style="font-size:9px;opacity:.4;margin-top:2px">Cash Call v1.7</div>
+    </div>
+  </div>
+
+  <div class="kgrid">
+    <div class="kpi"><div class="kpi-l">Facturas</div><div class="kpi-v" style="color:#1a4a8a">${m1rows.length}</div><div class="kpi-s">${ocs.length} OC(s)</div></div>
+    <div class="kpi"><div class="kpi-l">Val. Facturado</div><div class="kpi-v" style="font-size:12px;color:#1a4a8a">${fmt(totalValor)}</div><div class="kpi-s">sin IVA</div></div>
+    <div class="kpi"><div class="kpi-l">Val. Pagado</div><div class="kpi-v" style="font-size:12px;color:#059669">${fmt(valPagado)}</div><div class="kpi-s">${pctPago}% del facturado</div></div>
+    <div class="kpi"><div class="kpi-l">En Mora</div><div class="kpi-v" style="color:${enMora>0?'#dc2626':'#059669'}">${enMora}</div><div class="kpi-s">${maxMora>0?'Máx: '+maxMora+'d':'Al día'}</div></div>
+    <div class="kpi"><div class="kpi-l">Recepcionadas</div><div class="kpi-v" style="color:#0891b2">${recOk+recPar}</div><div class="kpi-s">${recOk} compl · ${recPar} parc</div></div>
+    <div class="kpi" style="border-right:none"><div class="kpi-l">CxP Estado</div><div class="kpi-v" style="font-size:14px">${pagadas}✅ ${pendientes}⏳ ${sinCxP}❌</div><div class="kpi-s">Pag · Aprobadas · Sin CxP</div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="sec" style="border-right:1px solid #f1f5f9">
+      <div class="sec-t">📅 Facturado por Mes</div>
+      <table><thead><tr><th>Mes</th><th style="text-align:center">Fact.</th><th style="text-align:right">Facturado</th><th style="text-align:right">Pagado</th><th style="text-align:center">% Pago</th></tr></thead>
+      <tbody>${monthRowsHtml}</tbody></table>
+    </div>
+    <div class="sec">
+      <div class="sec-t">📦 Órdenes de Compra</div>
+      <table><thead><tr><th>OC / PO</th><th style="text-align:center">Fact.</th><th style="text-align:right">Valor</th><th style="text-align:center">Rec.</th></tr></thead>
+      <tbody>${ocRowsHtml}</tbody></table>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">📋 Detalle de Facturas (${allRows.length} registros)</div>
+    <table><thead><tr>
+      <th>N° Factura</th><th>OC</th><th>Mes</th><th style="text-align:right">Valor sin IVA</th>
+      <th style="text-align:center">Rec.</th><th style="text-align:center">CxP</th>
+      <th>Pago</th><th style="text-align:center">Mora</th><th>Observaciones</th>
+    </tr></thead>
+    <tbody>${rowsHtml}</tbody></table>
+  </div>
+
+  <div style="padding:10px 18px;background:#f8fafc;font-size:8.5px;color:#94a3b8;display:flex;justify-content:space-between">
+    <span>Cash Call v1.7 · Ficha Proveedor · ${provName}</span>
+    <span>Generado: ${new Date().toLocaleString('es-CO')}</span>
+  </div>
+  <button class="btn-p noprint" onclick="window.print()">🖨 Imprimir / Guardar como PDF</button>
+  </body></html>`;
+  const w = window.open('','_blank');
+  if (w) { w.document.write(html); w.document.close(); }
+  else showToast('Permita ventanas emergentes para exportar', 'warn');
+}
+
 function exportBreachasPDF() {
   const data = state.m4data;
   if (!data || !data.length) { showToast('Sin datos de brechas. Procese los archivos primero.', 'warn'); return; }
@@ -5731,7 +5946,7 @@ function exportBreachasPDF() {
     <div style="text-align:right">
       <div style="font-size:11px;opacity:0.7">Generado por: ${currentUser||'Usuario'}</div>
       <div style="font-size:11px;opacity:0.7;margin-top:2px">${fechaHoy}</div>
-      <div style="font-size:10px;opacity:0.5;margin-top:2px;font-family:monospace">v1.6 · Cash Call Platform</div>
+      <div style="font-size:10px;opacity:0.5;margin-top:2px;font-family:monospace">v1.7 · Cash Call Platform</div>
     </div>
   </div>
 
@@ -5816,7 +6031,7 @@ function exportBreachasPDF() {
   </div>
 
   <div style="padding:16px 32px;background:#f8fafc;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center">
-    <div style="font-size:9px;color:#94a3b8">Cash Call v1.6 · Secretaría Distrital de Seguridad, Convivencia y Justicia · Dirección de Bienes</div>
+    <div style="font-size:9px;color:#94a3b8">Cash Call v1.7 · Secretaría Distrital de Seguridad, Convivencia y Justicia · Dirección de Bienes</div>
     <div style="font-size:9px;color:#94a3b8">Generado: ${new Date().toLocaleString('es-CO')}</div>
   </div>
 </div>
@@ -6192,7 +6407,7 @@ function exportCashCallJSON() {
   const filename = `CashCall_${fecha}.json`;
   const payload = {
     meta: {
-      app: 'Cash Call v1.6',
+      app: 'Cash Call v1.7',
       exportedBy: currentUser || '—',
       exportedAt: new Date().toISOString(),
       filename,
@@ -6215,7 +6430,6 @@ function exportCashCallJSON() {
         else out[k]=r[k] instanceof Date?r[k].toISOString().slice(0,10):r[k];
       }); return out;
     }),
-    modulo5: state.m5data
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -6228,7 +6442,7 @@ function exportCashCallJSON() {
     filename,
     recordCounts: {
       m1: state.m1data.length, m2: state.m2data.length,
-      m3: state.m3data.length, m4: state.m4data.length, m5: state.m5data.length
+      m3: state.m3data.length, m4: state.m4data.length
     },
     files: state.files.filter(f=>f.wb).map(f=>({ nombre:f.name, slot:f.slot, hojas:f.sheets }))
   });
@@ -6302,6 +6516,208 @@ function importCashCallJSON(input) {
   };
   reader.readAsText(file);
 }
+
+// ── DRAGGABLE + RESIZABLE FLOATING WINDOWS ─────────────────
+(function() {
+  function makeDraggableByHeader(win, headerEl) {
+    if (!win || !headerEl) return;
+    let ox=0, oy=0, dragging=false;
+    headerEl.style.cursor = 'move';
+    headerEl.addEventListener('mousedown', e => {
+      if (e.target.closest('button,input,select,a')) return;
+      dragging = true;
+      const r = win.getBoundingClientRect();
+      // Convert to fixed positioning if not already
+      if (!win._dragged) {
+        win._dragged = true;
+        win.style.transform = 'none';
+        win.style.margin = '0';
+        win.style.left = r.left + 'px';
+        win.style.top  = r.top  + 'px';
+      }
+      ox = e.clientX - r.left;
+      oy = e.clientY - r.top;
+      e.preventDefault();
+      const onMove = e2 => {
+        if (!dragging) return;
+        let nx = e2.clientX - ox;
+        let ny = e2.clientY - oy;
+        nx = Math.max(0, Math.min(nx, window.innerWidth  - 80));
+        ny = Math.max(0, Math.min(ny, window.innerHeight - 40));
+        win.style.left = nx + 'px';
+        win.style.top  = ny + 'px';
+      };
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', () => { dragging=false; document.removeEventListener('mousemove', onMove); }, {once:true});
+    });
+  }
+  function initDraggables() {
+    // Subwins — drag by .subwin-header
+    document.querySelectorAll('.subwin').forEach(sw => {
+      const hdr = sw.querySelector('.subwin-header');
+      if (hdr && !hdr._dragInit) { hdr._dragInit = true; makeDraggableByHeader(sw, hdr); }
+    });
+    // Month popup — drag by its first child (dark header div)
+    const mp = document.getElementById('m1-month-popup');
+    if (mp && !mp._dragInit) {
+      mp._dragInit = true;
+      const hdr = mp.firstElementChild;
+      if (hdr) makeDraggableByHeader(mp, hdr);
+    }
+  }
+  // Hook into openSubwin
+  const _orig = window.openSubwin;
+  window.openSubwin = function(...a) { if (_orig) _orig.apply(this,a); setTimeout(initDraggables,60); };
+  document.addEventListener('DOMContentLoaded', initDraggables);
+  setTimeout(initDraggables, 600);
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// INSTRUCTIVOS — AYUDA POR MÓDULO
+// ═══════════════════════════════════════════════════════════════
+const INSTRUCTIVOS = {
+  busqueda: {
+    icon: '🔎', title: 'Búsqueda Rápida — Instructivo',
+    html: `
+      <div class="inst-section-title">¿Qué es este módulo?</div>
+      <p>La <b>Búsqueda Rápida</b> permite localizar cualquier documento del sistema (factura, OC o proveedor) en tiempo real, cruzando los tres archivos cargados para mostrar el ciclo completo de un documento.</p>
+      <div class="inst-section-title">Pasos para usar</div>
+      <div class="inst-step"><div class="inst-step-num">1</div><div class="inst-step-body"><div class="inst-step-title">Escribe en el campo de búsqueda</div><div class="inst-step-desc">Ingresa el número de factura (ej: FESR786), número de OC (ej: AMM_OC_15188) o nombre del proveedor. El sistema busca en tiempo real mientras escribes.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">2</div><div class="inst-step-body"><div class="inst-step-title">Filtra por tipo</div><div class="inst-step-desc">Usa los botones <b>Solo Facturas</b>, <b>Solo OC</b>, <b>Solo Proveedores</b> o <b>Solo Recepciones</b> para acotar los resultados.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">3</div><div class="inst-step-body"><div class="inst-step-title">Revisa el ciclo del documento</div><div class="inst-step-desc">Cada resultado muestra el flujo completo: Recepción Oracle → CxP → Pago, con los valores correspondientes y fechas clave.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">4</div><div class="inst-step-body"><div class="inst-step-title">Ir al proveedor o sincronizar</div><div class="inst-step-desc">Usa <b>Ver proveedor</b> para abrir la ficha completa en Módulo 5, o <b>Sincronizar en módulos</b> para filtrar todos los módulos por ese resultado.</div></div></div>
+      <div class="inst-tip">💡 <b>Tip:</b> Puedes sincronizar un proveedor encontrado aquí y todos los módulos quedarán filtrados simultáneamente para ese proveedor.</div>
+      <div class="inst-warn">⚠️ Los resultados dependen de que los archivos A1, A2 y A3 estén cargados y procesados correctamente.</div>`
+  },
+  modulo0: {
+    icon: '📊', title: 'Módulo 0 — Vista Gerencial Ejecutiva',
+    html: `
+      <div class="inst-section-title">¿Qué es este módulo?</div>
+      <p>El <b>Panel Gerencial</b> ofrece una visión ejecutiva consolidada del estado financiero del proyecto: alertas críticas, KPIs de facturación, recepciones, mora y brechas. Es el punto de partida para identificar problemas prioritarios.</p>
+      <div class="inst-section-title">Componentes principales</div>
+      <div class="inst-step"><div class="inst-step-num">1</div><div class="inst-step-body"><div class="inst-step-title">Panel de Alertas</div><div class="inst-step-desc">Muestra alertas críticas ordenadas por urgencia: facturas sin recepción, en mora, próximas a vencer. Cada alerta es clicable para ver el detalle.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">2</div><div class="inst-step-body"><div class="inst-step-title">KPIs principales</div><div class="inst-step-desc">Total facturas, valor recepcionado, pagado y pendiente. Los KPIs son interactivos — haz clic para ver el detalle en ventana emergente con filtro y sincronización.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">3</div><div class="inst-step-body"><div class="inst-step-title">Gráficas de análisis</div><div class="inst-step-desc">Distribución por estado (pagado/pendiente/sin CxP), mora por rangos de días, recepciones y análisis trimestral de tendencias.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">4</div><div class="inst-step-body"><div class="inst-step-title">Facturas próximas a vencer</div><div class="inst-step-desc">Tabla de facturas que vencen en los próximos 30 días o ya están en mora, ordenadas por urgencia.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">5</div><div class="inst-step-body"><div class="inst-step-title">Exportar PDF</div><div class="inst-step-desc">Genera un informe gerencial completo en PDF listo para presentar a directivos.</div></div></div>
+      <div class="inst-tip">💡 <b>Tip:</b> Haz clic en cualquier KPI para abrir una ventana con el detalle completo y opción de sincronizar el filtro en todos los módulos.</div>`
+  },
+  modulo1: {
+    icon: '📋', title: 'Módulo 1 — Facturas en Gestión',
+    html: `
+      <div class="inst-section-title">¿Qué es este módulo?</div>
+      <p>El <b>Módulo 1</b> muestra el registro maestro de facturas del proyecto (Archivo 1 — hoja Actual). Cada fila es una factura con su OC, REC y proveedor, cruzada automáticamente con las recepciones Oracle para determinar su estado de entrega.</p>
+      <div class="inst-section-title">Archivos necesarios</div>
+      <div class="inst-tip">📁 <b>Archivo 1:</b> Seguimiento_Compromisos_Actuals.xlsx — hoja "Actual" con columnas: Year, Num Month, Invoice Number, Supplier Name, PO, NuevaPO, REC, Vaule without IVA, STATUS, etc.</div>
+      <div class="inst-section-title">Cómo usarlo</div>
+      <div class="inst-step"><div class="inst-step-num">1</div><div class="inst-step-body"><div class="inst-step-title">KPIs de encabezado</div><div class="inst-step-desc">Total Facturas, Con Recepción (✅), Parciales (⚠️) y Sin Recepción (❌). El valor recepcionado viene del cruce con Oracle.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">2</div><div class="inst-step-body"><div class="inst-step-title">Gráfica de recepciones por mes</div><div class="inst-step-desc">Barras apiladas por responsable de recepción. <b>Haz clic en una barra</b> para ver el detalle de ese mes: responsables, facturas y valores.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">3</div><div class="inst-step-body"><div class="inst-step-title">Filtros</div><div class="inst-step-desc">Busca por número de factura, OC o proveedor. Filtra por año, mes y estado (Recepcionado / Parcial / Sin Recepción).</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">4</div><div class="inst-step-body"><div class="inst-step-title">Tabla de facturas</div><div class="inst-step-desc">Columnas: Estado · Año · Mes · OC · Proveedor · N° Factura · N° REC (A1) · Recepciones Oracle · Valor Acta · Val. Recepcionado · Diferencia · Fecha Recepción · Recepcionado Por.</div></div></div>
+      <div class="inst-warn">⚠️ Una factura <b>Parcial</b> significa que el valor recepcionado difiere más del 5% del valor facturado. Verificar con el supervisor de recepción.</div>`
+  },
+  modulo2: {
+    icon: '📥', title: 'Módulo 2 — Recepciones Oracle',
+    html: `
+      <div class="inst-section-title">¿Qué es este módulo?</div>
+      <p>El <b>Módulo 2</b> contiene todas las líneas de recepción registradas en Oracle ERP (Archivo 2). Es la fuente oficial de evidencia de entrega de bienes y servicios en el proyecto minero.</p>
+      <div class="inst-section-title">Archivos necesarios</div>
+      <div class="inst-tip">📁 <b>Archivo 2:</b> Recepciones_generales_Multicompañia.xls — con columnas: Organización, Fecha de Recepción, Recepción, Número de Documento (OC), Recepcionado Por, Valor Recepcionado por Línea, etc.</div>
+      <div class="inst-section-title">Cómo usarlo</div>
+      <div class="inst-step"><div class="inst-step-num">1</div><div class="inst-step-body"><div class="inst-step-title">KPIs</div><div class="inst-step-desc">Total recepciones, valor total recepcionado, número de OCs únicas y rango de fechas cubierto.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">2</div><div class="inst-step-body"><div class="inst-step-title">Filtros</div><div class="inst-step-desc">Busca por OC, factura, proveedor, recepción o proyecto. Filtra por año y mes de recepción.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">3</div><div class="inst-step-body"><div class="inst-step-title">Tabla de recepciones</div><div class="inst-step-desc">Columnas: Organización · Fecha · N° Recepción · N° Doc (OC) · Descripción · Cantidad · Valor Unitario · Valor Total · Recepcionado Por · Estado de Línea.</div></div></div>
+      <div class="inst-tip">💡 <b>Tip:</b> El número de recepción (N° REC) es el vínculo clave con el Módulo 1. Si una factura no aparece recepcionada en M1, busca aquí por la OC para verificar.</div>`
+  },
+  modulo3: {
+    icon: '💰', title: 'Módulo 3 — Cuentas por Pagar',
+    html: `
+      <div class="inst-section-title">¿Qué es este módulo?</div>
+      <p>El <b>Módulo 3</b> contiene todos los registros de Cuentas por Pagar registrados en Oracle (Archivo 3). Representa el estado contable oficial de las facturas: si están aprobadas para pago, ya pagadas o canceladas.</p>
+      <div class="inst-section-title">Archivos necesarios</div>
+      <div class="inst-tip">📁 <b>Archivo 3:</b> CuentasxPagar_vs_GL_Multicompañia.xls — con columnas: NIT, Nombre Proveedor, Número de Factura, Estado (Pagado/Aprobado/Cancelado), Valor Bruto, Fecha Transacción, Moneda, etc.</div>
+      <div class="inst-section-title">Estados de factura</div>
+      <div class="inst-step"><div class="inst-step-num">✅</div><div class="inst-step-body"><div class="inst-step-title">Pagado</div><div class="inst-step-desc">La factura fue procesada y el pago ejecutado. Tiene fecha de transacción y valor liquidado.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">⏳</div><div class="inst-step-body"><div class="inst-step-title">Aprobado</div><div class="inst-step-desc">La factura está en CxP aprobada pero aún no se ha ejecutado el pago. Puede generar mora si supera la fecha de vencimiento.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">❌</div><div class="inst-step-body"><div class="inst-step-title">Cancelado</div><div class="inst-step-desc">La factura fue anulada o rechazada en el sistema contable.</div></div></div>
+      <div class="inst-warn">⚠️ Si una factura de M1 con recepción confirmada <b>no aparece en M3</b>, significa que no ha sido registrada en CxP — brecha crítica que puede generar mora.</div>`
+  },
+  modulo4: {
+    icon: '🔍', title: 'Módulo 4 — Análisis Integral de Brechas',
+    html: `
+      <div class="inst-section-title">¿Qué es este módulo?</div>
+      <p>El <b>Módulo 4</b> es la vista consolidada del flujo completo por factura. Cruza M1 + M2 + M3 para identificar en qué etapa del proceso cada factura tiene una <b>brecha</b> que impide su pago correcto.</p>
+      <div class="inst-section-title">Flujos posibles</div>
+      <div class="inst-step"><div class="inst-step-num" style="background:linear-gradient(135deg,#059669,#047857)">✅</div><div class="inst-step-body"><div class="inst-step-title">Completo</div><div class="inst-step-desc">Tiene recepción Oracle ✅ + registro en CxP ✅ + pago ejecutado ✅. Ciclo cerrado sin observaciones.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num" style="background:linear-gradient(135deg,#dc2626,#b91c1c)">❌</div><div class="inst-step-body"><div class="inst-step-title">Sin Recepción</div><div class="inst-step-desc">La OC no tiene líneas de recepción en Oracle. Sin evidencia de entrega no puede procesarse el pago.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)">❌</div><div class="inst-step-body"><div class="inst-step-title">Sin CxP</div><div class="inst-step-desc">Hay recepción pero no fue registrada en Cuentas por Pagar. Requiere acción del área contable.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num" style="background:linear-gradient(135deg,#d97706,#b45309)">⏳</div><div class="inst-step-body"><div class="inst-step-title">Sin Pago</div><div class="inst-step-desc">Está en CxP aprobada pero el pago no se ha ejecutado. Verificar disponibilidad de caja y prioridad.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num" style="background:linear-gradient(135deg,#f59e0b,#d97706)">⚠️</div><div class="inst-step-body"><div class="inst-step-title">Con Brecha</div><div class="inst-step-desc">El valor pagado no coincide con el valor facturado (diferencia mayor al 5%). Requiere revisión.</div></div></div>
+      <div class="inst-section-title">Herramientas</div>
+      <div class="inst-tip">📄 <b>Informe PDF Brechas:</b> Genera un PDF ejecutivo con la priorización de pago ordenada por días de mora, ideal para reuniones de comité de pagos.</div>
+      <div class="inst-warn">⚠️ La columna <b>EN MORA</b> muestra los días transcurridos desde la fecha de vencimiento para facturas no pagadas. Priorizar siempre las de mayor mora.</div>`
+  },
+  modulo5: {
+    icon: '🏢', title: 'Módulo 5 — Ficha Análisis por Proveedor',
+    html: `
+      <div class="inst-section-title">¿Qué es este módulo?</div>
+      <p>El <b>Módulo 5</b> ofrece una ficha analítica 360° de cada proveedor: historia de facturación, estado de pagos, órdenes de compra, recepciones y mora. Es la herramienta ideal para reuniones de seguimiento con proveedores.</p>
+      <div class="inst-section-title">Cómo usarlo</div>
+      <div class="inst-step"><div class="inst-step-num">1</div><div class="inst-step-body"><div class="inst-step-title">Seleccionar proveedor</div><div class="inst-step-desc">Elige el proveedor en el dropdown. El listado se construye automáticamente de los archivos cargados. Opcionalmente filtra por año.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">2</div><div class="inst-step-body"><div class="inst-step-title">KPIs del proveedor</div><div class="inst-step-desc">Total facturas, valor facturado, valor pagado, % pagado, facturas en mora (con días máximos) y estado CxP (pagadas/aprobadas/sin CxP).</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">3</div><div class="inst-step-body"><div class="inst-step-title">Gráfica Facturado por Mes</div><div class="inst-step-desc">Comparativo mensual entre lo facturado (azul) y lo pagado (verde). Las cifras encima de cada barra muestran el número de facturas del mes.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">4</div><div class="inst-step-body"><div class="inst-step-title">Estado de Pagos</div><div class="inst-step-desc">Barras de progreso mostrando % de facturas pagadas, pendientes y sin CxP. Si hay mora, muestra el desglose por rangos de días.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">5</div><div class="inst-step-body"><div class="inst-step-title">Órdenes de Compra y Recepciones</div><div class="inst-step-desc">Tabla de OCs del proveedor con valor y recepciones confirmadas. Recepciones Oracle vinculadas con el responsable de recepción.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">6</div><div class="inst-step-body"><div class="inst-step-title">Exportar PDF</div><div class="inst-step-desc">Genera la ficha completa del proveedor en PDF para presentar en reuniones o archivar.</div></div></div>
+      <div class="inst-tip">💡 <b>Acceso rápido:</b> Desde Búsqueda Rápida, al encontrar una factura o OC, el botón <b>"Ver proveedor"</b> abre directamente este módulo con el proveedor preseleccionado.</div>`
+  },
+  auditorias: {
+    icon: '🗂️', title: 'Auditorías — Historial de Cambios',
+    html: `
+      <div class="inst-section-title">¿Qué es este módulo?</div>
+      <p>El módulo de <b>Auditorías</b> registra automáticamente cada sesión de trabajo: qué archivos se cargaron, cuántas facturas se procesaron y qué cambió respecto a la sesión anterior. Ideal para control de versiones del dashboard.</p>
+      <div class="inst-section-title">Cómo funciona</div>
+      <div class="inst-step"><div class="inst-step-num">1</div><div class="inst-step-body"><div class="inst-step-title">Registro automático</div><div class="inst-step-desc">Cada vez que procesas archivos se crea una entrada en el historial con fecha, usuario, archivos cargados y un snapshot de los datos.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">2</div><div class="inst-step-body"><div class="inst-step-title">Comparación de snapshots</div><div class="inst-step-desc">El sistema compara automáticamente la sesión actual con la anterior para detectar diferencias en conteos, valores y estados (nuevas facturas, cambios de estado, nuevos pagos).</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">3</div><div class="inst-step-body"><div class="inst-step-title">Exportar e importar JSON</div><div class="inst-step-desc">Guarda el estado completo del dashboard en un archivo JSON para compartir con el equipo o restaurar en otra sesión sin recargar los Excel.</div></div></div>
+      <div class="inst-step"><div class="inst-step-num">4</div><div class="inst-step-body"><div class="inst-step-title">Limpiar historial</div><div class="inst-step-desc">Usa el botón "Limpiar historial" para borrar las entradas antiguas cuando el log se vuelva muy extenso.</div></div></div>
+      <div class="inst-tip">💡 <b>Tip:</b> Exporta el JSON al final de cada semana para tener un respaldo completo. El JSON contiene todos los datos procesados y puede cargarse en cualquier sesión futura sin necesidad de los archivos Excel.</div>
+      <div class="inst-warn">⚠️ El historial se almacena solo en la sesión del navegador. Al cerrar el navegador se pierde, a menos que hayas exportado el JSON.</div>`
+  }
+};
+
+function showInstructive(moduleKey) {
+  const data = INSTRUCTIVOS[moduleKey];
+  if (!data) return;
+  const backdrop = document.getElementById('instructive-backdrop');
+  const icon     = document.getElementById('instructive-icon');
+  const title    = document.getElementById('instructive-title');
+  const body     = document.getElementById('instructive-body');
+  if (!backdrop || !icon || !title || !body) return;
+  icon.textContent  = data.icon;
+  title.textContent = data.title;
+  body.innerHTML    = data.html;
+  backdrop.classList.add('open');
+  // Make draggable
+  const modal = document.getElementById('instructive-modal');
+  const hdr   = document.getElementById('instructive-header');
+  if (modal && hdr && !hdr._dragInit) {
+    hdr._dragInit = true;
+    makeDraggableByHeader(modal, hdr);
+  }
+}
+
+function closeInstructive() {
+  const backdrop = document.getElementById('instructive-backdrop');
+  if (backdrop) backdrop.classList.remove('open');
+}
+
+// Close with Escape key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeInstructive();
+});
+
 </script>
 </body>
 </html>
