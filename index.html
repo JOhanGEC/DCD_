@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cash Call v1.5 — Build 15</title>
+<title>Cash Call v1.6 — Build 16</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -623,7 +623,7 @@
   <canvas id="loginCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></canvas>
   <div class="login-box" style="position:relative;z-index:1">
     <div class="login-logo">Cash<span class="login-logo-dot"></span><span>Call</span></div>
-    <div class="login-version">v1.5 · Control Financiero</div>
+    <div class="login-version">v1.6 · Control Financiero</div>
     <div class="login-field">
       <label>Usuario</label>
       <input type="text" id="loginUser" placeholder="usuario.nombre" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
@@ -649,7 +649,7 @@
   <div class="subwin" style="max-width:600px">
     <div class="subwin-header">
       <span style="font-size:16px">⌨️</span>
-      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v1.5</span>
+      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v1.6</span>
       <button class="subwin-close" onclick="closeSubwin('sw-ctrlm')">✕</button>
     </div>
     <div class="subwin-body" id="sw-ctrlm-body" style="padding:24px">
@@ -720,7 +720,7 @@
 </div>
 
 <!-- ══ GLOBAL FILTER SYNC TOAST ═══════════════════════════════ -->
-<div id="global-sync-banner" style="display:none;position:fixed;bottom:70px;right:20px;background:#0f2544;color:white;padding:10px 16px;border-radius:10px;font-size:12px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.3);display:flex;align-items:center;gap:10px;max-width:340px">
+<div id="global-sync-banner" style="display:none;position:fixed;bottom:70px;right:20px;background:#0f2544;color:white;padding:10px 16px;border-radius:10px;font-size:12px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.3);align-items:center;gap:10px;max-width:340px">
   <span>🔗</span>
   <span id="global-sync-text">Filtros sincronizados</span>
   <button onclick="clearGlobalFilter()" style="margin-left:auto;background:rgba(255,255,255,0.2);border:none;color:white;cursor:pointer;border-radius:6px;padding:3px 8px;font-size:11px">✕ Limpiar</button>
@@ -737,7 +737,7 @@
       <span class="login-user-badge" id="userBadge" title="Cerrar sesión" onclick="logout()">
         <span>👤</span><span id="userBadgeText">—</span><span style="font-size:10px;opacity:0.6">✕</span>
       </span>
-      <div class="header-badge" id="headerBadge">v1.5</div>
+      <div class="header-badge" id="headerBadge">v1.6</div>
     </div>
   </div>
 </header>
@@ -1036,6 +1036,12 @@
 
       <div class="summary-grid" id="sum1"></div>
 
+      <!-- Chart: Recepciones por Mes/Año/Responsable -->
+      <div class="chart-card" id="m1-rec-chart-card" style="margin-bottom:16px;padding:14px 16px;display:none">
+        <div class="chart-card-title">📅 Facturas Recepcionadas por Mes y Año — por Responsable</div>
+        <div id="m1-rec-chart" style="overflow-x:auto"></div>
+      </div>
+
       <div class="filter-bar">
         <span class="filter-label">🔍</span>
         <input type="text" id="f1search" placeholder="Factura, OC, Proveedor..." oninput="renderM1()">
@@ -1180,7 +1186,8 @@
           <span class="status-pill" data-status="con_brecha" onclick="setPill('pills4',this,'f4brecha',renderM4)">⚠️ Con Brecha</span>
         </div>
         <input type="hidden" id="f4brecha">
-        <button class="btn btn-sm btn-outline" onclick="exportTable('m4data','Modulo4_Analisis_Brechas')">⬇ Exportar</button>
+        <button class="btn btn-sm btn-outline" onclick="exportTable('m4data','Modulo4_Analisis_Brechas')">⬇ Exportar CSV</button>
+        <button class="btn btn-sm btn-danger-outline" onclick="exportBreachasPDF()" title="Genera informe PDF priorizando facturas por dias en mora">📄 Informe PDF Brechas</button>
       </div>
 
       <div class="table-wrap">
@@ -1191,14 +1198,15 @@
         <div class="table-scroll">
           <table>
             <thead><tr>
-              <th>Flujo</th><th>Proveedor</th><th>N° Factura</th><th>Orden de Compra</th>
-              <th class="currency">Valor sin IVA</th>
+              <th>Flujo</th>
               <th title="Recepción Oracle">📥 Recepción</th>
-              <th title="Valor recepcionado">💲 Val. Rec.</th>
               <th title="CxP Oracle">📊 CxP.</th>
+              <th title="Pago">💸 Pago</th>
+              <th>Proveedor</th><th>N° Factura</th><th>Orden de Compra</th>
+              <th class="currency">Valor sin IVA</th>
+              <th title="Valor recepcionado">💲 Val. Rec.</th>
               <th title="Fecha de la Factura">📅 F. Factura</th>
               <th title="Fecha de Recepción Oracle">📅 F. Recepción</th>
-              <th title="Pago">💸 Pago</th>
               <th>Fecha Pago</th>
               <th title="Verifica que el valor pagado (CxP) corresponda al valor facturado (sin IVA). Alerta si la diferencia supera el 5%.">⚖️ Verif. Pago</th>
               <th>Observaciones</th>
@@ -1225,7 +1233,8 @@
           <option value="anual">📅 Anual</option>
         </select>
         <select id="f5year" onchange="renderM5()"><option value="">Todos los años</option></select>
-        <button class="btn btn-sm btn-outline" onclick="exportTable('m5data','Modulo5_Proveedores')">⬇ Exportar</button>
+        <button class="btn btn-sm btn-outline" onclick="exportTable('m5data','Modulo5_Proveedores')">⬇ Exportar CSV</button>
+        <button class="btn btn-sm btn-danger-outline" onclick="exportBreachasPDF()" title="Informe PDF de brechas priorizando por mora">📄 Informe PDF Brechas</button>
       </div>
 
       <!-- KPIs periodo -->
@@ -1786,7 +1795,7 @@ function exportPDFReport() {
   </style></head><body>
   <div class="cover">
     <div class="cover-logo">Cash <span>Call</span></div>
-    <div class="cover-title">Informe Gerencial Ejecutivo · v1.5</div>
+    <div class="cover-title">Informe Gerencial Ejecutivo · v1.6</div>
     <div class="cover-meta">Generado: ${today.toLocaleDateString('es-CO',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} · ${today.toLocaleTimeString('es-CO')}<br>
     Usuario: ${currentUser||'—'} · Período analizado: ${[...new Set(d1.map(r=>r.year).filter(Boolean))].sort().join(', ')||'N/D'}</div>
   </div>
@@ -1845,7 +1854,7 @@ function exportPDFReport() {
   </div>`:''}
 
   <div class="footer">
-    Cash Call v1.5 · Desarrollado por Ing. Johan Manuel Cárdenas Leal, MSc · Todos los derechos reservados © 2026<br>
+    Cash Call v1.6 · Desarrollado por Ing. Johan Manuel Cárdenas Leal, MSc · Todos los derechos reservados © 2026<br>
     Informe generado automáticamente — ${today.toISOString()}
   </div>
   <script>window.onload=function(){window.print();}<\/script>
@@ -3404,35 +3413,57 @@ function parseFiles() {
     const wb = slotMap[1];
     // A1: prefer 'Facturas' sheet (exact), then any sheet with 'factura', skip metadata/helper sheets
     const A1_SKIP = ['wbs','meses','anteriores oc','ordenes compra lm','xdo_metadata'];
+    // Also try 'Actual' sheet (new format from Archivo1_Segumiento_Compromisos_Actuals.xlsx)
     const sheetName = wb.SheetNames.find(s => s.toLowerCase() === 'facturas') ||
+                      wb.SheetNames.find(s => s.toLowerCase() === 'actual') ||
                       wb.SheetNames.find(s => s.toLowerCase().includes('factura') && !A1_SKIP.includes(s.toLowerCase())) ||
                       wb.SheetNames.find(s => !A1_SKIP.includes(s.toLowerCase()) && !s.toLowerCase().includes('metadata')) ||
                       wb.SheetNames[0];
     const raw = _getRaw(wb, sheetName);
+    console.log('[A1] Using sheet:', sheetName, '— raw rows:', raw.length);
     const A1_KNOWN_COLS = [
-      'invoice number', 'supplier name', 'year', 'month', 'nuevapo', 'po',
+      'invoice number', 'supplier name', 'year', 'month', 'num month', 'nuevapo', 'po',
       'vaule without iva', 'value without iva', 'invoice date', 'due date',
-      'payment date', 'observations', 'nit', 'contract'
+      'payment date', 'observations', 'nit', 'contract', 'status', 'currency', 'rec', 'wbs', 'afe'
     ];
     let hdr = -1;
-    for (let i = 0; i < Math.min(15, raw.length); i++) {
+    // Pass 1: look for a row where MOST cells are text strings matching known column names
+    for (let i = 0; i < Math.min(20, raw.length); i++) {
       const r = raw[i]; if (!r || !r.length) continue;
-      const cellStrs = r.map(c => c != null ? String(c).trim().toLowerCase() : '');
+      // Only consider rows where the majority of non-null cells are strings (not numbers/dates/formulas)
+      const nonNull = r.filter(c => c != null);
+      const textCells = nonNull.filter(c => typeof c === 'string' && !String(c).startsWith('=') && !String(c).startsWith('+'));
+      if (nonNull.length > 0 && textCells.length / nonNull.length < 0.4) continue; // mostly numbers → skip
+      const cellStrs = r.map(c => c != null && typeof c === 'string' ? c.trim().toLowerCase() : '');
       let hits = 0;
       for (const known of A1_KNOWN_COLS) {
-        if (cellStrs.some(c => c === known || c.includes(known.substring(0, 7)))) hits++;
+        if (cellStrs.some(c => c === known || c === known.replace(' ',''))) hits++;
       }
       if (hits >= 3) { hdr = i; break; }
     }
+    // Pass 2: fallback — any row with >= 3 string cells matching known cols (less strict)
     if (hdr === -1) {
-      let maxCells = 0;
+      for (let i = 0; i < Math.min(20, raw.length); i++) {
+        const r = raw[i]; if (!r || !r.length) continue;
+        const cellStrs = r.map(c => c != null ? String(c).trim().toLowerCase() : '');
+        let hits = 0;
+        for (const known of A1_KNOWN_COLS) {
+          if (cellStrs.some(c => c === known || c.includes(known.substring(0, 7)))) hits++;
+        }
+        if (hits >= 3) { hdr = i; break; }
+      }
+    }
+    // Pass 3: row with most non-empty string cells
+    if (hdr === -1) {
+      let maxTextCells = 0;
       raw.forEach((r, i) => {
         if (!r) return;
-        const n = r.filter(c => c != null && String(c).trim() !== '').length;
-        if (n > maxCells) { maxCells = n; hdr = i; }
+        const n = r.filter(c => c != null && typeof c === 'string' && !String(c).startsWith('=')).length;
+        if (n > maxTextCells) { maxTextCells = n; hdr = i; }
       });
     }
     if (hdr === -1) hdr = 0;
+    console.log('[A1] Selected hdr row:', hdr, '— row preview:', (raw[hdr]||[]).filter(c=>c!=null).slice(0,8));
     const headers = (raw[hdr] || []).map(h => h != null ? String(h).trim() : '');
     state.df1 = [];
     for (let i = hdr + 1; i < raw.length; i++) {
@@ -3724,6 +3755,7 @@ function buildModules() {
     const monthNum = getA1Field(row, ['Num Month','NumMonth','Num_Month','MONTH_NUM']) || month;
     const rec = getA1Field(row, ['REC']);
     const lateDays = normalNum(getA1Field(row, ['LATE PAYMENT']));
+    const a1Status = normalStr(getA1Field(row, ['STATUS','Estado']));
     const obs = getA1Field(row, ['OBSERVATIONS','Observaciones']);
     const nit = getA1Field(row, ['Nit','NIT','N° Nit']);
     const afe = getA1Field(row, ['AFE','afe']);
@@ -3774,7 +3806,10 @@ function buildModules() {
     state.m2data.push({ inv, po, prov, year, month, valSinIva, invDate, cxpFechaTrans, cxpBruto, m2Status, cruceType, obs });
 
     let m3Status = 'no_encontrado';
-    if (hasCxP) {
+    // Use A1 STATUS field directly if available (new Actual sheet format)
+    if (a1Status && (a1Status.includes('paid') || a1Status.includes('pagado'))) {
+      m3Status = 'pagado';
+    } else if (hasCxP) {
       if (cxpStatus.includes('pagado') || cxpStatus.includes('paid')) m3Status = 'pagado';
       else m3Status = 'aprobado';
     }
@@ -3902,6 +3937,7 @@ function renderAll() {
   try { renderM3(); } catch(e) { console.warn('renderM3 error:', e); }
   try { renderM4(); } catch(e) { console.warn('renderM4 error:', e); }
   try { buildM5Data(); } catch(e) { console.warn('buildM5 error:', e); }
+  try { renderM5(); } catch(e) { console.warn('renderM5 error:', e); }
   ['1','2','3','4'].forEach(n => {
     const el = document.getElementById('cnt'+n);
     if (el) el.textContent = state['m'+n+'data']?.length || 0;
@@ -4384,6 +4420,70 @@ function renderM1() {
     <div class="summary-card s-info"><div class="summary-label">Valor Total Facturas</div><div class="summary-value" style="font-size:16px">${fmtCurrency(totalVal)}</div><div class="summary-sub">sin IVA</div></div>
     <div class="summary-card s-success"><div class="summary-label">Valor Recepcionado</div><div class="summary-value" style="font-size:16px">${fmtCurrency(totalRecVal)}</div><div class="summary-sub">Oracle</div></div>
   `;
+  // Chart: Recepciones por Mes/Año agrupadas por Recepcionado Por
+  const m1ChartCard = document.getElementById('m1-rec-chart-card');
+  const m1ChartEl = document.getElementById('m1-rec-chart');
+  if (m1ChartCard && m1ChartEl) {
+    // Build monthly map using ALL m1data (not filtered)
+    const allRec = state.m1data.filter(r => r.recStatus === 'recepcionado' || r.recStatus === 'parcial');
+    const monthMap = {}, byPersonMap = {};
+    allRec.forEach(r => {
+      const my = getMonthYear(r); if (!my) return;
+      const k = `${my.y}-${String(my.m).padStart(2,'0')}`;
+      const person = (r.recBy && r.recBy !== '—') ? r.recBy : 'Sin asignar';
+      if (!monthMap[k]) monthMap[k] = 0;
+      monthMap[k]++;
+      if (!byPersonMap[person]) byPersonMap[person] = {};
+      if (!byPersonMap[person][k]) byPersonMap[person][k] = 0;
+      byPersonMap[person][k]++;
+    });
+    const months = Object.keys(monthMap).sort();
+    if (months.length < 1) {
+      m1ChartCard.style.display = 'none';
+    } else {
+      m1ChartCard.style.display = 'block';
+      const persons = Object.keys(byPersonMap).sort();
+      const colors = ['#1a4a8a','#059669','#d97706','#7c3aed','#dc2626','#0891b2','#65a30d','#ea580c','#8b5cf6','#0284c7'];
+      const svgW = Math.max(560, months.length * 50 + 90);
+      const svgH = 180;
+      const chartH = svgH - 55;
+      const bGroup = (svgW - 90) / months.length;
+      const maxV = Math.max(1, ...months.map(k => monthMap[k]));
+      let guides = '', bars = '', xlabs = '', legend = '';
+      for (let i = 0; i <= 4; i++) {
+        const yg = 15 + chartH - i * (chartH / 4);
+        const vg = Math.round(maxV * i / 4);
+        guides += `<line x1="70" y1="${yg}" x2="${svgW - 5}" y2="${yg}" stroke="#e2e8f0" stroke-width="1"/>`;
+        guides += `<text x="65" y="${yg + 3}" text-anchor="end" font-size="9" fill="#94a3b8">${vg}</text>`;
+      }
+      months.forEach((k, mi) => {
+        const cx = 75 + mi * bGroup + bGroup / 2;
+        let stackY = 15 + chartH;
+        persons.forEach((p, pi) => {
+          const cnt = (byPersonMap[p] && byPersonMap[p][k]) || 0;
+          if (!cnt) return;
+          const bH = Math.max(2, Math.round((cnt / maxV) * chartH));
+          stackY -= bH;
+          bars += `<rect x="${cx - Math.min(20, bGroup * 0.45)}" y="${stackY}" width="${Math.min(40, bGroup * 0.9)}" height="${bH}" fill="${colors[pi % colors.length]}" rx="2" opacity="0.88"><title>${p}: ${cnt} en ${k}</title></rect>`;
+          if (bH >= 12) bars += `<text x="${cx}" y="${stackY + bH / 2 + 3}" text-anchor="middle" font-size="8" fill="white" font-weight="700">${cnt}</text>`;
+        });
+        const total_k = monthMap[k];
+        bars += `<text x="${cx}" y="${15 + chartH - Math.round((total_k / maxV) * chartH) - 4}" text-anchor="middle" font-size="8.5" fill="#1e293b" font-weight="700">${total_k}</text>`;
+        const shortK = k.slice(2);
+        xlabs += `<text x="${cx}" y="${svgH - 6}" text-anchor="middle" font-size="8.5" fill="#5c6f8a">${shortK}</text>`;
+      });
+      persons.slice(0, 8).forEach((p, pi) => {
+        const sn = p.length > 22 ? p.substring(0, 21) + '…' : p;
+        legend += `<span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px;font-size:10px"><span style="width:10px;height:10px;background:${colors[pi % colors.length]};border-radius:2px;display:inline-block"></span>${sn}</span>`;
+      });
+      m1ChartEl.innerHTML = `<svg viewBox="0 0 ${svgW} ${svgH}" style="width:100%;height:auto;display:block">
+        ${guides}${bars}${xlabs}
+        <line x1="70" y1="${15 + chartH}" x2="${svgW - 5}" y2="${15 + chartH}" stroke="#cbd5e1" stroke-width="1.5"/>
+      </svg>
+      <div style="margin-top:8px;flex-wrap:wrap;display:flex">${legend}</div>`;
+    }
+  }
+
   document.getElementById('cnt1table').textContent = total + ' registros';
   const tbody = document.getElementById('tbody1');
   if (!data.length) { tbody.innerHTML = emptyRow(13); _cleanPager('tbody1'); return; }
@@ -4601,15 +4701,15 @@ function renderM4() {
     }
     return `<tr>
       <td>${flujoLabel}</td>
+      <td style="text-align:center">${recBadge}</td>
+      <td style="text-align:center">${cxpBadge}</td>
+      <td style="text-align:center">${pagBadge}</td>
       <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${r.prov||'—'}</td>
       <td class="td-mono">${r.inv||'—'}</td><td class="td-mono">${r.po||'—'}</td>
       <td class="currency">${fmtCurrency(r.valSinIva)}</td>
-      <td style="text-align:center">${recBadge}</td>
       <td class="currency" style="font-size:11px">${r.totalRec ? fmtCurrency(r.totalRec) : '—'}</td>
-      <td style="text-align:center">${cxpBadge}</td>
       <td style="font-size:11px">${r.invDate ? fmtDate(r.invDate) : '—'}</td>
       <td style="font-size:11px">${r.recDate && r.recDate !== '—' ? r.recDate : '—'}</td>
-      <td style="text-align:center">${pagBadge}</td>
       <td style="font-size:11px">${fmtDate(r.payDate)}</td>
       <td style="text-align:center">${verifBadge}</td>
       <td style="font-size:11px;color:var(--col-danger);max-width:180px">${brechaStr}</td>
@@ -4621,7 +4721,104 @@ function renderM4() {
 // ═══════════════════════════════════════════════════════════════
 // MODULE 5 — ANÁLISIS POR PROVEEDOR
 // ═══════════════════════════════════════════════════════════════
+function buildM5DataEmergency() {
+  // Direct build from m1data fields (already parsed) or raw df1
+  const periodo = document.getElementById('f5periodo')?.value || 'trimestral';
+  const emergMap = {};
+  const src = state.m1data.length > 0 ? state.m1data : [];
+  src.forEach(r => {
+    const prov = r.prov || 'Sin nombre';
+    // Try year and monthNum from already-parsed m1data
+    const yr = r.year ? parseInt(String(r.year).replace('.0','')) : 0;
+    let mInt = r.monthNum ? parseInt(String(r.monthNum)) : 0;
+    if (!mInt && r.month) {
+      const mm = {enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,octubre:10,noviembre:11,diciembre:12,january:1,february:2,march:3,april:4,may:5,june:6,july:7,august:8,september:9,october:10,november:11,december:12};
+      mInt = mm[String(r.month).toLowerCase().trim()] || parseInt(String(r.month)) || 0;
+    }
+    // Also try invDate
+    if ((!yr || !mInt) && r.invDate) {
+      const d = parseAnyDate(r.invDate);
+      if (d && d.getFullYear() >= 2000) { const y2=d.getFullYear(), m2=d.getMonth()+1; if (!yr || yr<1990) {} }
+    }
+    const useYr = (yr >= 1990 && yr <= 2100) ? yr : 0;
+    const useMInt = (mInt >= 1 && mInt <= 12) ? mInt : 0;
+    if (!useYr || !useMInt) return;
+    let pk;
+    if (periodo==='mensual') pk=`${useYr}-${String(useMInt).padStart(2,'0')}`;
+    else if (periodo==='trimestral') pk=`${useYr} Q${Math.ceil(useMInt/3)}`;
+    else if (periodo==='semestral') pk=`${useYr} S${useMInt<=6?1:2}`;
+    else pk=String(useYr);
+    const k=`${prov}||${pk}`;
+    if (!emergMap[k]) emergMap[k]={prov,period:pk,facturas:0,facturado:0,pagado:0,pendiente:0,mora:0};
+    emergMap[k].facturas++;
+    emergMap[k].facturado += (r.valSinIva||0);
+  });
+  // Also try raw df1
+  if (Object.keys(emergMap).length === 0 && state.df1 && state.df1.length > 0) {
+    state.df1.forEach(row => {
+      const prov = String(getA1Field(row,['Supplier Name','Proveedor'])||'').trim()||'Sin nombre';
+      const yr = parseInt(String(getA1Field(row,['Year','Año'])||0).replace('.0',''))||0;
+      let mInt = parseInt(String(getA1Field(row,['Num Month','NumMonth'])||0))||0;
+      if (!mInt) {
+        const mm={enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,octubre:10,noviembre:11,diciembre:12};
+        mInt = mm[String(getA1Field(row,['Month','Mes'])||'').toLowerCase().trim()]||0;
+      }
+      if (!yr||yr<1990||!mInt) return;
+      let pk;
+      if (periodo==='mensual') pk=`${yr}-${String(mInt).padStart(2,'0')}`;
+      else if (periodo==='trimestral') pk=`${yr} Q${Math.ceil(mInt/3)}`;
+      else if (periodo==='semestral') pk=`${yr} S${mInt<=6?1:2}`;
+      else pk=String(yr);
+      const k=`${prov}||${pk}`;
+      if (!emergMap[k]) emergMap[k]={prov,period:pk,facturas:0,facturado:0,pagado:0,pendiente:0,mora:0};
+      emergMap[k].facturas++;
+      const val = parseFloat(String(getA1Field(row,[' Vaule without IVA ','Vaule without IVA','Value without IVA'])||0).replace(/[^0-9.-]/g,''))||0;
+      emergMap[k].facturado += val;
+      const st = String(getA1Field(row,['STATUS','Estado'])||'').toLowerCase();
+      if (st.includes('paid')||st.includes('pagado')) emergMap[k].pagado+=val; else emergMap[k].pendiente+=val;
+    });
+  }
+  if (Object.keys(emergMap).length > 0) {
+    state.m5data = Object.values(emergMap).sort((a,b)=>a.prov.localeCompare(b.prov)||a.period.localeCompare(b.period));
+    console.info('[M5 Emergency] Built', state.m5data.length, 'records');
+  }
+}
+
 function buildM5Data() {
+  // SAFETY: if m1data is empty but df1 has data, there was a parse issue
+  // Try to directly use df1 fields
+  if (state.m1data.length === 0 && state.df1 && state.df1.length > 0) {
+    console.warn('[M5] m1data is empty but df1 has', state.df1.length, 'rows — attempting direct df1 build');
+    const today2 = new Date(); today2.setHours(0,0,0,0);
+    const directMap = {};
+    const periodo2 = document.getElementById('f5periodo')?.value || 'trimestral';
+    state.df1.forEach(row => {
+      const prov = String(row['Supplier Name'] || row['Proveedor'] || '').trim() || 'Sin nombre';
+      const yr = row['Year'] != null ? parseInt(String(row['Year']).replace('.0','')) : 0;
+      const mNum = row['Num Month'] != null ? parseInt(String(row['Num Month'])) : 0;
+      const mTxt = row['Month'] != null ? String(row['Month']).toLowerCase() : '';
+      const mInt = mNum || {enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,octubre:10,noviembre:11,diciembre:12}[mTxt] || 0;
+      if (!yr || yr < 1990 || yr > 2100 || !mInt) return;
+      let pk;
+      if (periodo2==='mensual') pk=`${yr}-${String(mInt).padStart(2,'0')}`;
+      else if (periodo2==='trimestral') pk=`${yr} Q${Math.ceil(mInt/3)}`;
+      else if (periodo2==='semestral') pk=`${yr} S${mInt<=6?1:2}`;
+      else pk=String(yr);
+      const k=`${prov}||${pk}`;
+      if (!directMap[k]) directMap[k]={prov,period:pk,facturas:0,facturado:0,pagado:0,pendiente:0,mora:0};
+      directMap[k].facturas++;
+      const val = parseFloat(String(row[' Vaule without IVA ']||row['Vaule without IVA']||row['Value without IVA']||0).replace(/[^0-9.-]/g,'')) || 0;
+      directMap[k].facturado += val;
+      const st = String(row['STATUS']||'').toLowerCase();
+      if (st.includes('paid')||st.includes('pagado')) directMap[k].pagado += val;
+      else directMap[k].pendiente += val;
+    });
+    if (Object.keys(directMap).length > 0) {
+      state.m5data = Object.values(directMap).sort((a,b)=>a.prov.localeCompare(b.prov)||a.period.localeCompare(b.period));
+      console.info('[M5] Direct df1 build succeeded:', state.m5data.length, 'records');
+      return;
+    }
+  }
   // Ensure lateDaysCalc is computed on m3data before using it
   const today = new Date(); today.setHours(0,0,0,0);
   state.m3data.forEach(r => {
@@ -4737,6 +4934,11 @@ function buildM5Data() {
 function renderM5() {
   if (!state.processed) return;
   buildM5Data();
+  // If still no data but we have raw invoice data, force a direct rebuild
+  if (state.m5data.length === 0 && (state.m1data.length > 0 || (state.df1 && state.df1.length > 0))) {
+    console.warn('[renderM5] m5data still empty after buildM5Data — trying emergency rebuild from m1data/df1');
+    buildM5DataEmergency();
+  }
   const search = normalStr(document.getElementById('f5search')?.value||'');
   const year = document.getElementById('f5year')?.value||'';
   const periodo = document.getElementById('f5periodo')?.value||'trimestral';
@@ -5405,6 +5607,229 @@ function renderProvCard(provName, html) {
 // ═══════════════════════════════════════════════════════════════
 // EXPORT XLSX (por módulo)
 // ═══════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════
+// INFORME PDF — BRECHAS (MÓDULO 4)
+// ═══════════════════════════════════════════════════════════════
+function exportBreachasPDF() {
+  const data = state.m4data;
+  if (!data || !data.length) { showToast('Sin datos de brechas. Procese los archivos primero.', 'warn'); return; }
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  // Recalculate lateDays for m4data using m3data reference
+  const m3ByInv = {};
+  state.m3data.forEach(r => { m3ByInv[r.factura || r.inv || ''] = r; });
+
+  // Enrich m4 with mora info
+  const enriched = data.map(r => {
+    const m3 = m3ByInv[r.inv || ''] || {};
+    let lateDays = 0;
+    const isPaid = (r.pago === 'pagado' || r.flujo === 'completo');
+    if (!isPaid && (m3.dueDate || r.dueDate)) {
+      const due = parseAnyDate(m3.dueDate || r.dueDate);
+      if (due && due.getFullYear() >= 2000) lateDays = Math.max(0, Math.floor((today - due) / 86400000));
+    }
+    return { ...r, lateDays, isPaid };
+  });
+
+  // Sort: unpaid with most mora days first, then unpaid without mora by value, then paid
+  enriched.sort((a, b) => {
+    if (!a.isPaid && !b.isPaid) return (b.lateDays - a.lateDays) || ((b.valSinIva||b.valor||0) - (a.valSinIva||a.valor||0));
+    if (!a.isPaid) return -1;
+    if (!b.isPaid) return 1;
+    return 0;
+  });
+
+  // Stats
+  const total = enriched.length;
+  const conMora = enriched.filter(r => r.lateDays > 0).length;
+  const sinPago = enriched.filter(r => !r.isPaid).length;
+  const valPendiente = enriched.filter(r => !r.isPaid).reduce((s,r) => s+(r.valSinIva||r.valor||0), 0);
+  const valMora = enriched.filter(r => r.lateDays > 0).reduce((s,r) => s+(r.valSinIva||r.valor||0), 0);
+  const porFlujo = { completo:0, sin_recepcion:0, sin_cxp:0, sin_pago:0, con_brecha:0 };
+  enriched.forEach(r => { if (porFlujo[r.flujo] !== undefined) porFlujo[r.flujo]++; });
+
+  // Proveedores críticos (sin pago, mayor mora)
+  const provMap = {};
+  enriched.filter(r => !r.isPaid).forEach(r => {
+    const p = r.prov || '—';
+    if (!provMap[p]) provMap[p] = { prov: p, facturas: 0, valor: 0, maxMora: 0 };
+    provMap[p].facturas++;
+    provMap[p].valor += (r.valSinIva||r.valor||0);
+    provMap[p].maxMora = Math.max(provMap[p].maxMora, r.lateDays||0);
+  });
+  const topProvs = Object.values(provMap).sort((a,b) => b.maxMora - a.maxMora || b.valor - a.valor).slice(0, 10);
+
+  const fechaHoy = today.toLocaleDateString('es-CO', { day:'2-digit', month:'long', year:'numeric' });
+  const fmt = v => '$ ' + Math.round(v).toLocaleString('es-CO');
+  const moraColor = d => d > 60 ? '#dc2626' : d > 30 ? '#d97706' : d > 0 ? '#f59e0b' : '#059669';
+  const flujoLabel = { completo:'✅ Completo', sin_recepcion:'❌ Sin Recepción', sin_cxp:'❌ Sin CxP', sin_pago:'⏳ Sin Pago', con_brecha:'⚠️ Con Brecha' };
+
+  // Build printable HTML
+  const topRows = enriched.slice(0, 60).map((r, i) => {
+    const mora = r.lateDays || 0;
+    const bg = r.isPaid ? '#f0fdf7' : mora > 60 ? '#fef2f2' : mora > 30 ? '#fffbeb' : mora > 0 ? '#fefce8' : '#ffffff';
+    const moraCell = mora > 0 ? `<span style="color:${moraColor(mora)};font-weight:700">${mora}d</span>` : r.isPaid ? '<span style="color:#059669">—</span>' : '<span style="color:#94a3b8">0d</span>';
+    const estadoCell = `<span style="background:${r.flujo==='completo'?'#d1fae5':r.flujo==='sin_pago'?'#fef3c7':'#fee2e2'};color:${r.flujo==='completo'?'#065f46':r.flujo==='sin_pago'?'#92400e':'#991b1b'};padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700">${flujoLabel[r.flujo]||r.flujo}</span>`;
+    return `<tr style="background:${bg};border-bottom:1px solid #e2e8f0">
+      <td style="padding:5px 6px;font-size:9.5px;font-weight:700;color:#1e40af">${i+1}</td>
+      <td style="padding:5px 6px;font-size:9px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${(r.prov||'—').substring(0,22)}</td>
+      <td style="padding:5px 6px;font-size:9px;font-family:monospace">${r.inv||'—'}</td>
+      <td style="padding:5px 6px;font-size:9px;font-family:monospace">${r.po||r.oc||'—'}</td>
+      <td style="padding:5px 6px;font-size:9px;text-align:right;font-weight:600">${fmt(r.valSinIva||r.valor||0)}</td>
+      <td style="padding:5px 6px;text-align:center">${estadoCell}</td>
+      <td style="padding:5px 6px;text-align:center">${moraCell}</td>
+      <td style="padding:5px 6px;font-size:9px;color:#6b7280">${r.brechas?.length ? r.brechas.join(', ') : (r.isPaid ? 'Ninguna' : '—')}</td>
+    </tr>`;
+  }).join('');
+
+  const provRows = topProvs.map((p, i) => `<tr style="background:${i%2===0?'#f8fafc':'#ffffff'}">
+    <td style="padding:6px 8px;font-weight:700;color:${p.maxMora>60?'#dc2626':p.maxMora>30?'#d97706':'#1e40af'}">${i+1}</td>
+    <td style="padding:6px 8px;font-size:10px;font-weight:600">${p.prov}</td>
+    <td style="padding:6px 8px;text-align:center;font-weight:700">${p.facturas}</td>
+    <td style="padding:6px 8px;text-align:right;font-weight:700">${fmt(p.valor)}</td>
+    <td style="padding:6px 8px;text-align:center">
+      <span style="background:${p.maxMora>60?'#fee2e2':p.maxMora>30?'#fef3c7':'#fef9c3'};color:${moraColor(p.maxMora)};padding:2px 8px;border-radius:4px;font-weight:700;font-size:10px">${p.maxMora}d</span>
+    </td>
+    <td style="padding:6px 8px;font-size:10px;color:${p.maxMora>60?'#dc2626':p.maxMora>30?'#d97706':'#6b7280'}">
+      ${p.maxMora>60?'🔴 CRÍTICO — Atención inmediata':p.maxMora>30?'🟡 URGENTE — Programar pago':p.maxMora>0?'🟠 En mora — Gestionar':'—'}
+    </td>
+  </tr>`).join('');
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>Informe de Brechas — Cash Call</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  body { font-family:'IBM Plex Sans',sans-serif; margin:0; background:#f8fafc; color:#1e293b; font-size:11px; }
+  @media print { body { background:white; } .no-print { display:none !important; } @page { margin:15mm; size:A4 landscape; } }
+  .page { max-width:297mm; margin:0 auto; background:white; }
+  .header { background:linear-gradient(135deg,#0f2544,#1a4a8a); color:white; padding:24px 32px; display:flex; justify-content:space-between; align-items:flex-start; }
+  .kpi-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:0; border-bottom:3px solid #e2e8f0; }
+  .kpi { padding:16px 20px; border-right:1px solid #e2e8f0; }
+  .kpi:last-child { border-right:none; }
+  .kpi-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#64748b; margin-bottom:4px; }
+  .kpi-value { font-size:22px; font-weight:700; font-family:'IBM Plex Mono',monospace; }
+  .kpi-sub { font-size:9px; color:#94a3b8; margin-top:2px; }
+  .section { padding:20px 32px; border-bottom:1px solid #f1f5f9; }
+  .section-title { font-size:13px; font-weight:700; color:#0f2544; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .flujo-grid { display:flex; gap:10px; flex-wrap:wrap; }
+  .flujo-chip { padding:8px 14px; border-radius:8px; font-size:10px; font-weight:700; }
+  table { width:100%; border-collapse:collapse; }
+  thead th { background:#0f2544; color:white; padding:7px 6px; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; text-align:left; }
+  .btn-print { background:#0f2544; color:white; border:none; padding:10px 24px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; margin:20px auto; display:block; }
+  .alert-box { padding:12px 16px; border-radius:8px; margin-bottom:10px; border-left:4px solid; }
+  .alert-danger { background:#fef2f2; border-color:#dc2626; color:#991b1b; }
+  .alert-warning { background:#fffbeb; border-color:#f59e0b; color:#92400e; }
+</style></head><body>
+<div class="page">
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div style="font-size:20px;font-weight:700;letter-spacing:-0.5px">Cash <span style="color:#00b4c8">Call</span> · Informe de Brechas</div>
+      <div style="font-size:11px;opacity:0.7;margin-top:4px">Módulo 4 — Análisis Integral · Priorización por mora</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:11px;opacity:0.7">Generado por: ${currentUser||'Usuario'}</div>
+      <div style="font-size:11px;opacity:0.7;margin-top:2px">${fechaHoy}</div>
+      <div style="font-size:10px;opacity:0.5;margin-top:2px;font-family:monospace">v1.6 · Cash Call Platform</div>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Total Facturas</div>
+      <div class="kpi-value" style="color:#1e40af">${total}</div>
+      <div class="kpi-sub">En análisis</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Sin Pago</div>
+      <div class="kpi-value" style="color:#7c3aed">${sinPago}</div>
+      <div class="kpi-sub">${total>0?Math.round(sinPago/total*100):0}% del total</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">En Mora</div>
+      <div class="kpi-value" style="color:#dc2626">${conMora}</div>
+      <div class="kpi-sub">Vencidas sin pagar</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Val. Pendiente</div>
+      <div class="kpi-value" style="color:#d97706;font-size:14px">${fmt(valPendiente)}</div>
+      <div class="kpi-sub">Sin pagar</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Val. en Mora</div>
+      <div class="kpi-value" style="color:#dc2626;font-size:14px">${fmt(valMora)}</div>
+      <div class="kpi-sub">Vencido</div>
+    </div>
+  </div>
+
+  <!-- RESUMEN FLUJO -->
+  <div class="section">
+    <div class="section-title">🔢 Distribución por Estado de Flujo</div>
+    <div class="flujo-grid">
+      <div class="flujo-chip" style="background:#d1fae5;color:#065f46">✅ Completo: ${porFlujo.completo}</div>
+      <div class="flujo-chip" style="background:#fee2e2;color:#991b1b">❌ Sin Recepción: ${porFlujo.sin_recepcion}</div>
+      <div class="flujo-chip" style="background:#ede9fe;color:#5b21b6">❌ Sin CxP: ${porFlujo.sin_cxp}</div>
+      <div class="flujo-chip" style="background:#fef3c7;color:#92400e">⏳ Sin Pago: ${porFlujo.sin_pago}</div>
+      <div class="flujo-chip" style="background:#ffedd5;color:#c2410c">⚠️ Con Brecha: ${porFlujo.con_brecha}</div>
+    </div>
+    ${conMora > 0 ? `<div class="alert-box alert-danger" style="margin-top:12px">
+      🔴 <strong>Acción inmediata requerida:</strong> ${conMora} facturas tienen días vencidos sin pagar, representando ${fmt(valMora)} en riesgo de incumplimiento contractual.
+    </div>` : ''}
+  </div>
+
+  <!-- PROVEEDORES CRÍTICOS -->
+  ${topProvs.length ? `<div class="section">
+    <div class="section-title">🏢 Proveedores Críticos — Priorización de Pago</div>
+    <div style="font-size:10px;color:#64748b;margin-bottom:10px">Ordenados por días de mora máxima. Atacar de mayor a menor mora para reducir riesgo contractual.</div>
+    <table>
+      <thead><tr>
+        <th style="width:30px">#</th>
+        <th>Proveedor</th>
+        <th style="text-align:center">Facturas Pend.</th>
+        <th style="text-align:right">Valor Total</th>
+        <th style="text-align:center">Mora Máx.</th>
+        <th>Recomendación</th>
+      </tr></thead>
+      <tbody>${provRows}</tbody>
+    </table>
+  </div>` : ''}
+
+  <!-- DETALLE FACTURAS -->
+  <div class="section">
+    <div class="section-title">📋 Detalle de Facturas — Ordenadas por Prioridad de Pago ${enriched.length > 60 ? `<span style="font-size:9px;color:#94a3b8;font-weight:400">(mostrando 60 de ${enriched.length})</span>` : ''}</div>
+    <div style="font-size:10px;color:#64748b;margin-bottom:10px">Prioridad: ① Mayor mora → ② Mayor valor → ③ Pagadas</div>
+    <table>
+      <thead><tr>
+        <th style="width:25px">#</th>
+        <th>Proveedor</th>
+        <th>N° Factura</th>
+        <th>N° OC</th>
+        <th style="text-align:right">Valor sin IVA</th>
+        <th style="text-align:center">Estado</th>
+        <th style="text-align:center">Mora</th>
+        <th>Brechas detectadas</th>
+      </tr></thead>
+      <tbody>${topRows}</tbody>
+    </table>
+  </div>
+
+  <div style="padding:16px 32px;background:#f8fafc;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center">
+    <div style="font-size:9px;color:#94a3b8">Cash Call v1.6 · Secretaría Distrital de Seguridad, Convivencia y Justicia · Dirección de Bienes</div>
+    <div style="font-size:9px;color:#94a3b8">Generado: ${new Date().toLocaleString('es-CO')}</div>
+  </div>
+</div>
+<button class="btn-print no-print" onclick="window.print()">🖨 Imprimir / Guardar como PDF</button>
+</body></html>`;
+
+  const w = window.open('', '_blank');
+  if (!w) { showToast('Permita ventanas emergentes para generar el PDF', 'warn'); return; }
+  w.document.write(html);
+  w.document.close();
+  showToast('📄 Informe de brechas generado — use Imprimir para guardar como PDF', 'success');
+}
+
 function exportTable(dataKey, filename) {
   const data = state[dataKey];
   if (!data || !data.length) { alert('No hay datos para exportar. Procese los archivos primero.'); return; }
@@ -5767,7 +6192,7 @@ function exportCashCallJSON() {
   const filename = `CashCall_${fecha}.json`;
   const payload = {
     meta: {
-      app: 'Cash Call v1.5',
+      app: 'Cash Call v1.6',
       exportedBy: currentUser || '—',
       exportedAt: new Date().toISOString(),
       filename,
