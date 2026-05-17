@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cash Call v1.4 — Build 14</title>
+<title>Cash Call v1.5 — Build 15</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -286,7 +286,12 @@
   .kpi-card {
     background: var(--col-surface); border-radius: 10px; padding: 12px 10px;
     border: 1px solid var(--col-border); text-align: center;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    position: relative;
   }
+  .kpi-card[onclick] { cursor: pointer; }
+  .kpi-card[onclick]:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,0.13); border-color: var(--col-accent); }
+  .kpi-card[onclick]:after { content:'🔎'; position:absolute; bottom:4px; right:6px; font-size:9px; opacity:0.3; }
   .kpi-icon { font-size: 20px; margin-bottom: 4px; }
   .kpi-value { font-size: 20px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; color: var(--col-primary); }
   .kpi-val-fit { font-size: 11px !important; font-weight: 700; line-height: 1.3; word-break: break-all; }
@@ -618,7 +623,7 @@
   <canvas id="loginCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></canvas>
   <div class="login-box" style="position:relative;z-index:1">
     <div class="login-logo">Cash<span class="login-logo-dot"></span><span>Call</span></div>
-    <div class="login-version">v1.4 · Control Financiero</div>
+    <div class="login-version">v1.5 · Control Financiero</div>
     <div class="login-field">
       <label>Usuario</label>
       <input type="text" id="loginUser" placeholder="usuario.nombre" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
@@ -644,7 +649,7 @@
   <div class="subwin" style="max-width:600px">
     <div class="subwin-header">
       <span style="font-size:16px">⌨️</span>
-      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v1.4</span>
+      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v1.5</span>
       <button class="subwin-close" onclick="closeSubwin('sw-ctrlm')">✕</button>
     </div>
     <div class="subwin-body" id="sw-ctrlm-body" style="padding:24px">
@@ -696,7 +701,32 @@
   </div>
 </div>
 
-<!-- ══ HEADER ══════════════════════════════════════════════ -->
+<!-- ══ KPI DRILL-DOWN MODAL ══════════════════════════════════ -->
+<div class="subwin-backdrop" id="sw-kpi-drill">
+  <div class="subwin" style="max-width:860px;width:95vw">
+    <div class="subwin-header">
+      <span style="font-size:16px" id="sw-kpi-icon">📊</span>
+      <span class="subwin-title" id="sw-kpi-title">Detalle</span>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+        <span id="sw-kpi-count" style="font-size:11px;background:rgba(255,255,255,0.15);padding:3px 10px;border-radius:20px;font-weight:700"></span>
+        <button class="subwin-close" onclick="closeSubwin('sw-kpi-drill')">✕</button>
+      </div>
+    </div>
+    <div style="padding:10px 20px 0;border-bottom:1px solid var(--col-border);background:#f8fafc">
+      <input type="text" id="kpi-drill-search" placeholder="🔍 Filtrar resultados..." oninput="filterDrillTable()" style="width:100%;padding:8px 12px;border:1px solid var(--col-border);border-radius:8px;font-size:13px;outline:none;background:white">
+    </div>
+    <div class="subwin-body" id="sw-kpi-drill-body" style="padding:0"></div>
+  </div>
+</div>
+
+<!-- ══ GLOBAL FILTER SYNC TOAST ═══════════════════════════════ -->
+<div id="global-sync-banner" style="display:none;position:fixed;bottom:70px;right:20px;background:#0f2544;color:white;padding:10px 16px;border-radius:10px;font-size:12px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.3);display:flex;align-items:center;gap:10px;max-width:340px">
+  <span>🔗</span>
+  <span id="global-sync-text">Filtros sincronizados</span>
+  <button onclick="clearGlobalFilter()" style="margin-left:auto;background:rgba(255,255,255,0.2);border:none;color:white;cursor:pointer;border-radius:6px;padding:3px 8px;font-size:11px">✕ Limpiar</button>
+</div>
+
+
 <header class="app-header">
   <div class="header-inner">
     <div>
@@ -707,7 +737,7 @@
       <span class="login-user-badge" id="userBadge" title="Cerrar sesión" onclick="logout()">
         <span>👤</span><span id="userBadgeText">—</span><span style="font-size:10px;opacity:0.6">✕</span>
       </span>
-      <div class="header-badge" id="headerBadge">v1.4</div>
+      <div class="header-badge" id="headerBadge">v1.5</div>
     </div>
   </div>
 </header>
@@ -854,6 +884,7 @@
           <span class="qs-pill" id="qsFilterFact" onclick="setQsFilter('factura')">🧾 Solo Facturas</span>
           <span class="qs-pill" id="qsFilterOC" onclick="setQsFilter('oc')">📦 Solo OC</span>
           <span class="qs-pill" id="qsFilterProv" onclick="setQsFilter('proveedor')">🏢 Solo Proveedores</span>
+          <span class="qs-pill" id="qsFilterRec" onclick="setQsFilter('recepcion')">📥 Solo Recepciones</span>
         </div>
       </div>
       <div class="qs-result-area" id="qsResults">
@@ -880,19 +911,19 @@
 
       <!-- ── KPI compactos ── -->
       <div class="kpi-row" id="kpiRow">
-        <div class="kpi-card"><div class="kpi-icon">📄</div><div class="kpi-value" id="kpi-total">—</div><div class="kpi-label">Total Facturas</div></div>
-        <div class="kpi-card" style="border-top:3px solid var(--col-success)"><div class="kpi-icon">✅</div><div class="kpi-value" id="kpi-pagadas">—</div><div class="kpi-label">Pagadas</div><div class="kpi-sub" id="kpi-pagadas-pct">—</div></div>
-        <div class="kpi-card" style="border-top:3px solid var(--col-info)"><div class="kpi-icon">📥</div><div class="kpi-value" id="kpi-recepcionadas">—</div><div class="kpi-label">Recepcionadas</div><div class="kpi-sub" id="kpi-rec-pct">—</div></div>
-        <div class="kpi-card" style="border-top:3px solid var(--col-warning)"><div class="kpi-icon">⏳</div><div class="kpi-value" id="kpi-pendientes">—</div><div class="kpi-label">Pend. Pago</div></div>
-        <div class="kpi-card" style="border-top:3px solid var(--col-danger)"><div class="kpi-icon">⚠️</div><div class="kpi-value" id="kpi-mora">—</div><div class="kpi-label">En Mora</div></div>
-        <div class="kpi-card" style="border-top:3px solid var(--col-pending)"><div class="kpi-icon">🔴</div><div class="kpi-value" id="kpi-sin-rec">—</div><div class="kpi-label">Sin Recepción</div></div>
-        <div class="kpi-card" style="border-top:3px solid var(--col-accent)"><div class="kpi-icon">💵</div><div class="kpi-value kpi-val-fit" id="kpi-val-total">—</div><div class="kpi-label">Valor Total</div></div>
-        <div class="kpi-card" style="border-top:3px solid var(--col-success)"><div class="kpi-icon">💸</div><div class="kpi-value kpi-val-fit" id="kpi-val-pagado">—</div><div class="kpi-label">Valor Pagado</div></div>
-        <div class="kpi-card" style="border-top:3px solid var(--col-danger)"><div class="kpi-icon">🚫</div><div class="kpi-value kpi-val-fit" id="kpi-val-sin-rec">—</div><div class="kpi-label">Val. Sin Rec.</div></div>
-        <div class="kpi-card" style="border-top:3px solid var(--col-warning)"><div class="kpi-icon">🕐</div><div class="kpi-value kpi-val-fit" id="kpi-val-pendiente">—</div><div class="kpi-label">Val. Pendiente</div></div>
-        <div class="kpi-card" style="border-top:3px solid var(--col-accent2)"><div class="kpi-icon">📥</div><div class="kpi-value" id="kpi-rec-oracle-cnt">—</div><div class="kpi-label">Líneas Rec. Oracle</div></div>
-        <div class="kpi-card" style="border-top:3px solid var(--col-accent2)"><div class="kpi-icon">💲</div><div class="kpi-value kpi-val-fit" id="kpi-rec-oracle-val">—</div><div class="kpi-label">Val. Recepcionado</div></div>
-        <div class="kpi-card" style="border-top:3px solid var(--col-danger)"><div class="kpi-icon">⏳</div><div class="kpi-value kpi-val-fit" id="kpi-pend-cxp">—</div><div class="kpi-label">Pendiente CxP</div><div class="kpi-sub" id="kpi-pend-cxp-cnt">—</div></div>
+        <div class="kpi-card" style="cursor:pointer" onclick="showKpiDrill('total')" title="Ver todas las facturas"><div class="kpi-icon">📄</div><div class="kpi-value" id="kpi-total">—</div><div class="kpi-label">Total Facturas</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-success);cursor:pointer" onclick="showKpiDrill('pagadas')" title="Ver facturas pagadas"><div class="kpi-icon">✅</div><div class="kpi-value" id="kpi-pagadas">—</div><div class="kpi-label">Pagadas</div><div class="kpi-sub" id="kpi-pagadas-pct">—</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-info);cursor:pointer" onclick="showKpiDrill('recepcionadas')" title="Ver facturas recepcionadas"><div class="kpi-icon">📥</div><div class="kpi-value" id="kpi-recepcionadas">—</div><div class="kpi-label">Recepcionadas</div><div class="kpi-sub" id="kpi-rec-pct">—</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-warning);cursor:pointer" onclick="showKpiDrill('pendientes')" title="Ver facturas pendientes de pago"><div class="kpi-icon">⏳</div><div class="kpi-value" id="kpi-pendientes">—</div><div class="kpi-label">Pend. Pago</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-danger);cursor:pointer" onclick="showKpiDrill('mora')" title="Ver facturas en mora"><div class="kpi-icon">⚠️</div><div class="kpi-value" id="kpi-mora">—</div><div class="kpi-label">En Mora</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-pending);cursor:pointer" onclick="showKpiDrill('sinrec')" title="Ver facturas sin recepción Oracle"><div class="kpi-icon">🔴</div><div class="kpi-value" id="kpi-sin-rec">—</div><div class="kpi-label">Sin Recepción</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-accent);cursor:pointer" onclick="showKpiDrill('total')" title="Ver todas las facturas"><div class="kpi-icon">💵</div><div class="kpi-value kpi-val-fit" id="kpi-val-total">—</div><div class="kpi-label">Valor Total</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-success);cursor:pointer" onclick="showKpiDrill('pagadas')" title="Ver facturas pagadas"><div class="kpi-icon">💸</div><div class="kpi-value kpi-val-fit" id="kpi-val-pagado">—</div><div class="kpi-label">Valor Pagado</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-danger);cursor:pointer" onclick="showKpiDrill('sinrec')" title="Ver facturas sin recepción Oracle"><div class="kpi-icon">🚫</div><div class="kpi-value kpi-val-fit" id="kpi-val-sin-rec">—</div><div class="kpi-label">Val. Sin Rec.</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-warning);cursor:pointer" onclick="showKpiDrill('pendientes')" title="Ver facturas pendientes de pago"><div class="kpi-icon">🕐</div><div class="kpi-value kpi-val-fit" id="kpi-val-pendiente">—</div><div class="kpi-label">Val. Pendiente</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-accent2);cursor:pointer" onclick="showKpiDrill('oracle')" title="Ver líneas de recepción Oracle"><div class="kpi-icon">📥</div><div class="kpi-value" id="kpi-rec-oracle-cnt">—</div><div class="kpi-label">Líneas Rec. Oracle</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-accent2);cursor:pointer" onclick="showKpiDrill('oracle')" title="Ver líneas de recepción Oracle"><div class="kpi-icon">💲</div><div class="kpi-value kpi-val-fit" id="kpi-rec-oracle-val">—</div><div class="kpi-label">Val. Recepcionado</div></div>
+        <div class="kpi-card" style="border-top:3px solid var(--col-danger);cursor:pointer" onclick="showKpiDrill('cxp')" title="Ver facturas aprobadas pendientes de pago en CxP"><div class="kpi-icon">⏳</div><div class="kpi-value kpi-val-fit" id="kpi-pend-cxp">—</div><div class="kpi-label">Pendiente CxP</div><div class="kpi-sub" id="kpi-pend-cxp-cnt">—</div></div>
       </div>
 
       <!-- ── PANEL DE ALERTAS ── -->
@@ -1049,7 +1080,7 @@
 
       <div class="filter-bar">
         <span class="filter-label">🔍</span>
-        <input type="text" id="f2search" placeholder="OC, Proveedor, Recepción..." oninput="renderM2()">
+        <input type="text" id="f2search" placeholder="OC, Factura, Proveedor, Recepción, Organización..." oninput="renderM2()">
         <input type="text" id="f2proyecto" placeholder="🗂 Buscar Proyecto..." oninput="renderM2()" style="min-width:170px">
         <select id="f2year" onchange="renderM2()"><option value="">Todos los años</option></select>
         <select id="f2month" onchange="renderM2()"><option value="">Todos los meses</option></select>
@@ -1094,7 +1125,7 @@
 
       <div class="filter-bar">
         <span class="filter-label">🔍</span>
-        <input type="text" id="f3search" placeholder="Factura, Proveedor, NIT..." oninput="renderM3()">
+        <input type="text" id="f3search" placeholder="Factura, Proveedor, NIT, Recepción..." oninput="renderM3()">
         <select id="f3year" onchange="renderM3()"><option value="">Todos los años</option></select>
         <select id="f3month" onchange="renderM3()"><option value="">Todos los meses</option></select>
         <div class="status-pills" id="pills3">
@@ -1165,6 +1196,8 @@
               <th title="Recepción Oracle">📥 Recepción</th>
               <th title="Valor recepcionado">💲 Val. Rec.</th>
               <th title="CxP Oracle">📊 CxP.</th>
+              <th title="Fecha de la Factura">📅 F. Factura</th>
+              <th title="Fecha de Recepción Oracle">📅 F. Recepción</th>
               <th title="Pago">💸 Pago</th>
               <th>Fecha Pago</th>
               <th title="Verifica que el valor pagado (CxP) corresponda al valor facturado (sin IVA). Alerta si la diferencia supera el 5%.">⚖️ Verif. Pago</th>
@@ -1416,10 +1449,19 @@ function renderAnalytics() {
 
 function getMonthYear(r) {
   // Try to extract month and year from available fields
-  const y = r.year ? String(r.year) : null;
-  const m = r.month ? String(r.month) : null;
-  if (y && m) return { y: parseInt(y), m: parseInt(m) || monthStrToNum(m) };
-  return null;
+  let y = r.year != null ? String(r.year).replace('.0','').trim() : null;
+  if (!y || y === '' || y === 'null') y = null;
+  const yInt = y ? parseInt(y) : 0;
+  if (!yInt || yInt < 1990 || yInt > 2100) return null; // invalid year
+
+  // prefer monthNum (numeric), fall back to month (text or number)
+  const rawM = r.monthNum != null ? String(r.monthNum).trim() : (r.month != null ? String(r.month).trim() : null);
+  if (!rawM || rawM === '' || rawM === 'null') return null;
+
+  const mInt = parseInt(rawM) || monthStrToNum(rawM);
+  if (!mInt || mInt < 1 || mInt > 12) return null;
+
+  return { y: yInt, m: mInt };
 }
 
 function monthStrToNum(s) {
@@ -1744,7 +1786,7 @@ function exportPDFReport() {
   </style></head><body>
   <div class="cover">
     <div class="cover-logo">Cash <span>Call</span></div>
-    <div class="cover-title">Informe Gerencial Ejecutivo · v1.4</div>
+    <div class="cover-title">Informe Gerencial Ejecutivo · v1.5</div>
     <div class="cover-meta">Generado: ${today.toLocaleDateString('es-CO',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} · ${today.toLocaleTimeString('es-CO')}<br>
     Usuario: ${currentUser||'—'} · Período analizado: ${[...new Set(d1.map(r=>r.year).filter(Boolean))].sort().join(', ')||'N/D'}</div>
   </div>
@@ -1803,7 +1845,7 @@ function exportPDFReport() {
   </div>`:''}
 
   <div class="footer">
-    Cash Call v1.4 · Desarrollado por Ing. Johan Manuel Cárdenas Leal, MSc · Todos los derechos reservados © 2026<br>
+    Cash Call v1.5 · Desarrollado por Ing. Johan Manuel Cárdenas Leal, MSc · Todos los derechos reservados © 2026<br>
     Informe generado automáticamente — ${today.toISOString()}
   </div>
   <script>window.onload=function(){window.print();}<\/script>
@@ -1967,7 +2009,325 @@ function closeSubwin(swId) {
   if (b) b.classList.remove('open');
 }
 
-// Build module HTML strings for injection into subwindows
+// ═══════════════════════════════════════════════════════════════
+// KPI DRILL-DOWN — click on M0 cards to see source rows
+// ═══════════════════════════════════════════════════════════════
+let _drillData = [];  // current drill dataset (for inline filter)
+let _drillType = '';  // current drill key
+
+function showKpiDrill(type) {
+  if (!state.processed) { showToast('Procese archivos primero', 'warn'); return; }
+  _drillType = type;
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const d1 = state.m1data;
+  const d3 = state.m3data;
+  const d2rec = state.df2rec || [];
+  const d3cxp = state.df3cxp || [];
+
+  let title = '', icon = '', rows = [], cols = [];
+
+  switch(type) {
+    case 'total':
+      title = 'Todas las Facturas'; icon = '📄';
+      rows = d3.map(r => ({
+        col1: r.inv||'—', col2: r.prov||'—', col3: r.po||'—',
+        col4: r.m3Status==='pagado'?'✅ Pagado':r.m3Status==='aprobado'?'⏳ Aprobado':'❌ Sin CxP',
+        col5: fmtCurrency(r.valSinIva), col6: fmtDate(r.dueDate)||'—',
+        col7: fmtDate(r.payDate)||'—',
+        _raw: r
+      }));
+      cols = ['N° Factura','Proveedor','OC','Estado','Valor sin IVA','Vencimiento','Pago'];
+      break;
+    case 'pagadas':
+      title = 'Facturas Pagadas'; icon = '✅';
+      rows = d3.filter(r => r.m3Status==='pagado').map(r => ({
+        col1: r.inv||'—', col2: r.prov||'—', col3: r.po||'—',
+        col4: '✅ Pagado',
+        col5: fmtCurrency(r.cxpBruto||r.valSinIva),
+        col6: fmtDate(r.dueDate)||'—', col7: fmtDate(r.payDate)||'—',
+        _raw: r
+      }));
+      cols = ['N° Factura','Proveedor','OC','Estado','Val. Pagado','Vencimiento','Fecha Pago'];
+      break;
+    case 'pendientes':
+      title = 'Facturas Pendientes de Pago'; icon = '⏳';
+      rows = d3.filter(r => r.m3Status==='aprobado').map(r => ({
+        col1: r.inv||'—', col2: r.prov||'—', col3: r.po||'—',
+        col4: '⏳ Aprobado',
+        col5: fmtCurrency(r.cxpBruto||r.valSinIva),
+        col6: fmtDate(r.dueDate)||'—', col7: r.lateDaysCalc>0?`🔴 ${r.lateDaysCalc}d mora`:'Al día',
+        _raw: r
+      }));
+      cols = ['N° Factura','Proveedor','OC','Estado','Val. Pendiente','Vencimiento','Mora'];
+      break;
+    case 'mora': {
+      title = 'Facturas en Mora (vencidas sin pagar)'; icon = '⚠️';
+      const moraRows = d3.filter(r => (r.lateDaysCalc||0) > 0);
+      moraRows.sort((a,b) => (b.lateDaysCalc||0) - (a.lateDaysCalc||0));
+      rows = moraRows.map(r => ({
+        col1: r.inv||'—', col2: r.prov||'—', col3: r.po||'—',
+        col4: r.m3Status==='aprobado'?'⏳ Aprobado':'❌ Sin CxP',
+        col5: fmtCurrency(r.cxpBruto||r.valSinIva),
+        col6: fmtDate(r.dueDate)||'—',
+        col7: `<span style="color:#dc2626;font-weight:700">🔴 ${r.lateDaysCalc} días</span>`,
+        _raw: r
+      }));
+      cols = ['N° Factura','Proveedor','OC','Estado','Valor','Vencimiento','Días Mora'];
+      break;
+    }
+    case 'sinrec':
+      title = 'Facturas SIN Recepción Oracle'; icon = '🔴';
+      rows = d1.filter(r => r.recStatus==='sin_recepcion').map(r => ({
+        col1: r.inv||'—', col2: r.prov||'—', col3: r.po||'—',
+        col4: '❌ Sin Recepción',
+        col5: fmtCurrency(r.valSinIva),
+        col6: r.month||'—', col7: r.year||'—',
+        _raw: r
+      }));
+      cols = ['N° Factura','Proveedor','OC','Estado Rec.','Valor sin IVA','Mes','Año'];
+      break;
+    case 'recepcionadas':
+      title = 'Facturas Recepcionadas en Oracle'; icon = '📥';
+      rows = d1.filter(r => r.recStatus==='recepcionado'||r.recStatus==='parcial').map(r => ({
+        col1: r.inv||'—', col2: r.prov||'—', col3: r.po||'—',
+        col4: r.recStatus==='recepcionado'?'✅ Completo':'⚠️ Parcial',
+        col5: fmtCurrency(r.valSinIva),
+        col6: fmtCurrency(r.totalRec||0), col7: r.recNums||'—',
+        _raw: r
+      }));
+      cols = ['N° Factura','Proveedor','OC','Estado','Val. Facturado','Val. Recepcionado','N° Recepciones'];
+      break;
+    case 'oracle':
+      title = 'Líneas de Recepción Oracle (Archivo 2)'; icon = '📦';
+      rows = d2rec.map(r => ({
+        col1: r.rec||'—', col2: r.oc||'—', col3: r.proveedor||'—',
+        col4: r.estadoLinea||'—',
+        col5: fmtCurrency(r.valRec),
+        col6: r.proyecto||'—', col7: r.fecha||'—',
+        _raw: r
+      }));
+      cols = ['N° Recepción','OC','Proveedor','Estado','Val. Recepcionado','Proyecto','Fecha'];
+      break;
+    case 'cxp':
+      title = 'Aprobadas Pendientes en CxP (Archivo 3)'; icon = '💰';
+      rows = d3cxp.filter(r=>r.estado==='Aprobado').map(r => ({
+        col1: r.factura||'—', col2: r.prov||'—', col3: r.nit||'—',
+        col4: '📊 Aprobado',
+        col5: fmtCurrency(r.valorBruto),
+        col6: fmtCurrency(r.saldoFact||r.valorBruto),
+        col7: fmtDate(r.fechaContable)||'—',
+        _raw: r
+      }));
+      cols = ['N° Factura','Proveedor','NIT','Estado','Valor Bruto','Saldo','Fecha Contable'];
+      break;
+    default:
+      return;
+  }
+
+  _drillData = rows;
+
+  // Set modal header
+  document.getElementById('sw-kpi-icon').textContent = icon;
+  document.getElementById('sw-kpi-title').textContent = title;
+  document.getElementById('sw-kpi-count').textContent = rows.length.toLocaleString('es-CO') + ' registros';
+  document.getElementById('kpi-drill-search').value = '';
+
+  // Render table
+  _renderDrillTable(rows, cols);
+
+  // Open modal
+  const modal = document.getElementById('sw-kpi-drill');
+  modal.classList.add('open');
+  modal.onclick = e => { if (e.target === modal) closeSubwin('sw-kpi-drill'); };
+}
+
+function _renderDrillTable(rows, cols) {
+  const colsToUse = cols || _drillCols;
+  _drillCols = colsToUse;
+  const body = document.getElementById('sw-kpi-drill-body');
+  if (!body) return;
+  if (!rows.length) {
+    body.innerHTML = '<div style="padding:40px;text-align:center;color:var(--col-muted)">Sin registros para este filtro.</div>';
+    return;
+  }
+
+  const colorMap = {
+    'mora': '#fff1f2',  'sinrec': '#fff1f2', 'pendientes': '#fffbeb',
+    'total': '#f0f9ff', 'pagadas': '#f0fdf7', 'recepcionadas': '#f0fdf7',
+    'oracle': '#f0f9ff', 'cxp': '#fffbeb'
+  };
+  const bg = colorMap[_drillType] || '#ffffff';
+
+  const PAGE = 150;
+  const shown = rows.slice(0, PAGE);
+  const theadCols = colsToUse.map(c => `<th>${c}</th>`).join('');
+  const tbodyRows = shown.map(r =>
+    `<tr style="border-bottom:1px solid var(--col-border)">
+      <td class="td-mono" style="font-size:11px">${r.col1}</td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.col2}">${r.col2}</td>
+      <td class="td-mono" style="font-size:11px">${r.col3}</td>
+      <td style="font-size:11px">${r.col4}</td>
+      <td class="currency" style="font-size:12px">${r.col5}</td>
+      <td style="font-size:11px">${r.col6}</td>
+      <td style="font-size:11px">${r.col7}</td>
+    </tr>`
+  ).join('');
+
+  const moreRow = rows.length > PAGE
+    ? `<tr><td colspan="7" style="text-align:center;padding:12px;color:var(--col-muted);font-size:12px">
+        … y ${(rows.length-PAGE).toLocaleString('es-CO')} registros más · Usa el filtro de arriba para refinar
+       </td></tr>`
+    : '';
+
+  body.innerHTML = `
+    <div style="overflow-x:auto;max-height:65vh;overflow-y:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead style="position:sticky;top:0;background:${bg};z-index:2">
+          <tr style="border-bottom:2px solid var(--col-border)">${theadCols}</tr>
+        </thead>
+        <tbody>${tbodyRows}${moreRow}</tbody>
+      </table>
+    </div>
+    <div style="padding:10px 16px;border-top:1px solid var(--col-border);background:#f8fafc;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--col-muted)">
+      <span>Mostrando ${Math.min(PAGE,rows.length).toLocaleString('es-CO')} de ${rows.length.toLocaleString('es-CO')}</span>
+      <button onclick="applyGlobalFilter('${_drillType}')" class="btn btn-outline btn-sm" style="font-size:11px">🔗 Sincronizar filtro en módulos</button>
+    </div>`;
+}
+let _drillCols = [];
+
+function filterDrillTable() {
+  const q = normalStr(document.getElementById('kpi-drill-search').value);
+  const filtered = q ? _drillData.filter(r =>
+    [r.col1,r.col2,r.col3,r.col4,r.col5,r.col6,r.col7].some(v => normalStr(String(v||'')).includes(q))
+  ) : _drillData;
+  document.getElementById('sw-kpi-count').textContent = filtered.length.toLocaleString('es-CO') + ' registros';
+  _renderDrillTable(filtered, _drillCols);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GLOBAL FILTER SYNC — Quick Search → all modules
+// ═══════════════════════════════════════════════════════════════
+let _globalFilterActive = false;
+let _globalFilterTerm   = '';
+let _globalFilterType   = ''; // 'oc'|'factura'|'proveedor'|'proyecto'|'kpi'
+
+function applyGlobalFilter(kpiType) {
+  // Sync from KPI drill: filter each module to show relevant subset
+  closeSubwin('sw-kpi-drill');
+  _globalFilterActive = true;
+  _globalFilterType = 'kpi_' + kpiType;
+
+  const labels = {
+    mora:'en mora', sinrec:'sin recepción', pendientes:'pend. pago',
+    pagadas:'pagadas', total:'todas', recepcionadas:'recepcionadas',
+    oracle:'recepciones Oracle', cxp:'aprobadas CxP'
+  };
+  const label = labels[kpiType] || kpiType;
+
+  // Apply to each module filter where it makes sense
+  if (['mora','pendientes','pagadas','total','sinrec','recepcionadas','cxp'].includes(kpiType)) {
+    // M3: set estado filter
+    const m3pill = {
+      mora:'', pendientes:'Aprobado', pagadas:'Pagado',
+      total:'', sinrec:'', recepcionadas:'', cxp:'Aprobado'
+    }[kpiType];
+    const pillsEl = document.getElementById('pills3');
+    if (pillsEl) {
+      pillsEl.querySelectorAll('.status-pill').forEach(p => {
+        const isMatch = p.dataset.status === m3pill;
+        p.classList.toggle('active-all', m3pill==='' && p.dataset.status==='');
+        p.classList.toggle('active', m3pill!=='' && isMatch);
+      });
+      const hiddenEl = document.getElementById('f3estado');
+      if (hiddenEl) hiddenEl.value = m3pill || '';
+      renderM3();
+    }
+    // M1: filter by recStatus if applicable
+    if (['sinrec','recepcionadas'].includes(kpiType)) {
+      // No direct pill, but we can set search hint
+    }
+  }
+
+  if (['oracle'].includes(kpiType)) {
+    // M2: show all, already open
+  }
+
+  showGlobalSyncBanner(`Módulos sincronizados: facturas ${label}`);
+}
+
+function applyGlobalSearchSync(term, filterType) {
+  // Called from Quick Search "Buscar" button — sync all modules
+  if (!term.trim()) return;
+  _globalFilterActive = true;
+  _globalFilterTerm   = term.trim();
+  _globalFilterType   = filterType;
+
+  const t = normalStr(term.trim());
+
+  // M1: set search field
+  const f1 = document.getElementById('f1sw_search') || document.getElementById('f1search');
+  // Module 1 inline panel
+  const f1main = document.querySelector('#panel-modulo1 input[id="f1search"]');
+
+  // M2: set OC / proveedor / factura search
+  const f2 = document.getElementById('f2search');
+  if (f2) { f2.value = term.trim(); renderM2(); }
+
+  // M3: set factura / NIT / proveedor search
+  const f3 = document.getElementById('f3search');
+  if (f3) { f3.value = term.trim(); renderM3(); }
+
+  // M4: set search
+  const f4 = document.getElementById('f4search');
+  if (f4) { f4.value = term.trim(); renderM4(); }
+
+  // M5: set proveedor search
+  const f5 = document.getElementById('f5search');
+  if (f5) { f5.value = term.trim(); renderM5(); }
+
+  showGlobalSyncBanner(`Todos los módulos filtrados por: "${term.trim()}"`);
+}
+
+function showGlobalSyncBanner(msg) {
+  const b = document.getElementById('global-sync-banner');
+  const t = document.getElementById('global-sync-text');
+  if (!b || !t) return;
+  t.textContent = msg;
+  b.style.display = 'flex';
+  clearTimeout(b._timeout);
+  b._timeout = setTimeout(() => { b.style.display = 'none'; }, 5500);
+}
+
+function clearGlobalFilter() {
+  _globalFilterActive = false;
+  _globalFilterTerm   = '';
+
+  // Reset all module filters
+  ['f2search','f3search','f4search','f5search'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+
+  // Reset M3 pills
+  const pillsEl3 = document.getElementById('pills3');
+  if (pillsEl3) {
+    pillsEl3.querySelectorAll('.status-pill').forEach(p => {
+      p.classList.toggle('active-all', p.dataset.status==='');
+      p.classList.remove('active');
+    });
+    const hiddenEl3 = document.getElementById('f3estado');
+    if (hiddenEl3) hiddenEl3.value = '';
+  }
+
+  renderM2(); renderM3(); renderM4(); renderM5();
+
+  const b = document.getElementById('global-sync-banner');
+  if (b) b.style.display = 'none';
+  showToast('Filtros sincronizados limpiados', 'info');
+}
+
+
 function buildM1Html() {
   return `
     <div class="alert alert-info" style="margin-bottom:14px">ℹ️ Valida que cada acta/factura tenga recepción registrada en Oracle, verificando que el valor recepcionado coincida.</div>
@@ -2084,7 +2444,7 @@ function buildM4Html() {
         <thead><tr>
           <th>Flujo</th><th>Proveedor</th><th>N° Factura</th><th>Orden de Compra</th>
           <th class="currency">Valor sin IVA</th><th>📥 Recepción</th><th>💲 Val. Rec.</th>
-          <th>📊 Contabiliz.</th><th>💸 Pago</th><th>Fecha Pago</th><th>Observaciones</th>
+          <th>📊 Contabiliz.</th><th>📅 F. Factura</th><th>📅 F. Recepción</th><th>💸 Pago</th><th>Fecha Pago</th><th>Observaciones</th>
         </tr></thead>
         <tbody id="tbodysw4"></tbody>
       </table></div>
@@ -2190,7 +2550,7 @@ function renderM3inSubwin() {
   });
   data.forEach(r=>{
     if(r.m3Status==='pagado'){r.lateDaysCalc=0;}
-    else if(r.dueDate){const due=parseAnyDate(r.dueDate);if(due){const diff=Math.floor((today-due)/86400000);r.lateDaysCalc=diff>0?diff:0;}else r.lateDaysCalc=0;}
+    else if(r.dueDate){const due=parseAnyDate(r.dueDate);if(due&&due.getFullYear()>=2000){const diff=Math.floor((today-due)/86400000);r.lateDaysCalc=diff>0?diff:0;}else r.lateDaysCalc=(r.lateDays&&r.lateDays>0&&r.lateDays<3650)?r.lateDays:0;}
     else r.lateDaysCalc=0;
   });
   const total=data.length,pagado=data.filter(r=>r.m3Status==='pagado').length;
@@ -2250,7 +2610,7 @@ function renderM4inSubwin() {
     <div class="summary-card s-warning"><div class="summary-label">Pend. Pago</div><div class="summary-value">${sinPago}</div></div>`;
   const cntEl=document.getElementById('cnt4sw');if(cntEl)cntEl.textContent=total+' registros';
   const tbody4sw=document.getElementById('tbodysw4');if(!tbody4sw)return;
-  if(!data.length){tbody4sw.innerHTML=emptyRow(11);_cleanPager('tbodysw4');return;}
+  if(!data.length){tbody4sw.innerHTML=emptyRow(13);_cleanPager('tbodysw4');return;}
   const rowFnSW4 = r => {
     const flujoLabel=r.flujo==='completo'?'<span class="badge badge-success">✅ Completo</span>':r.flujo==='sin_recepcion'?'<span class="badge badge-danger">❌ Sin Rec.</span>':r.flujo==='sin_cxp'?'<span class="badge badge-pending">❌ Sin CxP</span>':r.flujo==='sin_pago'?'<span class="badge badge-warning">⏳ Sin Pago</span>':'<span class="badge badge-danger">⚠️ Brecha</span>';
     const recBadge=r.recStatus==='recepcionado'?'<span class="badge badge-success">✅</span>':r.recStatus==='parcial'?'<span class="badge badge-warning">⚠️</span>':'<span class="badge badge-danger">❌</span>';
@@ -2263,11 +2623,13 @@ function renderM4inSubwin() {
       <td style="text-align:center">${recBadge}</td>
       <td class="currency">${r.totalRec?fmtCurrency(r.totalRec):'—'}</td>
       <td style="text-align:center">${cxpBadge}</td>
+      <td style="font-size:11px">${r.invDate ? fmtDate(r.invDate) : '—'}</td>
+      <td style="font-size:11px">${r.recDate && r.recDate !== '—' ? r.recDate : '—'}</td>
       <td style="text-align:center">${pagBadge}</td>
       <td>${fmtDate(r.payDate)}</td>
       <td style="font-size:11px;color:var(--col-danger)">${r.brechas.length?r.brechas.join(' · '):'—'}</td></tr>`;
   };
-  _renderTablePaged('tbodysw4', 'cnt4sw', data, rowFnSW4, 11);
+  _renderTablePaged('tbodysw4', 'cnt4sw', data, rowFnSW4, 13);
 }
 
 function renderChartsInSubwin(container) {
@@ -2290,7 +2652,7 @@ function renderChartsInSubwin(container) {
   const moraEl=container.querySelector('#mora-chart');
   if(moraEl){
     const today=new Date();today.setHours(0,0,0,0);
-    d3.forEach(r=>{if(r.m3Status==='pagado'){r.lateDaysCalc=0;}else if(r.dueDate){const due=parseAnyDate(r.dueDate);if(due){const diff=Math.floor((today-due)/86400000);r.lateDaysCalc=diff>0?diff:0;}else r.lateDaysCalc=0;}else r.lateDaysCalc=0;});
+    d3.forEach(r=>{if(r.m3Status==='pagado'){r.lateDaysCalc=0;}else if(r.dueDate){const due=parseAnyDate(r.dueDate);if(due&&due.getFullYear()>=2000){const diff=Math.floor((today-due)/86400000);r.lateDaysCalc=diff>0?diff:0;}else r.lateDaysCalc=(r.lateDays&&r.lateDays>0&&r.lateDays<3650)?r.lateDays:0;}else r.lateDaysCalc=0;});
     const ranges=[{label:'0 días (pagado/a tiempo)',f:r=>r.lateDaysCalc===0,color:'#059669'},{label:'1–15 días',f:r=>r.lateDaysCalc>0&&r.lateDaysCalc<=15,color:'#d97706'},{label:'16–30 días',f:r=>r.lateDaysCalc>15&&r.lateDaysCalc<=30,color:'#f59e0b'},{label:'31–60 días',f:r=>r.lateDaysCalc>30&&r.lateDaysCalc<=60,color:'#dc2626'},{label:'>60 días',f:r=>r.lateDaysCalc>60,color:'#7f1d1d'}];
     const mx=Math.max(1,...ranges.map(m=>d3.filter(m.f).length));
     moraEl.innerHTML=ranges.map(m=>{const cnt=d3.filter(m.f).length;const w=Math.round(cnt/mx*100);return`<div class="mora-range-row"><div class="mora-range-label">${m.label}</div><div class="mora-range-track"><div class="mora-range-fill" style="width:${w}%;background:${m.color}">${cnt>0?cnt:''}</div></div><div class="mora-range-count">${cnt}</div></div>`;}).join('');
@@ -3359,6 +3721,7 @@ function buildModules() {
     const advance = normalNum(getA1Field(row, ['Advance Payment','Anticipo']));
     const year = getA1Field(row, ['Year','Año']);
     const month = getA1Field(row, ['Month','Mes']);
+    const monthNum = getA1Field(row, ['Num Month','NumMonth','Num_Month','MONTH_NUM']) || month;
     const rec = getA1Field(row, ['REC']);
     const lateDays = normalNum(getA1Field(row, ['LATE PAYMENT']));
     const obs = getA1Field(row, ['OBSERVATIONS','Observaciones']);
@@ -3384,7 +3747,7 @@ function buildModules() {
       if (valSinIva && Math.abs(totalRec - valSinIva) / Math.max(valSinIva, 1) > 0.05) recStatus = 'parcial';
       else recStatus = 'recepcionado';
     }
-    state.m1data.push({ inv, po, prov, year, month, valSinIva, rec, recRows: recRows.length, recNums, recDate, recBy, totalRec, recStatus, obs, nit, afe, wbs, currency });
+    state.m1data.push({ inv, po, prov, year, month, monthNum, valSinIva, rec, recRows: recRows.length, recNums, recDate, recBy, totalRec, recStatus, obs, nit, afe, wbs, currency, invDate });
 
     // M2 & M3
     const invNorm = normalStr(inv);
@@ -3415,7 +3778,7 @@ function buildModules() {
       if (cxpStatus.includes('pagado') || cxpStatus.includes('paid')) m3Status = 'pagado';
       else m3Status = 'aprobado';
     }
-    state.m3data.push({ inv, po, prov, year, month, valSinIva, advance: advance || cxpAnticipo, cxpBruto, dueDate, payDate: payDate || (m3Status==='pagado' ? cxpFechaTrans : null), m3Status, lateDays, obs });
+    state.m3data.push({ inv, po, prov, year, month, valSinIva, advance: advance || cxpAnticipo, cxpBruto, dueDate, payDate: payDate || (m3Status==='pagado' ? cxpFechaTrans : null), m3Status, lateDays, obs, invDate, recDate });
 
     // M4
     const brechas = [];
@@ -3429,7 +3792,7 @@ function buildModules() {
     else if (!hasCxP) flujo = 'sin_cxp';
     else if (recStatus === 'sin_recepcion') flujo = 'sin_recepcion';
     else if (m3Status !== 'pagado') flujo = 'sin_pago';
-    state.m4data.push({ inv, po, prov, year, month, valSinIva, recStatus, totalRec, m2Status, m3Status, cxpBruto, payDate: payDate || (m3Status==='pagado'?cxpFechaTrans:null), brechas, flujo, obs });
+    state.m4data.push({ inv, po, prov, year, month, valSinIva, recStatus, totalRec, m2Status, m3Status, cxpBruto, payDate: payDate || (m3Status==='pagado'?cxpFechaTrans:null), brechas, flujo, obs, invDate, recDate });
   });
 
   // ── Build df2rec: raw A2 with parsed year/month from Fecha de Recepción ──
@@ -3480,6 +3843,16 @@ function buildModules() {
       fechaContable: r['FECHA CONTABLE'] || '—',
     };
   });
+
+  // Cross-ref df3cxp with m1data to add recepción numbers per invoice
+  { const m1ByInv = {};
+    state.m1data.forEach(r => { if (r.inv) m1ByInv[normalStr(r.inv)] = r; });
+    state.df3cxp.forEach(r => {
+      const m1r = m1ByInv[normalStr(r.factura||'')];
+      r.recNums = m1r ? (m1r.recNums||'') : '';
+      r.rec     = m1r ? (m1r.rec||'') : '';
+    });
+  }
 
   ['1','2','3','4'].forEach(n => {
     const el = document.getElementById('cnt'+n);
@@ -3548,17 +3921,19 @@ function renderM0() {
 
   const today = new Date(); today.setHours(0,0,0,0);
 
-  // ── Recalculate lateDays correctly: if pagado → no mora ──
+  // ── Recalculate lateDays correctly: if pagado → no mora; ignore Excel epoch dates ──
   d3.forEach(r => {
     if (r.m3Status === 'pagado') {
       r.lateDaysCalc = 0; // paid = no mora
     } else if (r.dueDate) {
       const due = parseAnyDate(r.dueDate);
-      if (due) {
+      // Ignore Excel epoch artifacts (dates before year 2000 = invalid serial dates)
+      if (due && due.getFullYear() >= 2000) {
         const diff = Math.floor((today - due) / 86400000);
         r.lateDaysCalc = diff > 0 ? diff : 0;
       } else {
-        r.lateDaysCalc = r.lateDays && r.lateDays > 0 ? r.lateDays : 0;
+        // Fallback: use original lateDays from A1 if it's a reasonable value
+        r.lateDaysCalc = (r.lateDays && r.lateDays > 0 && r.lateDays < 3650) ? r.lateDays : 0;
       }
     } else {
       r.lateDaysCalc = 0;
@@ -4054,7 +4429,7 @@ function renderM2() {
     if (month2   && r._mo !== month2)                      return false;
     if (proyecto && !normalStr(r.proyecto).includes(proyecto)) return false;
     if (search) {
-      const hay = normalStr(r.oc + ' ' + r.proveedor + ' ' + r.rec + ' ' + r.desc + ' ' + r.org);
+      const hay = normalStr(r.oc + ' ' + r.proveedor + ' ' + r.rec + ' ' + r.desc + ' ' + r.org + ' ' + (r.factura||'') + ' ' + (r.inv||''));
       if (!hay.includes(search)) return false;
     }
     return true;
@@ -4118,7 +4493,7 @@ function renderM3() {
     if (year3  && r._yr  !== year3)             return false;
     if (month3 && r._mo  !== month3)            return false;
     if (search) {
-      const hay = normalStr(r.factura + ' ' + r.prov + ' ' + r.nit);
+      const hay = normalStr(r.factura + ' ' + r.prov + ' ' + r.nit + ' ' + (r.recNums||'') + ' ' + (r.rec||''));
       if (!hay.includes(search)) return false;
     }
     return true;
@@ -4232,24 +4607,50 @@ function renderM4() {
       <td style="text-align:center">${recBadge}</td>
       <td class="currency" style="font-size:11px">${r.totalRec ? fmtCurrency(r.totalRec) : '—'}</td>
       <td style="text-align:center">${cxpBadge}</td>
+      <td style="font-size:11px">${r.invDate ? fmtDate(r.invDate) : '—'}</td>
+      <td style="font-size:11px">${r.recDate && r.recDate !== '—' ? r.recDate : '—'}</td>
       <td style="text-align:center">${pagBadge}</td>
       <td style="font-size:11px">${fmtDate(r.payDate)}</td>
       <td style="text-align:center">${verifBadge}</td>
       <td style="font-size:11px;color:var(--col-danger);max-width:180px">${brechaStr}</td>
     </tr>`;
   };
-  _renderTablePaged('tbody4', 'cnt4table', data, rowFn4, 11);
+  _renderTablePaged('tbody4', 'cnt4table', data, rowFn4, 14);
 }
 
 // ═══════════════════════════════════════════════════════════════
 // MODULE 5 — ANÁLISIS POR PROVEEDOR
 // ═══════════════════════════════════════════════════════════════
 function buildM5Data() {
+  // Ensure lateDaysCalc is computed on m3data before using it
+  const today = new Date(); today.setHours(0,0,0,0);
+  state.m3data.forEach(r => {
+    if (r.m3Status === 'pagado') { r.lateDaysCalc = 0; }
+    else if (r.dueDate) {
+      const due = parseAnyDate(r.dueDate);
+      if (due && due.getFullYear() >= 2000) {
+        r.lateDaysCalc = Math.max(0, Math.floor((today - due) / 86400000));
+      } else {
+        r.lateDaysCalc = (r.lateDays && r.lateDays > 0 && r.lateDays < 3650) ? r.lateDays : 0;
+      }
+    } else { r.lateDaysCalc = 0; }
+  });
   // Build per-provider period data from m1 + m3
   const d1 = state.m1data, d3 = state.m3data;
   const map = {}; // key: prov|period
   const getPeriodKey = (r, periodo) => {
-    const my = getMonthYear(r);
+    // Try standard getMonthYear first
+    let my = getMonthYear(r);
+    // Fallback: extract from invDate
+    if (!my && r.invDate) {
+      const d = parseAnyDate(r.invDate);
+      if (d && d.getFullYear() >= 2000) my = { y: d.getFullYear(), m: d.getMonth()+1 };
+    }
+    // Fallback: extract from dueDate
+    if (!my && r.dueDate) {
+      const d = parseAnyDate(r.dueDate);
+      if (d && d.getFullYear() >= 2000) my = { y: d.getFullYear(), m: d.getMonth()+1 };
+    }
     if (!my) return null;
     const y = my.y, m = my.m;
     if (periodo==='mensual') return `${y}-${String(m).padStart(2,'0')}`;
@@ -4258,10 +4659,11 @@ function buildM5Data() {
     return String(y);
   };
   const periodo = document.getElementById('f5periodo')?.value || 'trimestral';
+  let dbgNullPeriod = 0;
   d1.forEach(r => {
     const pk = getPeriodKey(r, periodo);
     const prov = r.prov||'Sin nombre';
-    if (!pk) return;
+    if (!pk) { dbgNullPeriod++; return; }
     const k = `${prov}||${pk}`;
     if (!map[k]) map[k] = { prov, period:pk, facturas:0, facturado:0, pagado:0, pendiente:0, mora:0 };
     map[k].facturas++;
@@ -4278,6 +4680,58 @@ function buildM5Data() {
     if ((r.lateDaysCalc||0)>0) map[k].mora++;
   });
   state.m5data = Object.values(map).sort((a,b)=>a.prov.localeCompare(b.prov)||a.period.localeCompare(b.period));
+
+  // Last-resort: if map is completely empty but m1data has records, group by invDate
+  if (state.m5data.length === 0 && d1.length > 0) {
+    const fallbackMap = {};
+    d1.forEach(r => {
+      const prov = r.prov||'Sin nombre';
+      // try invDate year
+      let pk = null;
+      if (r.invDate) {
+        const d = parseAnyDate(r.invDate);
+        if (d && d.getFullYear() >= 2000) {
+          const y = d.getFullYear(), m = d.getMonth()+1;
+          if (periodo==='mensual') pk = `${y}-${String(m).padStart(2,'0')}`;
+          else if (periodo==='trimestral') pk = `${y} Q${Math.ceil(m/3)}`;
+          else if (periodo==='semestral') pk = `${y} S${m<=6?1:2}`;
+          else pk = String(y);
+        }
+      }
+      if (!pk) pk = 'Sin período';
+      const k = `${prov}||${pk}`;
+      if (!fallbackMap[k]) fallbackMap[k] = { prov, period:pk, facturas:0, facturado:0, pagado:0, pendiente:0, mora:0 };
+      fallbackMap[k].facturas++;
+      fallbackMap[k].facturado += (r.valSinIva||0);
+    });
+    d3.forEach(r => {
+      const prov = r.prov||'Sin nombre';
+      let pk = null;
+      if (r.invDate) {
+        const d = parseAnyDate(r.invDate);
+        if (d && d.getFullYear() >= 2000) {
+          const y = d.getFullYear(), m = d.getMonth()+1;
+          if (periodo==='mensual') pk = `${y}-${String(m).padStart(2,'0')}`;
+          else if (periodo==='trimestral') pk = `${y} Q${Math.ceil(m/3)}`;
+          else if (periodo==='semestral') pk = `${y} S${m<=6?1:2}`;
+          else pk = String(y);
+        }
+      }
+      if (!pk) pk = 'Sin período';
+      const k = `${prov}||${pk}`;
+      if (!fallbackMap[k]) fallbackMap[k] = { prov, period:pk, facturas:0, facturado:0, pagado:0, pendiente:0, mora:0 };
+      if (r.m3Status==='pagado') fallbackMap[k].pagado += (r.cxpBruto||r.valSinIva||0);
+      else fallbackMap[k].pendiente += (r.valSinIva||0);
+      if ((r.lateDaysCalc||0)>0) fallbackMap[k].mora++;
+    });
+    state.m5data = Object.values(fallbackMap).sort((a,b)=>a.prov.localeCompare(b.prov)||a.period.localeCompare(b.period));
+    console.info(`[M5] Fallback mode: built ${state.m5data.length} records from invDate`);
+  }
+
+  if (state.m5data.length === 0 && dbgNullPeriod > 0) {
+    console.warn(`[M5] buildM5Data: ${dbgNullPeriod}/${d1.length} registros sin período válido.`,
+      d1.slice(0,3).map(r=>({year:r.year, month:r.month, monthNum:r.monthNum, invDate:r.invDate})));
+  }
 }
 
 function renderM5() {
@@ -4323,38 +4777,52 @@ function renderM5() {
     provMap[r.prov].pagado += r.pagado;
   });
   const topProvs = Object.entries(provMap).sort((a,b)=>b[1].facturado-a[1].facturado).slice(0,12);
-  const maxV = Math.max(1,...topProvs.map(([,v])=>v.facturado));
-  const svgH=180, svgW=780, chartH=svgH-60, chartW=svgW-90;
-  const barGroup = chartW/topProvs.length;
-  const barW = Math.min(55, barGroup*0.6);
-  let bars='', guides='', xlabs='';
-  for(let i=0;i<=4;i++){
-    const yg=20+chartH-i*(chartH/4);
-    const vg=maxV*i/4;
-    guides+=`<line x1="70" y1="${yg}" x2="${svgW-10}" y2="${yg}" stroke="#e2e8f0" stroke-width="1"/>`;
-    const lbl=vg>=1e9?(vg/1e9).toFixed(2).replace('.',',')+'MM':vg>1e6?(vg/1e6).toFixed(0)+'M':vg>1e3?(vg/1e3).toFixed(0)+'K':vg.toFixed(0);
-    guides+=`<text x="65" y="${yg+4}" text-anchor="end" font-size="10" fill="#94a3b8">${lbl}</text>`;
-  }
-  topProvs.forEach(([name,vals],i)=>{
-    const cx=80+i*barGroup+barGroup/2;
-    const hF=Math.round((vals.facturado/maxV)*chartH);
-    const hP=Math.round((vals.pagado/maxV)*chartH);
-    const yF=20+chartH-hF, yP=20+chartH-hP;
-    bars+=`<rect x="${cx-barW/2-1}" y="${yF}" width="${barW*0.5}" height="${hF}" fill="#1a4a8a" rx="3" opacity="0.8" style="cursor:pointer" onclick="openProviderDetail('${name.replace(/'/g,"\\'")}')"><title>${name}: Facturado ${fmtCurrency(vals.facturado)}</title></rect>`;
-    bars+=`<rect x="${cx+1}" y="${yP}" width="${barW*0.5}" height="${hP}" fill="#059669" rx="3" opacity="0.85" style="cursor:pointer" onclick="openProviderDetail('${name.replace(/'/g,"\\'")}')"><title>${name}: Pagado ${fmtCurrency(vals.pagado)}</title></rect>`;
-    const sn=name.length>12?name.substring(0,11)+'…':name;
-    xlabs+=`<text x="${cx}" y="${svgH-18}" text-anchor="middle" font-size="9.5" fill="#5c6f8a" transform="rotate(-25,${cx},${svgH-18})">${sn}</text>`;
-  });
   const m5chartEl = document.getElementById('m5-chart-prov');
-  if(m5chartEl) m5chartEl.innerHTML=`<svg viewBox="0 0 ${svgW} ${svgH}" style="width:100%;height:${svgH}px;max-height:${svgH}px;display:block">
-    ${guides}${bars}${xlabs}
-    <line x1="70" y1="${20+chartH}" x2="${svgW-10}" y2="${20+chartH}" stroke="#cbd5e1" stroke-width="2"/>
-  </svg>
-  <div style="display:flex;gap:16px;margin-top:8px;font-size:12px;padding-left:80px">
-    <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:#1a4a8a;border-radius:2px;display:inline-block"></span>Facturado</span>
-    <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:#059669;border-radius:2px;display:inline-block"></span>Pagado</span>
-    <span style="font-size:11px;color:var(--col-muted)">💡 Clic en barra → análisis detallado del proveedor</span>
-  </div>`;
+  if (m5chartEl) {
+    if (!topProvs.length) {
+      // Last-resort: build from m1data using invDate only
+      let debugInfo = '';
+      if (state.m1data.length > 0) {
+        const sample = state.m1data[0];
+        debugInfo = `<div style="font-size:10px;color:#94a3b8;margin-top:8px">Debug: year="${sample.year}" month="${sample.month}" monthNum="${sample.monthNum}" invDate="${sample.invDate}"</div>`;
+      }
+      m5chartEl.innerHTML = `<div style="color:var(--col-muted);font-size:13px;padding:30px;text-align:center">
+        ${state.m1data.length ? `📊 Sin datos para el filtro. Intente "Todos los años" o borre el filtro de proveedor.<br><span style="font-size:11px">m5data: ${state.m5data.length} · m1data: ${state.m1data.length}</span>${debugInfo}` : 'Cargue y procese archivos para ver el análisis.'}
+      </div>`;
+    } else {
+      const maxV = Math.max(1,...topProvs.map(([,v])=>v.facturado));
+      const svgH=180, svgW=780, chartH=svgH-60, chartW=svgW-90;
+      const barGroup = chartW/topProvs.length;
+      const barW = Math.min(55, barGroup*0.6);
+      let bars='', guides='', xlabs='';
+      for(let i=0;i<=4;i++){
+        const yg=20+chartH-i*(chartH/4);
+        const vg=maxV*i/4;
+        guides+=`<line x1="70" y1="${yg}" x2="${svgW-10}" y2="${yg}" stroke="#e2e8f0" stroke-width="1"/>`;
+        const lbl=vg>=1e9?(vg/1e9).toFixed(2).replace('.',',')+'MM':vg>1e6?(vg/1e6).toFixed(0)+'M':vg>1e3?(vg/1e3).toFixed(0)+'K':vg.toFixed(0);
+        guides+=`<text x="65" y="${yg+4}" text-anchor="end" font-size="10" fill="#94a3b8">${lbl}</text>`;
+      }
+      topProvs.forEach(([name,vals],i)=>{
+        const cx=80+i*barGroup+barGroup/2;
+        const hF=Math.max(2,Math.round((vals.facturado/maxV)*chartH));
+        const hP=Math.max(0,Math.round((vals.pagado/maxV)*chartH));
+        const yF=20+chartH-hF, yP=20+chartH-hP;
+        bars+=`<rect x="${cx-barW/2-1}" y="${yF}" width="${barW*0.5}" height="${hF}" fill="#1a4a8a" rx="3" opacity="0.8" style="cursor:pointer" onclick="openProviderDetail('${name.replace(/'/g,"\\'")}')"><title>${name}: Facturado ${fmtCurrency(vals.facturado)}</title></rect>`;
+        if(hP>0) bars+=`<rect x="${cx+1}" y="${yP}" width="${barW*0.5}" height="${hP}" fill="#059669" rx="3" opacity="0.85" style="cursor:pointer" onclick="openProviderDetail('${name.replace(/'/g,"\\'")}')"><title>${name}: Pagado ${fmtCurrency(vals.pagado)}</title></rect>`;
+        const sn=name.length>12?name.substring(0,11)+'…':name;
+        xlabs+=`<text x="${cx}" y="${svgH-18}" text-anchor="middle" font-size="9.5" fill="#5c6f8a" transform="rotate(-25,${cx},${svgH-18})">${sn}</text>`;
+      });
+      m5chartEl.innerHTML=`<svg viewBox="0 0 ${svgW} ${svgH}" style="width:100%;height:${svgH}px;max-height:${svgH}px;display:block">
+        ${guides}${bars}${xlabs}
+        <line x1="70" y1="${20+chartH}" x2="${svgW-10}" y2="${20+chartH}" stroke="#cbd5e1" stroke-width="2"/>
+      </svg>
+      <div style="display:flex;gap:16px;margin-top:8px;font-size:12px;padding-left:80px">
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:#1a4a8a;border-radius:2px;display:inline-block"></span>Facturado</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:#059669;border-radius:2px;display:inline-block"></span>Pagado</span>
+        <span style="font-size:11px;color:var(--col-muted)">💡 Clic en barra → análisis detallado del proveedor</span>
+      </div>`;
+    }
+  }
 
   // Comparativo: diagrama de barras MES A MES (últimos 12 meses)
   const compEl = document.getElementById('m5-chart-comp');
@@ -4436,31 +4904,34 @@ function renderM5() {
   // Conteo facturas registradas vs pagadas
   const cntEl = document.getElementById('m5-chart-cnt');
   if (cntEl) {
-    const topP = topProvs.slice(0,8);
-    const maxCnt = Math.max(1,...state.m1data.reduce((acc,r)=>{
-      const k=r.prov||'';
-      acc[k]=(acc[k]||0)+1; return acc;
-    },{})[Symbol.iterator]?[0]:topP.map(([n])=>data.filter(r=>r.prov===n).reduce((s,r)=>s+r.facturas,0)));
-    const provCntMap = {};
-    data.forEach(r=>{if(!provCntMap[r.prov])provCntMap[r.prov]={reg:0,pag:0};provCntMap[r.prov].reg+=r.facturas;provCntMap[r.prov].pag+=Math.round(r.pagado>0?r.facturas*(r.pagado/Math.max(1,r.facturado)):0);});
-    const top8 = topProvs.slice(0,8).map(([n])=>({ name:n, reg:provCntMap[n]?.reg||0, pag:provCntMap[n]?.pag||0 }));
-    const mx = Math.max(1,...top8.map(r=>r.reg));
-    cntEl.innerHTML=top8.map(r=>{
-      const sn=r.name.length>18?r.name.substring(0,17)+'…':r.name;
-      const wr=Math.round(r.reg/mx*100), wp=Math.round(r.pag/mx*100);
-      return `<div style="margin-bottom:10px">
-        <div style="font-size:11px;color:#1a2535;margin-bottom:3px;font-weight:500">${sn}</div>
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
-          <div style="width:70px;font-size:9.5px;color:#5c6f8a;text-align:right;flex-shrink:0">Registradas</div>
-          <div style="flex:1;height:12px;background:#e2e8f0;border-radius:3px;overflow:hidden"><div style="width:${wr}%;height:100%;background:#1a4a8a;border-radius:3px"></div></div>
-          <div style="width:25px;font-size:10px;font-weight:700;color:#1a4a8a">${r.reg}</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px">
-          <div style="width:70px;font-size:9.5px;color:#5c6f8a;text-align:right;flex-shrink:0">Pagadas</div>
-          <div style="flex:1;height:12px;background:#e2e8f0;border-radius:3px;overflow:hidden"><div style="width:${wp}%;height:100%;background:#059669;border-radius:3px"></div></div>
-          <div style="width:25px;font-size:10px;font-weight:700;color:#059669">${r.pag}</div>
-        </div>
-      </div>`;}).join('');
+    if (!topProvs.length) {
+      cntEl.innerHTML = '<div style="color:var(--col-muted);font-size:12px;padding:20px 0">Sin datos.</div>';
+    } else {
+      const provCntMap = {};
+      data.forEach(r=>{
+        if(!provCntMap[r.prov]) provCntMap[r.prov]={reg:0,pag:0};
+        provCntMap[r.prov].reg += r.facturas;
+        provCntMap[r.prov].pag += Math.round(r.pagado>0 ? r.facturas*(r.pagado/Math.max(1,r.facturado)) : 0);
+      });
+      const top8 = topProvs.slice(0,8).map(([n])=>({ name:n, reg:provCntMap[n]?.reg||0, pag:provCntMap[n]?.pag||0 }));
+      const mx = Math.max(1,...top8.map(r=>r.reg));
+      cntEl.innerHTML=top8.map(r=>{
+        const sn=r.name.length>18?r.name.substring(0,17)+'…':r.name;
+        const wr=Math.round(r.reg/mx*100), wp=Math.round(r.pag/mx*100);
+        return `<div style="margin-bottom:10px">
+          <div style="font-size:11px;color:#1a2535;margin-bottom:3px;font-weight:500">${sn}</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+            <div style="width:70px;font-size:9.5px;color:#5c6f8a;text-align:right;flex-shrink:0">Registradas</div>
+            <div style="flex:1;height:12px;background:#e2e8f0;border-radius:3px;overflow:hidden"><div style="width:${wr}%;height:100%;background:#1a4a8a;border-radius:3px"></div></div>
+            <div style="width:25px;font-size:10px;font-weight:700;color:#1a4a8a">${r.reg}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:70px;font-size:9.5px;color:#5c6f8a;text-align:right;flex-shrink:0">Pagadas</div>
+            <div style="flex:1;height:12px;background:#e2e8f0;border-radius:3px;overflow:hidden"><div style="width:${wp}%;height:100%;background:#059669;border-radius:3px"></div></div>
+            <div style="width:25px;font-size:10px;font-weight:700;color:#059669">${r.pag}</div>
+          </div>
+        </div>`;}).join('');
+    }
   }
 
   // Sort: most mora first, then highest value
@@ -4651,11 +5122,11 @@ let qsFilter = 'all';
 
 function setQsFilter(f) {
   qsFilter = f;
-  ['All','Fact','OC','Prov'].forEach(k => {
+  ['All','Fact','OC','Prov','Rec'].forEach(k => {
     const el = document.getElementById('qsFilter'+k);
     if (el) el.classList.remove('active');
   });
-  const map = { all:'All', factura:'Fact', oc:'OC', proveedor:'Prov' };
+  const map = { all:'All', factura:'Fact', oc:'OC', proveedor:'Prov', recepcion:'Rec' };
   const el = document.getElementById('qsFilter' + map[f]);
   if (el) el.classList.add('active');
   doQuickSearch();
@@ -4665,7 +5136,7 @@ let _qsDebounce = null;
 function liveQuickSearch(val) {
   clearTimeout(_qsDebounce);
   if (!val.trim()) {
-    document.getElementById('qsResults').innerHTML = `<div class="qs-no-data"><div class="qs-icon">🔍</div><div style="font-size:14px;font-weight:600;color:var(--col-primary);margin-bottom:6px">Ingrese un término de búsqueda</div><div style="font-size:12px;color:var(--col-muted)">Busca en: factura · OC · proveedor · NIT · proyecto · mes · año · observaciones · estado · receptor</div></div>`;
+    document.getElementById('qsResults').innerHTML = `<div class="qs-no-data"><div class="qs-icon">🔍</div><div style="font-size:14px;font-weight:600;color:var(--col-primary);margin-bottom:6px">Ingrese un término de búsqueda</div><div style="font-size:12px;color:var(--col-muted)">Busca en: factura · OC · proveedor · NIT · proyecto · mes · año · observaciones · recepción · organización · estado · receptor</div></div>`;
     return;
   }
   if (val.trim().length < 2) return;
@@ -4683,11 +5154,22 @@ function doQuickSearch() {
 
   // ── Búsqueda comodín: match en CUALQUIER campo relevante ──────────────────
   // Para cada registro construimos una cadena de búsqueda con TODOS los campos
+  // incluyendo recepción, organización, NIT, AFE/proyecto, mes, año, etc.
   const buildHay1 = r => normalStr([
     r.inv, r.po, r.prov, r.rec, r.recNums, r.recBy,
     r.year, r.month, r.obs, r.recStatus,
     r.nit, r.afe, r.wbs, r.currency, r.recDate
   ].filter(Boolean).join(' '));
+
+  // Also search in A2 (df2rec) for recepción numbers and organización
+  const recMatches = new Set();
+  (state.df2rec||[]).forEach(r2 => {
+    const hay2 = normalStr([r2.rec, r2.oc, r2.proveedor, r2.org, r2.proyecto, r2.desc].filter(Boolean).join(' '));
+    if (hay2.includes(term)) {
+      recMatches.add(normalStr(r2.oc));      // link back via OC
+      recMatches.add(normalStr(r2.rec));     // or via recepción
+    }
+  });
 
   const matchedInvRows  = [];
   const matchedOCRows   = [];
@@ -4696,22 +5178,32 @@ function doQuickSearch() {
 
   state.m1data.forEach(r => {
     const hay = buildHay1(r);
-    if (!hay.includes(term)) return;
+    // Also check if OC or recNums matches something found in A2
+    const poNorm  = normalStr(r.po  || '');
+    const recNorm = normalStr(r.recNums || '');
+    const extraMatch = recMatches.has(poNorm) || recMatches.has(recNorm) ||
+      [...recMatches].some(rm => recNorm.includes(rm));
 
-    // Determinar la "razón" del match para clasificar en sección
+    if (!hay.includes(term) && !extraMatch) return;
+
     const invN  = normalStr(r.inv  || '');
     const poN   = normalStr(r.po   || '');
     const provN = normalStr(r.prov || '');
 
     if (invN && invN.includes(term))       { matchedInvRows.push(r); seenInvForProv.add(r.inv); }
     else if (poN && poN.includes(term))    { matchedOCRows.push(r);  seenInvForProv.add(r.inv); }
-    else                                   { matchedInvRows.push(r); seenInvForProv.add(r.inv); } // cualquier otro campo → sección facturas
+    else                                   { matchedInvRows.push(r); seenInvForProv.add(r.inv); }
 
     if (provN && provN.includes(term))     { matchedProvNames.add(r.prov); }
-    // Si el term coincide con NIT/proyecto pero no con nombre, igual incluir proveedor
     const nitN = normalStr(r.nit || '');
     if (nitN && nitN.includes(term))       { matchedProvNames.add(r.prov); }
   });
+
+  // Also search raw A2 rows for recepción / organización results shown separately
+  const rawRecRows = (state.df2rec||[]).filter(r2 => {
+    const hay2 = normalStr([r2.rec, r2.oc, r2.proveedor, r2.org, r2.proyecto, r2.desc].filter(Boolean).join(' '));
+    return hay2.includes(term);
+  }).slice(0, 20);
 
   // Deduplicate
   const seenInv = new Set();
@@ -4730,15 +5222,18 @@ function doQuickSearch() {
   const showFact = (qsFilter === 'all' || qsFilter === 'factura');
   const showOC   = (qsFilter === 'all' || qsFilter === 'oc');
   const showProv = (qsFilter === 'all' || qsFilter === 'proveedor');
+  const showRec  = (qsFilter === 'all' || qsFilter === 'recepcion');
   const forceShowProv = uniqueProvs.length > 0 && cycleRowsFact.length === 0 && cycleRowsOC.length === 0;
 
-  const totalHits = cycleRowsFact.length + cycleRowsOC.length + uniqueProvs.length;
+  const totalHits = cycleRowsFact.length + cycleRowsOC.length + uniqueProvs.length + rawRecRows.length;
   if (totalHits > 0) {
-    html.push(`<div style="font-size:11px;color:var(--col-muted);margin-bottom:12px;padding:6px 12px;background:#f8fafc;border-radius:8px;border:1px solid var(--col-border)">
+    html.push(`<div style="font-size:11px;color:var(--col-muted);margin-bottom:12px;padding:6px 12px;background:#f8fafc;border-radius:8px;border:1px solid var(--col-border);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
       🔎 <strong>${totalHits}</strong> resultado(s) para "<em>${raw}</em>"
       ${cycleRowsFact.length ? ` · 🧾 ${cycleRowsFact.length} factura(s)` : ''}
       ${cycleRowsOC.length   ? ` · 📦 ${cycleRowsOC.length} OC(s)` : ''}
       ${uniqueProvs.length   ? ` · 🏢 ${uniqueProvs.length} proveedor(es)` : ''}
+      ${rawRecRows.length    ? ` · 📥 ${rawRecRows.length} recepción(es)` : ''}
+      <button onclick="applyGlobalSearchSync('${raw.replace(/'/g,"\\'")}','${qsFilter}')" class="btn btn-outline btn-sm" style="margin-left:auto;font-size:10px;padding:3px 10px">🔗 Sincronizar en módulos</button>
     </div>`);
   }
 
@@ -4754,9 +5249,26 @@ function doQuickSearch() {
     html.push(`<div class="section-title" style="font-size:14px;margin-bottom:14px;${html.length?'margin-top:24px':''}">🏢 Proveedores encontrados — ${uniqueProvs.length} resultado(s)</div>`);
     uniqueProvs.forEach(provName => renderProvCard(provName, html));
   }
+  if (showRec && rawRecRows.length > 0) {
+    html.push(`<div class="section-title" style="font-size:14px;margin-bottom:14px;${html.length?'margin-top:24px':''}">📥 Recepciones Oracle encontradas — ${rawRecRows.length} resultado(s)</div>`);
+    rawRecRows.forEach(r2 => {
+      html.push(`<div class="ciclo-card" style="margin-bottom:10px;padding:14px 18px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px">
+        <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12px">
+          <div><span style="font-weight:700;color:var(--col-primary)">📥 Recepción:</span> <span class="td-mono">${r2.rec||'—'}</span></div>
+          <div><span style="font-weight:700;color:var(--col-primary)">📦 OC:</span> <span class="td-mono">${r2.oc||'—'}</span></div>
+          <div><span style="font-weight:700;color:var(--col-primary)">🏢 Proveedor:</span> ${r2.proveedor||'—'}</div>
+          <div><span style="font-weight:700;color:var(--col-primary)">🏭 Organización:</span> ${r2.org||'—'}</div>
+          <div><span style="font-weight:700;color:var(--col-primary)">🗂 Proyecto:</span> ${r2.proyecto||'—'}</div>
+          <div><span style="font-weight:700;color:var(--col-primary)">💰 Val. Rec.:</span> ${fmtCurrency(r2.valRec)}</div>
+          <div><span style="font-weight:700;color:var(--col-primary)">📅 Fecha:</span> ${r2.fecha||'—'}</div>
+          <div><span style="font-weight:700;color:var(--col-primary)">Estado:</span> <span class="badge ${r2.estadoLinea==='Entregada'?'badge-success':'badge-warning'}">${r2.estadoLinea||'—'}</span></div>
+        </div>
+      </div>`);
+    });
+  }
 
   if (!html.length) {
-    document.getElementById('qsResults').innerHTML = `<div class="qs-no-data"><div class="qs-icon">🔎</div><div style="font-size:14px;font-weight:600;color:var(--col-primary);margin-bottom:6px">Sin resultados para "<em>${raw}</em>"</div><div style="font-size:12px;color:var(--col-muted)">Puede buscar por: factura, OC, proveedor, NIT, proyecto, mes, año, observaciones, estado, receptor…</div></div>`;
+    document.getElementById('qsResults').innerHTML = `<div class="qs-no-data"><div class="qs-icon">🔎</div><div style="font-size:14px;font-weight:600;color:var(--col-primary);margin-bottom:6px">Sin resultados para "<em>${raw}</em>"</div><div style="font-size:12px;color:var(--col-muted)">Puede buscar por: factura · OC · proveedor · NIT · proyecto · mes · año · observaciones · estado · receptor · recepción · organización…</div></div>`;
   } else {
     document.getElementById('qsResults').innerHTML = html.join('');
   }
@@ -5255,7 +5767,7 @@ function exportCashCallJSON() {
   const filename = `CashCall_${fecha}.json`;
   const payload = {
     meta: {
-      app: 'Cash Call v1.4',
+      app: 'Cash Call v1.5',
       exportedBy: currentUser || '—',
       exportedAt: new Date().toISOString(),
       filename,
