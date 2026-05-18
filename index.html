@@ -1155,7 +1155,7 @@
 
       <!-- ── DIAGRAMA DE PARETO ── -->
       <div class="chart-card" style="margin-bottom:16px;padding:14px 16px">
-        <div class="chart-card-title">📉 Diagrama de Pareto — Proveedores Críticos por Valor</div>
+        <div class="chart-card-title">📉 Diagrama de Pareto — Proveedores Críticos por Valor <span style="font-size:11px;font-weight:500;color:var(--col-accent);background:rgba(0,180,200,0.1);border-radius:6px;padding:2px 8px;margin-left:8px">🗂 C-DZP-21-000-A</span></div>
         <div id="chart-pareto"><div style="color:var(--col-muted);font-size:12px;padding:20px 0">Sin datos.</div></div>
       </div>
 
@@ -1782,7 +1782,22 @@ function renderTrimestral() {
 function renderPareto() {
   const el = document.getElementById('chart-pareto');
   if (!el) return;
-  const d1 = state.m1data;
+  // ── Filtrar SÓLO proyecto C-DZP-21-000-A ──────────────────────────────────
+  // m1data no tiene campo proyecto directamente; el proyecto está en df2rec.
+  // Se construye el set de OCs que pertenecen al proyecto vía df2rec (igual
+  // que passesProjectFilter), y se filtran las facturas por esas OCs.
+  const PARETO_PROYECTO = 'C-DZP-21-000-A';
+  const ocsProy = new Set(
+    (state.df2rec || [])
+      .filter(r2 => (r2.proyecto || '').trim().toUpperCase() === PARETO_PROYECTO.toUpperCase())
+      .map(r2 => normalStr(r2.oc || ''))
+      .filter(Boolean)
+  );
+  // Si no hay recepciones del proyecto aún, usar todos los datos de m1data
+  const useAllM1 = ocsProy.size === 0;
+  const d1 = (state.m1data || []).filter(r =>
+    useAllM1 || ocsProy.has(normalStr(r.po || ''))
+  );
   const provMap = {};
   d1.forEach(r => {
     const p = r.prov||'Sin nombre';
@@ -1790,7 +1805,17 @@ function renderPareto() {
     provMap[p] += (r.valSinIva||0);
   });
   const items = Object.entries(provMap).sort((a,b)=>b[1]-a[1]).slice(0,15);
-  if (!items.length) { el.innerHTML='<div style="color:var(--col-muted);font-size:12px;padding:20px 0">Sin datos.</div>'; return; }
+  if (!items.length) {
+    const sinArchivo = !state.m1data || !state.m1data.length;
+    const sinRec     = ocsProy.size === 0 && state.df2rec && state.df2rec.length > 0;
+    const msg = sinArchivo
+      ? '📂 Cargue el Archivo 1 (Facturas) para visualizar el Pareto.'
+      : sinRec
+        ? '⚠️ No se encontraron recepciones Oracle vinculadas al proyecto <strong>C-DZP-21-000-A</strong> en el Archivo 2. El Pareto se construye a partir de las facturas cuyas OCs tienen recepción en el proyecto activo.'
+        : '⚠️ No hay proveedores con valor facturado para el proyecto <strong>C-DZP-21-000-A</strong>.';
+    el.innerHTML = `<div style="color:var(--col-muted);font-size:12px;padding:20px 0">${msg}</div>`;
+    return;
+  }
 
   const totalAll = items.reduce((s,[,v])=>s+v,0);
   let cumPct = 0;
@@ -4362,9 +4387,10 @@ function renderM0() {
   const recOk     = d1.filter(r=>r.recStatus==='recepcionado').length;
   const recNo     = d1.filter(r=>r.recStatus==='sin_recepcion').length;
   const valSinRec = d1.filter(r=>r.recStatus==='sin_recepcion').reduce((s,r)=>s+(r.valSinIva||0),0);
-  // Recepciones Oracle from A2 (df2rec)
-  const totalRecOracle  = (state.df2rec||[]).length;
-  const valorRecOracle  = (state.df2rec||[]).reduce((s,r)=>s+(r.valRec||0),0);
+  // Recepciones Oracle from A2 (df2rec) — SOLO proyecto C-DZP-21-000-A
+  const df2recProy = (state.df2rec||[]).filter(r => (r.proyecto||'').trim().toUpperCase() === 'C-DZP-21-000-A');
+  const totalRecOracle  = df2recProy.length;
+  const valorRecOracle  = df2recProy.reduce((s,r)=>s+(r.valRec||0),0);
   // Pendiente por pagar from A3 (df3cxp Aprobado)
   const valPendCxP      = (state.df3cxp||[]).filter(r=>r.estado==='Aprobado').reduce((s,r)=>s+(r.valorBruto||0),0);
   const cntAprobCxP     = (state.df3cxp||[]).filter(r=>r.estado==='Aprobado').length;
@@ -4714,13 +4740,14 @@ function renderM0RecTable() {
     return;
   }
 
-  // Populate year/month selects for M0 rec table if empty
+  // Populate year/month selects for M0 rec table if empty — solo C-DZP-21-000-A
   const selY0 = document.getElementById('f0recYear');
   const selM0 = document.getElementById('f0recMonth');
   if (selY0 && selY0.options.length <= 1) {
     const monthOrder = {enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,octubre:10,noviembre:11,diciembre:12};
-    const yrs = [...new Set(state.df2rec.map(r=>r._yr).filter(Boolean))].sort();
-    const mos = [...new Set(state.df2rec.map(r=>r._mo).filter(Boolean))].sort((a,b)=>(monthOrder[a]||99)-(monthOrder[b]||99));
+    const df2recProyFilt = state.df2rec.filter(r => (r.proyecto||'').trim().toUpperCase() === 'C-DZP-21-000-A');
+    const yrs = [...new Set(df2recProyFilt.map(r=>r._yr).filter(Boolean))].sort();
+    const mos = [...new Set(df2recProyFilt.map(r=>r._mo).filter(Boolean))].sort((a,b)=>(monthOrder[a]||99)-(monthOrder[b]||99));
     selY0.innerHTML = '<option value="">Todos los años</option>';
     yrs.forEach(y => { const o=document.createElement('option'); o.value=y; o.textContent=y; selY0.appendChild(o); });
     if (selM0) {
@@ -4729,7 +4756,10 @@ function renderM0RecTable() {
     }
   }
 
+  // ── Solo proyecto C-DZP-21-000-A ──────────────────────────────────────────
+  const REC_PROYECTO = 'C-DZP-21-000-A';
   let data = state.df2rec.filter(r => {
+    if ((r.proyecto || '').trim().toUpperCase() !== REC_PROYECTO.toUpperCase()) return false;
     if (year0  && r._yr !== year0)  return false;
     if (month0 && r._mo !== month0) return false;
     if (search) {
