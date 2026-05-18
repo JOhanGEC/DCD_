@@ -904,7 +904,12 @@
     </div>
     <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
       <span class="login-user-badge" id="userBadge" title="Cerrar sesión" onclick="logout()">
-        <span>👤</span><span id="userBadgeText">—</span><span style="font-size:10px;opacity:0.6">✕</span>
+        <span>👤</span>
+        <span style="display:flex;flex-direction:column;line-height:1.25">
+          <span id="userBadgeText">—</span>
+          <span style="font-size:9px;color:rgba(255,255,255,0.55);font-weight:600;letter-spacing:0.3px">🗂 C-DZP-21-000-A</span>
+        </span>
+        <span style="font-size:10px;opacity:0.6">✕</span>
       </span>
       <div class="header-badge" id="headerBadge">v1.8</div>
     </div>
@@ -999,22 +1004,12 @@
       <!-- Lista de archivos cargados -->
       <div class="file-list" id="fileList"></div>
 
-      <!-- ── FILTRO GLOBAL DE PROYECTO ─────────────────────── -->
-      <div id="project-filter-bar" style="display:none;background:var(--col-surface);border:1px solid var(--col-border);border-radius:12px;padding:12px 18px;margin-bottom:14px">
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <span style="font-size:12px;font-weight:700;color:var(--col-primary);flex-shrink:0">🗂 Filtro de Proyecto:</span>
-          <select id="proj-select" onchange="setProjectFilter(this.value)"
-            style="flex:1;min-width:220px;max-width:420px;padding:6px 10px;border-radius:8px;
-                   border:1px solid var(--col-border);font-size:12.5px;font-family:inherit;
-                   color:var(--col-text);background:white;cursor:pointer">
-            <option value="__ALL__">🌐 Todos los proyectos</option>
-          </select>
-          <span id="proj-filter-info" style="font-size:10.5px;color:var(--col-muted)"></span>
-        </div>
-        <div style="font-size:10.5px;color:var(--col-muted);margin-top:6px">
-          Filtra <strong>todos los módulos</strong> (M1–M5, Búsqueda, Panel Gerencial) por proyecto.
-          Basado en la columna <strong>Proyecto</strong> del Archivo 2.
-        </div>
+      <!-- ── FILTRO GLOBAL DE PROYECTO — oculto, fijo a C-DZP-21-000-A ── -->
+      <div id="project-filter-bar" style="display:none">
+        <select id="proj-select" style="display:none">
+          <option value="__ALL__">Todos los proyectos</option>
+        </select>
+        <span id="proj-filter-info" style="display:none"></span>
       </div>
 
       <div class="process-bar">
@@ -1229,15 +1224,13 @@
         <div id="m1-rec-chart" style="overflow-x:auto"></div>
       </div>
 
-      <!-- ── M1 Filtros: Fila 1 — Búsquedas + Proyecto ── -->
+      <!-- ── M1 Filtros: Fila 1 — Búsquedas ── -->
       <div class="filter-bar" style="flex-wrap:nowrap;gap:8px;margin-bottom:6px">
         <span class="filter-label" style="flex-shrink:0">🔍</span>
         <input type="text" id="f1oc"      placeholder="Buscar OC..."        oninput="renderM1()" style="min-width:160px;flex:1">
         <input type="text" id="f1factura" placeholder="Buscar N° Factura..."  oninput="renderM1()" style="min-width:160px;flex:1">
-        <select id="f1proyecto" onchange="renderM1()" style="min-width:180px;flex:1.2">
-          <option value="">🗂 Todos los proyectos</option>
-        </select>
-        <!-- Legacy hidden input kept for backward compat with applyGlobalSearchSync -->
+        <!-- Proyecto fijo: C-DZP-21-000-A -->
+        <select id="f1proyecto" style="display:none"></select>
         <input type="hidden" id="f1search">
       </div>
       <!-- ── M1 Filtros: Fila 2 — Año / Mes / Estado / Vista / Export ── -->
@@ -1443,6 +1436,13 @@
         <select id="m5year-select" onchange="renderM5()" style="font-size:13px;padding:7px 10px;border:1.5px solid var(--col-border);border-radius:8px;background:white">
           <option value="">Todos los años</option>
         </select>
+        <select id="m5month-select" onchange="renderM5()" style="font-size:13px;padding:7px 10px;border:1.5px solid var(--col-border);border-radius:8px;background:white">
+          <option value="">Todos los meses</option>
+        </select>
+        <div style="display:flex;align-items:center;gap:0;border:1px solid var(--col-border);border-radius:8px;overflow:hidden;flex-shrink:0">
+          <button id="btn-m5-acum" onclick="setM5Vista('acumulado')" style="padding:6px 13px;font-size:11.5px;font-weight:600;border:none;cursor:pointer;background:#0f2544;color:#4ade80;transition:all .15s">📦 Acumulado</button>
+          <button id="btn-m5-ind"  onclick="setM5Vista('individual')" style="padding:6px 13px;font-size:11.5px;font-weight:600;border:none;cursor:pointer;background:white;color:var(--col-muted);transition:all .15s">🔍 Individual</button>
+        </div>
         <button class="btn btn-sm btn-outline" onclick="renderM5Pdf()" title="Exportar ficha en PDF">📄 Exportar PDF</button>
       </div>
 
@@ -3609,9 +3609,22 @@ function buildProjectFilterUI() {
 function setProjectFilter(proj) {
   state.activeProject = proj;
   buildProjectFilterUI();
-  // Re-render all active modules
   if (!state.processed) return;
-  try { renderAll(); } catch(e) { console.warn('setProjectFilter renderAll:', e); }
+  _markAllDirty(); // forzar re-render en todos al cambiar filtro
+  try { renderM0(); } catch(e) { console.warn('setProjectFilter renderM0:', e); }
+  // Re-renderizar el módulo activo inmediatamente si es M1–M4
+  const activePanel = document.querySelector('.panel.active');
+  if (activePanel) {
+    const tabName = activePanel.id.replace('panel-','');
+    if (['modulo1','modulo2','modulo3','modulo4'].includes(tabName)) {
+      try {
+        if (tabName==='modulo1') { renderM1(); _dirtyModules.delete('modulo1'); }
+        if (tabName==='modulo2') { renderM2(); _dirtyModules.delete('modulo2'); }
+        if (tabName==='modulo3') { renderM3(); _dirtyModules.delete('modulo3'); }
+        if (tabName==='modulo4') { renderM4(); _dirtyModules.delete('modulo4'); }
+      } catch(e) { console.warn('setProjectFilter active panel render:', e); }
+    }
+  }
 }
 
 // Filter helper — returns true if a m1data row passes the active project filter
@@ -3646,56 +3659,35 @@ function processData() {
   if (mainTxt) mainTxt.textContent = 'Procesando archivos...';
   _setProgress(5, 'Iniciando cruce de datos...');
 
-  // Paso 1: parseFiles
-  setTimeout(() => {
-    _setProgress(20, 'Analizando Archivo 1 — Facturas...');
-    setTimeout(() => {
-      try {
-        parseFiles();
-        _setProgress(55, 'Construyendo módulos...');
-        setTimeout(() => {
-          try {
-            buildModules();
-            _setProgress(85, 'Renderizando dashboard...');
-            setTimeout(() => {
-              try {
-                state.processed = true;
-                renderAll();
-                _setProgress(100, 'Completado');
-                setTimeout(() => {
-                  overlay.style.display = 'none';
-                  _setProgress(0, '');
-                  if (mainTxt) mainTxt.textContent = 'Procesando archivos...';
-                  const btnJ = document.getElementById('btnExportJSON');
-                  if (btnJ) btnJ.disabled = false;
-                  showToast('✅ Datos procesados correctamente', 'success');
-                  addAuditEntry('proceso', `${state.m1data.length} facturas · ${state.m3data.length} registros CxP`, {
-                    files: state.files.filter(f=>f.wb).map(f=>({ nombre:f.name, slot:f.slot, hojas:f.sheets }))
-                  });
-                  switchTab('modulo0');
-                }, 250);
-              } catch(err) {
-                overlay.style.display = 'none';
-                _setProgress(0, '');
-                console.error('processData render error:', err);
-                alert('Error renderizando: ' + err.message + '\n\nRevisa la consola para más detalles.');
-              }
-            }, 50);
-          } catch(err) {
-            overlay.style.display = 'none';
-            _setProgress(0, '');
-            console.error('processData buildModules error:', err);
-            alert('Error construyendo módulos: ' + err.message);
-          }
-        }, 50);
-      } catch(err) {
-        overlay.style.display = 'none';
-        _setProgress(0, '');
-        console.error('processData parseFiles error:', err);
-        alert('Error procesando archivos: ' + err.message + '\n\nRevisa la consola para más detalles.');
-      }
-    }, 50);
-  }, 50);
+  // Usar requestAnimationFrame + Promise para ceder el hilo sin delays artificiales
+  const _tick = fn => new Promise(res => setTimeout(() => { fn(); res(); }, 10));
+
+  _tick(() => { _setProgress(20, 'Analizando Archivo 1 — Facturas...'); })
+    .then(() => _tick(() => { parseFiles(); _setProgress(55, 'Construyendo módulos...'); }))
+    .then(() => _tick(() => { buildModules(); _setProgress(85, 'Renderizando dashboard...'); }))
+    .then(() => _tick(() => {
+      state.processed = true;
+      renderAll();
+      _setProgress(100, 'Completado');
+      overlay.style.display = 'none';
+      _setProgress(0, '');
+      if (mainTxt) mainTxt.textContent = 'Procesando archivos...';
+      const btnJ = document.getElementById('btnExportJSON');
+      if (btnJ) btnJ.disabled = false;
+      // Fijar proyecto C-DZP-21-000-A automáticamente
+      setProjectFilter('C-DZP-21-000-A');
+      showToast('✅ Datos procesados correctamente — Proyecto: C-DZP-21-000-A', 'success');
+      addAuditEntry('proceso', `${state.m1data.length} facturas · ${state.m3data.length} registros CxP`, {
+        files: state.files.filter(f=>f.wb).map(f=>({ nombre:f.name, slot:f.slot, hojas:f.sheets }))
+      });
+      switchTab('modulo0');
+    }))
+    .catch(err => {
+      overlay.style.display = 'none';
+      _setProgress(0, '');
+      console.error('processData error:', err);
+      alert('Error procesando datos: ' + err.message + '\n\nRevisa la consola para más detalles.');
+    });
 }
 
 function sheetToRows(wb, sheetName, headerRow) {
@@ -3743,7 +3735,7 @@ function parseFiles() {
                       wb.SheetNames.find(s => !A1_SKIP.includes(s.toLowerCase()) && !s.toLowerCase().includes('metadata')) ||
                       wb.SheetNames[0];
     const raw = _getRaw(wb, sheetName);
-    console.log('[A1] Using sheet:', sheetName, '— raw rows:', raw.length);
+    // debug suprimido
     const A1_KNOWN_COLS = [
       'invoice number', 'supplier name', 'year', 'month', 'num month', 'nuevapo', 'po',
       'vaule without iva', 'value without iva', 'invoice date', 'due date',
@@ -3786,14 +3778,14 @@ function parseFiles() {
       });
     }
     if (hdr === -1) hdr = 0;
-    console.log('[A1] Selected hdr row:', hdr, '— row preview:', (raw[hdr]||[]).filter(c=>c!=null).slice(0,8));
+    // debug removed
     const headers = (raw[hdr] || []).map(h => h != null ? String(h).trim() : '');
     state.df1 = [];
     for (let i = hdr + 1; i < raw.length; i++) {
       const row = raw[i]; if (!row || row.every(c => c == null)) continue;
       const obj = {}; headers.forEach((h, j) => { if (!h) return; if (obj[h] == null) obj[h] = row[j] != null ? row[j] : null; else if (row[j] != null && obj[h] == null) obj[h] = row[j]; }); state.df1.push(obj);
     }
-    console.log('[A1] hdr='+hdr+', headers[0..4]='+JSON.stringify(headers.slice(0,5))+', rows='+state.df1.length);
+    // debug removed
   }
 
     // ── Archivo 2 ──
@@ -3844,7 +3836,7 @@ function parseFiles() {
       const row = raw[i]; if (!row || row.every(c => c == null)) continue;
       const obj = {}; headers.forEach((h, j) => { obj[h] = row[j] != null ? row[j] : null; }); state.df2.push(obj);
     }
-    console.log('[A2] hdr='+hdr+', sheet='+sheetName+', headers:', JSON.stringify(headers.filter(h=>h).slice(0,5)), 'rows='+state.df2.length);
+    // debug removed
     if (hdr <= 1) console.warn('[A2] WARNING: hdr='+hdr+' suspiciously low — metadata header rows may have tricked detection!');
   }
 
@@ -3888,13 +3880,20 @@ function parseFiles() {
       const row = raw[i]; if (!row || row.every(c => c == null)) continue;
       const obj = {}; headers.forEach((h, j) => { obj[h] = row[j] != null ? row[j] : null; }); state.df3.push(obj);
     }
-    console.log('[A3] hdr='+hdr+', sheet='+sheetName+', headers[0..4]='+JSON.stringify(headers.slice(0,5))+', rows='+state.df3.length);
+    // debug removed
   }
 }
 
+const _normalCache = new Map();
 function normalStr(s) {
   if (s == null) return '';
-  return String(s).trim().toLowerCase().replace(/\s+/g, ' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const key = s;
+  let r = _normalCache.get(key);
+  if (r !== undefined) return r;
+  r = String(s).trim().toLowerCase().replace(/\s+/g, ' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  if (_normalCache.size > 50000) _normalCache.clear(); // evitar memory leak
+  _normalCache.set(key, r);
+  return r;
 }
 
 // ── VIRTUAL PAGINATION ─────────────────────────────────────────
@@ -3967,7 +3966,10 @@ function _loadMoreRows(tbodyId, counterId) {
   const start = ps.page * PAGE_SIZE;
   const slice = ps.data.slice(start, start + PAGE_SIZE);
   const tbody = document.getElementById(tbodyId);
-  if (tbody) tbody.innerHTML += slice.map(ps.pageRowFn).join('');
+  if (tbody) {
+    const frag = document.createRange().createContextualFragment(slice.map(ps.pageRowFn).join(''));
+    tbody.appendChild(frag);
+  }
   _renderPager(tbodyId, counterId, ps.total);
 }
 
@@ -3977,7 +3979,10 @@ function _loadAllRows(tbodyId, counterId) {
   const shown = (ps.page + 1) * PAGE_SIZE;
   const rest = ps.data.slice(shown);
   const tbody = document.getElementById(tbodyId);
-  if (tbody) tbody.innerHTML += rest.map(ps.pageRowFn).join('');
+  if (tbody) {
+    const frag = document.createRange().createContextualFragment(rest.map(ps.pageRowFn).join(''));
+    tbody.appendChild(frag);
+  }
   ps.page = Math.ceil(ps.total / PAGE_SIZE);
   _renderPager(tbodyId, counterId, ps.total);
 }
@@ -3992,9 +3997,10 @@ function normalNum(v) {
   const s = String(v).replace(/[$,\s]/g,'');
   const n = parseFloat(s); return isNaN(n) ? null : n;
 }
+const _currencyFmt = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
 function fmtCurrency(v) {
   if (v == null) return '—';
-  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(v);
+  return _currencyFmt.format(v);
 }
 function fmtDate(v) {
   if (!v) return '—';
@@ -4073,7 +4079,7 @@ function buildModules() {
       recByOC[recKey].push(r);
     }
   });
-  console.log('[buildModules] recByOC keys:', Object.keys(recByOC).length, '— sample:', Object.keys(recByOC).slice(0,3));
+  // debug removed
   if (Object.keys(recByOC).length === 0 || Object.keys(recByOC)[0] === '') {
     console.error('[buildModules] ERROR: recByOC is empty or keyed by "" — A2 header detection failed!');
   }
@@ -4295,26 +4301,42 @@ function buildModules() {
   fillSel('f2year', years2, true);  fillSel('f2month', months2, false);
   fillSel('f2sw_year', years2, true); fillSel('f2sw_month', months2, false);
   fillSel('f3year', years3, true);  fillSel('f3month', months3, false);
+
+  // ── Pre-computar lateDaysCalc una sola vez para toda m3data ──
+  const _today0 = new Date(); _today0.setHours(0,0,0,0);
+  state.m3data.forEach(r => {
+    if (r.m3Status === 'pagado') { r.lateDaysCalc = 0; return; }
+    if (r.dueDate) {
+      const due = parseAnyDate(r.dueDate);
+      if (due && due.getFullYear() >= 2000) {
+        const diff = Math.floor((_today0 - due) / 86400000);
+        r.lateDaysCalc = diff > 0 ? diff : 0;
+      } else {
+        r.lateDaysCalc = (r.lateDays && r.lateDays > 0 && r.lateDays < 3650) ? r.lateDays : 0;
+      }
+    } else { r.lateDaysCalc = 0; }
+  });
 }
 
 // ═══════════════════════════════════════════════════════════════
 // RENDER FUNCTIONS
 // ═══════════════════════════════════════════════════════════════
+// ── DIRTY FLAGS: módulos se renderizan solo cuando se visitan ──
+const _dirtyModules = new Set();
+function _markAllDirty() {
+  ['modulo1','modulo2','modulo3','modulo4','modulo5'].forEach(m => _dirtyModules.add(m));
+}
+
 function renderAll() {
   try { buildProjectFilterUI(); } catch(e) { console.warn('projFilterUI error:', e); }
-  try { renderM0(); } catch(e) { console.warn('renderM0 error:', e); }
-  try { renderM1(); } catch(e) { console.warn('renderM1 error:', e); }
-  try { renderM2(); } catch(e) { console.warn('renderM2 error:', e); }
-  try { renderM3(); } catch(e) { console.warn('renderM3 error:', e); }
-  try { renderM4(); } catch(e) { console.warn('renderM4 error:', e); }
-  try { initM5Selectors(); } catch(e) { console.warn('m5 init error:', e); }
-['1','2','3','4'].forEach(n => {
+  ['1','2','3','4'].forEach(n => {
     const el = document.getElementById('cnt'+n);
     if (el) el.textContent = state['m'+n+'data']?.length || 0;
   });
-
   try { renderFilesResumen(); } catch(e) { console.warn('filesResumen error:', e); }
-  try { renderM0RecTable(); } catch(e) { console.warn('M0RecTable error:', e); }
+  // Marcar todos como pendientes; solo renderizar M0 ya que es la vista inicial
+  _markAllDirty();
+  try { renderM0(); } catch(e) { console.warn('renderM0 error:', e); }
 }
 
 // ── MODULE 0: GERENCIAL ──────────────────────────────────────
@@ -4326,24 +4348,7 @@ function renderM0() {
 
   const today = new Date(); today.setHours(0,0,0,0);
 
-  // ── Recalculate lateDays correctly: if pagado → no mora; ignore Excel epoch dates ──
-  d3.forEach(r => {
-    if (r.m3Status === 'pagado') {
-      r.lateDaysCalc = 0; // paid = no mora
-    } else if (r.dueDate) {
-      const due = parseAnyDate(r.dueDate);
-      // Ignore Excel epoch artifacts (dates before year 2000 = invalid serial dates)
-      if (due && due.getFullYear() >= 2000) {
-        const diff = Math.floor((today - due) / 86400000);
-        r.lateDaysCalc = diff > 0 ? diff : 0;
-      } else {
-        // Fallback: use original lateDays from A1 if it's a reasonable value
-        r.lateDaysCalc = (r.lateDays && r.lateDays > 0 && r.lateDays < 3650) ? r.lateDays : 0;
-      }
-    } else {
-      r.lateDaysCalc = 0;
-    }
-  });
+  // lateDaysCalc ya fue pre-computado en buildModules
 
   const total = d3.length;
   const pagadas = d3.filter(r => r.m3Status === 'pagado').length;
@@ -4771,14 +4776,8 @@ function renderM1() {
   const year1  = document.getElementById('f1year')?.value  || '';
   const month1 = document.getElementById('f1month')?.value || '';
   let data = state.m1data.filter(r => {
-    // Filtro de proyecto global (del panel carga) tiene prioridad; luego el select local
-    if (state.activeProject !== '__ALL__' && !passesProjectFilter(r)) return false;
-    if (filterProyM1 && state.activeProject === '__ALL__') {
-      // local project select: match by OC in df2rec
-      const poNorm = normalStr(r.po||'');
-      const ok = (state.df2rec||[]).some(r2 => r2.proyecto === filterProyM1 && normalStr(r2.oc) === poNorm);
-      if (!ok) return false;
-    }
+    // Proyecto siempre fijo a C-DZP-21-000-A vía passesProjectFilter
+    if (!passesProjectFilter(r)) return false;
     if (estado  && r.recStatus !== estado)                  return false;
     if (year1   && String(r.year) !== String(year1))        return false;
     if (month1  && normalStr(r.month) !== month1)           return false;
@@ -5233,13 +5232,28 @@ function switchTab(name) {
   document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id==='panel-'+name));
   if (name==='auditorias') { try { renderAuditPanel(); } catch(e) { console.warn(e); } }
   if (state.processed) {
-    if (name==='busqueda') { /* quick search — no auto render needed */ }
-    if (name==='modulo0') { try { renderM0(); } catch(e) { console.warn(e); } }
-    if (name==='modulo1') { try { renderM1(); } catch(e) { console.warn(e); } }
-    if (name==='modulo2') { try { renderM2(); } catch(e) { console.warn(e); } }
-    if (name==='modulo3') { try { renderM3(); } catch(e) { console.warn(e); } }
-    if (name==='modulo4') { try { renderM4(); } catch(e) { console.warn(e); } }
-}
+    // Lazy render: solo renderizar si el módulo está marcado como dirty (primera vez o tras cambio de filtro)
+    if (name==='modulo0') {
+      if (_dirtyModules.has('modulo0') || true) { // M0 siempre rápido, re-render OK
+        try { renderM0(); } catch(e) { console.warn(e); }
+      }
+    }
+    if (name==='modulo1' && _dirtyModules.has('modulo1')) {
+      try { renderM1(); _dirtyModules.delete('modulo1'); } catch(e) { console.warn(e); }
+    }
+    if (name==='modulo2' && _dirtyModules.has('modulo2')) {
+      try { renderM2(); _dirtyModules.delete('modulo2'); } catch(e) { console.warn(e); }
+    }
+    if (name==='modulo3' && _dirtyModules.has('modulo3')) {
+      try { renderM3(); _dirtyModules.delete('modulo3'); } catch(e) { console.warn(e); }
+    }
+    if (name==='modulo4' && _dirtyModules.has('modulo4')) {
+      try { renderM4(); _dirtyModules.delete('modulo4'); } catch(e) { console.warn(e); }
+    }
+    if (name==='modulo5' && _dirtyModules.has('modulo5')) {
+      try { initM5Selectors(); _dirtyModules.delete('modulo5'); } catch(e) { console.warn(e); }
+    }
+  }
 }
 
 function showToast(msg, type='info') {
@@ -5297,13 +5311,21 @@ function doQuickSearch() {
     r.nit, r.afe, r.wbs, r.currency, r.recDate
   ].filter(Boolean).join(' '));
 
-  // Also search in A2 (df2rec) for recepción numbers and organización
+  // ── Solo buscar dentro del proyecto activo (C-DZP-21-000-A) ──────────────
+  // Pre-construir set de OCs que pertenecen al proyecto activo (desde df2rec)
+  const ocsProjActivo = new Set();
+  (state.df2rec||[]).forEach(r2 => {
+    if (passesProjectFilterRec(r2)) ocsProjActivo.add(normalStr(r2.oc));
+  });
+
+  // Also search in A2 (df2rec) SOLO del proyecto activo
   const recMatches = new Set();
   (state.df2rec||[]).forEach(r2 => {
+    if (!passesProjectFilterRec(r2)) return; // ← solo proyecto activo
     const hay2 = normalStr([r2.rec, r2.oc, r2.proveedor, r2.org, r2.proyecto, r2.desc].filter(Boolean).join(' '));
     if (hay2.includes(term)) {
-      recMatches.add(normalStr(r2.oc));      // link back via OC
-      recMatches.add(normalStr(r2.rec));     // or via recepción
+      recMatches.add(normalStr(r2.oc));
+      recMatches.add(normalStr(r2.rec));
     }
   });
 
@@ -5313,9 +5335,11 @@ function doQuickSearch() {
   const seenInvForProv  = new Set();
 
   state.m1data.forEach(r => {
+    // ← Filtrar: solo incluir si la OC pertenece al proyecto activo
+    const poNorm = normalStr(r.po || '');
+    if (!ocsProjActivo.has(poNorm)) return;
+
     const hay = buildHay1(r);
-    // Also check if OC or recNums matches something found in A2
-    const poNorm  = normalStr(r.po  || '');
     const recNorm = normalStr(r.recNums || '');
     const extraMatch = recMatches.has(poNorm) || recMatches.has(recNorm) ||
       [...recMatches].some(rm => recNorm.includes(rm));
@@ -5335,8 +5359,9 @@ function doQuickSearch() {
     if (nitN && nitN.includes(term))       { matchedProvNames.add(r.prov); }
   });
 
-  // Also search raw A2 rows for recepción / organización results shown separately
+  // Also search raw A2 rows SOLO del proyecto activo
   const rawRecRows = (state.df2rec||[]).filter(r2 => {
+    if (!passesProjectFilterRec(r2)) return false; // ← solo proyecto activo
     const hay2 = normalStr([r2.rec, r2.oc, r2.proveedor, r2.org, r2.proyecto, r2.desc].filter(Boolean).join(' '));
     return hay2.includes(term);
   }).slice(0, 20);
@@ -5406,7 +5431,40 @@ function doQuickSearch() {
   }
 
   if (!html.length) {
-    document.getElementById('qsResults').innerHTML = `<div class="qs-no-data"><div class="qs-icon">🔎</div><div style="font-size:14px;font-weight:600;color:var(--col-primary);margin-bottom:6px">Sin resultados para "<em>${raw}</em>"</div><div style="font-size:12px;color:var(--col-muted)">Puede buscar por: factura · OC · proveedor · NIT · proyecto · mes · año · observaciones · estado · receptor · recepción · organización…</div></div>`;
+    // Verificar si el término existe en los datos SIN filtro de proyecto
+    const termExistsOutside = (() => {
+      const PROYECTO_ACTIVO = 'C-DZP-21-000-A';
+      // Buscar en m1data sin filtro de proyecto
+      const enM1 = state.m1data.some(r => {
+        const hay = normalStr([r.inv, r.po, r.prov, r.nit, r.rec, r.recNums, r.year, r.month, r.obs, r.afe, r.wbs].filter(Boolean).join(' '));
+        return hay.includes(term);
+      });
+      // Buscar en df2rec sin filtro de proyecto (cualquier proyecto)
+      const enA2 = (state.df2rec||[]).some(r2 => {
+        const hay2 = normalStr([r2.rec, r2.oc, r2.proveedor, r2.org, r2.proyecto, r2.desc].filter(Boolean).join(' '));
+        return hay2.includes(term);
+      });
+      // Buscar en df3cxp
+      const enA3 = (state.df3cxp||[]).some(r3 => {
+        const hay3 = normalStr([r3.factura, r3.prov, r3.nit, r3.estado].filter(Boolean).join(' '));
+        return hay3.includes(term);
+      });
+      return enM1 || enA2 || enA3;
+    })();
+
+    if (termExistsOutside) {
+      document.getElementById('qsResults').innerHTML = `
+        <div style="text-align:center;padding:50px 20px">
+          <div style="font-size:48px;margin-bottom:16px">🚫</div>
+          <div style="font-size:16px;font-weight:700;color:#dc2626;margin-bottom:8px">No corresponde al Proyecto C-DZP-21-000-A</div>
+          <div style="font-size:13px;color:var(--col-muted);max-width:420px;margin:0 auto;line-height:1.6">
+            La búsqueda <strong>"${raw}"</strong> existe en los datos pero <strong>no pertenece</strong> al proyecto activo.<br>
+            Solo se muestran resultados del proyecto <span style="color:#059669;font-weight:700">C-DZP-21-000-A</span>.
+          </div>
+        </div>`;
+    } else {
+      document.getElementById('qsResults').innerHTML = `<div class="qs-no-data"><div class="qs-icon">🔎</div><div style="font-size:14px;font-weight:600;color:var(--col-primary);margin-bottom:6px">Sin resultados para "<em>${raw}</em>"</div><div style="font-size:12px;color:var(--col-muted)">Puede buscar por: factura · OC · proveedor · NIT · proyecto · mes · año · observaciones · estado · receptor · recepción · organización…</div></div>`;
+    }
   } else {
     document.getElementById('qsResults').innerHTML = html.join('');
   }
@@ -5683,10 +5741,8 @@ function initM5Selectors() {
   const sel = document.getElementById('m5prov-select');
   if (!sel) return;
   const cur = sel.value;
-  // Use index as value to avoid encoding issues, store actual name in data-name
   sel.innerHTML = '<option value="">— Selecciona un proveedor —</option>' +
     sorted.map((p, i) => `<option value="${i}" data-prov="${p.replace(/"/g,'&quot;')}">${p}</option>`).join('');
-  // Restore selection by matching name
   if (cur) {
     const prevName = sel.getAttribute('data-last-prov') || '';
     for (const opt of sel.options) {
@@ -5701,21 +5757,46 @@ function initM5Selectors() {
     ySel.innerHTML = '<option value="">Todos los años</option>' +
       years.map(y => `<option value="${y}"${String(y)===cy?' selected':''}>${y}</option>`).join('');
   }
+  // Month selector
+  const monthOrder = {enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,octubre:10,noviembre:11,diciembre:12};
+  const months = [...new Set(state.m1data.map(r => String(r.month||'').toLowerCase()).filter(Boolean))]
+    .sort((a,b) => (monthOrder[a]||99)-(monthOrder[b]||99));
+  const mSel = document.getElementById('m5month-select');
+  if (mSel) {
+    const cm = mSel.value;
+    mSel.innerHTML = '<option value="">Todos los meses</option>' +
+      months.map(m => `<option value="${m}"${m===cm?' selected':''}>${m.charAt(0).toUpperCase()+m.slice(1)}</option>`).join('');
+  }
   const el5 = document.getElementById('cnt5');
   if (el5) el5.textContent = sorted.length;
-  console.info('[M5] Selectors init: providers='+sorted.length+', sample:', sorted.slice(0,3));
+}
+
+window._m5Vista = 'acumulado';
+function setM5Vista(v) {
+  window._m5Vista = v;
+  const bA = document.getElementById('btn-m5-acum');
+  const bI = document.getElementById('btn-m5-ind');
+  if (bA && bI) {
+    if (v === 'acumulado') {
+      bA.style.background = '#0f2544'; bA.style.color = '#4ade80';
+      bI.style.background = 'white';   bI.style.color = 'var(--col-muted)';
+    } else {
+      bI.style.background = '#0f2544'; bI.style.color = '#4ade80';
+      bA.style.background = 'white';   bA.style.color = 'var(--col-muted)';
+    }
+  }
+  renderM5();
 }
 
 function renderM5() {
   if (!state.processed) return;
-  // Get provider name from data-prov attribute (avoids encoding issues with index-based value)
   const sel5 = document.getElementById('m5prov-select');
   const selOpt = sel5 && sel5.selectedIndex > 0 ? sel5.options[sel5.selectedIndex] : null;
   const provName = selOpt ? (selOpt.getAttribute('data-prov') || '') : '';
   if (sel5) sel5.setAttribute('data-last-prov', provName);
   const yearSel  = document.getElementById('m5year-select')?.value  || '';
-  console.info('[M5] renderM5 called — prov:', JSON.stringify(provName), 'year:', yearSel,
-    'total m1data:', state.m1data.length, 'm3data:', state.m3data.length, 'm4data:', state.m4data.length);
+  const monthSel = normalStr(document.getElementById('m5month-select')?.value || '');
+  const vista    = window._m5Vista || 'acumulado';
   const placeholder = document.getElementById('m5-placeholder');
   const kpisEl   = document.getElementById('m5-kpis');
 
@@ -5728,17 +5809,21 @@ function renderM5() {
   }
   if (placeholder) placeholder.style.display = 'none';
 
-  // ── Get all records for this provider ──
+  // ── Filtrar por proveedor + año + mes ──
   const provNorm = provName.trim().toLowerCase();
-  const m1rows = state.m1data.filter(r => r.prov && String(r.prov).trim().toLowerCase() === provNorm && (!yearSel || parseInt(String(r.year).replace('.0','')) === parseInt(yearSel)));
-  const m3rows = state.m3data.filter(r => r.prov && String(r.prov).trim().toLowerCase() === provNorm && (!yearSel || parseInt(String(r.year).replace('.0','')) === parseInt(yearSel)));
-  const m4rows = state.m4data.filter(r => r.prov && String(r.prov).trim().toLowerCase() === provNorm && (!yearSel || parseInt(String(r.year).replace('.0','')) === parseInt(yearSel)));
-  console.info('[M5] Filtered — provNorm:', JSON.stringify(provNorm), 'm1:', m1rows.length, 'm3:', m3rows.length, 'm4:', m4rows.length);
-  // If no rows found, show debug info
+  const matchRow = r => {
+    if (!r.prov || String(r.prov).trim().toLowerCase() !== provNorm) return false;
+    if (yearSel  && parseInt(String(r.year).replace('.0','')) !== parseInt(yearSel)) return false;
+    if (monthSel && normalStr(r.month||'') !== monthSel) return false;
+    return true;
+  };
+  const m1rows = state.m1data.filter(matchRow);
+  const m3rows = state.m3data.filter(matchRow);
+  const m4rows = state.m4data.filter(matchRow);
+
   if (m1rows.length === 0 && state.m1data.length > 0) {
-    const sample = state.m1data.slice(0,3).map(r => JSON.stringify(r.prov));
-    console.warn('[M5] No match! Sample m1data provs:', sample.join(', '));
-    if (kpisEl) kpisEl.innerHTML = `<div style="padding:12px;background:#fef2f2;border-radius:8px;color:#dc2626;font-size:12px">⚠️ Sin datos para "<b>${provName}</b>" en ${yearSel||'todos los años'}. Verifique que los archivos hayan sido procesados correctamente.</div>`;
+    if (kpisEl) kpisEl.innerHTML = `<div style="padding:12px;background:#fef2f2;border-radius:8px;color:#dc2626;font-size:12px">⚠️ Sin datos para "<b>${provName}</b>"${monthSel?' en '+monthSel:''}${yearSel?' · '+yearSel:''}. Verifique los filtros o que los archivos hayan sido procesados.</div>`;
+    ['m5-timeline','m5-payment-status','m5-ocs','m5-recs','m5-tbody'].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=''; });
     return;
   }
 
@@ -5911,34 +5996,91 @@ function renderM5() {
     } else recsEl.innerHTML = '<div style="color:var(--col-muted);padding:14px;font-size:12px">Sin recepciones Oracle vinculadas.</div>';
   }
 
-  // ── Detalle facturas ──
+  // ── Detalle facturas — vista Acumulado o Individual ──
   const tbody5 = document.getElementById('m5-tbody');
   const cntEl5 = document.getElementById('m5-inv-count');
   if (tbody5) {
-    if (cntEl5) cntEl5.textContent = m4rows.length + ' facturas';
     const rows4 = m4rows.length ? m4rows : m1rows.map(r => ({ ...r, flujo: r.recStatus==='recepcionado'?'sin_pago':'sin_recepcion' }));
-    tbody5.innerHTML = rows4.slice(0,50).map((r,i) => {
-      const d = parseAnyDate(r.dueDate);
-      const days = d ? Math.floor((today-d)/86400000) : 0;
-      const moraStr = r.m3Status !== 'pagado' && days > 0
-        ? `<span style="background:#fee2e2;color:#dc2626;padding:1px 6px;border-radius:4px;font-size:9.5px;font-weight:700">${days}d</span>`
-        : r.m3Status === 'pagado' ? '<span style="color:#059669;font-size:10px">—</span>' : '<span style="color:#94a3b8;font-size:10px">0d</span>';
-      const recB = r.recStatus==='recepcionado'?'<span style="color:#059669;font-size:11px">✅</span>':r.recStatus==='parcial'?'<span style="color:#d97706;font-size:11px">⚠️</span>':'<span style="color:#dc2626;font-size:11px">❌</span>';
-      const cxpB = r.m3Status==='pagado'||r.m3Status==='aprobado'?'<span style="color:#059669;font-size:11px">✅</span>':'<span style="color:#dc2626;font-size:11px">❌</span>';
-      const pagB = r.m3Status==='pagado'?'<span style="color:#059669;font-size:11px">✅</span>':r.m3Status==='aprobado'?'<span style="color:#d97706;font-size:11px">⏳</span>':'<span style="color:#dc2626;font-size:11px">❌</span>';
-      const mes = r.month ? String(r.month).substring(0,3) + (r.year?String(r.year).slice(2):'') : '—';
-      return `<tr style="background:${i%2===0?'white':'#f8fafc'};border-bottom:1px solid #f1f5f9">
-        <td style="padding:5px 8px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#1a4a8a;font-weight:600">${r.inv||'—'}</td>
-        <td style="padding:5px 8px;font-family:'IBM Plex Mono',monospace;font-size:10px">${r.po||'—'}</td>
-        <td style="padding:5px 8px;font-size:10.5px">${mes}</td>
-        <td style="padding:5px 8px;text-align:right;font-weight:600">${fmtCurrency(r.valSinIva)}</td>
-        <td style="padding:5px 8px;text-align:center">${recB}</td>
-        <td style="padding:5px 8px;text-align:center">${cxpB}</td>
-        <td style="padding:5px 8px;text-align:center">${pagB}</td>
-        <td style="padding:5px 8px;text-align:center">${moraStr}</td>
-        <td style="padding:5px 8px;font-size:9.5px;color:#6b7280;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.obs||''}">${r.obs||'—'}</td>
-      </tr>`;
-    }).join('') || '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--col-muted)">Sin datos de facturas.</td></tr>';
+
+    if (vista === 'individual') {
+      // ── VISTA INDIVIDUAL: una fila por factura, sin agrupar ──
+      if (cntEl5) cntEl5.textContent = rows4.length + ' facturas · Vista individual';
+      tbody5.innerHTML = rows4.map((r,i) => {
+        const d = parseAnyDate(r.dueDate);
+        const days = d ? Math.floor((today-d)/86400000) : 0;
+        const moraStr = r.m3Status !== 'pagado' && days > 0
+          ? `<span style="background:#fee2e2;color:#dc2626;padding:1px 6px;border-radius:4px;font-size:9.5px;font-weight:700">${days}d</span>`
+          : r.m3Status === 'pagado' ? '<span style="color:#059669;font-size:10px">—</span>' : '<span style="color:#94a3b8;font-size:10px">0d</span>';
+        const recB = r.recStatus==='recepcionado'?'✅':r.recStatus==='parcial'?'⚠️':'❌';
+        const cxpB = r.m3Status==='pagado'||r.m3Status==='aprobado'?'✅':'❌';
+        const pagB = r.m3Status==='pagado'?'✅':r.m3Status==='aprobado'?'⏳':'❌';
+        const statusColor = r.m3Status==='pagado'?'#f0fdf7':r.m3Status==='aprobado'?'#fffbeb':'#fef2f2';
+        return `<tr style="background:${statusColor};border-bottom:1px solid #f1f5f9">
+          <td style="padding:6px 8px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#1a4a8a;font-weight:700">${r.inv||'—'}</td>
+          <td style="padding:6px 8px;font-family:'IBM Plex Mono',monospace;font-size:10px">${r.po||'—'}</td>
+          <td style="padding:6px 8px;font-size:10.5px;text-transform:capitalize">${r.month||'—'} ${r.year||''}</td>
+          <td style="padding:6px 8px;text-align:right;font-weight:700;font-family:'IBM Plex Mono',monospace">${fmtCurrency(r.valSinIva)}</td>
+          <td style="padding:6px 8px;text-align:right;font-family:'IBM Plex Mono',monospace;color:#059669">${r.totalRec?fmtCurrency(r.totalRec):'—'}</td>
+          <td style="padding:6px 8px;text-align:center;font-size:13px">${recB}</td>
+          <td style="padding:6px 8px;text-align:center;font-size:13px">${cxpB}</td>
+          <td style="padding:6px 8px;text-align:center;font-size:13px">${pagB}</td>
+          <td style="padding:6px 8px;text-align:center">${moraStr}</td>
+          <td style="padding:6px 8px;font-size:9.5px;color:#6b7280;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.obs||''}">${r.obs||'—'}</td>
+        </tr>`;
+      }).join('') || '<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--col-muted)">Sin datos.</td></tr>';
+      // Update table header for individual view
+      const thead5 = tbody5.closest('table')?.querySelector('thead tr');
+      if (thead5) thead5.innerHTML = `
+        <th style="padding:7px 8px;text-align:left;font-weight:600;font-size:10px">N° FACTURA</th>
+        <th style="padding:7px 8px;text-align:left;font-weight:600;font-size:10px">OC</th>
+        <th style="padding:7px 8px;text-align:left;font-weight:600;font-size:10px">MES / AÑO</th>
+        <th style="padding:7px 8px;text-align:right;font-weight:600;font-size:10px">VALOR SIN IVA</th>
+        <th style="padding:7px 8px;text-align:right;font-weight:600;font-size:10px">VAL. REC.</th>
+        <th style="padding:7px 8px;text-align:center;font-weight:600;font-size:10px">REC.</th>
+        <th style="padding:7px 8px;text-align:center;font-weight:600;font-size:10px">CxP</th>
+        <th style="padding:7px 8px;text-align:center;font-weight:600;font-size:10px">PAGO</th>
+        <th style="padding:7px 8px;text-align:center;font-weight:600;font-size:10px">MORA</th>
+        <th style="padding:7px 8px;text-align:left;font-weight:600;font-size:10px">OBSERVACIONES</th>`;
+    } else {
+      // ── VISTA ACUMULADA: agrupada por mes, totales ──
+      const mesMap = {};
+      rows4.forEach(r => {
+        const k = `${r.year||'?'}-${normalStr(r.month||'?')}`;
+        const label = `${String(r.month||'').substring(0,3)} ${r.year||''}`;
+        if (!mesMap[k]) mesMap[k] = { label, facturas:0, valor:0, valRec:0, pagadas:0, mora:0, sinRec:0 };
+        mesMap[k].facturas++;
+        mesMap[k].valor += (r.valSinIva||0);
+        mesMap[k].valRec += (r.totalRec||0);
+        if (r.m3Status==='pagado') mesMap[k].pagadas++;
+        if ((r.lateDaysCalc||0)>0) mesMap[k].mora++;
+        if (r.recStatus==='sin_recepcion') mesMap[k].sinRec++;
+      });
+      const mesKeys = Object.keys(mesMap).sort();
+      if (cntEl5) cntEl5.textContent = rows4.length + ' facturas · ' + mesKeys.length + ' mes(es)';
+      // Update header for acumulado
+      const thead5 = tbody5.closest('table')?.querySelector('thead tr');
+      if (thead5) thead5.innerHTML = `
+        <th style="padding:7px 8px;text-align:left;font-weight:600;font-size:10px">MES / AÑO</th>
+        <th style="padding:7px 8px;text-align:center;font-weight:600;font-size:10px">FACTURAS</th>
+        <th style="padding:7px 8px;text-align:right;font-weight:600;font-size:10px">VALOR TOTAL</th>
+        <th style="padding:7px 8px;text-align:right;font-weight:600;font-size:10px">VAL. RECEPCIONADO</th>
+        <th style="padding:7px 8px;text-align:center;font-weight:600;font-size:10px">PAGADAS</th>
+        <th style="padding:7px 8px;text-align:center;font-weight:600;font-size:10px">SIN REC.</th>
+        <th style="padding:7px 8px;text-align:center;font-weight:600;font-size:10px">EN MORA</th>`;
+      tbody5.innerHTML = mesKeys.map((k,i) => {
+        const m = mesMap[k];
+        const pctPag = m.facturas>0 ? Math.round(m.pagadas/m.facturas*100) : 0;
+        return `<tr style="background:${i%2===0?'white':'#f8fafc'};border-bottom:1px solid #f1f5f9">
+          <td style="padding:6px 8px;font-weight:700;font-size:11px;text-transform:capitalize;color:#0f2544">${m.label}</td>
+          <td style="padding:6px 8px;text-align:center;font-family:'IBM Plex Mono',monospace;font-weight:700">${m.facturas}</td>
+          <td style="padding:6px 8px;text-align:right;font-weight:700;font-family:'IBM Plex Mono',monospace">${fmtCurrency(m.valor)}</td>
+          <td style="padding:6px 8px;text-align:right;color:#059669;font-family:'IBM Plex Mono',monospace">${m.valRec?fmtCurrency(m.valRec):'—'}</td>
+          <td style="padding:6px 8px;text-align:center"><span style="background:${pctPag===100?'#d1fae5':'#fef3c7'};color:${pctPag===100?'#059669':'#d97706'};padding:2px 8px;border-radius:10px;font-size:10.5px;font-weight:700">${m.pagadas}/${m.facturas} · ${pctPag}%</span></td>
+          <td style="padding:6px 8px;text-align:center">${m.sinRec>0?`<span style="color:#dc2626;font-weight:700">${m.sinRec}</span>`:'<span style="color:#059669">0</span>'}</td>
+          <td style="padding:6px 8px;text-align:center">${m.mora>0?`<span style="background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:10px;font-size:10.5px;font-weight:700">${m.mora}</span>`:'<span style="color:#94a3b8;font-size:10px">—</span>'}</td>
+        </tr>`;
+      }).join('') || '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--col-muted)">Sin datos.</td></tr>';
+    }
   }
 }
 
