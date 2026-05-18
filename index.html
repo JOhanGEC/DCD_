@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⛏ Cash Call v1.7 — Control Financiero Minero</title>
+<title>⛏ Cash Call v1.8 — Control Financiero Minero</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -77,8 +77,8 @@
   }
   .nav-item:hover { color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.05); }
   .nav-item.active {
-    color: white; background: rgba(0,180,200,0.15);
-    border-left-color: var(--col-accent);
+    color: #4ade80; background: rgba(5,150,105,0.18);
+    border-left-color: #22c55e;
   }
   .nav-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
   .nav-label { flex: 1; line-height: 1.3; }
@@ -87,7 +87,7 @@
     background: rgba(255,255,255,0.15); border-radius: 10px;
     padding: 1px 7px; font-size: 10px; font-family: 'IBM Plex Mono', monospace;
   }
-  .nav-item.active .nav-badge { background: var(--col-accent); color: var(--col-primary); font-weight: 700; }
+  .nav-item.active .nav-badge { background: #22c55e; color: #0f2544; font-weight: 700; }
 
   .sidebar-divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 8px 16px; }
 
@@ -758,7 +758,7 @@
   <!-- Pickaxe head right -->
   <path d="M20 14 L15 10 L22 13 Z" fill="white" opacity="0.75"/>
 </svg>Cash<span class="login-logo-dot"></span><span>Call</span></div>
-    <div class="login-version">v1.7 · Control Financiero</div>
+    <div class="login-version">v1.8 · Control Financiero</div>
     <div class="login-field">
       <label>Usuario</label>
       <input type="text" id="loginUser" placeholder="usuario.nombre" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
@@ -784,7 +784,7 @@
   <div class="subwin" style="max-width:600px">
     <div class="subwin-header">
       <span style="font-size:16px">⌨️</span>
-      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v1.7</span>
+      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v1.8</span>
       <button class="subwin-close" onclick="closeSubwin('sw-ctrlm')">✕</button>
     </div>
     <div class="subwin-body" id="sw-ctrlm-body" style="padding:24px">
@@ -906,7 +906,7 @@
       <span class="login-user-badge" id="userBadge" title="Cerrar sesión" onclick="logout()">
         <span>👤</span><span id="userBadgeText">—</span><span style="font-size:10px;opacity:0.6">✕</span>
       </span>
-      <div class="header-badge" id="headerBadge">v1.7</div>
+      <div class="header-badge" id="headerBadge">v1.8</div>
     </div>
   </div>
 </header>
@@ -998,6 +998,24 @@
 
       <!-- Lista de archivos cargados -->
       <div class="file-list" id="fileList"></div>
+
+      <!-- ── FILTRO GLOBAL DE PROYECTO ─────────────────────── -->
+      <div id="project-filter-bar" style="display:none;background:var(--col-surface);border:1px solid var(--col-border);border-radius:12px;padding:12px 18px;margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span style="font-size:12px;font-weight:700;color:var(--col-primary);flex-shrink:0">🗂 Filtro de Proyecto:</span>
+          <select id="proj-select" onchange="setProjectFilter(this.value)"
+            style="flex:1;min-width:220px;max-width:420px;padding:6px 10px;border-radius:8px;
+                   border:1px solid var(--col-border);font-size:12.5px;font-family:inherit;
+                   color:var(--col-text);background:white;cursor:pointer">
+            <option value="__ALL__">🌐 Todos los proyectos</option>
+          </select>
+          <span id="proj-filter-info" style="font-size:10.5px;color:var(--col-muted)"></span>
+        </div>
+        <div style="font-size:10.5px;color:var(--col-muted);margin-top:6px">
+          Filtra <strong>todos los módulos</strong> (M1–M5, Búsqueda, Panel Gerencial) por proyecto.
+          Basado en la columna <strong>Proyecto</strong> del Archivo 2.
+        </div>
+      </div>
 
       <div class="process-bar">
         <button class="btn btn-primary" id="btnProcess" onclick="processData()" disabled>
@@ -1211,10 +1229,20 @@
         <div id="m1-rec-chart" style="overflow-x:auto"></div>
       </div>
 
-      <div class="filter-bar">
-        <span class="filter-label">🔍</span>
-        <input type="text" id="f1search" placeholder="Factura, OC, Proveedor..." oninput="renderM1()">
-        <select id="f1year" onchange="renderM1()"><option value="">Todos los años</option></select>
+      <!-- ── M1 Filtros: Fila 1 — Búsquedas + Proyecto ── -->
+      <div class="filter-bar" style="flex-wrap:nowrap;gap:8px;margin-bottom:6px">
+        <span class="filter-label" style="flex-shrink:0">🔍</span>
+        <input type="text" id="f1oc"      placeholder="Buscar OC..."        oninput="renderM1()" style="min-width:160px;flex:1">
+        <input type="text" id="f1factura" placeholder="Buscar N° Factura..."  oninput="renderM1()" style="min-width:160px;flex:1">
+        <select id="f1proyecto" onchange="renderM1()" style="min-width:180px;flex:1.2">
+          <option value="">🗂 Todos los proyectos</option>
+        </select>
+        <!-- Legacy hidden input kept for backward compat with applyGlobalSearchSync -->
+        <input type="hidden" id="f1search">
+      </div>
+      <!-- ── M1 Filtros: Fila 2 — Año / Mes / Estado / Vista / Export ── -->
+      <div class="filter-bar" style="flex-wrap:wrap;gap:8px">
+        <select id="f1year"  onchange="renderM1()"><option value="">Todos los años</option></select>
         <select id="f1month" onchange="renderM1()"><option value="">Todos los meses</option></select>
         <div class="status-pills" id="pills1">
           <span class="status-pill active-all" data-status="" onclick="setPill('pills1',this,'f1estado',renderM1)">Todos</span>
@@ -1223,16 +1251,21 @@
           <span class="status-pill" data-status="sin_recepcion" onclick="setPill('pills1',this,'f1estado',renderM1)">❌ Sin Recepción</span>
         </div>
         <input type="hidden" id="f1estado">
+        <div style="display:flex;align-items:center;gap:0;border:1px solid var(--col-border);border-radius:8px;overflow:hidden;flex-shrink:0;margin-left:auto">
+          <button id="btn-m1-acum" onclick="setM1Vista('acumulado')" style="padding:5px 13px;font-size:11.5px;font-weight:600;border:none;cursor:pointer;background:#0f2544;color:#4ade80;transition:all .15s">📦 Acumulado</button>
+          <button id="btn-m1-ind"  onclick="setM1Vista('individual')" style="padding:5px 13px;font-size:11.5px;font-weight:600;border:none;cursor:pointer;background:white;color:var(--col-muted);transition:all .15s">🔍 Individual</button>
+        </div>
         <button class="btn btn-sm btn-outline" onclick="exportTable('m1data','Modulo1_Facturas')">⬇ Exportar</button>
       </div>
 
       <div class="table-wrap">
         <div class="table-header">
-          <span class="table-title">Facturas en Seguimiento</span>
+          <span class="table-title" id="m1-table-title">Facturas en Seguimiento</span>
           <span class="table-count" id="cnt1table">—</span>
         </div>
         <div class="table-scroll">
-          <table>
+          <!-- Vista ACUMULADA (por defecto) -->
+          <table id="tbl-m1-acum">
             <thead><tr>
               <th>Estado</th><th>Año</th><th>Mes</th><th>Orden de Compra</th>
               <th>Proveedor</th><th>N° Factura</th><th>N° REC (A1)</th>
@@ -1241,6 +1274,17 @@
               <th>Fecha Recepción</th><th>Recepcionado Por</th>
             </tr></thead>
             <tbody id="tbody1"></tbody>
+          </table>
+          <!-- Vista INDIVIDUAL (desagregada por N° recepción) -->
+          <table id="tbl-m1-ind" style="display:none">
+            <thead><tr>
+              <th>Estado Factura</th><th>Año</th><th>Mes</th><th>Orden de Compra</th>
+              <th>Proveedor</th><th>N° Factura</th><th>N° REC (A1)</th>
+              <th>N° Recepción Oracle</th><th class="currency">Valor Acta (sin IVA)</th>
+              <th class="currency">Val. Recepcionado</th><th>Diferencia Individual</th>
+              <th>Fecha Recepción</th><th>Recepcionado Por</th>
+            </tr></thead>
+            <tbody id="tbody1-ind"></tbody>
           </table>
         </div>
       </div>
@@ -1486,7 +1530,9 @@ const state = {
   files: [], // { wb, name, slot }
   df1: [], df2: [], df3: [],
   m1data: [], m2data: [], m3data: [], m4data: [],
-  processed: false
+  df2rec: [], df3cxp: [],
+  processed: false,
+  activeProject: '__ALL__'  // '__ALL__' = sin filtro, o código de proyecto
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -1977,7 +2023,7 @@ function exportPDFReport() {
   </style></head><body>
   <div class="cover">
     <div class="cover-logo">Cash <span>Call</span></div>
-    <div class="cover-title">Informe Gerencial Ejecutivo · v1.7</div>
+    <div class="cover-title">Informe Gerencial Ejecutivo · v1.8</div>
     <div class="cover-meta">Generado: ${today.toLocaleDateString('es-CO',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} · ${today.toLocaleTimeString('es-CO')}<br>
     Usuario: ${currentUser||'—'} · Período analizado: ${[...new Set(d1.map(r=>r.year).filter(Boolean))].sort().join(', ')||'N/D'}</div>
   </div>
@@ -2036,7 +2082,7 @@ function exportPDFReport() {
   </div>`:''}
 
   <div class="footer">
-    Cash Call v1.7 · Desarrollado por Ing. Johan Manuel Cárdenas Leal, MSc · Todos los derechos reservados © 2026<br>
+    Cash Call v1.8 · Desarrollado por Ing. Johan Manuel Cárdenas Leal, MSc · Todos los derechos reservados © 2026<br>
     Informe generado automáticamente — ${today.toISOString()}
   </div>
   <script>window.onload=function(){window.print();}<\/script>
@@ -2457,10 +2503,20 @@ function applyGlobalSearchSync(term, filterType) {
 
   const t = normalStr(term.trim());
 
-  // M1: set search field
-  const f1 = document.getElementById('f1sw_search') || document.getElementById('f1search');
-  // Module 1 inline panel
-  const f1main = document.querySelector('#panel-modulo1 input[id="f1search"]');
+  // M1: set search fields (v1.8 — separate OC and Factura inputs)
+  const f1oc   = document.getElementById('f1oc');
+  const f1fact = document.getElementById('f1factura');
+  const f1main = document.querySelector('#panel-modulo1 input[id="f1search"]'); // legacy hidden
+  // Heuristic: if it looks like an OC (starts with letters + underscore or "OC") put it in OC,
+  // otherwise try both. Safe: put in OC if filterType is 'oc', factura if 'factura', else OC.
+  if (f1oc) {
+    f1oc.value = (filterType === 'factura') ? '' : term.trim();
+  }
+  if (f1fact) {
+    f1fact.value = (filterType === 'factura') ? term.trim() : '';
+  }
+  if (f1main) f1main.value = term.trim(); // keep legacy
+  try { renderM1(); } catch(e) {}
 
   // M2: set OC / proveedor / factura search
   const f2 = document.getElementById('f2search');
@@ -3497,6 +3553,92 @@ function updateProcessBtn() {
 // ═══════════════════════════════════════════════════════════════
 // DATA PROCESSING
 // ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// FILTRO GLOBAL DE PROYECTO
+// ═══════════════════════════════════════════════════════════════
+
+function buildProjectFilterUI() {
+  const projSet = new Set();
+  (state.df2rec || []).forEach(r => {
+    if (r.proyecto && r.proyecto !== '—' && r.proyecto.trim()) projSet.add(r.proyecto.trim());
+  });
+  const projects = [...projSet].sort();
+
+  const bar = document.getElementById('project-filter-bar');
+  const sel  = document.getElementById('proj-select');
+  if (!bar) return;
+
+  if (!projects.length) { bar.style.display = 'none'; return; }
+  bar.style.display = 'block';
+
+  // Rebuild select options preserving current selection
+  if (sel) {
+    const cur = state.activeProject;
+    sel.innerHTML = '<option value="__ALL__">🌐 Todos los proyectos</option>';
+    projects.forEach(p => {
+      const o = document.createElement('option');
+      o.value = p; o.textContent = '🗂 ' + p;
+      if (p === cur) o.selected = true;
+      sel.appendChild(o);
+    });
+    if (cur === '__ALL__') sel.value = '__ALL__';
+    // Highlight select when a project is active
+    const active = state.activeProject !== '__ALL__';
+    sel.style.borderColor = active ? '#059669'          : 'var(--col-border)';
+    sel.style.background  = active ? '#f0fdf4'          : 'white';
+    sel.style.color       = active ? '#059669'          : 'var(--col-text)';
+    sel.style.fontWeight  = active ? '700'              : 'normal';
+  }
+
+  // Info text
+  const infoEl = document.getElementById('proj-filter-info');
+  if (infoEl) {
+    if (state.activeProject === '__ALL__') {
+      infoEl.textContent = projects.length + ' proyecto(s) disponibles';
+      infoEl.style.color = 'var(--col-muted)';
+      infoEl.style.fontWeight = 'normal';
+    } else {
+      const cnt = (state.df2rec||[]).filter(r => r.proyecto === state.activeProject).length;
+      infoEl.textContent = '✅ ' + state.activeProject + ' — ' + cnt + ' recepciones';
+      infoEl.style.color = '#059669';
+      infoEl.style.fontWeight = '600';
+    }
+  }
+}
+
+function setProjectFilter(proj) {
+  state.activeProject = proj;
+  buildProjectFilterUI();
+  // Re-render all active modules
+  if (!state.processed) return;
+  try { renderAll(); } catch(e) { console.warn('setProjectFilter renderAll:', e); }
+}
+
+// Filter helper — returns true if a m1data row passes the active project filter
+function passesProjectFilter(r) {
+  if (state.activeProject === '__ALL__') return true;
+  // Check if any recepcion for this OC belongs to the active project
+  const proj = state.activeProject;
+  const poNorm = normalStr(r.po || '');
+  return (state.df2rec || []).some(r2 =>
+    r2.proyecto === proj && (normalStr(r2.oc) === poNorm)
+  );
+}
+
+function passesProjectFilterRec(r2) {
+  if (state.activeProject === '__ALL__') return true;
+  return r2.proyecto === state.activeProject;
+}
+
+function passesProjectFilterGeneric(r) {
+  if (state.activeProject === '__ALL__') return true;
+  // For m3/m4 data (no direct project link) — filter by OC match in df2rec
+  const poNorm = normalStr(r.po || '');
+  return (state.df2rec || []).some(r2 =>
+    r2.proyecto === state.activeProject && (normalStr(r2.oc) === poNorm)
+  );
+}
+
 function processData() {
   const overlay = document.getElementById('loadingOverlay');
   const mainTxt = document.getElementById('loadingText');
@@ -4132,6 +4274,23 @@ function buildModules() {
   }
   fillSel('f1year', years1, true);  fillSel('f1month', months1, false);
   fillSel('f4year', years1, true);  fillSel('f4month', months1, false);
+
+  // Poblar select de Proyecto en M1 (f1proyecto)
+  (function() {
+    const sel = document.getElementById('f1proyecto');
+    if (!sel) return;
+    const projSet = new Set();
+    (state.df2rec || []).forEach(r => {
+      if (r.proyecto && r.proyecto !== '—' && r.proyecto.trim()) projSet.add(r.proyecto.trim());
+    });
+    const projs = [...projSet].sort();
+    sel.innerHTML = '<option value="">🗂 Todos los proyectos</option>';
+    projs.forEach(p => {
+      const o = document.createElement('option');
+      o.value = p; o.textContent = p;
+      sel.appendChild(o);
+    });
+  })();
   fillSel('f1sw_year', years1, true); fillSel('f1sw_month', months1, false);
   fillSel('f2year', years2, true);  fillSel('f2month', months2, false);
   fillSel('f2sw_year', years2, true); fillSel('f2sw_month', months2, false);
@@ -4142,6 +4301,7 @@ function buildModules() {
 // RENDER FUNCTIONS
 // ═══════════════════════════════════════════════════════════════
 function renderAll() {
+  try { buildProjectFilterUI(); } catch(e) { console.warn('projFilterUI error:', e); }
   try { renderM0(); } catch(e) { console.warn('renderM0 error:', e); }
   try { renderM1(); } catch(e) { console.warn('renderM1 error:', e); }
   try { renderM2(); } catch(e) { console.warn('renderM2 error:', e); }
@@ -4603,15 +4763,27 @@ function renderM0RecTable() {
 
 // ── MODULE 1 ──────────────────────────────────────────────────
 function renderM1() {
-  const search = normalStr(document.getElementById('f1search').value);
+  // Nuevos campos de búsqueda (v1.8)
+  const searchOC      = normalStr((document.getElementById('f1oc')?.value      || document.getElementById('f1search')?.value || ''));
+  const searchFact    = normalStr(document.getElementById('f1factura')?.value   || '');
+  const filterProyM1  = (document.getElementById('f1proyecto')?.value           || '');
   const estado = document.getElementById('f1estado').value;
   const year1  = document.getElementById('f1year')?.value  || '';
   const month1 = document.getElementById('f1month')?.value || '';
   let data = state.m1data.filter(r => {
+    // Filtro de proyecto global (del panel carga) tiene prioridad; luego el select local
+    if (state.activeProject !== '__ALL__' && !passesProjectFilter(r)) return false;
+    if (filterProyM1 && state.activeProject === '__ALL__') {
+      // local project select: match by OC in df2rec
+      const poNorm = normalStr(r.po||'');
+      const ok = (state.df2rec||[]).some(r2 => r2.proyecto === filterProyM1 && normalStr(r2.oc) === poNorm);
+      if (!ok) return false;
+    }
     if (estado  && r.recStatus !== estado)                  return false;
     if (year1   && String(r.year) !== String(year1))        return false;
     if (month1  && normalStr(r.month) !== month1)           return false;
-    if (search) { const hay = normalStr(r.inv+' '+r.po+' '+r.prov+' '+r.recNums); if (!hay.includes(search)) return false; }
+    if (searchOC   ) { if (!normalStr(r.po  ||'').includes(searchOC))  return false; }
+    if (searchFact ) { if (!normalStr(r.inv ||'').includes(searchFact)) return false; }
     return true;
   });
   const total = data.length;
@@ -4719,6 +4891,113 @@ function renderM1() {
     </tr>`;
   };
   _renderTablePaged('tbody1', 'cnt1table', data, rowFn1, 13);
+  // If individual view is active, also render it
+  if (window._m1Vista === 'individual') renderM1Individual(data);
+}
+
+// ── MÓDULO 1: Vista Individual (desagregada por N° recepción) ──
+let _m1VistaDefault = 'acumulado';
+window._m1Vista = 'acumulado'; // default: acumulado
+
+function setM1Vista(vista) {
+  window._m1Vista = vista;
+  const btnAcum = document.getElementById('btn-m1-acum');
+  const btnInd  = document.getElementById('btn-m1-ind');
+  const tblAcum = document.getElementById('tbl-m1-acum');
+  const tblInd  = document.getElementById('tbl-m1-ind');
+  const title   = document.getElementById('m1-table-title');
+  if (!btnAcum || !btnInd) return;
+  if (vista === 'individual') {
+    btnAcum.style.background = 'white'; btnAcum.style.color = 'var(--col-muted)';
+    btnInd.style.background  = '#059669'; btnInd.style.color  = 'white';
+    if (tblAcum) tblAcum.style.display = 'none';
+    if (tblInd)  tblInd.style.display  = '';
+    if (title)   title.textContent = 'Recepciones Individuales (desagregado)';
+  } else {
+    btnAcum.style.background = '#0f2544'; btnAcum.style.color = '#4ade80';
+    btnInd.style.background  = 'white';   btnInd.style.color  = 'var(--col-muted)';
+    if (tblAcum) tblAcum.style.display = '';
+    if (tblInd)  tblInd.style.display  = 'none';
+    if (title)   title.textContent = 'Facturas en Seguimiento';
+  }
+  // Re-render after switching
+  try { renderM1(); } catch(e) {}
+}
+
+function renderM1Individual(filteredData) {
+  const tbodyInd = document.getElementById('tbody1-ind');
+  if (!tbodyInd) return;
+
+  // Expand each factura row into one row per recepción Oracle
+  const rows = [];
+  filteredData.forEach(r => {
+    const recNums = r.recNums ? r.recNums.split(',').map(s => s.trim()).filter(Boolean) : [];
+    if (!recNums.length) {
+      // Sin recepciones → una fila
+      rows.push({ ...r, _singleRec: '—', _singleVal: null, _isExpanded: false });
+    } else {
+      // Intentar buscar valores individuales desde df2rec (M2)
+      const recValues = {};
+      if (state.df2rec && state.df2rec.length) {
+        state.df2rec.forEach(rec2 => {
+          const rnum = String(rec2.rec || '').trim();
+          const roc  = normalStr(rec2.oc || '');
+          if (recNums.includes(rnum) || roc === normalStr(r.po || '')) {
+            if (!recValues[rnum]) recValues[rnum] = 0;
+            recValues[rnum] += rec2.valRec || 0;
+          }
+        });
+      }
+      recNums.forEach((rn, idx) => {
+        const indVal = recValues[rn] || null;
+        rows.push({ ...r, _singleRec: rn, _singleVal: indVal, _isExpanded: recNums.length > 1, _recIdx: idx, _recTotal: recNums.length });
+      });
+    }
+  });
+
+  if (!rows.length) { tbodyInd.innerHTML = emptyRow(13); return; }
+
+  document.getElementById('cnt1table').textContent = rows.length + ' filas (individual)';
+
+  const rowFnInd = r => {
+    const badgeRec = r.recStatus==='recepcionado' ? '<span class="badge badge-success">✅ Recepcionado</span>'
+      : r.recStatus==='parcial' ? '<span class="badge badge-warning">⚠️ Parcial</span>'
+      : '<span class="badge badge-danger">❌ Sin Recepción</span>';
+    // For individual: diff = recVal - valSinIva only on first sub-row; others show individual val vs portion
+    const showVal  = r._singleVal != null ? fmtCurrency(r._singleVal) : '—';
+    let diffStr = '—';
+    if (r._recTotal === 1 && r._singleVal != null) {
+      const d = r._singleVal - r.valSinIva;
+      diffStr = `<div class="val-diff ${Math.abs(d)<r.valSinIva*0.05?'ok':'err'}">${d>=0?'+':''}${fmtCurrency(d)}</div>`;
+    } else if (r._singleVal != null && r.valSinIva && r._recTotal > 1) {
+      const portion = r.valSinIva / r._recTotal;
+      const d = r._singleVal - portion;
+      diffStr = `<div class="val-diff ${Math.abs(d)<portion*0.1?'ok':'err'}" title="vs porción estimada ${fmtCurrency(portion)}">${d>=0?'+':''}${fmtCurrency(d)}</div>`;
+    }
+    const recLabel = r._isExpanded
+      ? `<span class="td-mono" style="background:#f0f9ff;border-radius:4px;padding:2px 6px;font-size:10.5px;border:1px solid #bae6fd">${r._singleRec}</span>`
+      : `<span class="td-mono">${r._singleRec}</span>`;
+    const rowStyle = r._recIdx > 0 ? ' style="background:#fafbff"' : '';
+    // Only show factura data on first sub-row to make grouping visually clear
+    const isFirst = !r._isExpanded || r._recIdx === 0;
+    return `<tr${rowStyle}>
+      <td>${isFirst ? badgeRec : ''}</td>
+      <td>${isFirst ? (r.year||'—') : ''}</td>
+      <td>${isFirst ? (r.month||'—') : ''}</td>
+      <td class="td-mono">${isFirst ? (r.po||'—') : ''}</td>
+      <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${isFirst ? (r.prov||'—') : '↳'}</td>
+      <td class="td-mono">${isFirst ? (r.inv||'—') : ''}</td>
+      <td class="td-mono">${isFirst ? (r.rec||'—') : ''}</td>
+      <td>${recLabel}</td>
+      <td class="currency">${isFirst ? fmtCurrency(r.valSinIva) : ''}</td>
+      <td class="currency">${showVal}</td>
+      <td class="currency">${diffStr}</td>
+      <td>${r.recDate||'—'}</td>
+      <td style="font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis" title="${r.recBy||''}">${r.recBy||'—'}</td>
+    </tr>`;
+  };
+
+  tbodyInd.innerHTML = rows.map(rowFnInd).join('');
 }
 
 // ── MODULE 2: Recepciones Oracle (A2) ─────────────────────────
@@ -4736,6 +5015,7 @@ function renderM2() {
   }
 
   let data = state.df2rec.filter(r => {
+    if (!passesProjectFilterRec(r))                        return false;
     if (estado   && r.estadoLinea !== estado)              return false;
     if (year2    && r._yr !== year2)                       return false;
     if (month2   && r._mo !== month2)                      return false;
@@ -4800,7 +5080,13 @@ function renderM3() {
     return;
   }
 
+  // Project filter for M3: match by factura against m1data (which has po) 
+  const _m3ProjFilter = state.activeProject !== '__ALL__';
+  const _m3ValidInvs = _m3ProjFilter
+    ? new Set(state.m1data.filter(r => passesProjectFilter(r)).map(r => normalStr(r.inv)))
+    : null;
   let data = state.df3cxp.filter(r => {
+    if (_m3ProjFilter && _m3ValidInvs && !_m3ValidInvs.has(normalStr(r.factura||''))) return false;
     if (estado && r.estado !== estado)          return false;
     if (year3  && r._yr  !== year3)             return false;
     if (month3 && r._mo  !== month3)            return false;
@@ -4865,6 +5151,7 @@ function renderM4() {
   const year4 = document.getElementById('f4year')?.value || '';
   const month4 = document.getElementById('f4month')?.value || '';
   let data = state.m4data.filter(r => {
+    if (!passesProjectFilter(r))               return false;
     if (brecha && r.flujo !== brecha) return false;
     if (year4 && String(r.year) !== String(year4)) return false;
     if (month4 && normalStr(r.month) !== month4) return false;
@@ -5060,9 +5347,11 @@ function doQuickSearch() {
     if (seenInv.has(r.inv)) return false; seenInv.add(r.inv); return true;
   }).slice(0, 30);
 
+  // FIX v1.8: deduplicar por OC+Proveedor (una OC puede tener múltiples proveedores)
   const seenOC = new Set();
   const cycleRowsOC = matchedOCRows.filter(r => {
-    if (seenOC.has(r.po)) return false; seenOC.add(r.po); return true;
+    const key = (r.po||'') + '|||' + (r.prov||'');
+    if (seenOC.has(key)) return false; seenOC.add(key); return true;
   }).slice(0, 30);
 
   const uniqueProvs = [...matchedProvNames].slice(0, 10);
@@ -5779,7 +6068,7 @@ function renderM5Pdf() {
     <div style="text-align:right">
       <div style="font-size:10px;opacity:.6">${currentUser||'Usuario'}</div>
       <div style="font-size:10px;opacity:.6;margin-top:2px">${fechaHoy}</div>
-      <div style="font-size:9px;opacity:.4;margin-top:2px">Cash Call v1.7</div>
+      <div style="font-size:9px;opacity:.4;margin-top:2px">Cash Call v1.8</div>
     </div>
   </div>
 
@@ -5816,7 +6105,7 @@ function renderM5Pdf() {
   </div>
 
   <div style="padding:10px 18px;background:#f8fafc;font-size:8.5px;color:#94a3b8;display:flex;justify-content:space-between">
-    <span>Cash Call v1.7 · Ficha Proveedor · ${provName}</span>
+    <span>Cash Call v1.8 · Ficha Proveedor · ${provName}</span>
     <span>Generado: ${new Date().toLocaleString('es-CO')}</span>
   </div>
   <button class="btn-p noprint" onclick="window.print()">🖨 Imprimir / Guardar como PDF</button>
@@ -5946,7 +6235,7 @@ function exportBreachasPDF() {
     <div style="text-align:right">
       <div style="font-size:11px;opacity:0.7">Generado por: ${currentUser||'Usuario'}</div>
       <div style="font-size:11px;opacity:0.7;margin-top:2px">${fechaHoy}</div>
-      <div style="font-size:10px;opacity:0.5;margin-top:2px;font-family:monospace">v1.7 · Cash Call Platform</div>
+      <div style="font-size:10px;opacity:0.5;margin-top:2px;font-family:monospace">v1.8 · Cash Call Platform</div>
     </div>
   </div>
 
@@ -6031,7 +6320,7 @@ function exportBreachasPDF() {
   </div>
 
   <div style="padding:16px 32px;background:#f8fafc;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center">
-    <div style="font-size:9px;color:#94a3b8">Cash Call v1.7 · Secretaría Distrital de Seguridad, Convivencia y Justicia · Dirección de Bienes</div>
+    <div style="font-size:9px;color:#94a3b8">Cash Call v1.8 · Secretaría Distrital de Seguridad, Convivencia y Justicia · Dirección de Bienes</div>
     <div style="font-size:9px;color:#94a3b8">Generado: ${new Date().toLocaleString('es-CO')}</div>
   </div>
 </div>
@@ -6407,7 +6696,7 @@ function exportCashCallJSON() {
   const filename = `CashCall_${fecha}.json`;
   const payload = {
     meta: {
-      app: 'Cash Call v1.7',
+      app: 'Cash Call v1.8',
       exportedBy: currentUser || '—',
       exportedAt: new Date().toISOString(),
       filename,
