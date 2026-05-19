@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⛏ Cash Call v1.8 — Control Financiero Minero</title>
+<title>⛏ Cash Call v2.0 — Control Financiero Minero</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -726,6 +726,120 @@
   .audit-type-import { background: #fef3c7; color: #d97706; }
   .audit-timeline-dot.import { background: #fef3c7; border-color: #d97706; }
   .audit-timeline-connector { width: 2px; background: var(--col-border); margin: 0 15px; flex-shrink: 0; min-height: 20px; }
+
+  /* ── C-DZP-21-000-A MODULE ─────────────────── */
+  .dzp-header-banner {
+    background: linear-gradient(135deg, #0f2544 0%, #1a4a8a 60%, #7c3aed 100%);
+    border-radius: 14px; padding: 20px 26px; margin-bottom: 20px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;
+    box-shadow: 0 4px 20px rgba(124,58,237,0.25);
+  }
+  .dzp-banner-left { display: flex; align-items: center; gap: 16px; }
+  .dzp-banner-icon { font-size: 36px; }
+  .dzp-banner-title { font-size: 20px; font-weight: 800; color: white; letter-spacing: -0.3px; line-height: 1.2; }
+  .dzp-banner-sub { font-size: 11.5px; color: rgba(255,255,255,0.65); margin-top: 3px; }
+  .dzp-banner-badges { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .dzp-badge-pill {
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 20px; padding: 5px 14px; font-size: 11px; font-weight: 700; color: white;
+    font-family: 'IBM Plex Mono', monospace; white-space: nowrap;
+  }
+  .dzp-badge-pill.green { background: rgba(5,150,105,0.3); border-color: #34d399; color: #6ee7b7; }
+  .dzp-badge-pill.purple { background: rgba(124,58,237,0.4); border-color: #a78bfa; color: #ddd6fe; }
+
+  /* KPI row excel-style */
+  .dzp-kpi-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 16px;
+  }
+  @media(max-width:900px){ .dzp-kpi-grid { grid-template-columns: repeat(3,1fr); } }
+  .dzp-kpi {
+    background: var(--col-surface); border-radius: 10px; border: 1px solid var(--col-border);
+    padding: 13px 15px; border-top: 4px solid var(--col-border); position: relative;
+    transition: box-shadow 0.15s;
+  }
+  .dzp-kpi:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+  .dzp-kpi-label { font-size: 9.5px; font-weight: 700; color: var(--col-muted); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 5px; }
+  .dzp-kpi-val { font-size: 24px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; color: var(--col-primary); line-height: 1.1; }
+  .dzp-kpi-sub { font-size: 10px; color: var(--col-muted); margin-top: 4px; }
+  .dzp-kpi.t-success { border-top-color: var(--col-success); }
+  .dzp-kpi.t-warning { border-top-color: var(--col-warning); }
+  .dzp-kpi.t-danger  { border-top-color: var(--col-danger);  }
+  .dzp-kpi.t-info    { border-top-color: var(--col-info);    }
+  .dzp-kpi.t-purple  { border-top-color: #7c3aed; }
+  .dzp-kpi-pct-bar { height: 4px; background: #e2e8f0; border-radius: 4px; margin-top: 8px; overflow: hidden; }
+  .dzp-kpi-pct-fill { height: 100%; border-radius: 4px; }
+
+  /* Filtro row */
+  .dzp-filter-row {
+    background: var(--col-surface); border-radius: 10px; border: 1px solid var(--col-border);
+    padding: 10px 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px;
+  }
+  .dzp-filter-row input, .dzp-filter-row select {
+    border: 1px solid var(--col-border); border-radius: 7px;
+    padding: 6px 10px; font-size: 12.5px; color: var(--col-text); background: var(--col-bg);
+    outline: none; transition: border 0.15s; font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .dzp-filter-row input:focus, .dzp-filter-row select:focus { border-color: #7c3aed; }
+  .dzp-filter-row input { min-width: 210px; }
+
+  /* Excel-like master table */
+  .dzp-table-wrap { background: var(--col-surface); border-radius: 10px; border: 1px solid var(--col-border); overflow: hidden; }
+  .dzp-table-header {
+    padding: 10px 14px; background: linear-gradient(90deg,#0f2544,#1a4a8a);
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .dzp-table-title { font-size: 12.5px; font-weight: 700; color: white; }
+  .dzp-table-count { font-size: 11px; color: rgba(255,255,255,0.65); font-family: 'IBM Plex Mono', monospace; }
+  .dzp-table-scroll { overflow-x: auto; max-height: 520px; overflow-y: auto; }
+  .dzp-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .dzp-table thead th {
+    background: #1e3a5f; padding: 9px 10px; text-align: left;
+    font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.8);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid rgba(255,255,255,0.1); position: sticky; top: 0; z-index: 1;
+    white-space: nowrap;
+  }
+  .dzp-table tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.1s; }
+  .dzp-table tbody tr:nth-child(even) { background: #fafbfc; }
+  .dzp-table tbody tr:hover { background: #eff6ff; }
+  .dzp-table tbody td { padding: 9px 10px; vertical-align: middle; }
+
+  /* Compliance meter */
+  .dzp-comply-wrap { display: flex; align-items: center; gap: 8px; }
+  .dzp-comply-bar { flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; min-width: 60px; }
+  .dzp-comply-fill { height: 100%; border-radius: 4px; }
+  .dzp-comply-pct { font-size: 11px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; white-space: nowrap; }
+
+  /* Summary row at bottom */
+  .dzp-summary-footer {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 10px;
+    margin-top: 14px; padding: 14px; background: linear-gradient(135deg,#f8fafc,#eff6ff);
+    border-radius: 10px; border: 1px solid var(--col-border);
+  }
+  .dzp-sum-item { text-align: center; }
+  .dzp-sum-label { font-size: 9.5px; font-weight: 700; color: var(--col-muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px; }
+  .dzp-sum-val { font-size: 16px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; color: var(--col-primary); }
+  .dzp-sum-val.green { color: var(--col-success); }
+  .dzp-sum-val.orange { color: var(--col-warning); }
+  .dzp-sum-val.red { color: var(--col-danger); }
+  .dzp-sum-val.purple { color: #7c3aed; }
+
+  /* No data state */
+  .dzp-no-data {
+    text-align: center; padding: 60px 20px; color: var(--col-muted);
+    background: var(--col-surface); border-radius: 10px; border: 2px dashed var(--col-border);
+  }
+  .dzp-no-data .dzp-nd-icon { font-size: 52px; margin-bottom: 14px; }
+  .dzp-no-data h3 { font-size: 15px; color: var(--col-primary); margin-bottom: 8px; }
+  .dzp-no-data p { font-size: 12.5px; line-height: 1.6; }
+
+  .dzp-search-no-match {
+    background: #fff7ed; border: 1.5px solid #fdba74; border-radius: 10px;
+    padding: 22px 24px; text-align: center; margin-top: 6px;
+  }
+  .dzp-search-no-match h4 { color: #c2410c; font-size: 14px; margin-bottom: 6px; }
+  .dzp-search-no-match p { color: #92400e; font-size: 12.5px; }
+
 </style>
 </head>
 <body>
@@ -758,7 +872,7 @@
   <!-- Pickaxe head right -->
   <path d="M20 14 L15 10 L22 13 Z" fill="white" opacity="0.75"/>
 </svg>Cash<span class="login-logo-dot"></span><span>Call</span></div>
-    <div class="login-version">v1.8 · Control Financiero</div>
+    <div class="login-version">v2.0 · Control Financiero</div>
     <div class="login-field">
       <label>Usuario</label>
       <input type="text" id="loginUser" placeholder="usuario.nombre" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
@@ -784,7 +898,7 @@
   <div class="subwin" style="max-width:600px">
     <div class="subwin-header">
       <span style="font-size:16px">⌨️</span>
-      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v1.8</span>
+      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v2.0</span>
       <button class="subwin-close" onclick="closeSubwin('sw-ctrlm')">✕</button>
     </div>
     <div class="subwin-body" id="sw-ctrlm-body" style="padding:24px">
@@ -911,7 +1025,7 @@
         </span>
         <span style="font-size:10px;opacity:0.6">✕</span>
       </span>
-      <div class="header-badge" id="headerBadge">v1.8</div>
+      <div class="header-badge" id="headerBadge">v2.0</div>
     </div>
   </div>
 </header>
@@ -938,37 +1052,42 @@
         <span class="nav-label">Búsqueda Rápida<span class="nav-sub">Factura · OC · Proveedor</span></span>
         <span class="nav-badge" style="background:var(--col-accent);color:var(--col-primary)">NEW</span>
       </div>
-      <div class="nav-item" data-tab="modulo0" onclick="switchTab('modulo0')">
+      <div class="nav-item" data-tab="dzp" onclick="switchTab('dzp')">
+        <span class="nav-icon">🏗️</span>
+        <span class="nav-label">C-DZP-21-000-A<span class="nav-sub">Tablero de Control</span></span>
+        <span class="nav-badge" style="background:#7c3aed;color:white" id="cntDZP">—</span>
+      </div>
+      <div class="nav-item" data-tab="modulo0" id="nav-modulo0" onclick="switchTab('modulo0')" style="display:none">
         <span class="nav-icon">📊</span>
         <span class="nav-label">Módulo 0<span class="nav-sub">Vista Gerencial</span></span>
         <span class="nav-badge" id="cnt0">—</span>
       </div>
-      <div class="nav-item" data-tab="modulo1" id="nav-modulo1" onclick="switchTab('modulo1')">
+      <div class="nav-item" data-tab="modulo1" id="nav-modulo1" onclick="switchTab('modulo1')" style="display:none">
         <span class="nav-icon">📋</span>
         <span class="nav-label">Módulo 1<span class="nav-sub">Facturas</span></span>
         <span class="nav-badge" id="cnt1">0</span>
       </div>
-      <div class="nav-item" data-tab="modulo2" id="nav-modulo2" onclick="switchTab('modulo2')">
+      <div class="nav-item" data-tab="modulo2" id="nav-modulo2" onclick="switchTab('modulo2')" style="display:none">
         <span class="nav-icon">🔄</span>
         <span class="nav-label">Módulo 2<span class="nav-sub">Recepciones Oracle</span></span>
         <span class="nav-badge" id="cnt2">0</span>
       </div>
-      <div class="nav-item" data-tab="modulo3" id="nav-modulo3" onclick="switchTab('modulo3')">
+      <div class="nav-item" data-tab="modulo3" id="nav-modulo3" onclick="switchTab('modulo3')" style="display:none">
         <span class="nav-icon">💰</span>
         <span class="nav-label">Módulo 3<span class="nav-sub">Cuentas por Pagar</span></span>
         <span class="nav-badge" id="cnt3">0</span>
       </div>
-      <div class="nav-item" data-tab="modulo4" id="nav-modulo4" onclick="switchTab('modulo4')">
+      <div class="nav-item" data-tab="modulo4" id="nav-modulo4" onclick="switchTab('modulo4')" style="display:none">
         <span class="nav-icon">🔍</span>
         <span class="nav-label">Módulo 4<span class="nav-sub">Análisis Brechas</span></span>
         <span class="nav-badge" id="cnt4">0</span>
       </div>
-      <div class="nav-item" data-tab="modulo5" id="nav-modulo5" onclick="switchTab('modulo5')">
+      <div class="nav-item" data-tab="modulo5" id="nav-modulo5" onclick="switchTab('modulo5')" style="display:none">
         <span class="nav-icon">🏢</span>
         <span class="nav-label">Módulo 5<span class="nav-sub">Ficha Proveedor</span></span>
         <span class="nav-badge" id="cnt5">0</span>
       </div>
-            <div class="nav-item" data-tab="auditorias" onclick="switchTab('auditorias')">
+            <div class="nav-item" data-tab="auditorias" id="nav-auditorias" onclick="switchTab('auditorias')" style="display:none">
         <span class="nav-icon">🗂️</span>
         <span class="nav-label">Auditorías<span class="nav-sub">Historial de cambios</span></span>
         <span class="nav-badge" id="cntAudit">0</span>
@@ -1074,6 +1193,93 @@
           <div class="qs-icon">🔍</div>
           <div style="font-size:14px;font-weight:600;color:var(--col-primary);margin-bottom:6px">Ingrese un término de búsqueda</div>
           <div style="font-size:12px">Puede buscar por número de factura, OC o nombre de proveedor</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PANEL: C-DZP-21-000-A ══════════════════════════════ -->
+    <div class="panel" id="panel-dzp">
+      <!-- Banner -->
+      <div class="dzp-header-banner">
+        <div class="dzp-banner-left">
+          <div class="dzp-banner-icon">🏗️</div>
+          <div>
+            <div class="dzp-banner-title">C-DZP-21-000-A</div>
+            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo</div>
+          </div>
+        </div>
+        <div class="dzp-banner-badges">
+          <span class="dzp-badge-pill green" id="dzp-badge-act">— Actas</span>
+          <span class="dzp-badge-pill" id="dzp-badge-rec">— REC</span>
+          <span class="dzp-badge-pill" id="dzp-badge-fac">— Facturas</span>
+          <span class="dzp-badge-pill purple" id="dzp-badge-comply">—% Cumpl.</span>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="dzp-kpi-grid" id="dzp-kpi-grid">
+        <div class="dzp-kpi t-info">
+          <div class="dzp-kpi-label">Actas Gestionadas</div>
+          <div class="dzp-kpi-val" id="dzp-k-actas">—</div>
+          <div class="dzp-kpi-pct-bar"><div class="dzp-kpi-pct-fill" id="dzp-k-actas-bar" style="background:var(--col-info);width:0%"></div></div>
+        </div>
+        <div class="dzp-kpi t-success">
+          <div class="dzp-kpi-label">Con Recepción Oracle</div>
+          <div class="dzp-kpi-val" id="dzp-k-rec">—</div>
+          <div class="dzp-kpi-sub" id="dzp-k-rec-pct">—</div>
+          <div class="dzp-kpi-pct-bar"><div class="dzp-kpi-pct-fill" id="dzp-k-rec-bar" style="background:var(--col-success);width:0%"></div></div>
+        </div>
+        <div class="dzp-kpi t-warning">
+          <div class="dzp-kpi-label">Con Factura</div>
+          <div class="dzp-kpi-val" id="dzp-k-fac">—</div>
+          <div class="dzp-kpi-sub" id="dzp-k-fac-pct">—</div>
+          <div class="dzp-kpi-pct-bar"><div class="dzp-kpi-pct-fill" id="dzp-k-fac-bar" style="background:var(--col-warning);width:0%"></div></div>
+        </div>
+        <div class="dzp-kpi t-purple">
+          <div class="dzp-kpi-label">% Cumplimiento</div>
+          <div class="dzp-kpi-val" id="dzp-k-comply">—</div>
+          <div class="dzp-kpi-pct-bar"><div class="dzp-kpi-pct-fill" id="dzp-k-comply-bar" style="background:#7c3aed;width:0%"></div></div>
+        </div>
+        <div class="dzp-kpi t-danger">
+          <div class="dzp-kpi-label">Revisiones / Alertas</div>
+          <div class="dzp-kpi-val" id="dzp-k-revisar">—</div>
+          <div class="dzp-kpi-sub">Requieren atención</div>
+        </div>
+      </div>
+
+      <!-- Filtros -->
+      <div class="dzp-filter-row">
+        <span class="filter-label">🔍</span>
+        <input type="text" id="dzp-search" placeholder="OC, factura, proveedor, N° REC…" oninput="renderDZP()" autocomplete="off">
+        <span class="filter-label">AÑO</span>
+        <select id="dzp-year" onchange="renderDZP()"><option value="">Todos</option></select>
+        <span class="filter-label">MES</span>
+        <select id="dzp-month" onchange="renderDZP()">
+          <option value="">Todos</option>
+          <option>Enero</option><option>Febrero</option><option>Marzo</option>
+          <option>Abril</option><option>Mayo</option><option>Junio</option>
+          <option>Julio</option><option>Agosto</option><option>Septiembre</option>
+          <option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
+        </select>
+        <span class="filter-label">ESTADO</span>
+        <select id="dzp-estado" onchange="renderDZP()">
+          <option value="">Todos</option>
+          <option value="pagado">✅ Pagado</option>
+          <option value="aprobado">⏳ Aprobado</option>
+          <option value="revisar">⚠️ Revisar</option>
+          <option value="sin_rec">❌ Sin Recepción</option>
+        </select>
+        <button class="btn btn-sm btn-outline" onclick="document.getElementById('dzp-search').value='';document.getElementById('dzp-year').value='';document.getElementById('dzp-month').value='';document.getElementById('dzp-estado').value='';renderDZP()">↺ Limpiar</button>
+        <div style="flex:1"></div>
+        <button class="btn btn-sm btn-outline" onclick="exportDZPxls()" title="Exportar tabla a Excel">📥 Excel</button>
+      </div>
+
+      <!-- Result area -->
+      <div id="dzp-content">
+        <div class="dzp-no-data">
+          <div class="dzp-nd-icon">🏗️</div>
+          <h3>Módulo C-DZP-21-000-A</h3>
+          <p>Procese los archivos Excel en <strong>Carga de Archivos</strong> para visualizar el tablero<br>de control exclusivo del proyecto <strong>C-DZP-21-000-A</strong>.</p>
         </div>
       </div>
     </div>
@@ -1543,8 +1749,8 @@ const USERS = {
 };
 let currentUser = null;
 
-// Tracks which modules user has activated via Ctrl+M (all active by default)
-const activatedModules = new Set(['modulo0','modulo1','modulo2','modulo3','modulo4','modulo5','busqueda']);
+// Módulos ocultos por defecto — se activan con triple X
+const activatedModules = new Set(['busqueda','dzp']); // solo búsqueda rápida y DZP visibles
 
 function doLogin() {
   const u = (document.getElementById('loginUser').value || '').trim().toUpperCase();
@@ -2118,14 +2324,27 @@ function exportPDFReport() {
   else { alert('Permita ventanas emergentes para exportar el PDF.'); }
 }
 
-// ─── Ctrl+M: open module activation modal ───────────────────
-document.addEventListener('keydown', e => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 'm') {
-    e.preventDefault();
-    if (!currentUser) { alert('Debe iniciar sesión primero para usar este acceso.'); return; }
-    openCtrlMPanel();
-  }
-});
+// ─── Triple X: abrir panel de activación de módulos ─────────
+(function() {
+  let _xCount = 0, _xTimer = null;
+  document.addEventListener('keydown', e => {
+    if (e.key === 'x' || e.key === 'X') {
+      _xCount++;
+      if (_xTimer) clearTimeout(_xTimer);
+      if (_xCount >= 3) {
+        _xCount = 0;
+        e.preventDefault();
+        if (!currentUser) { showToast('Inicia sesión primero', 'warn'); return; }
+        openCtrlMPanel();
+      } else {
+        _xTimer = setTimeout(() => { _xCount = 0; }, 600);
+      }
+    } else {
+      _xCount = 0;
+      if (_xTimer) { clearTimeout(_xTimer); _xTimer = null; }
+    }
+  });
+})();
 
 function openCtrlMPanel() {
   if (!currentUser) { showToast('Inicia sesión primero', 'warn'); return; }
@@ -2146,7 +2365,7 @@ function openCtrlMPanel() {
     { id:'modulo3', icon:'💰', title:'Módulo 3', sub:'Pagos a Proveedores', alwaysOn:false, cnt: m3len },
     { id:'modulo4', icon:'🔍', title:'Módulo 4', sub:'Análisis de Brechas', alwaysOn:false, cnt: m4len },
     { id:'modulo5', icon:'🏢', title:'Módulo 5', sub:'Ficha Proveedor', alwaysOn:false, cnt: state.m1data ? [...new Set(state.m1data.map(r=>r.prov).filter(Boolean))].length : 0 },
-
+    { id:'auditorias', icon:'🗂️', title:'Auditorías', sub:'Historial de cambios', alwaysOn:false, cnt: 0 },
   ];
 
   document.getElementById('ctrlm-modules').innerHTML = modules.map(m => {
@@ -3763,7 +3982,9 @@ function parseFiles() {
     // debug suprimido
     const A1_KNOWN_COLS = [
       'invoice number', 'supplier name', 'year', 'month', 'num month', 'nuevapo', 'po',
-      'vaule without iva', 'value without iva', 'invoice date', 'due date',
+      'vaule without iva', 'value without iva', 'iva (vat)', 'vat', 'invoice value', 'valor acta sin iva', 'valor acta con iva',
+      'valor rec', 'validacion', 'estado de la factura', 'valor de la factura', 'fecha de la factura',
+      'contract', 'invoice date', 'due date',
       'payment date', 'observations', 'nit', 'contract', 'status', 'currency', 'rec', 'wbs', 'afe'
     ];
     let hdr = -1;
@@ -3804,11 +4025,18 @@ function parseFiles() {
     }
     if (hdr === -1) hdr = 0;
     // debug removed
-    const headers = (raw[hdr] || []).map(h => h != null ? String(h).trim() : '');
+    // Build headers — deduplicate duplicates by appending _2, _3 etc.
+    const rawHeaders = (raw[hdr] || []).map(h => h != null ? String(h).trim() : '');
+    const hdrCount = {};
+    const headers = rawHeaders.map(h => {
+      if (!h) return h;
+      hdrCount[h] = (hdrCount[h] || 0) + 1;
+      return hdrCount[h] === 1 ? h : h + '_' + hdrCount[h];
+    });
     state.df1 = [];
     for (let i = hdr + 1; i < raw.length; i++) {
       const row = raw[i]; if (!row || row.every(c => c == null)) continue;
-      const obj = {}; headers.forEach((h, j) => { if (!h) return; if (obj[h] == null) obj[h] = row[j] != null ? row[j] : null; else if (row[j] != null && obj[h] == null) obj[h] = row[j]; }); state.df1.push(obj);
+      const obj = {}; headers.forEach((h, j) => { if (!h) return; obj[h] = row[j] != null ? row[j] : null; }); state.df1.push(obj);
     }
     // debug removed
   }
@@ -4073,35 +4301,61 @@ function parseAnyDate(v) {
   return (isNaN(d) || d.getFullYear() < 2000 || d.getFullYear() > 2100) ? null : d;
 }
 
+// Mapa de columnas construido UNA vez desde los headers — O(1) lookup por fila
+let _a1ColMap = null;  // { normalizedCandidate -> exactHeaderKey }
+let _dzpDirty = false; // true when DZP needs re-render
+
+function _buildA1ColMap(sampleRow) {
+  _a1ColMap = {};
+  const keys = Object.keys(sampleRow);
+  for (const key of keys) {
+    const nk = normalStr(key);
+    _a1ColMap[nk] = key;              // exact normalized → original key
+    _a1ColMap[key.toLowerCase()] = key; // lowercase → original key
+  }
+}
+
 function getA1Field(row, candidates) {
+  // Build map once from first row
+  if (!_a1ColMap) _buildA1ColMap(row);
   for (const c of candidates) {
-    // Direct key match first (first non-null wins due to df1 build logic)
+    // 1. Direct exact key
     if (row[c] != null && row[c] !== '') return row[c];
-    // Fuzzy match — take first non-null key that contains the candidate string
-    for (const key of Object.keys(row)) {
-      if (key === c) continue; // already checked
-      if (normalStr(key).includes(normalStr(c)) && row[key] != null && row[key] !== '') return row[key];
-    }
+    // 2. Normalized lookup (O(1))
+    const mapped = _a1ColMap[normalStr(c)] || _a1ColMap[c.toLowerCase()];
+    if (mapped && row[mapped] != null && row[mapped] !== '') return row[mapped];
   }
   return null;
 }
 
 function buildModules() {
   const recByOC = {};
+  // recByREC: agrupado por N° Recepción → suma de 'Valor Total' de todas las líneas
+  // recByOC: fallback cuando no hay REC específico en Archivo 1
+  const recByREC = {};  // 'REC_12627' → { total: number, rows: [] }
   state.df2.forEach(r => {
-    // Try all possible OC field name variants (with/without accents)
+    // Índice por OC (fallback)
     const rawOC = r['Número de Documento'] || r['Numero de Documento'] || r['Número de documento'] ||
                   r['numero de documento'] || r['NUMERO DE DOCUMENTO'] || '';
     const oc = normalStr(rawOC);
-    if (!oc) return;
-    if (!recByOC[oc]) recByOC[oc] = [];
-    recByOC[oc].push(r);
-    // Also index by Recepción number for cross-matching
-    const recNum = r['Recepción'] || r['Recepcion'] || r['recepcion'] || '';
-    if (recNum) {
+    if (oc) {
+      if (!recByOC[oc]) recByOC[oc] = [];
+      recByOC[oc].push(r);
+    }
+    // Índice por N° Recepción — clave primaria
+    // Valor REC = 'Valor Recepcionado por Línea' de la PRIMERA línea que coincida
+    const recNum = r['Recepción'] || r['Recepcion'] || r['RECEPCION'] || r['recepcion'] || '';
+    if (recNum && String(recNum).trim()) {
       const recKey = 'REC_' + normalStr(String(recNum));
-      if (!recByOC[recKey]) recByOC[recKey] = [];
-      recByOC[recKey].push(r);
+      if (!recByREC[recKey]) {
+        // Solo guardar la PRIMERA línea encontrada para ese N° Recepción
+        const vt = normalNum(r['Valor Recepcionado por Línea'] || r['Valor Recepcionado por Linea'] || 0);
+        recByREC[recKey] = { total: vt, rows: [r] };
+      } else {
+        recByREC[recKey].rows.push(r); // guardar otras líneas para referencia
+      }
+      if (!recByOC['REC_' + normalStr(String(recNum))]) recByOC['REC_' + normalStr(String(recNum))] = [];
+      recByOC['REC_' + normalStr(String(recNum))].push(r);
     }
   });
   // debug removed
@@ -4119,53 +4373,108 @@ function buildModules() {
 
   state.m1data = []; state.m2data = []; state.m3data = []; state.m4data = [];
   state.df2rec = []; state.df3cxp = [];
+  _a1ColMap = null; // reset column map for fresh file
 
-  state.df1.forEach(row => {
-    const inv = getA1Field(row, ['Invoice Number','Numero Factura','N° Factura']);
-    const po = getA1Field(row, ['PO','NuevaPO','Orden de Compra','Contract']);
-    const prov = getA1Field(row, ['Supplier Name','Proveedor']);
-    const valSinIva = normalNum(getA1Field(row, ['Vaule without IVA','Value without IVA','Valor sin IVA'])) || normalNum(getA1Field(row, ['Invoice Value','Valor Factura']));
-    const invDate = getA1Field(row, ['Invoice Date','Fecha Factura']);
-    const dueDate = getA1Field(row, ['Due Date','Fecha Vencimiento']);
-    const payDate = getA1Field(row, ['PAYMENT DATE','Fecha Pago']);
-    const advance = normalNum(getA1Field(row, ['Advance Payment','Anticipo']));
-    const year = getA1Field(row, ['Year','Año']);
-    const month = getA1Field(row, ['Month','Mes']);
+  state.df1.forEach((row, _rowIdx) => {
+    try {
+    // ── Campos directos del Archivo 1 ──────────────────────────────
+    const inv      = getA1Field(row, ['Invoice Number','Numero Factura','N° Factura']);
+    const po       = getA1Field(row, ['Contract','NuevaPO','PO','Orden de Compra']);  // Contract es la OC
+    const prov     = getA1Field(row, ['Supplier Name','Proveedor']);
+    const valSinIva = normalNum(getA1Field(row, ['Vaule without IVA','Vaule without IVA ','Value without IVA','Valor sin IVA','Valor acta sin IVA']));
+    const valIVA    = normalNum(getA1Field(row, ['IVA (VAT)','VAT','IVA']));
+    // valConIva = Invoice Value del Archivo 1 (valor acta con IVA)
+    const valConIva = normalNum(getA1Field(row, ['Invoice Value','Valor acta con IVA','Valor con IVA']));
+    const rec      = getA1Field(row, ['REC']);  // N° Recepción — clave cruce con Archivo 2
+    const year     = getA1Field(row, ['Year','Año']);
+    const month    = getA1Field(row, ['Month','Mes']);
     const monthNum = getA1Field(row, ['Num Month','NumMonth','Num_Month','MONTH_NUM']) || month;
-    const rec = getA1Field(row, ['REC']);
+    const invDate  = getA1Field(row, ['Invoice Date','Fecha Factura']);
+    const dueDate  = getA1Field(row, ['Due Date','Fecha Vencimiento']);
+    const payDate  = getA1Field(row, ['PAYMENT DATE','Fecha Pago']);
+    const advance  = normalNum(getA1Field(row, ['Advance Payment','Anticipo']));
     const lateDays = normalNum(getA1Field(row, ['LATE PAYMENT']));
-    const a1Status = normalStr(getA1Field(row, ['STATUS','Estado']));
-    const obs = getA1Field(row, ['OBSERVATIONS','Observaciones']);
-    const nit = getA1Field(row, ['Nit','NIT','N° Nit']);
-    const afe = getA1Field(row, ['AFE','afe']);
-    const wbs = getA1Field(row, ['WBS','wbs']);
+    const obs      = getA1Field(row, ['OBSERVATIONS','Observaciones']);
+    const nit      = getA1Field(row, ['Nit','NIT','N° Nit']);
+    const afe      = getA1Field(row, ['AFE','afe']);
+    const wbs      = getA1Field(row, ['WBS','wbs']);
     const currency = getA1Field(row, ['Currency','Moneda']);
+    // Campos fórmula del Archivo 1 (algunos archivos ya traen el cruce calculado)
+    const a1RecVal    = normalNum(getA1Field(row, ['Valor REC','Valor Recepcionado']));
+    const a1Estado    = getA1Field(row, ['Estado de la factura','ESTADO','Estado factura']);
+    const a1ValFac    = getA1Field(row, ['Valor de la factura','Valor Factura CxP','VALOR BRUTO INCLUIDO IVA']);
+    const a1FechaTrans= getA1Field(row, ['Fecha de la factura','Fecha transaccion','FECHA TRANSACCION']);
 
     if (!inv && !po) return;
 
-    // M1 — try OC match first, then REC number match
+    // M1 — cruce por N° Recepción (Archivo 1 col REC) contra Archivo 2 col 'Recepción'
+    // Valor a mostrar: suma de 'Valor Total' de todas las líneas de esa recepción en A2
     const poNorm = normalStr(po);
-    let recRows = recByOC[poNorm] || [];
-    // If no OC match, try matching by REC number (some files link by reception #)
-    if (!recRows.length && rec) {
-      const recKey = 'REC_' + normalStr(String(rec));
-      recRows = recByOC[recKey] || [];
-    }
-    const totalRec = recRows.reduce((s, r) => {
-      const v = normalNum(r['Valor Recepcionado por Línea'] || r['Valor Total'] || r['Valor Unitario']);
-      return s + (v || 0);
-    }, 0);
-    const recNums = [...new Set(recRows.map(r => r['Recepción'] || r['Recepcion'] || '').filter(Boolean))].join(', ');
-    const recDate = recRows.length ? fmtDate(recRows[0]['Fecha de Recepción'] || recRows[0]['Fecha Recepcion']) : '—';
-    const recBy = recRows.length ? (recRows[0]['Recepcionado Por'] || '—') : '—';
-    let recStatus = 'sin_recepcion';
-    if (recRows.length > 0) {
-      if (valSinIva && Math.abs(totalRec - valSinIva) / Math.max(valSinIva, 1) > 0.05) recStatus = 'parcial';
-      else recStatus = 'recepcionado';
-    }
-    state.m1data.push({ inv, po, prov, year, month, monthNum, valSinIva, rec, recRows: recRows.length, recNums, recDate, recBy, totalRec, recStatus, obs, nit, afe, wbs, currency, invDate });
+    const recStr = rec ? String(rec).trim() : '';
+    const recIsValid = recStr && recStr !== 'revisar' && recStr !== '0' && recStr !== '';
+    let recRows = [];
+    let totalRecFromA2 = 0;
 
-    // M2 & M3
+    if (recIsValid) {
+      // Cruce primario: por N° Recepción exacto → obtiene todas las líneas de esa recepción
+      const recKey = 'REC_' + normalStr(recStr);
+      const recEntry = recByREC[recKey];
+      if (recEntry) {
+        recRows = recEntry.rows;
+        totalRecFromA2 = recEntry.total;  // suma de 'Valor Total' de todas las líneas
+      }
+    }
+    // Fallback: si no hay REC o no se encontró, cruzar por OC completa
+    if (!recRows.length) {
+      recRows = recByOC[poNorm] || [];
+      totalRecFromA2 = recRows.reduce((s, r) => s + (normalNum(r['Valor Recepcionado por Línea'] || r['Valor Recepcionado por Linea'] || 0)), 0);
+    }
+
+    // Valor REC final: del Archivo 2 (Valor Total sumado por Recepción) o del Archivo 1
+    const totalRec = totalRecFromA2 || a1RecVal || 0;
+    const recNums = recIsValid ? recStr : [...new Set(recRows.map(r => r['Recepción'] || r['Recepcion'] || '').filter(Boolean))].join(', ');
+    const recDate = recRows.length ? fmtDate(recRows[0]['Fecha de Recepción'] || recRows[0]['Fecha Recepcion']) : '—';
+    const recBy   = recRows.length ? (recRows[0]['Recepcionado Por'] || '—') : '—';
+
+    // ── VALIDACIÓN 1: Valor REC (primera línea A2) vs Vaule without IVA (A1) ───
+    // Regla exacta del tablero ejemplo:
+    //   Si REC cell = "revisar" o vacío → Valor REC = "revisar", validREC = false
+    //   Si Valor REC (A2, primera línea) === Vaule without IVA (A1) → validREC = true
+    //   Si difieren → validREC = false
+    const recCellStr = String(rec||'').trim().toLowerCase();
+    let recStatus = 'sin_recepcion';
+    let validREC  = false;
+    let recIsRevisar = (recCellStr === 'revisar' || recCellStr === '');
+
+    if (recIsRevisar) {
+      recStatus = 'revisar';
+      validREC  = false;
+    } else if (recIsValid) {
+      if (totalRec != null && valSinIva != null && valSinIva > 0) {
+        const diff = Math.abs(totalRec - valSinIva) / Math.max(valSinIva, 1);
+        validREC  = diff <= 0.005;  // 0.5% tolerancia
+        recStatus = validREC ? 'recepcionado' : 'revisar';
+      } else if (totalRec) {
+        recStatus = 'recepcionado'; validREC = true;
+      }
+    } else if (recRows.length > 0) {
+      const diff = (totalRec && valSinIva) ? Math.abs(totalRec-valSinIva)/Math.max(valSinIva,1) : 0;
+      validREC  = diff <= 0.005;
+      recStatus = validREC ? 'recepcionado' : 'revisar';
+    }
+
+    // ── VALIDACIÓN 2: VALOR BRUTO INCLUIDO IVA (A3) vs IVA(VAT) (A1) ────────
+    // Buscar en cxpMatch el VALOR BRUTO INCLUIDO IVA del Archivo 3
+    const a1EstadoNorm = String(a1Estado ?? '').trim().toLowerCase();
+    const a1CxpBruto   = normalNum(a1ValFac);
+    const a1CxpFecha   = a1FechaTrans ? String(a1FechaTrans) : null;
+    const a1m2Status   = a1EstadoNorm.includes('pagado') ? 'pagado' :
+                         a1EstadoNorm.includes('aprobado') ? 'aprobado' :
+                         a1EstadoNorm.includes('revisar')  ? 'revisar' : '';
+    // m1Valid se calculará después con los datos de CxP (cxpMatch)
+    // validREC y validCxP se pasan al push y se usan en DZP render
+
+    // M2 & M3 — resolver ANTES del push para tener m3EstadoRaw disponible
     const invNorm = normalStr(inv);
     let cxpMatch = cxpByInv[invNorm] || [];
     if (!cxpMatch.length && prov) {
@@ -4179,24 +4488,49 @@ function buildModules() {
     const cxpStatus = hasCxP ? normalStr(cxpMatch[0]['ESTADO'] || '') : '';
     const cxpBruto = hasCxP ? normalNum(cxpMatch[0]['VALOR BRUTO INCLUIDO IVA'] || cxpMatch[0]['Valor Bruto']) : null;
     const cxpAnticipo = hasCxP ? normalNum(cxpMatch[0]['APLICACIÓN ANTICIPOS'] || 0) : null;
-    const cxpFechaTrans = hasCxP ? fmtDate(cxpMatch[0]['FECHA TRANSACCIÓN'] || cxpMatch[0]['Fecha Transaccion']) : null;
+    const cxpFechaTrans = hasCxP ? fmtDate(cxpMatch[0]['FECHA TRANSACCIÓN'] || cxpMatch[0]['Fecha Transaccion'] || cxpMatch[0]['FECHA CONTABLE'] || cxpMatch[0]['Fecha Contable']) : null;
     const cruceType = cxpByInv[invNorm]?.length > 0 ? 'Factura' : (hasCxP ? 'Proveedor' : 'No encontrado');
+
+    // Estado del Archivo 3 — columna ESTADO, cruce por NUMERO DE FACTURA
+    let m3Status = 'no_encontrado';
+    let m3EstadoRaw = '';
+    if (hasCxP) {
+      m3EstadoRaw = String(cxpMatch[0]['ESTADO'] || cxpMatch[0]['Estado'] || '').trim();
+      const est = m3EstadoRaw.toLowerCase();
+      if (est.includes('pagado') || est.includes('paid'))            m3Status = 'pagado';
+      else if (est.includes('aprobado') || est.includes('approved')) m3Status = 'aprobado';
+      else if (est.includes('cancelado') || est.includes('cancel'))  m3Status = 'cancelado';
+      else m3Status = 'aprobado';
+    }
 
     let m2Status = 'pendiente';
     if (hasCxP) {
       if (cxpStatus.includes('pagado') || cxpStatus.includes('paid')) m2Status = 'pagado';
       else if (cxpStatus.includes('aprobado') || cxpStatus.includes('approved')) m2Status = 'aprobado';
     }
+
+    state.m1data.push({ inv, po, prov, year, month, monthNum, valSinIva, valIVA, valConIva,
+      rec, recRows: recRows.length, recNums, recDate, recBy, totalRec, recStatus, validREC,
+      a1Estado, a1EstadoNorm, a1m2Status, a1CxpBruto, a1CxpFecha, a1ValFac,
+      m3EstadoRaw, m3Status,
+      obs, nit, afe, wbs, currency, invDate });
+
     state.m2data.push({ inv, po, prov, year, month, valSinIva, invDate, cxpFechaTrans, cxpBruto, m2Status, cruceType, obs });
 
-    let m3Status = 'no_encontrado';
-    // Use A1 STATUS field directly if available (new Actual sheet format)
-    if (a1Status && (a1Status.includes('paid') || a1Status.includes('pagado'))) {
-      m3Status = 'pagado';
-    } else if (hasCxP) {
-      if (cxpStatus.includes('pagado') || cxpStatus.includes('paid')) m3Status = 'pagado';
-      else m3Status = 'aprobado';
+    // ── VALIDACIÓN 2: VALOR BRUTO INCLUIDO IVA (A3) vs Invoice Value (A1) ─────
+    // Invoice Value (A1) == VALOR BRUTO INCLUIDO IVA (A3) → validCxP = true/false
+    const cxpFechaContable = hasCxP ? (cxpMatch[0]['FECHA TRANSACCIÓN'] || cxpMatch[0]['FECHA CONTABLE'] || cxpMatch[0]['Fecha Contable'] || cxpFechaTrans) : null;
+    let validCxP = false;
+    if (hasCxP && cxpBruto != null && valConIva != null && valConIva > 0) {
+      const diffCxP = Math.abs(cxpBruto - valConIva) / Math.max(valConIva, 1);
+      validCxP = diffCxP <= 0.005;
+    } else if (hasCxP && cxpBruto != null && valConIva == null) {
+      validCxP = true; // sin Invoice Value en A1 — asumir OK si existe en A3
     }
+    // Agregar validCxP y fechaContable al registro m1data (actualizar en place)
+    const m1rec = state.m1data[state.m1data.length - 1];
+    if (m1rec) { m1rec.validCxP = validCxP; m1rec.cxpFechaContable = fmtDate(cxpFechaContable); m1rec.cxpBruto = cxpBruto; m1rec.m1Valid = validCxP ? 'ok' : (hasCxP ? 'revisar' : null); }
+
     state.m3data.push({ inv, po, prov, year, month, valSinIva, advance: advance || cxpAnticipo, cxpBruto, dueDate, payDate: payDate || (m3Status==='pagado' ? cxpFechaTrans : null), m3Status, lateDays, obs, invDate, recDate });
 
     // M4
@@ -4212,6 +4546,7 @@ function buildModules() {
     else if (recStatus === 'sin_recepcion') flujo = 'sin_recepcion';
     else if (m3Status !== 'pagado') flujo = 'sin_pago';
     state.m4data.push({ inv, po, prov, year, month, valSinIva, recStatus, totalRec, m2Status, m3Status, cxpBruto, payDate: payDate || (m3Status==='pagado'?cxpFechaTrans:null), brechas, flujo, obs, invDate, recDate });
+    } catch(_rowErr) { console.warn('[buildModules] fila '+_rowIdx+' error:', _rowErr); }
   });
 
   // ── Build df2rec: raw A2 with parsed year/month from Fecha de Recepción ──
@@ -4362,6 +4697,13 @@ function renderAll() {
   // Marcar todos como pendientes; solo renderizar M0 ya que es la vista inicial
   _markAllDirty();
   try { renderM0(); } catch(e) { console.warn('renderM0 error:', e); }
+  // DZP: only render eagerly if panel is already visible; else mark dirty for lazy render
+  const dzpPanel = document.getElementById('panel-dzp');
+  if (dzpPanel && dzpPanel.classList.contains('active')) {
+    try { renderDZP(); } catch(e) { console.warn('renderDZP error:', e); }
+  } else {
+    _dzpDirty = true;
+  }
 }
 
 // ── MODULE 0: GERENCIAL ──────────────────────────────────────
@@ -5282,6 +5624,11 @@ function switchTab(name) {
     }
     if (name==='modulo5' && _dirtyModules.has('modulo5')) {
       try { initM5Selectors(); _dirtyModules.delete('modulo5'); } catch(e) { console.warn(e); }
+    }
+    if (name==='dzp') {
+      if (_dzpDirty || !document.getElementById('dzp-content')?.children.length) {
+        try { renderDZP(); _dzpDirty = false; } catch(e) { console.warn('renderDZP error:', e); }
+      }
     }
   }
 }
@@ -7178,6 +7525,336 @@ function closeInstructive() {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeInstructive();
 });
+
+/* ═══════════════════════════════════════════════════════════
+   C-DZP-21-000-A — Tablero de Control v2.0
+   ═══════════════════════════════════════════════════════════ */
+
+const DZP_PROJECT_ID = 'C-DZP-21-000-A';
+
+// El modulo C-DZP-21-000-A muestra TODOS los datos cargados.
+// C-DZP-21-000-A es el contrato marco; las OCs (AMM_OC_xxxxx) no
+// repiten el codigo del proyecto en cada fila del Excel.
+function getDZPData() {
+  if (!state.processed) return { m1: [], m2: [], m3: [], m4: [] };
+  return {
+    m1: state.m1data,
+    m2: state.m2data,
+    m3: state.m3data,
+    m4: state.m4data
+  };
+}
+
+function renderDZP() {
+  if (!state.processed) return;
+  _dzpDirty = false;
+
+  const { m1 } = getDZPData();
+  const setEl = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+  const setW  = (id, pct) => { const el=document.getElementById(id); if(el) el.style.width=Math.min(pct,100)+'%'; };
+
+  // Sin datos en absoluto
+  if (!m1.length && state.processed) {
+    document.getElementById('dzp-content').innerHTML = `
+      <div class="dzp-no-data">
+        <div class="dzp-nd-icon">📂</div>
+        <h3>Sin registros disponibles</h3>
+        <p>No se encontraron facturas en los archivos cargados.<br>
+        Verifique que haya cargado correctamente el <strong>Archivo 1</strong> (facturas).</p>
+      </div>`;
+    return;
+  }
+
+  // Populate year select — rebuild only if data changed
+  const yearSel = document.getElementById('dzp-year');
+  if (yearSel) {
+    const years = [...new Set(m1.map(r=>r.year).filter(Boolean))].sort();
+    const current = [...yearSel.options].slice(1).map(o=>o.value);
+    if (years.join() !== current.join()) {
+      while (yearSel.options.length > 1) yearSel.remove(1);
+      years.forEach(y => { const opt = document.createElement('option'); opt.value=y; opt.textContent=y; yearSel.appendChild(opt); });
+    }
+  }
+
+  // ── Filtros ──────────────────────────────────────────────────
+  const search  = normalStr((document.getElementById('dzp-search')||{value:''}).value);
+  const yearF   = (document.getElementById('dzp-year')||{value:''}).value;
+  const monthF  = normalStr((document.getElementById('dzp-month')||{value:''}).value);
+  const estadoF = (document.getElementById('dzp-estado')||{value:''}).value;
+
+  let data = [...m1];
+  if (search) {
+    data = data.filter(r => {
+      const hay = normalStr([r.po,r.inv,r.prov,r.recNums,String(r.rec||'')].join(' '));
+      return hay.includes(search);
+    });
+    if (data.length === 0) {
+      const termino = document.getElementById('dzp-search').value;
+      document.getElementById('dzp-content').innerHTML = `
+        <div class="dzp-search-no-match">
+          <h4>⚠️ No se registran resultados para "${termino}"</h4>
+          <p>La búsqueda no encontró coincidencias.<br>
+          Intente con otro número de OC, factura o proveedor.</p>
+        </div>`;
+      return;
+    }
+  }
+  if (yearF)   data = data.filter(r => String(r.year) === String(yearF));
+  if (monthF)  data = data.filter(r => normalStr(r.month) === monthF);
+  if (estadoF) {
+    data = data.filter(r => {
+      if (estadoF==='pagado')   return r.m3Status==='pagado';
+      if (estadoF==='aprobado') return r.m3Status==='aprobado';
+      if (estadoF==='revisar')  return r.validREC === false || r.recStatus==='revisar' || r.m3Status==='no_encontrado';
+      if (estadoF==='sin_rec')  return r.recStatus==='sin_recepcion';
+      return true;
+    });
+  }
+
+  // ── KPIs — calculados sobre data FILTRADA ────────────────────
+  const totalActas = data.length;
+  const conRec     = data.filter(r => r.recStatus !== 'sin_recepcion').length;
+  const conFac     = data.filter(r => r.inv && r.inv !== '—' && r.inv !== '').length;
+  const revisar    = data.filter(r => r.validREC === false || r.recStatus === 'revisar' || r.recStatus === 'sin_recepcion').length;
+  const comply     = totalActas > 0 ? Math.round((conFac/totalActas)*100) : 0;
+
+  setEl('dzp-k-actas',   totalActas);
+  setEl('dzp-k-rec',     conRec);
+  setEl('dzp-k-rec-pct', totalActas ? pct(conRec,totalActas)+'% del total' : '—');
+  setEl('dzp-k-fac',     conFac);
+  setEl('dzp-k-fac-pct', totalActas ? pct(conFac,totalActas)+'% del total' : '—');
+  setEl('dzp-k-comply',  comply+'%');
+  setEl('dzp-k-revisar', revisar);
+  setW('dzp-k-actas-bar', 100);
+  setW('dzp-k-rec-bar',   totalActas?pct(conRec,totalActas):0);
+  setW('dzp-k-fac-bar',   totalActas?pct(conFac,totalActas):0);
+  setW('dzp-k-comply-bar', comply);
+
+  // Banner badges (siempre totales del dataset completo para contexto)
+  const tot = m1.length;
+  setEl('dzp-badge-act',    totalActas + (tot!==totalActas ? '/'+tot : '') +' Actas');
+  setEl('dzp-badge-rec',    conRec+' REC');
+  setEl('dzp-badge-fac',    conFac+' Facturas');
+  setEl('dzp-badge-comply', comply+'% Cumpl.');
+  setEl('cntDZP', tot);
+
+  // ── Build HTML ───────────────────────────────────────────────
+  const totalFiltered = data.length;
+  const sumActaSinIva = data.reduce((s,r)=>s+(r.valSinIva||0),0);
+  const sumActaConIva = data.reduce((s,r)=>s+(r.valConIva||0),0);
+  const sumRecVal     = data.reduce((s,r)=>s+(r.totalRec||0),0);
+  const sumCxPBruto   = data.reduce((s,r)=>s+(r.cxpBruto||0),0);
+  const countPagadas  = data.filter(r=>r.m3Status==='pagado').length;
+  const countRevisar  = data.filter(r=>String(r.m1Valid||'').toLowerCase().includes('revisar')||r.recStatus==='sin_recepcion').length;
+  const countSinRec   = data.filter(r=>r.recStatus==='sin_recepcion').length;
+
+  // ── Helpers de celda — replicando exactamente el Excel del usuario ──────
+
+  // Col REC Oracle: número en badge verde si coincide, rojo si no
+  function recBadge(r) {
+    const n = r.recNums || String(r.rec||'');
+    const isRevisar = !n || n.toLowerCase()==='revisar' || n==='0';
+    if (isRevisar) return '<span style="color:var(--col-danger);font-weight:700">revisar</span>';
+    if (r.validREC === true)
+      return `<span style="display:inline-flex;align-items:center;gap:3px;background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;border-radius:6px;padding:2px 8px;font-weight:700;font-size:11px">✅ ${n}</span>`;
+    return `<span style="display:inline-flex;align-items:center;gap:3px;background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;border-radius:6px;padding:2px 8px;font-weight:700;font-size:11px">❌ ${n}</span>`;
+  }
+
+  // Col Validación 1 (H): Valor REC A2 vs Valor s/IVA A1
+  function val1Badge(r) {
+    if (r.recStatus === 'sin_recepcion' && (!r.rec || r.rec === '')) return '<span style="color:var(--col-muted)">—</span>';
+    if (r.validREC === true)  return '<span style="color:#059669;font-size:16px;font-weight:700">✔</span>';
+    return '<span style="color:#dc2626;font-size:16px;font-weight:900">✕</span>';
+  }
+
+  // Estado de la factura: VLOOKUP N°Factura → A3 ESTADO
+  // Si no se encuentra en A3 → "revisar" (rosa)
+  function estadoBadge(r) {
+    const raw = String(r.m3EstadoRaw || '').trim();
+    const lo  = raw.toLowerCase();
+    if (!raw || r.m3Status === 'no_encontrado') {
+      return '<span style="background:#fce7f3;color:#9d174d;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">revisar</span>';
+    }
+    if (lo.includes('pagado'))    return `<span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">${raw}</span>`;
+    if (lo.includes('aprobado'))  return `<span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">${raw}</span>`;
+    if (lo.includes('cancelado')) return `<span style="background:#f1f5f9;color:#475569;padding:2px 8px;border-radius:4px;font-size:11px">${raw}</span>`;
+    if (lo.includes('revisar'))   return `<span style="background:#fce7f3;color:#9d174d;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">revisar</span>`;
+    return `<span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:4px;font-size:11px">${raw}</span>`;
+  }
+
+  // Valor de la factura: A3 VALOR BRUTO INCLUIDO IVA si encontrado, else "revisar"
+  function vFacturaBadge(r) {
+    if (r.cxpBruto) return fmtCurrency(r.cxpBruto);
+    return '<span style="background:#fce7f3;color:#9d174d;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:600">revisar</span>';
+  }
+
+  // Validacion 2: Invoice Value (A1) == VALOR BRUTO INCLUIDO IVA (A3)
+  function val2Badge(r) {
+    if (!r.cxpBruto) return '<span style="color:#dc2626;font-size:16px;font-weight:900">✕</span>';
+    if (r.validCxP === true)  return '<span style="color:#059669;font-size:16px;font-weight:700">✔</span>';
+    return '<span style="color:#dc2626;font-size:16px;font-weight:900">✕</span>';
+  }
+
+  // Fecha de la factura: A3 FECHA TRANSACCION si encontrado, else "revisar"
+  function vFechaBadge(r) {
+    const f = r.cxpFechaContable || r.cxpFechaTrans;
+    if (f && f !== 'Invalid Date' && f !== 'null') return f;
+    return '<span style="background:#fce7f3;color:#9d174d;padding:2px 6px;border-radius:4px;font-size:11px">revisar</span>';
+  }
+
+  const rows = data.map((r,i) => {
+    const rowNum = i+1;
+    return `<tr>
+      <td style="text-align:center;font-size:10px;color:var(--col-muted);font-family:'IBM Plex Mono',monospace">${rowNum}</td>
+      <td class="td-mono" style="font-size:11px;white-space:nowrap">${r.po||'—'}</td>
+      <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${r.prov||'—'}</td>
+      <td class="td-mono" style="font-size:11px">${r.inv||'—'}</td>
+      <td class="currency">${r.valSinIva ? fmtCurrency(r.valSinIva) : '—'}</td>
+      <td class="currency">${r.valConIva ? fmtCurrency(r.valConIva) : '—'}</td>
+      <td style="text-align:center">${recBadge(r)}</td>
+      <td class="currency">${r.totalRec ? fmtCurrency(r.totalRec) : '—'}</td>
+      <td style="text-align:center">${val1Badge(r)}</td>
+      <td style="text-align:center">${estadoBadge(r)}</td>
+      <td class="currency">${vFacturaBadge(r)}</td>
+      <td style="text-align:center">${val2Badge(r)}</td>
+      <td style="font-size:11px;color:var(--col-muted);text-align:center">${vFechaBadge(r)}</td>
+    </tr>`;
+  }).join('');
+
+  const compliancePct = totalFiltered > 0 ? Math.round((data.filter(r=>r.inv&&r.inv!=='—').length/totalFiltered)*100) : 0;
+
+  document.getElementById('dzp-content').innerHTML = `
+    <div class="dzp-table-wrap">
+      <div class="dzp-table-header">
+        <span class="dzp-table-title">🏗️ Actas y Facturas — C-DZP-21-000-A</span>
+        <span class="dzp-table-count">${totalFiltered} registros filtrados</span>
+      </div>
+      <div class="dzp-table-scroll">
+        <table class="dzp-table">
+          <thead>
+            <tr>
+              <th style="width:28px">#</th>
+              <th>Orden de Compra</th>
+              <th>Proveedor</th>
+              <th>Factura</th>
+              <th title="Vaule without IVA — Archivo 1">Valor acta sin IVA</th>
+              <th title="Invoice Value — Archivo 1">Valor acta con IVA</th>
+              <th style="text-align:center" title="N° Recepción — Archivo 1">REC</th>
+              <th title="Valor Recepcionado por Línea — Archivo 2">Valor REC</th>
+              <th style="text-align:center" title="Valor REC = Valor s/IVA">Validacion</th>
+              <th style="text-align:center" title="ESTADO — Archivo 3">Estado de la factura</th>
+              <th title="VALOR BRUTO INCLUIDO IVA — Archivo 3">Valor de la factura</th>
+              <th style="text-align:center" title="Validación Valor factura A3">Validacion</th>
+              <th title="Fecha Transacción — Archivo 3">Fecha de la factura</th>
+            </tr>
+          </thead>
+          <tbody>${rows||'<tr><td colspan="12" style="text-align:center;padding:30px;color:var(--col-muted)">Sin registros con los filtros aplicados</td></tr>'}</tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="dzp-summary-footer">
+      <div class="dzp-sum-item">
+        <div class="dzp-sum-label">Total Actas</div>
+        <div class="dzp-sum-val">${totalFiltered}</div>
+      </div>
+      <div class="dzp-sum-item">
+        <div class="dzp-sum-label">Σ Valor s/IVA</div>
+        <div class="dzp-sum-val">${fmtCurrency(sumActaSinIva)}</div>
+      </div>
+      <div class="dzp-sum-item">
+        <div class="dzp-sum-label">Σ Valor c/IVA</div>
+        <div class="dzp-sum-val">${fmtCurrency(sumActaConIva)}</div>
+      </div>
+      <div class="dzp-sum-item">
+        <div class="dzp-sum-label">Σ Valor REC</div>
+        <div class="dzp-sum-val">${fmtCurrency(sumRecVal)}</div>
+      </div>
+      <div class="dzp-sum-item">
+        <div class="dzp-sum-label">Σ CxP Bruto</div>
+        <div class="dzp-sum-val green">${fmtCurrency(sumCxPBruto)}</div>
+      </div>
+      <div class="dzp-sum-item">
+        <div class="dzp-sum-label">Pagadas</div>
+        <div class="dzp-sum-val green">${countPagadas}</div>
+      </div>
+      <div class="dzp-sum-item">
+        <div class="dzp-sum-label">Sin Recepción</div>
+        <div class="dzp-sum-val ${countSinRec>0?'red':''}">${countSinRec}</div>
+      </div>
+      <div class="dzp-sum-item">
+        <div class="dzp-sum-label">A Revisar</div>
+        <div class="dzp-sum-val ${countRevisar>0?'orange':''}">${countRevisar}</div>
+      </div>
+      <div class="dzp-sum-item">
+        <div class="dzp-sum-label">% Cumplimiento</div>
+        <div class="dzp-sum-val purple">${compliancePct}%</div>
+      </div>
+    </div>`;
+}
+
+function exportDZPxls() {
+  if (!state.processed) return;
+  const { m1 } = getDZPData();
+  if (!m1.length) { showToast('No hay datos C-DZP para exportar','warning'); return; }
+
+  // Aplicar filtros activos igual que la tabla
+  const search  = normalStr((document.getElementById('dzp-search')||{value:''}).value);
+  const yearF   = (document.getElementById('dzp-year')||{value:''}).value;
+  const monthF  = normalStr((document.getElementById('dzp-month')||{value:''}).value);
+  const estadoF = (document.getElementById('dzp-estado')||{value:''}).value;
+  let data = [...m1];
+  if (search)  data = data.filter(r => normalStr([r.po,r.inv,r.prov,r.recNums,String(r.rec||'')].join(' ')).includes(search));
+  if (yearF)   data = data.filter(r => String(r.year) === String(yearF));
+  if (monthF)  data = data.filter(r => normalStr(r.month) === monthF);
+  if (estadoF) data = data.filter(r => {
+    if (estadoF==='pagado')   return r.m3Status==='pagado';
+    if (estadoF==='aprobado') return r.m3Status==='aprobado';
+    if (estadoF==='revisar')  return r.validREC===false || r.recStatus==='revisar' || r.m3Status==='no_encontrado';
+    if (estadoF==='sin_rec')  return r.recStatus==='sin_recepcion';
+    return true;
+  });
+
+  // Construir filas con los mismos valores que la tabla
+  const wsData = [
+    ['Orden de Compra','Proveedor','Factura','Valor acta sin IVA','Valor acta con IVA',
+     'REC','Valor REC','Validacion 1','Estado de la factura','Valor de la factura',
+     'Validacion 2','Fecha de la factura']
+  ];
+
+  data.forEach(r => {
+    const recN   = r.recNums || String(r.rec||'');
+    const val1   = r.validREC === true ? 1 : (r.recStatus==='sin_recepcion'&&!r.rec ? '' : 0);
+    const estado = r.m3EstadoRaw || (r.m3Status==='no_encontrado' ? 'revisar' : r.m3Status);
+    const vFac   = r.cxpBruto || 'revisar';
+    const val2   = !r.cxpBruto ? 0 : (r.validCxP === true ? 1 : 0);
+    const fecha  = r.cxpFechaContable || r.cxpFechaTrans || 'revisar';
+    wsData.push([
+      r.po||'', r.prov||'', r.inv||'',
+      r.valSinIva||'', r.valConIva||'',
+      recN, r.totalRec||'', val1,
+      estado, vFac, val2, fecha
+    ]);
+  });
+
+  // Crear XLS con SheetJS
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+  // Ancho de columnas
+  ws['!cols'] = [
+    {wch:18},{wch:28},{wch:22},{wch:18},{wch:18},
+    {wch:10},{wch:18},{wch:12},{wch:20},{wch:18},{wch:12},{wch:18}
+  ];
+
+  XLSX.utils.book_append_sheet(wb, ws, 'C-DZP-21-000-A');
+  XLSX.writeFile(wb, 'C-DZP-21-000-A.xlsx');
+  showToast('✅ Excel exportado: C-DZP-21-000-A.xlsx', 'success');
+}
+
+// DZP module is hooked into renderAll() and switchTab() directly above
+
+
 
 </script>
 </body>
