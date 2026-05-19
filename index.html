@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⛏ Cash Call v2.0 — Control Financiero Minero</title>
+<title>⛏ Cash Call v2.1 — Control Financiero Minero</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -840,6 +840,100 @@
   .dzp-search-no-match h4 { color: #c2410c; font-size: 14px; margin-bottom: 6px; }
   .dzp-search-no-match p { color: #92400e; font-size: 12.5px; }
 
+  /* ── DZP SUB-NAVIGATION (3 sub-ventanas) ────── */
+  .dzp-subnav {
+    display: flex; gap: 0; margin-bottom: 18px;
+    background: var(--col-surface); border-radius: 10px;
+    border: 1px solid var(--col-border); overflow: hidden;
+  }
+  .dzp-subnav-btn {
+    flex: 1; padding: 11px 14px; border: none; background: none; cursor: pointer;
+    display: flex; align-items: center; gap: 8px; justify-content: center;
+    font-size: 12.5px; font-weight: 600; color: var(--col-muted);
+    transition: all 0.18s; position: relative; font-family: 'IBM Plex Sans', sans-serif;
+    border-right: 1px solid var(--col-border);
+  }
+  .dzp-subnav-btn:last-child { border-right: none; }
+  .dzp-subnav-btn:hover { background: #f0f4f9; color: var(--col-primary); }
+  .dzp-subnav-btn.active {
+    background: linear-gradient(135deg, #0f2544, #1a4a8a);
+    color: white;
+  }
+  .dzp-subnav-btn .dsb-num {
+    width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.15); font-size: 11px; font-weight: 800; flex-shrink: 0;
+  }
+  .dzp-subnav-btn:not(.active) .dsb-num { background: var(--col-border); color: var(--col-muted); }
+  .dzp-subnav-btn .dsb-badge {
+    background: #dc2626; color: white; border-radius: 20px;
+    padding: 1px 7px; font-size: 10px; font-weight: 700; margin-left: auto; flex-shrink: 0;
+  }
+  .dzp-subnav-btn:not(.active) .dsb-badge { background: #fca5a5; color: #991b1b; }
+  .dzp-sub-panel { display: none; }
+  .dzp-sub-panel.active { display: block; }
+
+  /* Sub-ventana 1: tabla de proveedores con alertas */
+  .dzp-prov-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .dzp-prov-table thead th {
+    background: #1e3a5f; padding: 9px 12px; text-align: left;
+    font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.85);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid rgba(255,255,255,0.1); position: sticky; top: 0; z-index: 1;
+    white-space: nowrap;
+  }
+  .dzp-prov-table tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.1s; }
+  .dzp-prov-table tbody tr:nth-child(even) { background: #fafbfc; }
+  .dzp-prov-table tbody tr:hover { background: #eff6ff; }
+  .dzp-prov-table tbody td { padding: 10px 12px; vertical-align: middle; }
+  .alert-count-link {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 28px; height: 28px; border-radius: 50%;
+    background: #fee2e2; color: #991b1b; border: 1.5px solid #fca5a5;
+    font-weight: 800; font-size: 13px; cursor: pointer;
+    transition: all 0.15s; text-decoration: none; font-family: 'IBM Plex Mono', monospace;
+  }
+  .alert-count-link:hover { background: #dc2626; color: white; transform: scale(1.15); }
+  .alert-count-link.zero { background: #d1fae5; color: #065f46; border-color: #6ee7b7; cursor: default; pointer-events: none; }
+
+  /* Sub-ventana 2: lista de OC del proveedor */
+  .dzp-oc-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .dzp-oc-table thead th {
+    background: #1e3a5f; padding: 8px 10px; text-align: left;
+    font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.85);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid rgba(255,255,255,0.1); position: sticky; top: 0; z-index: 1;
+    white-space: nowrap;
+  }
+  .dzp-oc-table tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.1s; cursor: pointer; }
+  .dzp-oc-table tbody tr:nth-child(even) { background: #fafbfc; }
+  .dzp-oc-table tbody tr:hover { background: #dbeafe; }
+  .dzp-oc-table tbody td { padding: 8px 10px; vertical-align: middle; }
+  .oc-click-hint { font-size: 9.5px; color: var(--col-accent); font-weight: 600; }
+
+  /* breadcrumb nav */
+  .dzp-breadcrumb {
+    display: flex; align-items: center; gap: 6px; font-size: 12px;
+    color: var(--col-muted); margin-bottom: 12px; flex-wrap: wrap;
+  }
+  .dzp-breadcrumb-link {
+    color: var(--col-accent); cursor: pointer; font-weight: 600;
+    text-decoration: underline; text-underline-offset: 2px;
+  }
+  .dzp-breadcrumb-link:hover { color: var(--col-secondary); }
+  .dzp-breadcrumb-sep { opacity: 0.4; }
+
+  /* Sub-ventana 1 filter row */
+  .dzp-sv1-filter {
+    background: var(--col-surface); border-radius: 10px; border: 1px solid var(--col-border);
+    padding: 10px 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px;
+  }
+  .dzp-sv1-filter select, .dzp-sv1-filter input {
+    border: 1px solid var(--col-border); border-radius: 7px;
+    padding: 6px 10px; font-size: 12.5px; color: var(--col-text); background: var(--col-bg);
+    outline: none; transition: border 0.15s; font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .dzp-sv1-filter select:focus, .dzp-sv1-filter input:focus { border-color: #7c3aed; }
+
 </style>
 </head>
 <body>
@@ -872,7 +966,7 @@
   <!-- Pickaxe head right -->
   <path d="M20 14 L15 10 L22 13 Z" fill="white" opacity="0.75"/>
 </svg>Cash<span class="login-logo-dot"></span><span>Call</span></div>
-    <div class="login-version">v2.0 · Control Financiero</div>
+    <div class="login-version">v2.1 · Control Financiero</div>
     <div class="login-field">
       <label>Usuario</label>
       <input type="text" id="loginUser" placeholder="usuario.nombre" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
@@ -1025,7 +1119,7 @@
         </span>
         <span style="font-size:10px;opacity:0.6">✕</span>
       </span>
-      <div class="header-badge" id="headerBadge">v2.0</div>
+      <div class="header-badge" id="headerBadge">v2.1</div>
     </div>
   </div>
 </header>
@@ -1205,7 +1299,7 @@
           <div class="dzp-banner-icon">🏗️</div>
           <div>
             <div class="dzp-banner-title">C-DZP-21-000-A</div>
-            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo</div>
+            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v2.1</span></div>
           </div>
         </div>
         <div class="dzp-banner-badges">
@@ -1230,7 +1324,7 @@
           <div class="dzp-kpi-pct-bar"><div class="dzp-kpi-pct-fill" id="dzp-k-rec-bar" style="background:var(--col-success);width:0%"></div></div>
         </div>
         <div class="dzp-kpi t-warning">
-          <div class="dzp-kpi-label">Con Factura</div>
+          <div class="dzp-kpi-label">Con Factura (CxP)</div>
           <div class="dzp-kpi-val" id="dzp-k-fac">—</div>
           <div class="dzp-kpi-sub" id="dzp-k-fac-pct">—</div>
           <div class="dzp-kpi-pct-bar"><div class="dzp-kpi-pct-fill" id="dzp-k-fac-bar" style="background:var(--col-warning);width:0%"></div></div>
@@ -1247,39 +1341,104 @@
         </div>
       </div>
 
-      <!-- Filtros -->
-      <div class="dzp-filter-row">
-        <span class="filter-label">🔍</span>
-        <input type="text" id="dzp-search" placeholder="OC, factura, proveedor, N° REC…" oninput="renderDZP()" autocomplete="off">
-        <span class="filter-label">AÑO</span>
-        <select id="dzp-year" onchange="renderDZP()"><option value="">Todos</option></select>
-        <span class="filter-label">MES</span>
-        <select id="dzp-month" onchange="renderDZP()">
-          <option value="">Todos</option>
-          <option>Enero</option><option>Febrero</option><option>Marzo</option>
-          <option>Abril</option><option>Mayo</option><option>Junio</option>
-          <option>Julio</option><option>Agosto</option><option>Septiembre</option>
-          <option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
-        </select>
-        <span class="filter-label">ESTADO</span>
-        <select id="dzp-estado" onchange="renderDZP()">
-          <option value="">Todos</option>
-          <option value="pagado">✅ Pagado</option>
-          <option value="aprobado">⏳ Aprobado</option>
-          <option value="revisar">⚠️ Revisar</option>
-          <option value="sin_rec">❌ Sin Recepción</option>
-        </select>
-        <button class="btn btn-sm btn-outline" onclick="document.getElementById('dzp-search').value='';document.getElementById('dzp-year').value='';document.getElementById('dzp-month').value='';document.getElementById('dzp-estado').value='';renderDZP()">↺ Limpiar</button>
-        <div style="flex:1"></div>
-        <button class="btn btn-sm btn-outline" onclick="exportDZPxls()" title="Exportar tabla a Excel">📥 Excel</button>
+      <!-- ══ SUB-NAVEGACIÓN (3 sub-ventanas) ══ -->
+      <div class="dzp-subnav">
+        <button class="dzp-subnav-btn active" id="dzp-snbtn-1" onclick="dzpSwitchSub(1)">
+          <span class="dsb-num">1</span>
+          <span>Proveedores &amp; Alertas</span>
+          <span class="dsb-badge" id="dzp-sv1-badge">0</span>
+        </button>
+        <button class="dzp-subnav-btn" id="dzp-snbtn-2" onclick="dzpSwitchSub(2)">
+          <span class="dsb-num">2</span>
+          <span id="dzp-snbtn2-label">Órdenes de Compra</span>
+        </button>
+        <button class="dzp-subnav-btn" id="dzp-snbtn-3" onclick="dzpSwitchSub(3)">
+          <span class="dsb-num">3</span>
+          <span>Análisis Acta / Factura</span>
+        </button>
       </div>
 
-      <!-- Result area -->
-      <div id="dzp-content">
-        <div class="dzp-no-data">
-          <div class="dzp-nd-icon">🏗️</div>
-          <h3>Módulo C-DZP-21-000-A</h3>
-          <p>Procese los archivos Excel en <strong>Carga de Archivos</strong> para visualizar el tablero<br>de control exclusivo del proyecto <strong>C-DZP-21-000-A</strong>.</p>
+      <!-- ══ SUB-PANEL 1: Proveedores con alertas ══ -->
+      <div class="dzp-sub-panel active" id="dzp-sp1">
+        <!-- Filtros año / mes -->
+        <div class="dzp-sv1-filter">
+          <span class="filter-label">AÑO</span>
+          <select id="dzp-sv1-year" onchange="renderDZPSV1()"><option value="">Todos</option></select>
+          <span class="filter-label">MES</span>
+          <select id="dzp-sv1-month" onchange="renderDZPSV1()">
+            <option value="">Todos</option>
+            <option>Enero</option><option>Febrero</option><option>Marzo</option>
+            <option>Abril</option><option>Mayo</option><option>Junio</option>
+            <option>Julio</option><option>Agosto</option><option>Septiembre</option>
+            <option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
+          </select>
+          <span class="filter-label">SOLO ALERTAS</span>
+          <select id="dzp-sv1-only-alerts" onchange="renderDZPSV1()">
+            <option value="">Todos los proveedores</option>
+            <option value="1">Solo con alertas</option>
+          </select>
+          <button class="btn btn-sm btn-outline" onclick="document.getElementById('dzp-sv1-year').value='';document.getElementById('dzp-sv1-month').value='';document.getElementById('dzp-sv1-only-alerts').value='';renderDZPSV1()">↺ Limpiar</button>
+        </div>
+        <div id="dzp-sv1-content">
+          <div class="dzp-no-data"><div class="dzp-nd-icon">🏗️</div><h3>Procese archivos primero</h3></div>
+        </div>
+      </div>
+
+      <!-- ══ SUB-PANEL 2: OC del proveedor ══ -->
+      <div class="dzp-sub-panel" id="dzp-sp2">
+        <div class="dzp-breadcrumb" id="dzp-sp2-breadcrumb">
+          <span class="dzp-breadcrumb-link" onclick="dzpSwitchSub(1)">1 · Proveedores</span>
+          <span class="dzp-breadcrumb-sep">›</span>
+          <span id="dzp-sp2-prov-name" style="color:var(--col-primary);font-weight:700">—</span>
+        </div>
+        <div id="dzp-sp2-content">
+          <div class="dzp-no-data"><div class="dzp-nd-icon">📦</div><h3>Seleccione un proveedor en la Sub-ventana 1</h3></div>
+        </div>
+      </div>
+
+      <!-- ══ SUB-PANEL 3: Análisis Acta / Factura ══ -->
+      <div class="dzp-sub-panel" id="dzp-sp3">
+        <!-- Breadcrumb dinámico -->
+        <div class="dzp-breadcrumb" id="dzp-sp3-breadcrumb">
+          <span class="dzp-breadcrumb-link" onclick="dzpSwitchSub(1)">1 · Proveedores</span>
+          <span class="dzp-breadcrumb-sep" id="dzp-sp3-bc2-sep" style="display:none">›</span>
+          <span class="dzp-breadcrumb-link" id="dzp-sp3-bc2" style="display:none" onclick="dzpSwitchSub(2)"></span>
+          <span class="dzp-breadcrumb-sep">›</span>
+          <span id="dzp-sp3-context" style="color:var(--col-primary);font-weight:700">Todos los registros</span>
+        </div>
+        <!-- Filtros (análisis completo) -->
+        <div class="dzp-filter-row">
+          <span class="filter-label">🔍</span>
+          <input type="text" id="dzp-search" placeholder="OC, factura, proveedor, N° REC…" oninput="renderDZP()" autocomplete="off">
+          <span class="filter-label">AÑO</span>
+          <select id="dzp-year" onchange="renderDZP()"><option value="">Todos</option></select>
+          <span class="filter-label">MES</span>
+          <select id="dzp-month" onchange="renderDZP()">
+            <option value="">Todos</option>
+            <option>Enero</option><option>Febrero</option><option>Marzo</option>
+            <option>Abril</option><option>Mayo</option><option>Junio</option>
+            <option>Julio</option><option>Agosto</option><option>Septiembre</option>
+            <option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
+          </select>
+          <span class="filter-label">ESTADO</span>
+          <select id="dzp-estado" onchange="renderDZP()">
+            <option value="">Todos</option>
+            <option value="pagado">✅ Pagado</option>
+            <option value="aprobado">⏳ Aprobado</option>
+            <option value="revisar">⚠️ Revisar</option>
+            <option value="sin_rec">❌ Sin Recepción</option>
+          </select>
+          <button class="btn btn-sm btn-outline" onclick="dzpClearSP3Filters()">↺ Limpiar</button>
+          <div style="flex:1"></div>
+          <button class="btn btn-sm btn-outline" onclick="exportDZPxls()" title="Exportar tabla a Excel">📥 Excel</button>
+        </div>
+        <!-- Result area -->
+        <div id="dzp-content">
+          <div class="dzp-no-data">
+            <div class="dzp-nd-icon">🏗️</div>
+            <h3>Módulo C-DZP-21-000-A</h3>
+            <p>Procese los archivos Excel en <strong>Carga de Archivos</strong> para visualizar el tablero<br>de control exclusivo del proyecto <strong>C-DZP-21-000-A</strong>.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -4700,7 +4859,7 @@ function renderAll() {
   // DZP: only render eagerly if panel is already visible; else mark dirty for lazy render
   const dzpPanel = document.getElementById('panel-dzp');
   if (dzpPanel && dzpPanel.classList.contains('active')) {
-    try { renderDZP(); } catch(e) { console.warn('renderDZP error:', e); }
+    try { renderDZPSV1(); } catch(e) { console.warn('renderDZP error:', e); }
   } else {
     _dzpDirty = true;
   }
@@ -5626,8 +5785,14 @@ function switchTab(name) {
       try { initM5Selectors(); _dirtyModules.delete('modulo5'); } catch(e) { console.warn(e); }
     }
     if (name==='dzp') {
-      if (_dzpDirty || !document.getElementById('dzp-content')?.children.length) {
-        try { renderDZP(); _dzpDirty = false; } catch(e) { console.warn('renderDZP error:', e); }
+      if (_dzpDirty || !document.getElementById('dzp-sv1-content')?.children.length) {
+        try {
+          // Render whichever sub-panel is active
+          if (_dzpActiveSub === 1 || typeof _dzpActiveSub === 'undefined') { _dzpActiveSub=1; renderDZPSV1(); }
+          else if (_dzpActiveSub === 2) renderDZPSV2();
+          else renderDZP();
+          _dzpDirty = false;
+        } catch(e) { console.warn('renderDZP error:', e); }
       }
     }
   }
@@ -7537,12 +7702,273 @@ const DZP_PROJECT_ID = 'C-DZP-21-000-A';
 // repiten el codigo del proyecto en cada fila del Excel.
 function getDZPData() {
   if (!state.processed) return { m1: [], m2: [], m3: [], m4: [] };
+  const DZP_PROJ = 'C-DZP-21-000-A';
+
+  // Construir el set de OCs que pertenecen al proyecto C-DZP-21-000-A
+  // usando el campo "Proyecto" del Archivo 2 (df2rec)
+  const df2rec = state.df2rec || [];
+  const ocsDZP = new Set(
+    df2rec
+      .filter(r => (r.proyecto || '').trim().toUpperCase() === DZP_PROJ.toUpperCase())
+      .map(r => (r.oc || '').trim().toUpperCase())
+      .filter(Boolean)
+  );
+
+  let m1dzp;
+  if (ocsDZP.size > 0) {
+    // Hay datos de Archivo 2: filtrar solo OCs del proyecto
+    m1dzp = (state.m1data || []).filter(r => {
+      const po = (r.po || '').trim().toUpperCase();
+      return po && ocsDZP.has(po);
+    });
+  } else {
+    // Sin Archivo 2 cargado: mostrar todos (compatibilidad)
+    m1dzp = state.m1data || [];
+  }
+
   return {
-    m1: state.m1data,
+    m1: m1dzp,
     m2: state.m2data,
     m3: state.m3data,
     m4: state.m4data
   };
+}
+
+// ── DZP Sub-navigation ──────────────────────────────────────
+let _dzpActiveSub = 1;
+let _dzpActiveProv = null; // proveedor seleccionado en SV1
+let _dzpActiveOC   = null; // OC seleccionada en SV2
+
+function dzpSwitchSub(n) {
+  _dzpActiveSub = n;
+  [1,2,3].forEach(i => {
+    document.getElementById('dzp-snbtn-'+i).classList.toggle('active', i===n);
+    document.getElementById('dzp-sp'+i).classList.toggle('active', i===n);
+  });
+  if (n===1) renderDZPSV1();
+  if (n===2) renderDZPSV2();
+  if (n===3) renderDZP();
+}
+
+function dzpClearSP3Filters() {
+  const ids = ['dzp-search','dzp-year','dzp-month','dzp-estado'];
+  ids.forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  _dzpActiveOC = null;
+  _dzpActiveProv = null;
+  const bc2 = document.getElementById('dzp-sp3-bc2');
+  const bc2sep = document.getElementById('dzp-sp3-bc2-sep');
+  if(bc2){ bc2.style.display='none'; bc2.textContent=''; }
+  if(bc2sep) bc2sep.style.display='none';
+  const ctx = document.getElementById('dzp-sp3-context');
+  if(ctx) ctx.textContent = 'Todos los registros';
+  renderDZP();
+}
+
+// ── Sub-ventana 1: Resumen por proveedor ────────────────────
+function renderDZPSV1() {
+  if (!state.processed) return;
+  const { m1 } = getDZPData();
+  if (!m1.length) { document.getElementById('dzp-sv1-content').innerHTML='<div class="dzp-no-data"><div class="dzp-nd-icon">📂</div><h3>Sin datos</h3></div>'; return; }
+
+  // Populate year select
+  const yearSel = document.getElementById('dzp-sv1-year');
+  if (yearSel) {
+    const years = [...new Set(m1.map(r=>r.year).filter(Boolean))].sort();
+    const current = [...yearSel.options].slice(1).map(o=>o.value);
+    if (years.join() !== current.join()) {
+      while (yearSel.options.length > 1) yearSel.remove(1);
+      years.forEach(y => { const opt=document.createElement('option'); opt.value=y; opt.textContent=y; yearSel.appendChild(opt); });
+    }
+  }
+
+  const yearF   = (document.getElementById('dzp-sv1-year')||{value:''}).value;
+  const monthF  = normalStr((document.getElementById('dzp-sv1-month')||{value:''}).value);
+  const onlyA   = (document.getElementById('dzp-sv1-only-alerts')||{value:''}).value;
+
+  let data = [...m1];
+  if (yearF)  data = data.filter(r => String(r.year) === String(yearF));
+  if (monthF) data = data.filter(r => normalStr(r.month) === monthF);
+
+  // Agrupar por proveedor
+  const provMap = {};
+  data.forEach(r => {
+    const prov = r.prov || '(Sin proveedor)';
+    if (!provMap[prov]) provMap[prov] = { total:0, alertas:0, pagadas:0, aprobadas:0, sinRec:0, ocSet:new Set() };
+    provMap[prov].total++;
+    provMap[prov].ocSet.add(r.po||'—');
+    // alerta = cualquier condición problemática
+    const isAlerta = r.validREC === false || r.recStatus === 'sin_recepcion' || r.recStatus === 'revisar' || r.m3Status === 'no_encontrado' || !r.cxpBruto;
+    if (isAlerta) provMap[prov].alertas++;
+    if (r.m3Status === 'pagado')   provMap[prov].pagadas++;
+    if (r.m3Status === 'aprobado') provMap[prov].aprobadas++;
+    if (r.recStatus === 'sin_recepcion') provMap[prov].sinRec++;
+  });
+
+  let provList = Object.entries(provMap).map(([prov,d])=>({prov,...d, ocs: d.ocSet.size}));
+  if (onlyA) provList = provList.filter(p=>p.alertas>0);
+  provList.sort((a,b)=>b.alertas-a.alertas || b.total-a.total);
+
+  const totalAlertas = provList.reduce((s,p)=>s+p.alertas,0);
+  document.getElementById('dzp-sv1-badge').textContent = totalAlertas;
+
+  const rows = provList.map((p,i) => {
+    const alertCell = p.alertas > 0
+      ? `<span class="alert-count-link" onclick="dzpOpenProvOC('${p.prov.replace(/'/g,"\\'")}',${p.alertas})" title="Ver órdenes de compra con alertas">${p.alertas}</span>`
+      : `<span class="alert-count-link zero">0</span>`;
+    const pct = p.total > 0 ? Math.round((p.pagadas/p.total)*100) : 0;
+    return `<tr>
+      <td style="text-align:center;font-size:10px;color:var(--col-muted);font-family:'IBM Plex Mono',monospace">${i+1}</td>
+      <td style="font-weight:600;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.prov}">${p.prov}</td>
+      <td style="text-align:center;font-family:'IBM Plex Mono',monospace">${p.ocs}</td>
+      <td style="text-align:center;font-family:'IBM Plex Mono',monospace">${p.total}</td>
+      <td style="text-align:center">${alertCell}</td>
+      <td style="text-align:center"><span style="background:#d1fae5;color:#065f46;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600">${p.pagadas}</span></td>
+      <td style="text-align:center"><span style="background:#fef3c7;color:#92400e;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600">${p.aprobadas}</span></td>
+      <td style="text-align:center"><span style="background:#fee2e2;color:#991b1b;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600">${p.sinRec}</span></td>
+      <td style="text-align:center">
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="flex:1;height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden;min-width:40px">
+            <div style="height:100%;background:var(--col-success);border-radius:4px;width:${pct}%"></div>
+          </div>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--col-success);white-space:nowrap">${pct}%</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('dzp-sv1-content').innerHTML = `
+    <div class="dzp-table-wrap">
+      <div class="dzp-table-header">
+        <span class="dzp-table-title">🏢 Resumen por Proveedor — C-DZP-21-000-A</span>
+        <span class="dzp-table-count">${provList.length} proveedores · ${totalAlertas} alertas totales</span>
+      </div>
+      <div class="dzp-table-scroll" style="max-height:500px">
+        <table class="dzp-prov-table">
+          <thead>
+            <tr>
+              <th style="width:28px">#</th>
+              <th>Proveedor</th>
+              <th style="text-align:center">OC's</th>
+              <th style="text-align:center">Actas</th>
+              <th style="text-align:center" title="Click en el número para ver detalle por OC">⚠️ Alertas</th>
+              <th style="text-align:center">✅ Pagadas</th>
+              <th style="text-align:center">⏳ Aprobadas</th>
+              <th style="text-align:center">❌ Sin REC</th>
+              <th>% Pagado</th>
+            </tr>
+          </thead>
+          <tbody>${rows||'<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--col-muted)">Sin datos con los filtros aplicados</td></tr>'}</tbody>
+        </table>
+      </div>
+    </div>
+    <div style="margin-top:10px;padding:10px 14px;background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;font-size:12px;color:#92400e;display:flex;align-items:center;gap:8px">
+      💡 <strong>Tip:</strong> Haz clic en el número de alertas (columna ⚠️) para ver las órdenes de compra del proveedor en la Sub-ventana 2.
+    </div>`;
+}
+
+function dzpOpenProvOC(prov, alertCount) {
+  _dzpActiveProv = prov;
+  _dzpActiveOC   = null;
+  // Actualizar label del botón sub-nav 2
+  const lbl = document.getElementById('dzp-snbtn2-label');
+  if(lbl) lbl.textContent = 'Órdenes de Compra';
+  dzpSwitchSub(2);
+}
+
+// ── Sub-ventana 2: OC del proveedor ─────────────────────────
+function renderDZPSV2() {
+  const el2 = document.getElementById('dzp-sp2-content');
+  const nameEl = document.getElementById('dzp-sp2-prov-name');
+  if (!_dzpActiveProv) {
+    if(nameEl) nameEl.textContent = '—';
+    if(el2) el2.innerHTML = '<div class="dzp-no-data"><div class="dzp-nd-icon">📦</div><h3>Seleccione un proveedor en la Sub-ventana 1</h3><p>Haga clic en el número de alertas de cualquier proveedor.</p></div>';
+    return;
+  }
+  if (!state.processed) return;
+  const { m1 } = getDZPData();
+  if(nameEl) nameEl.textContent = _dzpActiveProv;
+
+  const provData = m1.filter(r => (r.prov||'(Sin proveedor)') === _dzpActiveProv);
+
+  // Agrupar por OC
+  const ocMap = {};
+  provData.forEach(r => {
+    const oc = r.po || '—';
+    if (!ocMap[oc]) ocMap[oc] = { oc, actas:0, alertas:0, pagadas:0, aprobadas:0, sinRec:0, records:[] };
+    ocMap[oc].actas++;
+    ocMap[oc].records.push(r);
+    const isAlerta = r.validREC === false || r.recStatus === 'sin_recepcion' || r.recStatus === 'revisar' || r.m3Status === 'no_encontrado' || !r.cxpBruto;
+    if (isAlerta) ocMap[oc].alertas++;
+    if (r.m3Status === 'pagado')   ocMap[oc].pagadas++;
+    if (r.m3Status === 'aprobado') ocMap[oc].aprobadas++;
+    if (r.recStatus === 'sin_recepcion') ocMap[oc].sinRec++;
+  });
+
+  const ocList = Object.values(ocMap).sort((a,b)=>b.alertas-a.alertas||b.actas-a.actas);
+  const totalAlertas = ocList.reduce((s,o)=>s+o.alertas,0);
+
+  const rows = ocList.map((o,i) => {
+    const alertBadge = o.alertas > 0
+      ? `<span style="background:#fee2e2;color:#991b1b;border-radius:4px;padding:2px 10px;font-weight:800;font-size:12px">⚠️ ${o.alertas}</span>`
+      : `<span style="background:#d1fae5;color:#065f46;border-radius:4px;padding:2px 10px;font-weight:700;font-size:12px">✅ 0</span>`;
+    return `<tr onclick="dzpOpenOC('${o.oc.replace(/'/g,"\\'")}')" title="Ver análisis de ${o.oc}">
+      <td style="text-align:center;font-size:10px;color:var(--col-muted);font-family:'IBM Plex Mono',monospace">${i+1}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:var(--col-secondary);white-space:nowrap">${o.oc}</td>
+      <td style="text-align:center">${o.actas}</td>
+      <td style="text-align:center">${alertBadge}</td>
+      <td style="text-align:center"><span style="background:#d1fae5;color:#065f46;border-radius:4px;padding:2px 8px;font-size:11px">${o.pagadas}</span></td>
+      <td style="text-align:center"><span style="background:#fef3c7;color:#92400e;border-radius:4px;padding:2px 8px;font-size:11px">${o.aprobadas}</span></td>
+      <td style="text-align:center"><span style="background:#fee2e2;color:#991b1b;border-radius:4px;padding:2px 8px;font-size:11px">${o.sinRec}</span></td>
+      <td style="text-align:center;color:var(--col-accent);font-size:11px;font-weight:600">Ver análisis →</td>
+    </tr>`;
+  }).join('');
+
+  if(el2) el2.innerHTML = `
+    <div class="dzp-table-wrap">
+      <div class="dzp-table-header">
+        <span class="dzp-table-title">📦 Órdenes de Compra — ${_dzpActiveProv}</span>
+        <span class="dzp-table-count">${ocList.length} OC's · ${totalAlertas} alertas</span>
+      </div>
+      <div class="dzp-table-scroll" style="max-height:460px">
+        <table class="dzp-oc-table">
+          <thead>
+            <tr>
+              <th style="width:28px">#</th>
+              <th>Orden de Compra</th>
+              <th style="text-align:center">Actas</th>
+              <th style="text-align:center">⚠️ Alertas</th>
+              <th style="text-align:center">✅ Pagadas</th>
+              <th style="text-align:center">⏳ Aprobadas</th>
+              <th style="text-align:center">❌ Sin REC</th>
+              <th style="text-align:center">Acción</th>
+            </tr>
+          </thead>
+          <tbody>${rows||'<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--col-muted)">Sin órdenes de compra</td></tr>'}</tbody>
+        </table>
+      </div>
+    </div>
+    <div style="margin-top:10px;padding:10px 14px;background:#dbeafe;border:1px solid #93c5fd;border-radius:8px;font-size:12px;color:#1e40af;display:flex;align-items:center;gap:8px">
+      💡 <strong>Tip:</strong> Haz clic en cualquier fila para abrir el análisis detallado de esa Orden de Compra en la Sub-ventana 3.
+    </div>`;
+}
+
+function dzpOpenOC(oc) {
+  _dzpActiveOC = oc;
+  // Configurar filtro de la SV3 y breadcrumb
+  const searchEl = document.getElementById('dzp-search');
+  const bc2 = document.getElementById('dzp-sp3-bc2');
+  const bc2sep = document.getElementById('dzp-sp3-bc2-sep');
+  const ctx = document.getElementById('dzp-sp3-context');
+  if(searchEl) searchEl.value = oc;
+  // Reset otros filtros
+  ['dzp-year','dzp-month','dzp-estado'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  if(bc2 && _dzpActiveProv) {
+    bc2.textContent = _dzpActiveProv;
+    bc2.style.display = 'inline';
+    bc2sep.style.display = 'inline';
+  }
+  if(ctx) ctx.textContent = oc;
+  dzpSwitchSub(3);
 }
 
 function renderDZP() {
@@ -7644,8 +8070,15 @@ function renderDZP() {
   const sumActaConIva = data.reduce((s,r)=>s+(r.valConIva||0),0);
   const sumRecVal     = data.reduce((s,r)=>s+(r.totalRec||0),0);
   const sumCxPBruto   = data.reduce((s,r)=>s+(r.cxpBruto||0),0);
+
+  // ── CORRECCIÓN: conteos exactamente sobre los registros filtrados ──
   const countPagadas  = data.filter(r=>r.m3Status==='pagado').length;
-  const countRevisar  = data.filter(r=>String(r.m1Valid||'').toLowerCase().includes('revisar')||r.recStatus==='sin_recepcion').length;
+  const countAprobadas= data.filter(r=>r.m3Status==='aprobado').length;
+  // "A Revisar": registros que tengan algún problema real, excluyendo pagados
+  const countRevisar  = data.filter(r => {
+    if (r.m3Status==='pagado') return false; // pagados no son alerta
+    return r.validREC === false || r.recStatus==='sin_recepcion' || r.recStatus==='revisar' || r.m3Status==='no_encontrado' || !r.cxpBruto;
+  }).length;
   const countSinRec   = data.filter(r=>r.recStatus==='sin_recepcion').length;
 
   // ── Helpers de celda — replicando exactamente el Excel del usuario ──────
@@ -7668,7 +8101,6 @@ function renderDZP() {
   }
 
   // Estado de la factura: VLOOKUP N°Factura → A3 ESTADO
-  // Si no se encuentra en A3 → "revisar" (rosa)
   function estadoBadge(r) {
     const raw = String(r.m3EstadoRaw || '').trim();
     const lo  = raw.toLowerCase();
@@ -7721,12 +8153,13 @@ function renderDZP() {
     </tr>`;
   }).join('');
 
-  const compliancePct = totalFiltered > 0 ? Math.round((data.filter(r=>r.inv&&r.inv!=='—').length/totalFiltered)*100) : 0;
+  // Compliance: actas con factura encontrada en CxP (bruto != 0)
+  const compliancePct = totalFiltered > 0 ? Math.round((data.filter(r=>r.cxpBruto&&r.cxpBruto>0).length/totalFiltered)*100) : 0;
 
   document.getElementById('dzp-content').innerHTML = `
     <div class="dzp-table-wrap">
       <div class="dzp-table-header">
-        <span class="dzp-table-title">🏗️ Actas y Facturas — C-DZP-21-000-A</span>
+        <span class="dzp-table-title">🏗️ Análisis Actas y Facturas — C-DZP-21-000-A</span>
         <span class="dzp-table-count">${totalFiltered} registros filtrados</span>
       </div>
       <div class="dzp-table-scroll">
@@ -7737,8 +8170,8 @@ function renderDZP() {
               <th>Orden de Compra</th>
               <th>Proveedor</th>
               <th>Factura</th>
-              <th title="Vaule without IVA — Archivo 1">Valor acta sin IVA</th>
-              <th title="Invoice Value — Archivo 1">Valor acta con IVA</th>
+              <th title="Valor sin IVA — Archivo 1">Valor acta sin IVA</th>
+              <th title="Valor con IVA — Archivo 1">Valor acta con IVA</th>
               <th style="text-align:center" title="N° Recepción — Archivo 1">REC</th>
               <th title="Valor Recepcionado por Línea — Archivo 2">Valor REC</th>
               <th style="text-align:center" title="Valor REC = Valor s/IVA">Validacion</th>
@@ -7748,7 +8181,7 @@ function renderDZP() {
               <th title="Fecha Transacción — Archivo 3">Fecha de la factura</th>
             </tr>
           </thead>
-          <tbody>${rows||'<tr><td colspan="12" style="text-align:center;padding:30px;color:var(--col-muted)">Sin registros con los filtros aplicados</td></tr>'}</tbody>
+          <tbody>${rows||'<tr><td colspan="13" style="text-align:center;padding:30px;color:var(--col-muted)">Sin registros con los filtros aplicados</td></tr>'}</tbody>
         </table>
       </div>
     </div>
@@ -7775,15 +8208,19 @@ function renderDZP() {
         <div class="dzp-sum-val green">${fmtCurrency(sumCxPBruto)}</div>
       </div>
       <div class="dzp-sum-item">
-        <div class="dzp-sum-label">Pagadas</div>
+        <div class="dzp-sum-label">✅ Pagadas</div>
         <div class="dzp-sum-val green">${countPagadas}</div>
       </div>
       <div class="dzp-sum-item">
-        <div class="dzp-sum-label">Sin Recepción</div>
+        <div class="dzp-sum-label">⏳ Aprobadas</div>
+        <div class="dzp-sum-val" style="color:var(--col-warning)">${countAprobadas}</div>
+      </div>
+      <div class="dzp-sum-item">
+        <div class="dzp-sum-label">❌ Sin Recepción</div>
         <div class="dzp-sum-val ${countSinRec>0?'red':''}">${countSinRec}</div>
       </div>
       <div class="dzp-sum-item">
-        <div class="dzp-sum-label">A Revisar</div>
+        <div class="dzp-sum-label">⚠️ A Revisar</div>
         <div class="dzp-sum-val ${countRevisar>0?'orange':''}">${countRevisar}</div>
       </div>
       <div class="dzp-sum-item">
