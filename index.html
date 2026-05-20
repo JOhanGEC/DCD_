@@ -842,33 +842,35 @@
 
   /* ── DZP SUB-NAVIGATION (3 sub-ventanas) ────── */
   .dzp-subnav {
-    display: flex; gap: 0; margin-bottom: 18px;
-    background: var(--col-surface); border-radius: 10px;
-    border: 1px solid var(--col-border); overflow: hidden;
+    display: flex; gap: 6px; margin-bottom: 20px;
+    background: transparent;
   }
   .dzp-subnav-btn {
-    flex: 1; padding: 11px 14px; border: none; background: none; cursor: pointer;
-    display: flex; align-items: center; gap: 8px; justify-content: center;
+    flex: 1; padding: 12px 16px; border: 2px solid var(--col-border);
+    background: var(--col-surface); cursor: pointer;
+    display: flex; align-items: center; gap: 10px; justify-content: center;
     font-size: 12.5px; font-weight: 600; color: var(--col-muted);
-    transition: all 0.18s; position: relative; font-family: 'IBM Plex Sans', sans-serif;
-    border-right: 1px solid var(--col-border);
+    transition: all 0.2s; position: relative; font-family: 'IBM Plex Sans', sans-serif;
+    border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   }
-  .dzp-subnav-btn:last-child { border-right: none; }
-  .dzp-subnav-btn:hover { background: #f0f4f9; color: var(--col-primary); }
+  .dzp-subnav-btn:hover { background: #f0f4f9; color: var(--col-primary); border-color: var(--col-secondary); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
   .dzp-subnav-btn.active {
-    background: linear-gradient(135deg, #0f2544, #1a4a8a);
-    color: white;
+    background: linear-gradient(135deg, #0f2544 0%, #1a4a8a 100%);
+    color: white; border-color: #0f2544;
+    box-shadow: 0 4px 16px rgba(15,37,68,0.35);
+    transform: translateY(-2px);
   }
   .dzp-subnav-btn .dsb-num {
-    width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    background: rgba(255,255,255,0.15); font-size: 11px; font-weight: 800; flex-shrink: 0;
+    width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.15); font-size: 12px; font-weight: 800; flex-shrink: 0;
   }
-  .dzp-subnav-btn:not(.active) .dsb-num { background: var(--col-border); color: var(--col-muted); }
+  .dzp-subnav-btn:not(.active) .dsb-num { background: #e2e8f0; color: var(--col-primary); font-weight: 800; }
   .dzp-subnav-btn .dsb-badge {
     background: #dc2626; color: white; border-radius: 20px;
-    padding: 1px 7px; font-size: 10px; font-weight: 700; margin-left: auto; flex-shrink: 0;
+    padding: 2px 8px; font-size: 10px; font-weight: 700; margin-left: auto; flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(220,38,38,0.4);
   }
-  .dzp-subnav-btn:not(.active) .dsb-badge { background: #fca5a5; color: #991b1b; }
+  .dzp-subnav-btn:not(.active) .dsb-badge { background: #ef4444; color: white; }
   .dzp-sub-panel { display: none; }
   .dzp-sub-panel.active { display: block; }
 
@@ -886,14 +888,15 @@
   .dzp-prov-table tbody tr:hover { background: #eff6ff; }
   .dzp-prov-table tbody td { padding: 10px 12px; vertical-align: middle; }
   .alert-count-link {
-    display: inline-flex; align-items: center; justify-content: center;
-    min-width: 28px; height: 28px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+    min-width: 52px; height: 28px; border-radius: 14px;
     background: #fee2e2; color: #991b1b; border: 1.5px solid #fca5a5;
     font-weight: 800; font-size: 13px; cursor: pointer;
     transition: all 0.15s; text-decoration: none; font-family: 'IBM Plex Mono', monospace;
+    padding: 0 8px;
   }
-  .alert-count-link:hover { background: #dc2626; color: white; transform: scale(1.15); }
-  .alert-count-link.zero { background: #d1fae5; color: #065f46; border-color: #6ee7b7; cursor: default; pointer-events: none; }
+  .alert-count-link:hover { background: #dc2626; color: white; transform: scale(1.08); box-shadow: 0 2px 10px rgba(220,38,38,0.35); }
+  .alert-count-link.zero { background: #d1fae5; color: #065f46; border-color: #6ee7b7; cursor: default; pointer-events: none; min-width:28px; border-radius:50%; }
 
   /* Sub-ventana 2: lista de OC del proveedor */
   .dzp-oc-table { width: 100%; border-collapse: collapse; font-size: 12px; }
@@ -1320,13 +1323,13 @@
         <div class="dzp-kpi t-success">
           <div class="dzp-kpi-label">Con Recepción Oracle</div>
           <div class="dzp-kpi-val" id="dzp-k-rec">—</div>
-          <div class="dzp-kpi-sub" id="dzp-k-rec-pct">—</div>
+          <div class="dzp-kpi-sub" id="dzp-k-rec-pct">REC válida confirmada</div>
           <div class="dzp-kpi-pct-bar"><div class="dzp-kpi-pct-fill" id="dzp-k-rec-bar" style="background:var(--col-success);width:0%"></div></div>
         </div>
         <div class="dzp-kpi t-warning">
           <div class="dzp-kpi-label">Con Factura (CxP)</div>
           <div class="dzp-kpi-val" id="dzp-k-fac">—</div>
-          <div class="dzp-kpi-sub" id="dzp-k-fac-pct">—</div>
+          <div class="dzp-kpi-sub" id="dzp-k-fac-pct">Encontrada en Archivo 3</div>
           <div class="dzp-kpi-pct-bar"><div class="dzp-kpi-pct-fill" id="dzp-k-fac-bar" style="background:var(--col-warning);width:0%"></div></div>
         </div>
         <div class="dzp-kpi t-purple">
@@ -1378,6 +1381,8 @@
             <option value="1">Solo con alertas</option>
           </select>
           <button class="btn btn-sm btn-outline" onclick="document.getElementById('dzp-sv1-year').value='';document.getElementById('dzp-sv1-month').value='';document.getElementById('dzp-sv1-only-alerts').value='';renderDZPSV1()">↺ Limpiar</button>
+          <div style="flex:1"></div>
+          <button class="btn btn-sm" onclick="exportDZPpdf()" style="background:linear-gradient(135deg,#0f2544,#1a4a8a);color:white;font-size:11px;display:flex;align-items:center;gap:5px">📄 Exportar PDF</button>
         </div>
         <div id="dzp-sv1-content">
           <div class="dzp-no-data"><div class="dzp-nd-icon">🏗️</div><h3>Procese archivos primero</h3></div>
@@ -1386,10 +1391,16 @@
 
       <!-- ══ SUB-PANEL 2: OC del proveedor ══ -->
       <div class="dzp-sub-panel" id="dzp-sp2">
-        <div class="dzp-breadcrumb" id="dzp-sp2-breadcrumb">
-          <span class="dzp-breadcrumb-link" onclick="dzpSwitchSub(1)">1 · Proveedores</span>
-          <span class="dzp-breadcrumb-sep">›</span>
-          <span id="dzp-sp2-prov-name" style="color:var(--col-primary);font-weight:700">—</span>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+          <div class="dzp-breadcrumb" id="dzp-sp2-breadcrumb" style="margin-bottom:0">
+            <span class="dzp-breadcrumb-link" onclick="dzpSwitchSub(1)">1 · Proveedores</span>
+            <span class="dzp-breadcrumb-sep">›</span>
+            <span id="dzp-sp2-prov-name" style="color:var(--col-primary);font-weight:700">—</span>
+          </div>
+          <div style="display:flex;gap:7px;align-items:center">
+            <button class="btn btn-sm btn-outline" onclick="exportDZPSP2xls()" title="Exportar OC a Excel" style="font-size:11px">📥 Excel</button>
+            <button class="btn btn-sm" onclick="exportDZPSP2pdf()" style="background:linear-gradient(135deg,#0f2544,#1a4a8a);color:white;font-size:11px;display:flex;align-items:center;gap:5px">📄 Exportar PDF</button>
+          </div>
         </div>
         <div id="dzp-sp2-content">
           <div class="dzp-no-data"><div class="dzp-nd-icon">📦</div><h3>Seleccione un proveedor en la Sub-ventana 1</h3></div>
@@ -1431,6 +1442,7 @@
           <button class="btn btn-sm btn-outline" onclick="dzpClearSP3Filters()">↺ Limpiar</button>
           <div style="flex:1"></div>
           <button class="btn btn-sm btn-outline" onclick="exportDZPxls()" title="Exportar tabla a Excel">📥 Excel</button>
+          <button class="btn btn-sm" onclick="exportDZPSP3pdf()" style="background:linear-gradient(135deg,#0f2544,#1a4a8a);color:white;font-size:11px;display:flex;align-items:center;gap:5px">📄 Exportar PDF</button>
         </div>
         <!-- Result area -->
         <div id="dzp-content">
@@ -4083,7 +4095,7 @@ function processData() {
       addAuditEntry('proceso', `${state.m1data.length} facturas · ${state.m3data.length} registros CxP`, {
         files: state.files.filter(f=>f.wb).map(f=>({ nombre:f.name, slot:f.slot, hojas:f.sheets }))
       });
-      switchTab('modulo0');
+      switchTab('dzp');
     }))
     .catch(err => {
       overlay.style.display = 'none';
@@ -4659,7 +4671,8 @@ function buildModules() {
       if (est.includes('pagado') || est.includes('paid'))            m3Status = 'pagado';
       else if (est.includes('aprobado') || est.includes('approved')) m3Status = 'aprobado';
       else if (est.includes('cancelado') || est.includes('cancel'))  m3Status = 'cancelado';
-      else m3Status = 'aprobado';
+      else if (est.includes('revisar') || est.includes('review') || est.includes('revision')) m3Status = 'revisar';
+      else m3Status = 'revisar';
     }
 
     let m2Status = 'pendiente';
@@ -7797,7 +7810,7 @@ function renderDZPSV1() {
     provMap[prov].total++;
     provMap[prov].ocSet.add(r.po||'—');
     // alerta = cualquier condición problemática
-    const isAlerta = r.validREC === false || r.recStatus === 'sin_recepcion' || r.recStatus === 'revisar' || r.m3Status === 'no_encontrado' || !r.cxpBruto;
+    const isAlerta = r.validREC === false || r.recStatus === 'sin_recepcion' || r.recStatus === 'revisar' || r.m3Status === 'no_encontrado' || r.m3Status === 'revisar' || !r.cxpBruto;
     if (isAlerta) provMap[prov].alertas++;
     if (r.m3Status === 'pagado')   provMap[prov].pagadas++;
     if (r.m3Status === 'aprobado') provMap[prov].aprobadas++;
@@ -7811,9 +7824,41 @@ function renderDZPSV1() {
   const totalAlertas = provList.reduce((s,p)=>s+p.alertas,0);
   document.getElementById('dzp-sv1-badge').textContent = totalAlertas;
 
+  // ── Actualizar KPIs del panel con datos filtrados ──────────
+  const setEl = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+  const setW  = (id, p) => { const el=document.getElementById(id); if(el) el.style.width=Math.min(p,100)+'%'; };
+  const totalActas = data.length;
+  // Con Recepción Oracle: recStatus === 'recepcionado' (NO incluye 'revisar')
+  const conRec  = data.filter(r => r.recStatus === 'recepcionado').length;
+  // Con Factura CxP: tiene cxpBruto real (encontrada en Archivo 3)
+  const conFac  = data.filter(r => r.cxpBruto && r.cxpBruto > 0).length;
+  // Revisiones/Alertas: cualquier problema, excluyendo pagados
+  const revisar = data.filter(r => {
+    if (r.m3Status === 'pagado') return false;
+    return r.validREC === false || r.recStatus === 'revisar' || r.recStatus === 'sin_recepcion' || r.m3Status === 'no_encontrado' || r.m3Status === 'revisar' || !r.cxpBruto;
+  }).length;
+  // Cumplimiento: actas con factura encontrada en CxP / total
+  const comply  = totalActas > 0 ? Math.round((conFac/totalActas)*100) : 0;
+  setEl('dzp-k-actas',   totalActas);
+  setEl('dzp-k-rec',     conRec);
+  setEl('dzp-k-rec-pct', totalActas ? pct(conRec,totalActas)+'% del total' : '—');
+  setEl('dzp-k-fac',     conFac);
+  setEl('dzp-k-fac-pct', totalActas ? pct(conFac,totalActas)+'% del total' : '—');
+  setEl('dzp-k-comply',  comply+'%');
+  setEl('dzp-k-revisar', revisar);
+  setW('dzp-k-actas-bar', 100);
+  setW('dzp-k-rec-bar',   totalActas?pct(conRec,totalActas):0);
+  setW('dzp-k-fac-bar',   totalActas?pct(conFac,totalActas):0);
+  setW('dzp-k-comply-bar', comply);
+  const tot = m1.length;
+  setEl('dzp-badge-act',    totalActas + (tot!==totalActas ? '/'+tot : '') +' Actas');
+  setEl('dzp-badge-rec',    conRec+' REC');
+  setEl('dzp-badge-fac',    conFac+' Facturas');
+  setEl('dzp-badge-comply', comply+'% Cumpl.');
+
   const rows = provList.map((p,i) => {
     const alertCell = p.alertas > 0
-      ? `<span class="alert-count-link" onclick="dzpOpenProvOC('${p.prov.replace(/'/g,"\\'")}',${p.alertas})" title="Ver órdenes de compra con alertas">${p.alertas}</span>`
+      ? `<span class="alert-count-link" onclick="dzpOpenProvOC('${p.prov.replace(/'/g,"\\'")}',${p.alertas})" title="Ver órdenes de compra con alertas">${p.alertas} <span style="font-size:9px;font-weight:500;opacity:0.85;margin-left:2px">👆 Ver</span></span>`
       : `<span class="alert-count-link zero">0</span>`;
     const pct = p.total > 0 ? Math.round((p.pagadas/p.total)*100) : 0;
     return `<tr>
@@ -7897,7 +7942,7 @@ function renderDZPSV2() {
     if (!ocMap[oc]) ocMap[oc] = { oc, actas:0, alertas:0, pagadas:0, aprobadas:0, sinRec:0, records:[] };
     ocMap[oc].actas++;
     ocMap[oc].records.push(r);
-    const isAlerta = r.validREC === false || r.recStatus === 'sin_recepcion' || r.recStatus === 'revisar' || r.m3Status === 'no_encontrado' || !r.cxpBruto;
+    const isAlerta = r.validREC === false || r.recStatus === 'sin_recepcion' || r.recStatus === 'revisar' || r.m3Status === 'no_encontrado' || r.m3Status === 'revisar' || !r.cxpBruto;
     if (isAlerta) ocMap[oc].alertas++;
     if (r.m3Status === 'pagado')   ocMap[oc].pagadas++;
     if (r.m3Status === 'aprobado') ocMap[oc].aprobadas++;
@@ -8031,7 +8076,7 @@ function renderDZP() {
     data = data.filter(r => {
       if (estadoF==='pagado')   return r.m3Status==='pagado';
       if (estadoF==='aprobado') return r.m3Status==='aprobado';
-      if (estadoF==='revisar')  return r.validREC === false || r.recStatus==='revisar' || r.m3Status==='no_encontrado';
+      if (estadoF==='revisar')  return r.m3Status !== 'pagado' && (r.validREC === false || r.recStatus==='revisar' || r.m3Status==='no_encontrado' || r.m3Status==='revisar');
       if (estadoF==='sin_rec')  return r.recStatus==='sin_recepcion';
       return true;
     });
@@ -8039,9 +8084,16 @@ function renderDZP() {
 
   // ── KPIs — calculados sobre data FILTRADA ────────────────────
   const totalActas = data.length;
-  const conRec     = data.filter(r => r.recStatus !== 'sin_recepcion').length;
-  const conFac     = data.filter(r => r.inv && r.inv !== '—' && r.inv !== '').length;
-  const revisar    = data.filter(r => r.validREC === false || r.recStatus === 'revisar' || r.recStatus === 'sin_recepcion').length;
+  // Con Recepción Oracle: recStatus === 'recepcionado' (NO incluye 'revisar')
+  const conRec     = data.filter(r => r.recStatus === 'recepcionado').length;
+  // Con Factura CxP: tiene cxpBruto real (encontrada en Archivo 3)
+  const conFac     = data.filter(r => r.cxpBruto && r.cxpBruto > 0).length;
+  // Revisiones/Alertas: cualquier problema, excluyendo pagados
+  const revisar    = data.filter(r => {
+    if (r.m3Status === 'pagado') return false;
+    return r.validREC === false || r.recStatus === 'revisar' || r.recStatus === 'sin_recepcion' || r.m3Status === 'no_encontrado' || r.m3Status === 'revisar' || !r.cxpBruto;
+  }).length;
+  // Cumplimiento: actas con factura encontrada en CxP / total (igual al footer)
   const comply     = totalActas > 0 ? Math.round((conFac/totalActas)*100) : 0;
 
   setEl('dzp-k-actas',   totalActas);
@@ -8077,7 +8129,7 @@ function renderDZP() {
   // "A Revisar": registros que tengan algún problema real, excluyendo pagados
   const countRevisar  = data.filter(r => {
     if (r.m3Status==='pagado') return false; // pagados no son alerta
-    return r.validREC === false || r.recStatus==='sin_recepcion' || r.recStatus==='revisar' || r.m3Status==='no_encontrado' || !r.cxpBruto;
+    return r.validREC === false || r.recStatus==='sin_recepcion' || r.recStatus==='revisar' || r.m3Status==='no_encontrado' || r.m3Status==='revisar' || !r.cxpBruto;
   }).length;
   const countSinRec   = data.filter(r=>r.recStatus==='sin_recepcion').length;
 
@@ -8105,12 +8157,14 @@ function renderDZP() {
     const raw = String(r.m3EstadoRaw || '').trim();
     const lo  = raw.toLowerCase();
     if (!raw || r.m3Status === 'no_encontrado') {
-      return '<span style="background:#fce7f3;color:#9d174d;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">revisar</span>';
+      return '<span style="background:#fce7f3;color:#9d174d;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">⚠ Revisar</span>';
+    }
+    if (r.m3Status === 'revisar' || lo.includes('revisar')) {
+      return `<span style="background:#fce7f3;color:#9d174d;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">⚠ Revisar</span>`;
     }
     if (lo.includes('pagado'))    return `<span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">${raw}</span>`;
     if (lo.includes('aprobado'))  return `<span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">${raw}</span>`;
     if (lo.includes('cancelado')) return `<span style="background:#f1f5f9;color:#475569;padding:2px 8px;border-radius:4px;font-size:11px">${raw}</span>`;
-    if (lo.includes('revisar'))   return `<span style="background:#fce7f3;color:#9d174d;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">revisar</span>`;
     return `<span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:4px;font-size:11px">${raw}</span>`;
   }
 
@@ -8247,7 +8301,7 @@ function exportDZPxls() {
   if (estadoF) data = data.filter(r => {
     if (estadoF==='pagado')   return r.m3Status==='pagado';
     if (estadoF==='aprobado') return r.m3Status==='aprobado';
-    if (estadoF==='revisar')  return r.validREC===false || r.recStatus==='revisar' || r.m3Status==='no_encontrado';
+    if (estadoF==='revisar')  return r.m3Status !== 'pagado' && (r.validREC===false || r.recStatus==='revisar' || r.m3Status==='no_encontrado' || r.m3Status==='revisar');
     if (estadoF==='sin_rec')  return r.recStatus==='sin_recepcion';
     return true;
   });
@@ -8287,6 +8341,431 @@ function exportDZPxls() {
   XLSX.utils.book_append_sheet(wb, ws, 'C-DZP-21-000-A');
   XLSX.writeFile(wb, 'C-DZP-21-000-A.xlsx');
   showToast('✅ Excel exportado: C-DZP-21-000-A.xlsx', 'success');
+}
+
+function exportDZPpdf() {
+  if (!state.processed) { showToast('Procese los archivos primero', 'warn'); return; }
+  const { m1 } = getDZPData();
+  if (!m1.length) { showToast('No hay datos C-DZP para exportar','warn'); return; }
+
+  // Obtener filtros activos (sub-panel 1)
+  const yearF  = (document.getElementById('dzp-sv1-year')||{value:''}).value;
+  const monthF = normalStr((document.getElementById('dzp-sv1-month')||{value:''}).value);
+  const onlyA  = (document.getElementById('dzp-sv1-only-alerts')||{value:''}).value;
+
+  let data = [...m1];
+  if (yearF)  data = data.filter(r => String(r.year) === String(yearF));
+  if (monthF) data = data.filter(r => normalStr(r.month) === monthF);
+
+  // Agrupar por proveedor (igual que renderDZPSV1)
+  const provMap = {};
+  data.forEach(r => {
+    const prov = r.prov || '(Sin proveedor)';
+    if (!provMap[prov]) provMap[prov] = { total:0, alertas:0, pagadas:0, aprobadas:0, sinRec:0, ocSet:new Set() };
+    provMap[prov].total++;
+    provMap[prov].ocSet.add(r.po||'—');
+    const isAlerta = r.validREC===false || r.recStatus==='sin_recepcion' || r.recStatus==='revisar' || r.m3Status==='no_encontrado' || r.m3Status==='revisar' || !r.cxpBruto;
+    if (isAlerta) provMap[prov].alertas++;
+    if (r.m3Status==='pagado')   provMap[prov].pagadas++;
+    if (r.m3Status==='aprobado') provMap[prov].aprobadas++;
+    if (r.recStatus==='sin_recepcion') provMap[prov].sinRec++;
+  });
+
+  let provList = Object.entries(provMap).map(([prov,d])=>({prov,...d, ocs: d.ocSet.size}));
+  if (onlyA) provList = provList.filter(p=>p.alertas>0);
+  provList.sort((a,b)=>b.alertas-a.alertas || b.total-a.total);
+
+  const totalAlertas = provList.reduce((s,p)=>s+p.alertas,0);
+  const totalActas   = data.length;
+  const conRec       = data.filter(r=>r.recStatus==='recepcionado').length;
+  const conFac       = data.filter(r=>r.cxpBruto && r.cxpBruto>0).length;
+  const comply       = totalActas > 0 ? Math.round((conFac/totalActas)*100) : 0;
+
+  const filterDesc = [yearF||'Todos los años', monthF||'Todos los meses', onlyA?'Solo con alertas':'Todos los proveedores'].join(' · ');
+  const now = new Date().toLocaleString('es-CO');
+
+  const tableRows = provList.map((p,i)=>`
+    <tr style="background:${i%2===0?'#ffffff':'#f9fafb'}">
+      <td style="text-align:center;color:#94a3b8;font-size:10px">${i+1}</td>
+      <td style="font-weight:600;font-size:11px">${p.prov}</td>
+      <td style="text-align:center;font-size:11px">${p.ocs}</td>
+      <td style="text-align:center;font-size:11px">${p.total}</td>
+      <td style="text-align:center"><span style="background:#fee2e2;color:#dc2626;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:700">${p.alertas}</span></td>
+      <td style="text-align:center"><span style="background:#d1fae5;color:#059669;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:600">${p.pagadas}</span></td>
+      <td style="text-align:center"><span style="background:#fef3c7;color:#d97706;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:600">${p.aprobadas}</span></td>
+      <td style="text-align:center"><span style="background:#fee2e2;color:#dc2626;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:600">${p.sinRec}</span></td>
+      <td style="text-align:center;font-weight:700;color:${p.total>0&&Math.round((p.pagadas/p.total)*100)>=70?'#059669':'#d97706'}">${p.total>0?Math.round((p.pagadas/p.total)*100):0}%</td>
+    </tr>`).join('');
+
+  const printWin = window.open('','_blank','width=900,height=700');
+  printWin.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>C-DZP-21-000-A — Reporte por Proveedor</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0} body{font-family:'IBM Plex Sans',sans-serif;background:#fff;color:#1a2535;font-size:12px}
+    .hdr{background:linear-gradient(135deg,#0f2544 0%,#1a4a8a 100%);color:white;padding:20px 28px;display:flex;justify-content:space-between;align-items:flex-start}
+    .hdr-title{font-size:20px;font-weight:800;letter-spacing:-0.3px} .hdr-sub{font-size:11px;opacity:0.7;margin-top:3px}
+    .hdr-meta{text-align:right;font-size:10px;opacity:0.7;font-family:'IBM Plex Mono',monospace}
+    .kpi-row{display:flex;gap:12px;padding:16px 28px;background:#f8fafc;border-bottom:1px solid #e2e8f0}
+    .kpi{flex:1;background:white;border-radius:8px;padding:10px 14px;border:1px solid #e2e8f0;text-align:center}
+    .kpi-v{font-size:22px;font-weight:800;font-family:'IBM Plex Mono',monospace;color:#0f2544}
+    .kpi-l{font-size:9px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.6px;margin-top:2px}
+    .filter-bar{padding:8px 28px;background:#fffbeb;border-bottom:1px solid #fcd34d;font-size:11px;color:#92400e}
+    .content{padding:16px 28px}
+    table{width:100%;border-collapse:collapse;font-size:11px}
+    thead th{background:#0f2544;color:white;padding:8px 10px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;text-align:left}
+    tbody tr:hover{background:#eff6ff!important}
+    td{padding:8px 10px;border-bottom:1px solid #f1f5f9}
+    .footer{padding:14px 28px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;background:#f8fafc}
+    @media print{.no-print{display:none}body{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+  </style></head><body>
+  <div class="hdr">
+    <div><div class="hdr-title">⛏ C-DZP-21-000-A — Reporte por Proveedor</div>
+    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v2.1</div></div>
+    <div class="hdr-meta">Generado: ${now}<br>Filtro: ${filterDesc}</div>
+  </div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-v">${provList.length}</div><div class="kpi-l">Proveedores</div></div>
+    <div class="kpi"><div class="kpi-v">${totalActas}</div><div class="kpi-l">Actas</div></div>
+    <div class="kpi"><div class="kpi-v">${conRec}</div><div class="kpi-l">Con REC Oracle</div></div>
+    <div class="kpi"><div class="kpi-v">${conFac}</div><div class="kpi-l">Con Factura CxP</div></div>
+    <div class="kpi"><div class="kpi-v">${comply}%</div><div class="kpi-l">Cumplimiento</div></div>
+    <div class="kpi"><div class="kpi-v" style="color:#dc2626">${totalAlertas}</div><div class="kpi-l">Total Alertas</div></div>
+  </div>
+  <div class="filter-bar">⚙ Filtros aplicados: <strong>${filterDesc}</strong></div>
+  <div class="content">
+    <table>
+      <thead><tr>
+        <th style="width:28px">#</th><th>Proveedor</th>
+        <th style="text-align:center">OC's</th><th style="text-align:center">Actas</th>
+        <th style="text-align:center">⚠ Alertas</th><th style="text-align:center">✓ Pagadas</th>
+        <th style="text-align:center">⏳ Aprob.</th><th style="text-align:center">✗ Sin REC</th>
+        <th style="text-align:center">% Pagado</th>
+      </tr></thead>
+      <tbody>${tableRows||'<tr><td colspan="9" style="text-align:center;padding:20px;color:#94a3b8">Sin datos</td></tr>'}</tbody>
+    </table>
+  </div>
+  <div class="footer"><span>Cash Call v2.1 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
+  <div class="no-print" style="text-align:center;padding:16px">
+    <button onclick="window.print()" style="padding:10px 28px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
+    <button onclick="window.close()" style="margin-left:10px;padding:10px 20px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
+  </div>
+  </body></html>`);
+  printWin.document.close();
+}
+
+// ── Sub-panel 2: exportar OC del proveedor activo ────────────
+function _getSP2Data() {
+  if (!state.processed || !_dzpActiveProv) return null;
+  const { m1 } = getDZPData();
+  const provData = m1.filter(r => (r.prov||'(Sin proveedor)') === _dzpActiveProv);
+  const ocMap = {};
+  provData.forEach(r => {
+    const oc = r.po || '—';
+    if (!ocMap[oc]) ocMap[oc] = { oc, actas:0, alertas:0, pagadas:0, aprobadas:0, sinRec:0 };
+    ocMap[oc].actas++;
+    const isAlerta = r.validREC===false || r.recStatus==='sin_recepcion' || r.recStatus==='revisar' || r.m3Status==='no_encontrado' || r.m3Status==='revisar' || !r.cxpBruto;
+    if (isAlerta) ocMap[oc].alertas++;
+    if (r.m3Status==='pagado')   ocMap[oc].pagadas++;
+    if (r.m3Status==='aprobado') ocMap[oc].aprobadas++;
+    if (r.recStatus==='sin_recepcion') ocMap[oc].sinRec++;
+  });
+  return Object.values(ocMap).sort((a,b)=>b.alertas-a.alertas||b.actas-a.actas);
+}
+
+function exportDZPSP2xls() {
+  if (!state.processed) { showToast('Procese los archivos primero','warn'); return; }
+  if (!_dzpActiveProv) { showToast('Seleccione un proveedor primero','warn'); return; }
+  const ocList = _getSP2Data();
+  if (!ocList || !ocList.length) { showToast('Sin datos para exportar','warn'); return; }
+  const wsData = [['Orden de Compra','Actas','Alertas','Pagadas','Aprobadas','Sin REC']];
+  ocList.forEach(o => wsData.push([o.oc, o.actas, o.alertas, o.pagadas, o.aprobadas, o.sinRec]));
+  const wb2 = XLSX.utils.book_new();
+  const ws2 = XLSX.utils.aoa_to_sheet(wsData);
+  ws2['!cols'] = [{wch:22},{wch:8},{wch:10},{wch:10},{wch:12},{wch:10}];
+  XLSX.utils.book_append_sheet(wb2, ws2, 'OC_Proveedor');
+  const fname = 'DZP_OC_' + (_dzpActiveProv||'Proveedor').replace(/[^a-zA-Z0-9]/g,'_').substring(0,30) + '.xlsx';
+  XLSX.writeFile(wb2, fname);
+  showToast('✅ Excel exportado: ' + fname, 'success');
+}
+
+function exportDZPSP2pdf() {
+  if (!state.processed) { showToast('Procese los archivos primero','warn'); return; }
+  if (!_dzpActiveProv) { showToast('Seleccione un proveedor primero','warn'); return; }
+  const ocList = _getSP2Data();
+  if (!ocList || !ocList.length) { showToast('Sin datos para exportar','warn'); return; }
+  const totalAlertas = ocList.reduce((s,o)=>s+o.alertas,0);
+  const totalActas   = ocList.reduce((s,o)=>s+o.actas,0);
+  const now = new Date().toLocaleString('es-CO');
+  const tableRows = ocList.map((o,i)=>`
+    <tr style="background:${i%2===0?'#fff':'#f9fafb'}">
+      <td style="text-align:center;color:#94a3b8;font-size:10px">${i+1}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:11px;color:#1a4a8a">${o.oc}</td>
+      <td style="text-align:center">${o.actas}</td>
+      <td style="text-align:center"><span style="background:${o.alertas>0?'#fee2e2':'#d1fae5'};color:${o.alertas>0?'#dc2626':'#059669'};border-radius:4px;padding:2px 8px;font-weight:700;font-size:11px">${o.alertas>0?'⚠ '+o.alertas:'✓ 0'}</span></td>
+      <td style="text-align:center"><span style="background:#d1fae5;color:#059669;border-radius:4px;padding:2px 8px;font-size:11px">${o.pagadas}</span></td>
+      <td style="text-align:center"><span style="background:#fef3c7;color:#d97706;border-radius:4px;padding:2px 8px;font-size:11px">${o.aprobadas}</span></td>
+      <td style="text-align:center"><span style="background:#fee2e2;color:#dc2626;border-radius:4px;padding:2px 8px;font-size:11px">${o.sinRec}</span></td>
+    </tr>`).join('');
+  const pw = window.open('','_blank','width=860,height=640');
+  pw.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>OC — ${_dzpActiveProv}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0} body{font-family:'IBM Plex Sans',sans-serif;background:#fff;color:#1a2535;font-size:12px}
+    .hdr{background:linear-gradient(135deg,#0f2544,#1a4a8a);color:white;padding:18px 26px;display:flex;justify-content:space-between;align-items:flex-start}
+    .hdr-title{font-size:17px;font-weight:800} .hdr-sub{font-size:10px;opacity:0.7;margin-top:3px}
+    .hdr-meta{text-align:right;font-size:10px;opacity:0.7;font-family:'IBM Plex Mono',monospace}
+    .kpi-row{display:flex;gap:10px;padding:14px 26px;background:#f8fafc;border-bottom:1px solid #e2e8f0}
+    .kpi{flex:1;background:white;border-radius:8px;padding:9px 12px;border:1px solid #e2e8f0;text-align:center}
+    .kpi-v{font-size:20px;font-weight:800;font-family:'IBM Plex Mono',monospace;color:#0f2544}
+    .kpi-l{font-size:9px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.6px;margin-top:2px}
+    .prov-bar{padding:8px 26px;background:#eff6ff;border-bottom:1px solid #bfdbfe;font-size:11px;color:#1e40af;font-weight:600}
+    .content{padding:14px 26px}
+    table{width:100%;border-collapse:collapse;font-size:11px}
+    thead th{background:#0f2544;color:white;padding:8px 10px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;text-align:left}
+    td{padding:8px 10px;border-bottom:1px solid #f1f5f9}
+    .footer{padding:12px 26px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;background:#f8fafc}
+    @media print{.no-print{display:none}body{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+  </style></head><body>
+  <div class="hdr">
+    <div><div class="hdr-title">⛏ C-DZP-21-000-A — Órdenes de Compra por Proveedor</div>
+    <div class="hdr-sub">Tablero de Control · Cash Call v2.1</div></div>
+    <div class="hdr-meta">Generado: ${now}</div>
+  </div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-v">${ocList.length}</div><div class="kpi-l">OC's</div></div>
+    <div class="kpi"><div class="kpi-v">${totalActas}</div><div class="kpi-l">Actas</div></div>
+    <div class="kpi"><div class="kpi-v" style="color:#dc2626">${totalAlertas}</div><div class="kpi-l">Alertas</div></div>
+    <div class="kpi"><div class="kpi-v">${ocList.reduce((s,o)=>s+o.pagadas,0)}</div><div class="kpi-l">Pagadas</div></div>
+    <div class="kpi"><div class="kpi-v">${ocList.reduce((s,o)=>s+o.aprobadas,0)}</div><div class="kpi-l">Aprobadas</div></div>
+    <div class="kpi"><div class="kpi-v">${ocList.reduce((s,o)=>s+o.sinRec,0)}</div><div class="kpi-l">Sin REC</div></div>
+  </div>
+  <div class="prov-bar">🏢 Proveedor: <span style="font-size:12px">${_dzpActiveProv}</span></div>
+  <div class="content">
+    <table>
+      <thead><tr><th style="width:28px">#</th><th>Orden de Compra</th><th style="text-align:center">Actas</th>
+      <th style="text-align:center">⚠ Alertas</th><th style="text-align:center">✓ Pagadas</th>
+      <th style="text-align:center">⏳ Aprobadas</th><th style="text-align:center">✗ Sin REC</th></tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table>
+  </div>
+  <div class="footer"><span>Cash Call v2.1 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
+  <div class="no-print" style="text-align:center;padding:14px">
+    <button onclick="window.print()" style="padding:9px 26px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
+    <button onclick="window.close()" style="margin-left:8px;padding:9px 18px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
+  </div>
+  </body></html>`);
+  pw.document.close();
+}
+
+// ── Sub-panel 3: exportar análisis Acta/Factura filtrado ─────
+function exportDZPSP3pdf() {
+  if (!state.processed) { showToast('Procese los archivos primero','warn'); return; }
+  const { m1 } = getDZPData();
+  if (!m1.length) { showToast('Sin datos para exportar','warn'); return; }
+
+  // Mismos filtros que renderDZP y exportDZPxls
+  const search  = normalStr((document.getElementById('dzp-search')||{value:''}).value);
+  const yearF   = (document.getElementById('dzp-year')||{value:''}).value;
+  const monthF  = normalStr((document.getElementById('dzp-month')||{value:''}).value);
+  const estadoF = (document.getElementById('dzp-estado')||{value:''}).value;
+  let data = [...m1];
+  if (search)  data = data.filter(r => normalStr([r.po,r.inv,r.prov,r.recNums,String(r.rec||'')].join(' ')).includes(search));
+  if (yearF)   data = data.filter(r => String(r.year) === String(yearF));
+  if (monthF)  data = data.filter(r => normalStr(r.month) === monthF);
+  if (estadoF) data = data.filter(r => {
+    if (estadoF==='pagado')   return r.m3Status==='pagado';
+    if (estadoF==='aprobado') return r.m3Status==='aprobado';
+    if (estadoF==='revisar')  return r.m3Status !== 'pagado' && (r.validREC===false || r.recStatus==='revisar' || r.m3Status==='no_encontrado' || r.m3Status==='revisar');
+    if (estadoF==='sin_rec')  return r.recStatus==='sin_recepcion';
+    return true;
+  });
+
+  const ctx        = document.getElementById('dzp-sp3-context')?.textContent || 'Todos los registros';
+  const now        = new Date().toLocaleString('es-CO');
+  const filterDesc = [search?`Búsqueda: "${search}"`:'', yearF||'', monthF||'', estadoF||''].filter(Boolean).join(' · ') || 'Sin filtros activos';
+
+  // Helpers de formato (iguales al exportDZPxls)
+  const fmtNum = v => (v != null && v !== '' && !isNaN(Number(v))) ? ('$ ' + Number(v).toLocaleString('es-CO')) : (v||'—');
+  const val1Badge = v => v===1
+    ? `<span style="background:#d1fae5;color:#065f46;border-radius:3px;padding:1px 5px;font-size:8.5px;font-weight:700">✓ 1</span>`
+    : (v===0 ? `<span style="background:#fee2e2;color:#991b1b;border-radius:3px;padding:1px 5px;font-size:8.5px;font-weight:700">✗ 0</span>` : `<span style="color:#94a3b8;font-size:8.5px">—</span>`);
+  const estadoBadge = s => {
+    const map = {
+      pagado:      `<span style="background:#d1fae5;color:#065f46;border-radius:3px;padding:1px 5px;font-size:8.5px;font-weight:700">✓ Pagado</span>`,
+      aprobado:    `<span style="background:#fef3c7;color:#92400e;border-radius:3px;padding:1px 5px;font-size:8.5px;font-weight:600">⏳ Aprobado</span>`,
+      no_encontrado:`<span style="background:#fee2e2;color:#991b1b;border-radius:3px;padding:1px 5px;font-size:8.5px;font-weight:700">⚠ Revisar</span>`,
+    };
+    return map[s] || `<span style="background:#f1f5f9;color:#64748b;border-radius:3px;padding:1px 5px;font-size:8.5px">${s||'—'}</span>`;
+  };
+
+  // 13 columnas — exactamente las mismas que el Excel
+  const tableRows = data.map((r, i) => {
+    const recN  = r.recNums || String(r.rec || '');
+    const val1  = r.validREC === true ? 1 : (r.recStatus==='sin_recepcion' && !r.rec ? '' : 0);
+    const estado = r.m3EstadoRaw || (r.m3Status==='no_encontrado' ? 'no_encontrado' : r.m3Status);
+    const vFac  = r.cxpBruto || '';
+    const val2  = !r.cxpBruto ? 0 : (r.validCxP === true ? 1 : 0);
+    const fecha = r.cxpFechaContable || r.cxpFechaTrans || '—';
+    const bg    = i % 2 === 0 ? '#ffffff' : '#f8fafc';
+    return `<tr style="background:${bg}">
+      <td class="tc mono xs gray">${i+1}</td>
+      <td class="mono sm bold blue">${r.po||'—'}</td>
+      <td class="sm prov">${r.prov||'—'}</td>
+      <td class="mono xs">${r.inv||'—'}</td>
+      <td class="tr mono xs">${fmtNum(r.valSinIva)}</td>
+      <td class="tr mono xs">${fmtNum(r.valConIva)}</td>
+      <td class="mono xs">${recN||'—'}</td>
+      <td class="tr mono xs">${fmtNum(r.totalRec)}</td>
+      <td class="tc">${val1Badge(val1)}</td>
+      <td class="tc">${estadoBadge(estado)}</td>
+      <td class="tr mono xs">${vFac ? fmtNum(vFac) : '—'}</td>
+      <td class="tc">${val1Badge(val2)}</td>
+      <td class="mono xs">${fecha}</td>
+    </tr>`;
+  }).join('');
+
+  const pw = window.open('', '_blank', 'width=1200,height=750');
+  pw.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>Análisis Acta/Factura — C-DZP-21-000-A</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
+    @page { size: A4 landscape; margin: 8mm 10mm; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'IBM Plex Sans', sans-serif; background: #fff; color: #1a2535; font-size: 9px; }
+
+    /* ── HEADER ── */
+    .hdr { background: linear-gradient(135deg, #0f2544 0%, #1a4a8a 100%); color: white; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; }
+    .hdr-left { display: flex; flex-direction: column; gap: 2px; }
+    .hdr-title { font-size: 13px; font-weight: 800; letter-spacing: -0.2px; }
+    .hdr-sub   { font-size: 8px; opacity: 0.65; }
+    .hdr-right { text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 8px; opacity: 0.75; line-height: 1.5; }
+
+    /* ── KPI ROW ── */
+    .kpi-row { display: flex; gap: 6px; padding: 7px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+    .kpi { flex: 1; background: white; border-radius: 5px; padding: 5px 8px; border: 1px solid #e2e8f0; text-align: center; }
+    .kpi-v { font-size: 14px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; color: #0f2544; line-height: 1; }
+    .kpi-l { font-size: 7px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+    /* ── META BARS ── */
+    .filter-bar { padding: 4px 16px; background: #fffbeb; border-bottom: 1px solid #fcd34d; font-size: 8px; color: #92400e; }
+    .ctx-bar    { padding: 4px 16px; background: #eff6ff; border-bottom: 1px solid #bfdbfe; font-size: 8px; color: #1e40af; font-weight: 600; }
+
+    /* ── TABLE ── */
+    .content { padding: 8px 16px; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    col.c-num  { width: 22px; }
+    col.c-oc   { width: 68px; }
+    col.c-prov { width: 110px; }
+    col.c-inv  { width: 60px; }
+    col.c-vsiv { width: 56px; }
+    col.c-vciv { width: 56px; }
+    col.c-rec  { width: 52px; }
+    col.c-vrec { width: 56px; }
+    col.c-v1   { width: 28px; }
+    col.c-est  { width: 52px; }
+    col.c-vfac { width: 56px; }
+    col.c-v2   { width: 28px; }
+    col.c-fech { width: 52px; }
+    thead th {
+      background: #0f2544; color: white;
+      padding: 5px 4px; font-size: 7px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.3px;
+      text-align: left; white-space: nowrap; overflow: hidden;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    thead th:last-child { border-right: none; }
+    tbody tr { border-bottom: 1px solid #f1f5f9; }
+    tbody tr:hover { background: #eff6ff !important; }
+    td { padding: 4px 4px; vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-right: 1px solid #f1f5f9; font-size: 8px; }
+    td:last-child { border-right: none; }
+
+    /* ── TD HELPERS ── */
+    .tc   { text-align: center; }
+    .tr   { text-align: right; }
+    .mono { font-family: 'IBM Plex Mono', monospace; }
+    .xs   { font-size: 7.5px; }
+    .sm   { font-size: 8px; }
+    .bold { font-weight: 700; }
+    .blue { color: #1a4a8a; }
+    .gray { color: #94a3b8; }
+    .prov { font-size: 7.5px; max-width: 108px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* ── FOOTER ── */
+    .footer { padding: 5px 16px; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; font-size: 7.5px; color: #94a3b8; background: #f8fafc; }
+
+    /* ── PRINT RULES ── */
+    @media print {
+      .no-print { display: none; }
+      body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      thead { display: table-header-group; }
+      tbody tr { page-break-inside: avoid; }
+    }
+  </style></head><body>
+
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="hdr-title">⛏ C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</div>
+      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v2.1</div>
+    </div>
+    <div class="hdr-right">Generado: ${now}<br>${data.length} registros exportados</div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-v">${data.length}</div><div class="kpi-l">Actas</div></div>
+    <div class="kpi"><div class="kpi-v">${data.filter(r=>r.recStatus==='recepcionado').length}</div><div class="kpi-l">Con REC Oracle</div></div>
+    <div class="kpi"><div class="kpi-v">${data.filter(r=>r.cxpBruto&&r.cxpBruto>0).length}</div><div class="kpi-l">Con Factura CxP</div></div>
+    <div class="kpi"><div class="kpi-v">${data.filter(r=>r.m3Status==='pagado').length}</div><div class="kpi-l">Pagadas</div></div>
+    <div class="kpi"><div class="kpi-v">${data.filter(r=>r.m3Status==='aprobado').length}</div><div class="kpi-l">Aprobadas</div></div>
+    <div class="kpi"><div class="kpi-v" style="color:#dc2626">${data.filter(r=>r.m3Status!=='pagado'&&(r.validREC===false||r.recStatus==='revisar'||r.recStatus==='sin_recepcion'||r.m3Status==='no_encontrado'||!r.cxpBruto)).length}</div><div class="kpi-l">Alertas</div></div>
+    <div class="kpi"><div class="kpi-v">${Math.round((data.filter(r=>r.cxpBruto&&r.cxpBruto>0).length/Math.max(data.length,1))*100)}%</div><div class="kpi-l">Cumplimiento</div></div>
+  </div>
+
+  <div class="filter-bar">⚙ Filtros aplicados: <strong>${filterDesc}</strong></div>
+  <div class="ctx-bar">📍 Contexto: <strong>${ctx}</strong></div>
+
+  <div class="content">
+    <table>
+      <colgroup>
+        <col class="c-num"><col class="c-oc"><col class="c-prov"><col class="c-inv">
+        <col class="c-vsiv"><col class="c-vciv"><col class="c-rec"><col class="c-vrec">
+        <col class="c-v1"><col class="c-est"><col class="c-vfac">
+        <col class="c-v2"><col class="c-fech">
+      </colgroup>
+      <thead><tr>
+        <th class="tc">#</th>
+        <th>Orden de Compra</th>
+        <th>Proveedor</th>
+        <th>Factura</th>
+        <th class="tr">Val. Acta s/IVA</th>
+        <th class="tr">Val. Acta c/IVA</th>
+        <th>REC</th>
+        <th class="tr">Valor REC</th>
+        <th class="tc">Val.1</th>
+        <th class="tc">Estado Factura</th>
+        <th class="tr">Valor Factura</th>
+        <th class="tc">Val.2</th>
+        <th>Fecha Factura</th>
+      </tr></thead>
+      <tbody>
+        ${tableRows || '<tr><td colspan="13" style="text-align:center;padding:20px;color:#94a3b8">Sin datos con los filtros aplicados</td></tr>'}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    <span>Cash Call v2.1 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
+    <span>${data.length} registros &nbsp;·&nbsp; Filtro: ${filterDesc}</span>
+  </div>
+
+  <div class="no-print" style="text-align:center;padding:14px;background:#f8fafc;border-top:1px solid #e2e8f0">
+    <button onclick="window.print()" style="padding:10px 28px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px rgba(15,37,68,0.3)">🖨 Imprimir / Guardar PDF (Horizontal)</button>
+    <button onclick="window.close()" style="margin-left:10px;padding:10px 20px;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
+    <p style="margin-top:8px;font-size:10px;color:#94a3b8">💡 Al imprimir, seleccione <strong>Orientación: Horizontal</strong> y <strong>Sin márgenes</strong> para mejor resultado.</p>
+  </div>
+  </body></html>`);
+  pw.document.close();
 }
 
 // DZP module is hooked into renderAll() and switchTab() directly above
