@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⛏ Cash Call v3.0 — Control Financiero Minero</title>
+<title>⛏ Cash Call v3.1 — Control Financiero Minero · ARIS MINING</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -969,11 +969,11 @@
   <!-- Pickaxe head right -->
   <path d="M20 14 L15 10 L22 13 Z" fill="white" opacity="0.75"/>
 </svg>Cash<span class="login-logo-dot"></span><span>Call</span></div>
-    <div class="login-version">v3.0 · Control Financiero</div>
-    <div style="text-align:center;margin-top:-22px;margin-bottom:28px;font-size:9px;letter-spacing:2.5px;color:rgba(255,255,255,0.2);font-family:'IBM Plex Mono',monospace;text-transform:uppercase">ARIS MINING</div>
+    <div class="login-version">Control Financiero · ARIS MINING</div>
+    <div style="text-align:center;margin-top:-22px;margin-bottom:28px;font-size:9px;letter-spacing:2.5px;color:rgba(255,255,255,0.85);font-family:'IBM Plex Mono',monospace;text-transform:uppercase">ARIS MINING</div>
     <div class="login-field">
       <label>Usuario</label>
-      <input type="text" id="loginUser" placeholder="usuario.nombre" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
+      <input type="text" id="loginUser" placeholder="usuario.nombre" autocomplete="username" oninput="if(/^car$/i.test(this.value.trim())){this.value='CAROLINA.ESCOBAR';this.select();}" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
     <div class="login-field">
       <label>Contraseña</label>
@@ -985,7 +985,8 @@
       <div style="font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:0.5px;line-height:1.7">
         Desarrollado por<br>
         <span style="color:rgba(0,180,200,0.7);font-weight:600">Ing. Johan Manuel Cárdenas Leal, MSc</span><br>
-        Todos los derechos reservados © 2026
+        Todos los derechos reservados © 2026<br>
+        <span style="color:rgba(255,255,255,0.18);font-size:9px;letter-spacing:1.5px;font-family:'IBM Plex Mono',monospace">v3.1</span>
       </div>
     </div>
   </div>
@@ -1123,7 +1124,12 @@
         </span>
         <span style="font-size:10px;opacity:0.6">✕</span>
       </span>
-      <div class="header-badge" id="headerBadge">v3.0</div>
+      <div class="header-badge" id="headerBadge">v3.1</div>
+      <button onclick="abrirModalInformeGerencial()" title="Generar Informe Gerencial ejecutivo con PDF y Anexo Excel"
+        style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:9px;border:none;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.2px;background:linear-gradient(135deg,#059669,#047857);color:white;box-shadow:0 2px 10px rgba(5,150,105,0.45);transition:opacity 0.18s;white-space:nowrap"
+        onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+        📊 Informe Gerencial
+      </button>
     </div>
   </div>
 </header>
@@ -1155,37 +1161,37 @@
         <span class="nav-label">C-DZP-21-000-A<span class="nav-sub">Tablero de Control</span></span>
         <span class="nav-badge" style="background:#7c3aed;color:white" id="cntDZP">—</span>
       </div>
-      <div class="nav-item" data-tab="modulo0" id="nav-modulo0" onclick="switchTab('modulo0')" style="display:none">
+      <div class="nav-item" data-tab="modulo0" id="nav-modulo0" onclick="switchTab('modulo0')" style="display:flex">
         <span class="nav-icon">📊</span>
         <span class="nav-label">Módulo 0<span class="nav-sub">Vista Gerencial</span></span>
         <span class="nav-badge" id="cnt0">—</span>
       </div>
-      <div class="nav-item" data-tab="modulo1" id="nav-modulo1" onclick="switchTab('modulo1')" style="display:none">
+      <div class="nav-item" data-tab="modulo1" id="nav-modulo1" onclick="switchTab('modulo1')" style="display:flex">
         <span class="nav-icon">📋</span>
         <span class="nav-label">Módulo 1<span class="nav-sub">Facturas</span></span>
         <span class="nav-badge" id="cnt1">0</span>
       </div>
-      <div class="nav-item" data-tab="modulo2" id="nav-modulo2" onclick="switchTab('modulo2')" style="display:none">
+      <div class="nav-item" data-tab="modulo2" id="nav-modulo2" onclick="switchTab('modulo2')" style="display:flex">
         <span class="nav-icon">🔄</span>
         <span class="nav-label">Módulo 2<span class="nav-sub">Recepciones Oracle</span></span>
         <span class="nav-badge" id="cnt2">0</span>
       </div>
-      <div class="nav-item" data-tab="modulo3" id="nav-modulo3" onclick="switchTab('modulo3')" style="display:none">
+      <div class="nav-item" data-tab="modulo3" id="nav-modulo3" onclick="switchTab('modulo3')" style="display:flex">
         <span class="nav-icon">💰</span>
         <span class="nav-label">Módulo 3<span class="nav-sub">Cuentas por Pagar</span></span>
         <span class="nav-badge" id="cnt3">0</span>
       </div>
-      <div class="nav-item" data-tab="modulo4" id="nav-modulo4" onclick="switchTab('modulo4')" style="display:none">
+      <div class="nav-item" data-tab="modulo4" id="nav-modulo4" onclick="switchTab('modulo4')" style="display:flex">
         <span class="nav-icon">🔍</span>
         <span class="nav-label">Módulo 4<span class="nav-sub">Análisis Brechas</span></span>
         <span class="nav-badge" id="cnt4">0</span>
       </div>
-      <div class="nav-item" data-tab="modulo5" id="nav-modulo5" onclick="switchTab('modulo5')" style="display:none">
+      <div class="nav-item" data-tab="modulo5" id="nav-modulo5" onclick="switchTab('modulo5')" style="display:flex">
         <span class="nav-icon">🏢</span>
         <span class="nav-label">Módulo 5<span class="nav-sub">Ficha Proveedor</span></span>
         <span class="nav-badge" id="cnt5">0</span>
       </div>
-            <div class="nav-item" data-tab="auditorias" id="nav-auditorias" onclick="switchTab('auditorias')" style="display:none">
+            <div class="nav-item" data-tab="auditorias" id="nav-auditorias" onclick="switchTab('auditorias')" style="display:flex">
         <span class="nav-icon">🗂️</span>
         <span class="nav-label">Auditorías<span class="nav-sub">Historial de cambios</span></span>
         <span class="nav-badge" id="cntAudit">0</span>
@@ -1303,7 +1309,7 @@
           <div class="dzp-banner-icon">🏗️</div>
           <div>
             <div class="dzp-banner-title">C-DZP-21-000-A</div>
-            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v3.0</span></div>
+            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v3.1</span></div>
           </div>
         </div>
         <div class="dzp-banner-badges">
@@ -1461,6 +1467,22 @@
             <option value="aprobado">⏳ Aprobado</option>
             <option value="revisar">⚠️ Revisar</option>
             <option value="sin_rec">❌ Sin Recepción</option>
+          </select>
+          <span class="filter-label">REC</span>
+          <select id="dzp-rec-filter" onchange="renderDZP()">
+            <option value="">Todos</option>
+            <option value="con_rec">🟢 REC válida (verde)</option>
+            <option value="sin_rec">🔴 Sin REC</option>
+            <option value="revisar">🟠 REC a revisar</option>
+            <option value="con_num">🔵 Con número REC</option>
+            <option value="ant">📋 ANT</option>
+          </select>
+          <span class="filter-label">VALOR FACTURA</span>
+          <select id="dzp-valfac-filter" onchange="renderDZP()">
+            <option value="">Todos</option>
+            <option value="con_valor">🟢 Con Factura CxP</option>
+            <option value="sin_valor">🔴 Sin Factura CxP</option>
+            <option value="alerta">🚨 Todas las Alertas</option>
           </select>
           <button class="btn btn-sm btn-outline" onclick="dzpClearSP3Filters()">↺ Limpiar</button>
           <div style="flex:1"></div>
@@ -1944,7 +1966,7 @@ const USERS = {
 let currentUser = null;
 
 // Módulos ocultos por defecto — se activan con triple X
-const activatedModules = new Set(['busqueda','dzp']); // solo búsqueda rápida y DZP visibles
+const activatedModules = new Set(['busqueda','dzp','modulo0','modulo1','modulo2','modulo3','modulo4','modulo5','auditorias']); // todos visibles por defecto
 
 function doLogin() {
   const u = (document.getElementById('loginUser').value || '').trim().toUpperCase();
@@ -2553,7 +2575,7 @@ function openCtrlMPanel() {
 
   const modules = [
     { id:'busqueda', icon:'🔎', title:'Búsqueda Rápida', sub:'Factura · OC · Proveedor', alwaysOn:true, cnt: (state.m1data?.length||0)+(state.m3data?.length||0) },
-    { id:'modulo0', icon:'📊', title:'Módulo 0', sub:'Vista Gerencial Ejecutiva', alwaysOn:true, cnt: state.m3data?.length||0 },
+    { id:'modulo0', icon:'📊', title:'Módulo 0', sub:'Vista Gerencial Ejecutiva', alwaysOn:false, cnt: state.m3data?.length||0 },
     { id:'modulo1', icon:'📋', title:'Módulo 1', sub:'Facturas', alwaysOn:false, cnt: m1len },
     { id:'modulo2', icon:'🔄', title:'Módulo 2', sub:'Recepciones Oracle', alwaysOn:false, cnt: m2len },
     { id:'modulo3', icon:'💰', title:'Módulo 3', sub:'Pagos a Proveedores', alwaysOn:false, cnt: m3len },
@@ -2564,20 +2586,20 @@ function openCtrlMPanel() {
 
   document.getElementById('ctrlm-modules').innerHTML = modules.map(m => {
     const isActive = activatedModules.has(m.id);
-    const bg = m.alwaysOn ? '#f0f9ff' : isActive ? '#f0fdf7' : '#fef2f2';
-    const border = m.alwaysOn ? '#bae6fd' : isActive ? '#86efac' : '#fca5a5';
-    const statusIcon = m.alwaysOn ? '🔒' : isActive ? '✅' : '🚫';
+    const bg = m.alwaysOn ? '#f0f9ff' : isActive ? '#f0fdf7' : '#f8fafc';
+    const border = m.alwaysOn ? '#bae6fd' : isActive ? '#86efac' : '#e2e8f0';
+    const statusIcon = m.alwaysOn ? '🔒' : isActive ? '✅' : '👁️';
     const cntBadge = m.cnt > 0 ? `<div style="font-size:10px;color:#059669;font-weight:700;margin-bottom:8px">📊 ${m.cnt} registros</div>` : '';
     let buttons = '';
     if (m.alwaysOn) {
       buttons = `<button onclick="closeSubwin('sw-ctrlm');switchTab('${m.id}')" style="width:100%;padding:7px;border-radius:7px;border:none;background:#0f2544;color:white;font-size:11px;font-weight:700;cursor:pointer">→ Ir al módulo</button>`;
     } else if (isActive) {
       buttons = `<div style="display:flex;gap:6px">
-        <button onclick="closeSubwin('sw-ctrlm');switchTab('${m.id}')" style="flex:1;padding:7px;border-radius:7px;border:none;background:#059669;color:white;font-size:11px;font-weight:700;cursor:pointer">→ Abrir</button>
+        <button onclick="closeSubwin('sw-ctrlm');switchTab('${m.id}')" style="flex:1;padding:7px;border-radius:7px;border:none;background:#059669;color:white;font-size:11px;font-weight:700;cursor:pointer">→ Ir al módulo</button>
         <button onclick="toggleModuleActivation('${m.id}',false)" style="padding:7px 10px;border-radius:7px;border:1.5px solid #dc2626;background:white;color:#dc2626;font-size:11px;cursor:pointer" title="Ocultar módulo">🚫 Ocultar</button>
       </div>`;
     } else {
-      buttons = `<button onclick="toggleModuleActivation('${m.id}',false)" style="width:100%;padding:7px;border-radius:7px;border:1.5px solid #059669;background:white;color:#059669;font-size:11px;font-weight:700;cursor:pointer">+ Mostrar</button>`;
+      buttons = `<button onclick="toggleModuleActivation('${m.id}',false)" style="width:100%;padding:7px;border-radius:7px;border:none;background:#059669;color:white;font-size:11px;font-weight:700;cursor:pointer">✅ Mostrar</button>`;
     }
     return `<div style="background:${bg};border:2px solid ${border};border-radius:12px;padding:14px;transition:all 0.2s">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
@@ -7933,7 +7955,7 @@ function dzpSwitchSub(n) {
 }
 
 function dzpClearSP3Filters() {
-  const ids = ['dzp-search','dzp-year','dzp-month','dzp-estado'];
+  const ids = ['dzp-search','dzp-year','dzp-month','dzp-estado','dzp-rec-filter','dzp-valfac-filter'];
   ids.forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
   _dzpActiveOC = null;
   _dzpActiveProv = null;
@@ -8336,6 +8358,8 @@ function renderDZP() {
   const yearF   = (document.getElementById('dzp-year')||{value:''}).value;
   const monthF  = normalStr((document.getElementById('dzp-month')||{value:''}).value);
   const estadoF = (document.getElementById('dzp-estado')||{value:''}).value;
+  const recFilt = (document.getElementById('dzp-rec-filter')||{value:''}).value;
+  const valFacF = (document.getElementById('dzp-valfac-filter')||{value:''}).value;
 
   let data = [...m1];
   if (search) {
@@ -8362,6 +8386,25 @@ function renderDZP() {
       if (estadoF==='aprobado') return r.m3Status==='aprobado';
       if (estadoF==='revisar')  return r.m3Status !== 'pagado' && (r.validREC === false || r.recStatus==='revisar' || r.m3Status==='no_encontrado' || r.m3Status==='revisar');
       if (estadoF==='sin_rec')  return r.recStatus==='sin_recepcion';
+      return true;
+    });
+  }
+  if (recFilt) {
+    data = data.filter(r => {
+      if (recFilt==='con_rec')  return r.validREC === true || r.recStatus==='recepcionado';
+      if (recFilt==='sin_rec')  return r.recStatus==='sin_recepcion' && !r.rec && !r.recNums;
+      if (recFilt==='revisar')  return r.recStatus==='revisar' || (r.validREC===false && (r.rec||r.recNums));
+      if (recFilt==='con_num')  return !!(r.rec||r.recNums);
+      if (recFilt==='ant')      return String(r.rec||'').toUpperCase().includes('ANT') || String(r.recNums||'').toUpperCase().includes('ANT');
+      return true;
+    });
+  }
+  if (valFacF) {
+    data = data.filter(r => {
+      const isAlerta = r.m3Status !== 'pagado' && (r.validREC===false || r.recStatus==='sin_recepcion' || r.recStatus==='revisar' || r.m3Status==='no_encontrado' || r.m3Status==='revisar' || !r.cxpBruto);
+      if (valFacF==='con_valor') return r.cxpBruto && r.cxpBruto > 0;
+      if (valFacF==='sin_valor') return !r.cxpBruto || r.cxpBruto === 0;
+      if (valFacF==='alerta')    return isAlerta;
       return true;
     });
   }
@@ -8578,6 +8621,8 @@ function exportDZPxls() {
   const yearF   = (document.getElementById('dzp-year')||{value:''}).value;
   const monthF  = normalStr((document.getElementById('dzp-month')||{value:''}).value);
   const estadoF = (document.getElementById('dzp-estado')||{value:''}).value;
+  const recFilt = (document.getElementById('dzp-rec-filter')||{value:''}).value;
+  const valFacF = (document.getElementById('dzp-valfac-filter')||{value:''}).value;
   let data = [...m1];
   if (search)  data = data.filter(r => normalStr([r.po,r.inv,r.prov,r.recNums,String(r.rec||'')].join(' ')).includes(search));
   if (yearF)   data = data.filter(r => String(r.year) === String(yearF));
@@ -8587,6 +8632,21 @@ function exportDZPxls() {
     if (estadoF==='aprobado') return r.m3Status==='aprobado';
     if (estadoF==='revisar')  return r.m3Status !== 'pagado' && (r.validREC===false || r.recStatus==='revisar' || r.m3Status==='no_encontrado' || r.m3Status==='revisar');
     if (estadoF==='sin_rec')  return r.recStatus==='sin_recepcion';
+    return true;
+  });
+  if (recFilt) data = data.filter(r => {
+    if (recFilt==='con_rec')  return r.validREC === true || r.recStatus==='recepcionado';
+    if (recFilt==='sin_rec')  return r.recStatus==='sin_recepcion' && !r.rec && !r.recNums;
+    if (recFilt==='revisar')  return r.recStatus==='revisar' || (r.validREC===false && (r.rec||r.recNums));
+    if (recFilt==='con_num')  return !!(r.rec||r.recNums);
+    if (recFilt==='ant')      return String(r.rec||'').toUpperCase().includes('ANT') || String(r.recNums||'').toUpperCase().includes('ANT');
+    return true;
+  });
+  if (valFacF) data = data.filter(r => {
+    const isAlerta = r.m3Status !== 'pagado' && (r.validREC===false || r.recStatus==='sin_recepcion' || r.recStatus==='revisar' || r.m3Status==='no_encontrado' || r.m3Status==='revisar' || !r.cxpBruto);
+    if (valFacF==='con_valor') return r.cxpBruto && r.cxpBruto > 0;
+    if (valFacF==='sin_valor') return !r.cxpBruto || r.cxpBruto === 0;
+    if (valFacF==='alerta')    return isAlerta;
     return true;
   });
 
@@ -8705,7 +8765,7 @@ function exportDZPpdf() {
   </style></head><body>
   <div class="hdr">
     <div><div class="hdr-title">⛏ C-DZP-21-000-A — Reporte por Proveedor</div>
-    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v3.0</div></div>
+    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v3.1</div></div>
     <div class="hdr-meta">Generado: ${now}<br>Filtro: ${filterDesc}</div>
   </div>
   <div class="kpi-row">
@@ -8729,7 +8789,7 @@ function exportDZPpdf() {
       <tbody>${tableRows||'<tr><td colspan="9" style="text-align:center;padding:20px;color:#94a3b8">Sin datos</td></tr>'}</tbody>
     </table>
   </div>
-  <div class="footer"><span>Cash Call v3.0 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
+  <div class="footer"><span>Cash Call v3.1 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
   <div class="no-print" style="text-align:center;padding:16px">
     <button onclick="window.print()" style="padding:10px 28px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
     <button onclick="window.close()" style="margin-left:10px;padding:10px 20px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
@@ -8814,7 +8874,7 @@ function exportDZPSP2pdf() {
   </style></head><body>
   <div class="hdr">
     <div><div class="hdr-title">⛏ C-DZP-21-000-A — Órdenes de Compra por Proveedor</div>
-    <div class="hdr-sub">Tablero de Control · Cash Call v3.0</div></div>
+    <div class="hdr-sub">Tablero de Control · Cash Call v3.1</div></div>
     <div class="hdr-meta">Generado: ${now}</div>
   </div>
   <div class="kpi-row">
@@ -8834,7 +8894,7 @@ function exportDZPSP2pdf() {
       <tbody>${tableRows}</tbody>
     </table>
   </div>
-  <div class="footer"><span>Cash Call v3.0 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
+  <div class="footer"><span>Cash Call v3.1 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
   <div class="no-print" style="text-align:center;padding:14px">
     <button onclick="window.print()" style="padding:9px 26px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
     <button onclick="window.close()" style="margin-left:8px;padding:9px 18px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
@@ -8854,6 +8914,8 @@ function exportDZPSP3pdf() {
   const yearF   = (document.getElementById('dzp-year')||{value:''}).value;
   const monthF  = normalStr((document.getElementById('dzp-month')||{value:''}).value);
   const estadoF = (document.getElementById('dzp-estado')||{value:''}).value;
+  const recFilt = (document.getElementById('dzp-rec-filter')||{value:''}).value;
+  const valFacF = (document.getElementById('dzp-valfac-filter')||{value:''}).value;
   let data = [...m1];
   if (search)  data = data.filter(r => normalStr([r.po,r.inv,r.prov,r.recNums,String(r.rec||'')].join(' ')).includes(search));
   if (yearF)   data = data.filter(r => String(r.year) === String(yearF));
@@ -8865,10 +8927,27 @@ function exportDZPSP3pdf() {
     if (estadoF==='sin_rec')  return r.recStatus==='sin_recepcion';
     return true;
   });
+  if (recFilt) data = data.filter(r => {
+    if (recFilt==='con_rec')  return r.validREC === true || r.recStatus==='recepcionado';
+    if (recFilt==='sin_rec')  return r.recStatus==='sin_recepcion' && !r.rec && !r.recNums;
+    if (recFilt==='revisar')  return r.recStatus==='revisar' || (r.validREC===false && (r.rec||r.recNums));
+    if (recFilt==='con_num')  return !!(r.rec||r.recNums);
+    if (recFilt==='ant')      return String(r.rec||'').toUpperCase().includes('ANT') || String(r.recNums||'').toUpperCase().includes('ANT');
+    return true;
+  });
+  if (valFacF) data = data.filter(r => {
+    const isAlerta = r.m3Status !== 'pagado' && (r.validREC===false || r.recStatus==='sin_recepcion' || r.recStatus==='revisar' || r.m3Status==='no_encontrado' || r.m3Status==='revisar' || !r.cxpBruto);
+    if (valFacF==='con_valor') return r.cxpBruto && r.cxpBruto > 0;
+    if (valFacF==='sin_valor') return !r.cxpBruto || r.cxpBruto === 0;
+    if (valFacF==='alerta')    return isAlerta;
+    return true;
+  });
 
   const ctx        = document.getElementById('dzp-sp3-context')?.textContent || 'Todos los registros';
   const now        = new Date().toLocaleString('es-CO');
-  const filterDesc = [search?`Búsqueda: "${search}"`:'', yearF||'', monthF||'', estadoF||''].filter(Boolean).join(' · ') || 'Sin filtros activos';
+  const recFiltLabel = {con_rec:'Con REC',sin_rec:'Sin REC',revisar:'REC Revisar',ant:'ANT'}[recFilt]||'';
+  const valFacLabel  = {con_valor:'Con Valor Factura',sin_valor:'Sin Valor Factura',alerta:'Solo Alertas Factura'}[valFacF]||'';
+  const filterDesc = [search?`Búsqueda: "${search}"`:'', yearF||'', monthF||'', estadoF||'', recFiltLabel, valFacLabel].filter(Boolean).join(' · ') || 'Sin filtros activos';
 
   // Helpers de formato (iguales al exportDZPxls)
   const fmtNum = v => (v != null && v !== '' && !isNaN(Number(v))) ? ('$ ' + Number(v).toLocaleString('es-CO')) : (v||'—');
@@ -8991,7 +9070,7 @@ function exportDZPSP3pdf() {
   <div class="hdr">
     <div class="hdr-left">
       <div class="hdr-title">⛏ C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</div>
-      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v3.0</div>
+      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v3.1</div>
     </div>
     <div class="hdr-right">Generado: ${now}<br>${data.length} registros exportados</div>
   </div>
@@ -9039,7 +9118,7 @@ function exportDZPSP3pdf() {
   </div>
 
   <div class="footer">
-    <span>Cash Call v3.0 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
+    <span>Cash Call v3.1 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
     <span>${data.length} registros &nbsp;·&nbsp; Filtro: ${filterDesc}</span>
   </div>
 
@@ -9052,10 +9131,1122 @@ function exportDZPSP3pdf() {
   pw.document.close();
 }
 
-// DZP module is hooked into renderAll() and switchTab() directly above
-
-
-
 </script>
-</body>
-</html>
+
+<!-- ══ MODAL: INFORME GERENCIAL v3.1 ═════════════════════════ -->
+<div id="modal-informe-gerencial" style="display:none;position:fixed;inset:0;z-index:8000;background:rgba(10,22,40,0.88);backdrop-filter:blur(6px);align-items:center;justify-content:center;overflow-y:auto">
+  <canvas id="ig-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.3"></canvas>
+  <div style="background:#fff;border-radius:18px;padding:0;max-width:600px;width:96%;box-shadow:0 28px 80px rgba(0,0,0,0.55);position:relative;z-index:1;animation:cashCallSlideIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;overflow:hidden;margin:24px auto">
+    <div style="background:linear-gradient(135deg,#0a1628 0%,#0f2544 50%,#1a3a6e 100%);padding:22px 28px 18px;position:relative">
+      <button onclick="cerrarModalInformeGerencial()" style="position:absolute;top:14px;right:18px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);font-size:14px;cursor:pointer;color:rgba(255,255,255,0.65);border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-family:sans-serif">✕</button>
+      <div style="display:flex;align-items:center;gap:14px">
+        <svg width="48" height="48" viewBox="0 0 48 48" style="flex-shrink:0">
+          <rect width="48" height="48" rx="13" fill="#059669"/>
+          <rect width="48" height="48" rx="13" fill="url(#hg)"/>
+          <defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#059669"/><stop offset="100%" stop-color="#0f766e"/></linearGradient></defs>
+          <path d="M11 29 C11 19 16 13 24 13 C32 13 37 19 37 29 Z" fill="#00b4c8" opacity="0.95"/>
+          <rect x="9" y="29" width="30" height="4.5" rx="2.2" fill="#00b4c8"/>
+          <circle cx="24" cy="18" r="2.8" fill="white" opacity="0.9"/>
+          <line x1="16" y1="42" x2="32" y2="26" stroke="white" stroke-width="2.8" stroke-linecap="round"/>
+          <path d="M30 24 L38 21 L36 28 Z" fill="white"/>
+          <path d="M30 24 L24 19 L32 22 Z" fill="white"/>
+        </svg>
+        <div>
+          <div style="font-size:9.5px;font-weight:700;color:rgba(0,180,200,0.85);letter-spacing:2.2px;text-transform:uppercase;margin-bottom:3px">ARIS MINING · CASH CALL v3.1</div>
+          <div style="font-size:17px;font-weight:800;color:white">Informe Gerencial Ejecutivo</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.45);margin-top:3px">C-DZP-21-000-A &nbsp;·&nbsp; <kbd style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:4px;padding:1px 6px;font-size:9px;font-family:monospace;color:rgba(255,255,255,0.7)">Ctrl+G</kbd> para abrir</div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:22px 28px 26px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+        <div>
+          <label style="font-size:10px;font-weight:700;color:#5c6f8a;text-transform:uppercase;letter-spacing:0.6px;display:block;margin-bottom:5px">Fecha del Informe</label>
+          <input type="date" id="ig-fecha" style="width:100%;padding:8px 10px;border:1.5px solid #dde3ed;border-radius:8px;font-size:13px;font-family:'IBM Plex Sans',sans-serif;outline:none">
+        </div>
+        <div>
+          <label style="font-size:10px;font-weight:700;color:#5c6f8a;text-transform:uppercase;letter-spacing:0.6px;display:block;margin-bottom:5px">Período del Informe</label>
+          <select id="ig-periodo" style="width:100%;padding:8px 10px;border:1.5px solid #dde3ed;border-radius:8px;font-size:12.5px;font-family:'IBM Plex Sans',sans-serif;outline:none;background:white">
+            <option value="Enero 2025">Enero 2025</option><option value="Febrero 2025">Febrero 2025</option>
+            <option value="Marzo 2025">Marzo 2025</option><option value="Abril 2025">Abril 2025</option>
+            <option value="Mayo 2025">Mayo 2025</option><option value="Junio 2025">Junio 2025</option>
+            <option value="Julio 2025">Julio 2025</option><option value="Agosto 2025">Agosto 2025</option>
+            <option value="Septiembre 2025">Septiembre 2025</option><option value="Octubre 2025">Octubre 2025</option>
+            <option value="Noviembre 2025">Noviembre 2025</option><option value="Diciembre 2025">Diciembre 2025</option>
+            <option value="Enero – Febrero 2025">Bimestral: Ene–Feb 2025</option>
+            <option value="Marzo – Abril 2025">Bimestral: Mar–Abr 2025</option>
+            <option value="Mayo – Junio 2025">Bimestral: May–Jun 2025</option>
+            <option value="Julio – Agosto 2025">Bimestral: Jul–Ago 2025</option>
+            <option value="Septiembre – Octubre 2025">Bimestral: Sep–Oct 2025</option>
+            <option value="Noviembre – Diciembre 2025">Bimestral: Nov–Dic 2025</option>
+            <option value="Enero – Marzo 2025">Trimestral: Ene–Mar 2025</option>
+            <option value="Abril – Junio 2025">Trimestral: Abr–Jun 2025</option>
+            <option value="Julio – Septiembre 2025">Trimestral: Jul–Sep 2025</option>
+            <option value="Octubre – Diciembre 2025">Trimestral: Oct–Dic 2025</option>
+            <option value="Enero – Abril 2025">Cuatrimestral: Ene–Abr 2025</option>
+            <option value="Mayo – Agosto 2025">Cuatrimestral: May–Ago 2025</option>
+            <option value="Septiembre – Diciembre 2025">Cuatrimestral: Sep–Dic 2025</option>
+            <option value="Enero – Junio 2025" selected>Semestral: Ene–Jun 2025</option>
+            <option value="Julio – Diciembre 2025">Semestral: Jul–Dic 2025</option>
+            <option value="Enero – Diciembre 2025">Anual 2025</option>
+            <option value="Enero – Junio 2026">Semestral: Ene–Jun 2026</option>
+            <option value="Julio – Diciembre 2026">Semestral: Jul–Dic 2026</option>
+            <option value="Enero – Diciembre 2026">Anual 2026</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:10px;font-weight:700;color:#5c6f8a;text-transform:uppercase;letter-spacing:0.6px;display:block;margin-bottom:5px">Elaborado por</label>
+          <input type="text" id="ig-autor" value="Diana Carolina Escobar" oninput="igAutorAutocomplete(this)" style="width:100%;padding:8px 10px;border:1.5px solid #dde3ed;border-radius:8px;font-size:13px;font-family:'IBM Plex Sans',sans-serif;outline:none">
+        </div>
+        <div>
+          <label style="font-size:10px;font-weight:700;color:#5c6f8a;text-transform:uppercase;letter-spacing:0.6px;display:block;margin-bottom:5px">Cargo / Revisado por</label>
+          <input type="text" id="ig-cargo" placeholder="Ej: Analista Financiero" style="width:100%;padding:8px 10px;border:1.5px solid #dde3ed;border-radius:8px;font-size:13px;font-family:'IBM Plex Sans',sans-serif;outline:none">
+        </div>
+      </div>
+      <!-- JSON OBLIGATORIO -->
+      <div id="ig-json-box" style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:10px;padding:14px 16px;margin-bottom:16px;transition:all 0.3s">
+        <div style="font-size:11.5px;font-weight:700;color:#991b1b;margin-bottom:6px">📂 JSON Período Anterior — <span style="color:#dc2626">OBLIGATORIO</span></div>
+        <div id="ig-json-warning" style="font-size:10.5px;color:#dc2626;margin-bottom:10px;line-height:1.5;font-weight:600">⚠️ Debe cargar el JSON del período anterior para generar el informe comparativo. Exporte el JSON actual desde <strong>📦 Exportar JSON</strong> antes de actualizar los datos.</div>
+        <div style="font-size:10.5px;color:#7f1d1d;margin-bottom:10px;line-height:1.5">La fecha del JSON cargado debe ser <strong>anterior</strong> a la fecha del informe actual.</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button onclick="document.getElementById('ig-json-input').click()" style="padding:7px 14px;background:#dc2626;color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'IBM Plex Sans',sans-serif">📂 Cargar JSON anterior</button>
+          <input type="file" id="ig-json-input" accept=".json" style="display:none" onchange="igCargarJSON(this)">
+          <span id="ig-json-label" style="font-size:11px;color:#64748b;font-style:italic">Sin archivo cargado</span>
+        </div>
+        <div id="ig-json-preview" style="display:none;margin-top:10px;font-size:11px;color:#059669;font-weight:600;background:#d1fae5;border-radius:6px;padding:7px 11px"></div>
+        <div id="ig-json-date-error" style="display:none;margin-top:8px;font-size:11px;color:#dc2626;font-weight:600;background:#fee2e2;border-radius:6px;padding:7px 11px">⛔ La fecha del JSON debe ser anterior a la fecha del informe</div>
+      </div>
+      <!-- Opciones Anexos -->
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 16px;margin-bottom:18px">
+        <div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:10px">📥 Anexos Excel a incluir</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <label style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#374151;cursor:pointer"><input type="checkbox" id="ig-anx-dzp" checked style="width:14px;height:14px"> Análisis Acta/Factura (DZP)</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#374151;cursor:pointer"><input type="checkbox" id="ig-anx-alertas" checked style="width:14px;height:14px"> Alertas Pendientes</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#374151;cursor:pointer"><input type="checkbox" id="ig-anx-meses" checked style="width:14px;height:14px"> Gestión por Mes</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#374151;cursor:pointer"><input type="checkbox" id="ig-anx-m1" checked style="width:14px;height:14px"> Módulo 1 – Facturas</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#374151;cursor:pointer"><input type="checkbox" id="ig-anx-m2" checked style="width:14px;height:14px"> Módulo 2 – Recepciones</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#374151;cursor:pointer"><input type="checkbox" id="ig-anx-comp" checked style="width:14px;height:14px"> Comparativo Períodos</label>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button onclick="cerrarModalInformeGerencial()" style="padding:10px 20px;background:#f1f5f9;color:#64748b;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'IBM Plex Sans',sans-serif">Cancelar</button>
+        <button onclick="exportAnexoExcel()" id="ig-btn-excel" style="padding:10px 20px;background:linear-gradient(135deg,#1a4a8a,#0f2544);color:white;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;opacity:0.5;pointer-events:none" disabled>📥 Anexos Excel</button>
+        <button onclick="exportInformeGerencialPDF()" id="ig-btn-pdf" style="padding:10px 20px;background:linear-gradient(135deg,#059669,#047857);color:white;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;opacity:0.5;pointer-events:none" disabled>📄 Generar PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══ ESTADO JSON ANTERIOR ══════════════════════════════════════
+let _igJsonAnterior = null;
+
+// ── Constellation canvas for modal ─────────────────────────
+let _igCanvasAnim = null;
+function igStartCanvas() {
+  const cv = document.getElementById('ig-canvas'); if (!cv) return;
+  const ctx = cv.getContext('2d');
+  let stars = [], W, H;
+  function resize() { W=cv.width=window.innerWidth; H=cv.height=window.innerHeight; }
+  resize();
+  for (let i=0;i<90;i++) stars.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,r:Math.random()*1.6+0.4,a:Math.random()*6});
+  function draw() {
+    resize(); ctx.clearRect(0,0,W,H);
+    stars.forEach(s=>{ s.x+=s.vx; s.y+=s.vy; s.a+=0.006;
+      if(s.x<0)s.x=W; if(s.x>W)s.x=0; if(s.y<0)s.y=H; if(s.y>H)s.y=0;
+      const al=0.4+0.4*Math.abs(Math.sin(s.a));
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(0,180,200,${al})`; ctx.fill();
+    });
+    for(let i=0;i<stars.length;i++) for(let j=i+1;j<stars.length;j++) {
+      const dx=stars[i].x-stars[j].x,dy=stars[i].y-stars[j].y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<100){ctx.beginPath();ctx.moveTo(stars[i].x,stars[i].y);ctx.lineTo(stars[j].x,stars[j].y);ctx.strokeStyle=`rgba(0,180,200,${0.15*(1-d/100)})`;ctx.lineWidth=0.6;ctx.stroke();}
+    }
+    _igCanvasAnim = requestAnimationFrame(draw);
+  }
+  draw();
+}
+function igStopCanvas() { if(_igCanvasAnim){cancelAnimationFrame(_igCanvasAnim);_igCanvasAnim=null;} }
+
+function igAutorAutocomplete(input) {
+  const val = input.value;
+  // Si el usuario escribe "car" (case-insensitive) como primeras letras → autocomplete
+  if (/^car$/i.test(val.trim())) {
+    input.value = 'Diana Carolina Escobar';
+    input.select();
+  }
+}
+
+function igUnlockButtons() {
+  const ok = !!_igJsonAnterior && !document.getElementById('ig-json-date-error').style.display.includes('block') || (document.getElementById('ig-json-date-error')&&document.getElementById('ig-json-date-error').style.display==='none'&&!!_igJsonAnterior);
+  const unlocked = !!_igJsonAnterior;
+  ['ig-btn-excel','ig-btn-pdf'].forEach(id=>{
+    const btn=document.getElementById(id); if(!btn)return;
+    if(unlocked){btn.disabled=false;btn.style.opacity='1';btn.style.pointerEvents='auto';}
+    else{btn.disabled=true;btn.style.opacity='0.45';btn.style.pointerEvents='none';}
+  });
+  const box=document.getElementById('ig-json-box');
+  if(box) box.style.borderColor=unlocked?'#86efac':'#fca5a5';
+  const warn=document.getElementById('ig-json-warning');
+  if(warn) warn.style.display=unlocked?'none':'block';
+}
+
+function abrirModalInformeGerencial() {
+  const hoy = new Date().toISOString().slice(0,10);
+  document.getElementById('ig-fecha').value = hoy;
+  document.getElementById('modal-informe-gerencial').style.display = 'flex';
+  igUnlockButtons();
+  igStartCanvas();
+}
+function cerrarModalInformeGerencial() {
+  document.getElementById('modal-informe-gerencial').style.display = 'none';
+  igStopCanvas();
+}
+// Ctrl+G global shortcut
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey && e.key.toLowerCase()==='g') {
+    e.preventDefault();
+    if (document.getElementById('modal-informe-gerencial').style.display==='none') abrirModalInformeGerencial();
+    else cerrarModalInformeGerencial();
+  }
+});
+
+function igCargarJSON(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      const fechaPrev = parsed.meta?.fecha || parsed.fecha || '';
+      const fechaInf  = document.getElementById('ig-fecha').value || new Date().toISOString().slice(0,10);
+      // Validate date: JSON date must be BEFORE report date
+      const errEl = document.getElementById('ig-json-date-error');
+      const prevEl = document.getElementById('ig-json-preview');
+      if (fechaPrev && fechaPrev >= fechaInf) {
+        errEl.style.display='block';
+        prevEl.style.display='none';
+        document.getElementById('ig-json-label').textContent = '⛔ '+file.name+' — fecha inválida';
+        document.getElementById('ig-json-label').style.color='#dc2626';
+        _igJsonAnterior = null;
+        igUnlockButtons(); return;
+      }
+      errEl.style.display='none';
+      _igJsonAnterior = parsed;
+      const totalPrev = parsed.data?.m1?.length || parsed.m1?.length || '?';
+      document.getElementById('ig-json-label').textContent = file.name;
+      document.getElementById('ig-json-label').style.color='#059669';
+      prevEl.style.display='block';
+      prevEl.textContent = `✅ JSON válido: ${totalPrev} registros · Fecha: ${fechaPrev||'desconocida'}`;
+      igUnlockButtons();
+    } catch {
+      document.getElementById('ig-json-label').textContent='⚠️ Archivo JSON inválido';
+      document.getElementById('ig-json-label').style.color='#dc2626';
+      _igJsonAnterior=null; igUnlockButtons();
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ══ HELPERS COMPARTIDOS ═══════════════════════════════════════
+function igGetData() {
+  if (typeof getDZPData !== 'undefined') {
+    const { m1 } = getDZPData();
+    return m1 || [];
+  }
+  return [];
+}
+function igFmtCOP(v) {
+  if (!v && v !== 0) return '$ —';
+  return '$ ' + Number(v).toLocaleString('es-CO', {minimumFractionDigits:0});
+}
+function igFmtNum(v) {
+  if (!v && v !== 0) return '—';
+  return Number(v).toLocaleString('es-CO');
+}
+function igPct(a,b) { return b ? Math.round((a/b)*100) : 0; }
+
+function igGetMeses(data) {
+  const meses = {};
+  const orden = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  data.forEach(r => {
+    const mes = r.month || 'Sin mes';
+    if (!meses[mes]) meses[mes] = {total:0,pagadas:0,aprobadas:0,alertas:0,sinRec:0,conFac:0,valActa:0,valFac:0};
+    meses[mes].total++;
+    meses[mes].valActa += r.valConIva || 0;
+    meses[mes].valFac  += r.cxpBruto  || 0;
+    if (r.m3Status === 'pagado')   meses[mes].pagadas++;
+    if (r.m3Status === 'aprobado') meses[mes].aprobadas++;
+    if (r.cxpBruto && r.cxpBruto > 0) meses[mes].conFac++;
+    if (r.recStatus === 'sin_recepcion') meses[mes].sinRec++;
+    const isAlerta = r.m3Status !== 'pagado' && (r.validREC===false || r.recStatus==='sin_recepcion' || r.recStatus==='revisar' || r.m3Status==='no_encontrado' || r.m3Status==='revisar' || !r.cxpBruto);
+    if (isAlerta) meses[mes].alertas++;
+  });
+  return orden.filter(m => meses[m]).map(m => ({mes:m,...meses[m]}));
+}
+
+// ══ ANEXO EXCEL ══════════════════════════════════════════════
+function exportAnexoExcel() {
+  const data = igGetData();
+  if (!data.length) { showToast('Sin datos para exportar','warning'); return; }
+  const autor  = document.getElementById('ig-autor').value  || 'Diana Carolina Escobar';
+  const periodo = document.getElementById('ig-periodo').value || 'General';
+  const fecha  = document.getElementById('ig-fecha').value  || new Date().toLocaleDateString('es-CO');
+  const wb = XLSX.utils.book_new();
+
+  // ── Hoja 1: Resumen Ejecutivo ──────────────────────────────
+  const total     = data.length;
+  const pagadas   = data.filter(r=>r.m3Status==='pagado').length;
+  const aprobadas = data.filter(r=>r.m3Status==='aprobado').length;
+  const conRec    = data.filter(r=>r.recStatus==='recepcionado').length;
+  const sinRec    = data.filter(r=>r.recStatus==='sin_recepcion').length;
+  const conFac    = data.filter(r=>r.cxpBruto && r.cxpBruto>0).length;
+  const alertas   = data.filter(r => r.m3Status!=='pagado' && (r.validREC===false||r.recStatus==='sin_recepcion'||r.recStatus==='revisar'||r.m3Status==='no_encontrado'||r.m3Status==='revisar'||!r.cxpBruto)).length;
+  const sumActa   = data.reduce((s,r)=>s+(r.valConIva||0),0);
+  const sumFac    = data.reduce((s,r)=>s+(r.cxpBruto||0),0);
+  const cumpl     = igPct(conFac,total);
+
+  const wsResumen = XLSX.utils.aoa_to_sheet([
+    [`INFORME GERENCIAL — C-DZP-21-000-A`],[`Período: ${periodo}`],[`Fecha: ${fecha}`],[`Elaborado por: ${autor}`],[],
+    ['INDICADOR','VALOR','%'],
+    ['Total Actas/Facturas', total, '100%'],
+    ['Pagadas', pagadas, igPct(pagadas,total)+'%'],
+    ['Aprobadas', aprobadas, igPct(aprobadas,total)+'%'],
+    ['Con Recepción Oracle (REC)', conRec, igPct(conRec,total)+'%'],
+    ['Sin Recepción Oracle', sinRec, igPct(sinRec,total)+'%'],
+    ['Con Valor Factura (CxP)', conFac, igPct(conFac,total)+'%'],
+    ['⚠ A Revisar / Alertas', alertas, igPct(alertas,total)+'%'],
+    ['% Cumplimiento General', cumpl+'%', ''],
+    [],[],
+    ['VALORES MONETARIOS',''],
+    ['Σ Valor Actas c/IVA', sumActa],
+    ['Σ Valor Facturas CxP', sumFac],
+    ['Diferencia (Acta − Factura)', sumActa - sumFac],
+  ]);
+  wsResumen['!cols'] = [{wch:36},{wch:22},{wch:12}];
+  XLSX.utils.book_append_sheet(wb, wsResumen, '1. Resumen Ejecutivo');
+
+  // ── Hoja 2: Gestión por Mes ────────────────────────────────
+  const meses = igGetMeses(data);
+  const wsMeses = XLSX.utils.aoa_to_sheet([
+    ['MES','TOTAL','PAGADAS','APROBADAS','ALERTAS','SIN REC','CON FACTURA','% CUMPL.','Σ VAL.ACTA c/IVA','Σ VAL.FACTURA CxP'],
+    ...meses.map(m=>[m.mes,m.total,m.pagadas,m.aprobadas,m.alertas,m.sinRec,m.conFac,igPct(m.conFac,m.total)+'%',m.valActa,m.valFac])
+  ]);
+  wsMeses['!cols']=[{wch:14},{wch:8},{wch:10},{wch:12},{wch:10},{wch:10},{wch:14},{wch:10},{wch:20},{wch:20}];
+  XLSX.utils.book_append_sheet(wb, wsMeses, '2. Gestión por Mes');
+
+  // ── Hoja 3: Alertas Pendientes ─────────────────────────────
+  const alertRows = data.filter(r => r.m3Status!=='pagado' && (r.validREC===false||r.recStatus==='sin_recepcion'||r.recStatus==='revisar'||r.m3Status==='no_encontrado'||r.m3Status==='revisar'||!r.cxpBruto));
+  const wsAlertas = XLSX.utils.aoa_to_sheet([
+    ['#','OC','PROVEEDOR','FACTURA','ESTADO','REC','VALOR ACTA c/IVA','VALOR FACTURA','MES','AÑO'],
+    ...alertRows.map((r,i)=>[i+1,r.po||'',r.prov||'',r.inv||'',r.m3Status||'',r.recStatus||'',r.valConIva||'',r.cxpBruto||'',r.month||'',r.year||''])
+  ]);
+  wsAlertas['!cols']=[{wch:4},{wch:18},{wch:28},{wch:18},{wch:16},{wch:16},{wch:18},{wch:18},{wch:12},{wch:6}];
+  XLSX.utils.book_append_sheet(wb, wsAlertas, '3. Alertas Pendientes');
+
+  // ── Hoja 4: Detalle Completo ───────────────────────────────
+  const wsDetalle = XLSX.utils.aoa_to_sheet([
+    ['#','OC','PROVEEDOR','FACTURA','ESTADO','REC STATUS','REC #','VAL.ACTA s/IVA','VAL.ACTA c/IVA','VAL.REC','VAL.FACTURA CxP','MES','AÑO'],
+    ...data.map((r,i)=>[i+1,r.po||'',r.prov||'',r.inv||'',r.m3Status||'',r.recStatus||'',r.recNums||r.rec||'',r.valSinIva||'',r.valConIva||'',r.totalRec||'',r.cxpBruto||'',r.month||'',r.year||''])
+  ]);
+  wsDetalle['!cols']=[{wch:4},{wch:18},{wch:28},{wch:18},{wch:16},{wch:16},{wch:14},{wch:18},{wch:18},{wch:18},{wch:18},{wch:12},{wch:6}];
+  XLSX.utils.book_append_sheet(wb, wsDetalle, '4. Detalle Completo');
+
+  // ── Hoja 5: Comparativo con período anterior ───────────────
+  if (_igJsonAnterior) {
+    const prevData = _igJsonAnterior.data?.m1 || _igJsonAnterior.m1 || [];
+    const prevTotal = prevData.length;
+    const prevPag   = prevData.filter(r=>r.m3Status==='pagado').length;
+    const prevAlert = prevData.filter(r => r.m3Status!=='pagado' && (r.validREC===false||r.recStatus==='sin_recepcion'||r.recStatus==='revisar'||r.m3Status==='no_encontrado'||!r.cxpBruto)).length;
+    const prevConFac= prevData.filter(r=>r.cxpBruto&&r.cxpBruto>0).length;
+    const wsComp = XLSX.utils.aoa_to_sheet([
+      ['COMPARATIVO PERÍODOS','ANTERIOR','ACTUAL','VARIACIÓN'],
+      ['Total Actas', prevTotal, total, total - prevTotal],
+      ['Pagadas', prevPag, pagadas, pagadas - prevPag],
+      ['Alertas', prevAlert, alertas, alertas - prevAlert],
+      ['Con Factura CxP', prevConFac, conFac, conFac - prevConFac],
+      ['% Cumplimiento', igPct(prevConFac,prevTotal)+'%', cumpl+'%',''],
+    ]);
+    wsComp['!cols']=[{wch:28},{wch:12},{wch:12},{wch:14}];
+    XLSX.utils.book_append_sheet(wb, wsComp, '5. Comparativo Períodos');
+  }
+
+  XLSX.writeFile(wb, `InformeGerencial_C-DZP-21-000-A_${fecha}.xlsx`);
+  if (typeof showToast !== 'undefined') showToast('✅ Anexo Excel exportado correctamente', 'success');
+}
+
+// ══ INFORME GERENCIAL PDF ════════════════════════════════════
+function exportInformeGerencialPDF() {
+  const data = igGetData();
+  if (!data.length) { showToast('Sin datos para generar informe','warning'); return; }
+  if (!_igJsonAnterior) { showToast('⛔ Debe cargar el JSON del período anterior primero','warning'); return; }
+
+  const autor   = document.getElementById('ig-autor').value    || 'Diana Carolina Escobar';
+  const cargo   = document.getElementById('ig-cargo').value    || '';
+  const periodo = document.getElementById('ig-periodo').value  || 'General';
+  const fechaInf= document.getElementById('ig-fecha').value    || new Date().toISOString().slice(0,10);
+  const fechaFmt= new Date(fechaInf+'T12:00:00').toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});
+  const now     = new Date().toLocaleString('es-CO');
+
+  // ── Métricas principales ──────────────────────────────────
+  const total     = data.length;
+  const pagadas   = data.filter(r=>r.m3Status==='pagado').length;
+  const aprobadas = data.filter(r=>r.m3Status==='aprobado').length;
+  const conRec    = data.filter(r=>r.recStatus==='recepcionado'||r.validREC===true).length;
+  const sinRec    = data.filter(r=>r.recStatus==='sin_recepcion'&&!r.rec&&!r.recNums).length;
+  const recRevisar= data.filter(r=>r.recStatus==='revisar'||(r.validREC===false&&(r.rec||r.recNums))).length;
+  const conFac    = data.filter(r=>r.cxpBruto&&r.cxpBruto>0).length;
+  const sinFac    = data.filter(r=>!r.cxpBruto||r.cxpBruto===0).length;
+  const alertas   = data.filter(r=>r.m3Status!=='pagado'&&(r.validREC===false||r.recStatus==='sin_recepcion'||r.recStatus==='revisar'||r.m3Status==='no_encontrado'||r.m3Status==='revisar'||!r.cxpBruto)).length;
+  const sumActaSin= data.reduce((s,r)=>s+(r.valSinIva||0),0);
+  const sumActaCon= data.reduce((s,r)=>s+(r.valConIva||0),0);
+  const sumRec    = data.reduce((s,r)=>s+(r.totalRec||0),0);
+  const sumFac    = data.reduce((s,r)=>s+(r.cxpBruto||0),0);
+  const sumPagado = data.filter(r=>r.m3Status==='pagado').reduce((s,r)=>s+(r.cxpBruto||0),0);
+  const sumPend   = Math.max(0,sumActaCon-sumPagado);
+  const cumpl     = igPct(conFac,total);
+  const meses     = igGetMeses(data);
+
+  // ── Alertas por proveedor (Pareto) ────────────────────────
+  const alertMap={};
+  data.filter(r=>r.m3Status!=='pagado'&&(r.validREC===false||r.recStatus==='sin_recepcion'||r.recStatus==='revisar'||r.m3Status==='no_encontrado'||r.m3Status==='revisar'||!r.cxpBruto))
+    .forEach(r=>{const p=r.prov||'Sin Proveedor';alertMap[p]=(alertMap[p]||0)+1;});
+  const paretoData=Object.entries(alertMap).sort((a,b)=>b[1]-a[1]).slice(0,12);
+  const paretoTotal=paretoData.reduce((s,[,v])=>s+v,0);
+  let paretoAcum=0;
+  const paretoRows=paretoData.map(([p,v])=>{paretoAcum+=v;return{p,v,pct:igPct(v,paretoTotal),acum:igPct(paretoAcum,paretoTotal)};});
+
+  // ── Top proveedores valor ─────────────────────────────────
+  const provVal={};
+  data.forEach(r=>{const p=r.prov||'—';provVal[p]=(provVal[p]||0)+(r.valConIva||0);});
+  const topProvVal=Object.entries(provVal).sort((a,b)=>b[1]-a[1]).slice(0,8);
+
+  // ── Comparativo ───────────────────────────────────────────
+  const prevData  = _igJsonAnterior.data?.m1||_igJsonAnterior.m1||[];
+  const prevTotal = prevData.length;
+  const prevPag   = prevData.filter(r=>r.m3Status==='pagado').length;
+  const prevAlert = prevData.filter(r=>r.m3Status!=='pagado'&&(r.validREC===false||r.recStatus==='sin_recepcion'||r.recStatus==='revisar'||r.m3Status==='no_encontrado'||!r.cxpBruto)).length;
+  const prevConFac= prevData.filter(r=>r.cxpBruto&&r.cxpBruto>0).length;
+  const prevConRec= prevData.filter(r=>r.recStatus==='recepcionado'||r.validREC===true).length;
+  const prevSumFac= prevData.reduce((s,r)=>s+(r.cxpBruto||0),0);
+  const prevSumPag= prevData.filter(r=>r.m3Status==='pagado').reduce((s,r)=>s+(r.cxpBruto||0),0);
+  const fechaPrev = _igJsonAnterior.meta?.fecha||_igJsonAnterior.fecha||'período anterior';
+  const vc=(v,inv)=>`<td class="num" style="color:${(inv?v<0:v>0)?'#059669':(inv?v>0:v<0)?'#dc2626':'#64748b'};font-weight:700">${v>0?'+':''}${v}</td>`;
+
+  // ── SVG helpers ───────────────────────────────────────────
+  const mkBar=(pct,color,h=12)=>`<div style="height:${h}px;background:#f1f5f9;border-radius:6px;overflow:hidden;flex:1"><div style="height:100%;width:${pct}%;background:${color};border-radius:6px;transition:width 0.5s"></div></div>`;
+
+  // ── SVG Pareto ────────────────────────────────────────────
+  const pW=460,pH=160,padL=8,padB=24,barW=Math.floor((pW-padL)/Math.max(paretoRows.length,1))-3;
+  const maxBar=paretoRows[0]?.v||1;
+  const svgPareto=`<svg viewBox="0 0 ${pW} ${pH+30}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+    <!-- bars -->
+    ${paretoRows.map((d,i)=>{
+      const bH=Math.round((d.v/maxBar)*(pH-padB-10));
+      const x=padL+i*(barW+3),y=pH-padB-bH;
+      return `<rect x="${x}" y="${y}" width="${barW}" height="${bH}" rx="3" fill="${d.acum<=80?'#dc2626':'#fca5a5'}"/>
+        <text x="${x+barW/2}" y="${pH-padB+12}" text-anchor="middle" font-size="6.5" fill="#374151" font-family="IBM Plex Sans,sans-serif" transform="rotate(-30,${x+barW/2},${pH-padB+12})">${(d.p||'').slice(0,12)}</text>
+        <text x="${x+barW/2}" y="${y-3}" text-anchor="middle" font-size="7" fill="#374151" font-family="IBM Plex Mono,monospace">${d.v}</text>`;
+    }).join('')}
+    <!-- Pareto line -->
+    <polyline points="${paretoRows.map((d,i)=>{const x=padL+i*(barW+3)+barW/2,y=pH-padB-Math.round((d.acum/100)*(pH-padB-10));return x+','+y;}).join(' ')}" fill="none" stroke="#1a4a8a" stroke-width="1.5" stroke-dasharray="none"/>
+    ${paretoRows.map((d,i)=>{const x=padL+i*(barW+3)+barW/2,y=pH-padB-Math.round((d.acum/100)*(pH-padB-10));return `<circle cx="${x}" cy="${y}" r="3" fill="#1a4a8a"/><text x="${x+4}" y="${y-3}" font-size="6.5" fill="#1a4a8a" font-family="IBM Plex Mono,monospace">${d.acum}%</text>`;}).join('')}
+    <!-- 80% line -->
+    <line x1="${padL}" y1="${pH-padB-Math.round(0.8*(pH-padB-10))}" x2="${pW}" y2="${pH-padB-Math.round(0.8*(pH-padB-10))}" stroke="#d97706" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="${pW-2}" y="${pH-padB-Math.round(0.8*(pH-padB-10))-3}" text-anchor="end" font-size="7" fill="#d97706" font-family="IBM Plex Sans,sans-serif">80%</text>
+    <!-- Legend -->
+    <rect x="${padL}" y="${pH+10}" width="10" height="8" rx="2" fill="#dc2626"/>
+    <text x="${padL+14}" y="${pH+17}" font-size="7.5" fill="#374151" font-family="IBM Plex Sans,sans-serif">Alertas (Pareto ≤80%)</text>
+    <rect x="140" y="${pH+10}" width="10" height="8" rx="2" fill="#fca5a5"/>
+    <text x="154" y="${pH+17}" font-size="7.5" fill="#374151" font-family="IBM Plex Sans,sans-serif">Resto</text>
+    <line x1="210" y1="${pH+14}" x2="224" y2="${pH+14}" stroke="#1a4a8a" stroke-width="1.5"/>
+    <circle cx="217" cy="${pH+14}" r="3" fill="#1a4a8a"/>
+    <text x="228" y="${pH+17}" font-size="7.5" fill="#1a4a8a" font-family="IBM Plex Sans,sans-serif">% Acumulado</text>
+  </svg>`;
+
+  // ── SVG Donuts ────────────────────────────────────────────
+  const r0=38,cx0=48,cy0=48,circ0=2*Math.PI*r0;
+  const pf=cumpl/100,dash0=circ0*pf,gap0=circ0*(1-pf);
+  const svgDonut=`<svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" style="width:96px;height:96px;flex-shrink:0">
+    <circle cx="${cx0}" cy="${cy0}" r="${r0}" fill="none" stroke="#f1f5f9" stroke-width="11"/>
+    <circle cx="${cx0}" cy="${cy0}" r="${r0}" fill="none" stroke="${cumpl>=80?'#059669':cumpl>=60?'#d97706':'#dc2626'}" stroke-width="11"
+      stroke-dasharray="${dash0.toFixed(1)} ${gap0.toFixed(1)}" stroke-dashoffset="${(circ0*0.25).toFixed(1)}" stroke-linecap="round"/>
+    <text x="${cx0}" y="${cy0-4}" text-anchor="middle" font-size="14" font-weight="800" fill="#0f2544" font-family="IBM Plex Mono,sans-serif">${cumpl}%</text>
+    <text x="${cx0}" y="${cy0+10}" text-anchor="middle" font-size="7" fill="#64748b" font-family="IBM Plex Sans,sans-serif">Cumplim.</text>
+  </svg>`;
+
+  const estados=[{l:'Pagadas',v:pagadas,c:'#059669'},{l:'Aprobadas',v:aprobadas,c:'#d97706'},{l:'Alertas',v:alertas,c:'#dc2626'},{l:'Otros',v:Math.max(0,total-pagadas-aprobadas-alertas),c:'#94a3b8'}].filter(e=>e.v>0);
+  let off2=circ0*0.25;
+  const svgDonut2=`<svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" style="width:96px;height:96px;flex-shrink:0">
+    <circle cx="${cx0}" cy="${cy0}" r="${r0}" fill="none" stroke="#f1f5f9" stroke-width="11"/>
+    ${estados.map(e=>{const d=circ0*(e.v/total),g=circ0*(1-e.v/total);const s=`<circle cx="${cx0}" cy="${cy0}" r="${r0}" fill="none" stroke="${e.c}" stroke-width="11" stroke-dasharray="${d.toFixed(1)} ${g.toFixed(1)}" stroke-dashoffset="${(-off2+circ0*0.25).toFixed(1)}"/>`;off2-=d;return s;}).join('')}
+    <text x="${cx0}" y="${cy0-4}" text-anchor="middle" font-size="13" font-weight="800" fill="#0f2544" font-family="IBM Plex Mono,sans-serif">${total}</text>
+    <text x="${cx0}" y="${cy0+10}" text-anchor="middle" font-size="7" fill="#64748b" font-family="IBM Plex Sans,sans-serif">Actas</text>
+  </svg>`;
+
+  // ── SVG Barras mensuales ──────────────────────────────────
+  const maxMT=Math.max(...meses.map(m=>m.total),1);
+  const bW2=Math.max(18,Math.floor(340/Math.max(meses.length,1))-4);
+  const svgMesBar=`<svg viewBox="0 0 ${meses.length*(bW2+4)+10} 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+    ${meses.map((m,i)=>{
+      const x=5+i*(bW2+4),hT=Math.round((m.total/maxMT)*70),hP=Math.round((m.pagadas/maxMT)*70),hA=Math.round((m.alertas/maxMT)*70);
+      return `<rect x="${x}" y="${75-hT}" width="${bW2}" height="${hT}" rx="2" fill="#dbeafe"/>
+        <rect x="${x}" y="${75-hP}" width="${bW2}" height="${hP}" rx="2" fill="#059669"/>
+        <rect x="${x+bW2-4}" y="${75-hA}" width="4" height="${hA}" rx="1" fill="#dc2626" opacity="0.8"/>
+        <text x="${x+bW2/2}" y="86" text-anchor="middle" font-size="6.5" fill="#374151" font-family="IBM Plex Sans,sans-serif">${m.mes.slice(0,3)}</text>
+        <text x="${x+bW2/2}" y="${75-hT-3}" text-anchor="middle" font-size="6" fill="#374151" font-family="IBM Plex Mono,monospace">${m.total}</text>`;
+    }).join('')}
+  </svg>`;
+
+  // ── SVG Tendencia valor facturado ─────────────────────────
+  const maxV=Math.max(...meses.map(m=>m.valFac||m.valActa||0),1);
+  const ptsA=meses.map((m,i)=>`${10+i*(330/Math.max(meses.length-1,1))},${80-Math.round(((m.valActa||0)/maxV)*65)}`).join(' ');
+  const ptsF=meses.map((m,i)=>`${10+i*(330/Math.max(meses.length-1,1))},${80-Math.round(((m.valFac||0)/maxV)*65)}`).join(' ');
+  const svgTendencia=`<svg viewBox="0 0 350 95" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+    <polyline points="${ptsA}" fill="none" stroke="#bfdbfe" stroke-width="1.5" stroke-linejoin="round"/>
+    <polyline points="${ptsF}" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linejoin="round"/>
+    ${meses.map((m,i)=>{const x=10+i*(330/Math.max(meses.length-1,1)),yF=80-Math.round(((m.valFac||0)/maxV)*65);return `<circle cx="${x}" cy="${yF}" r="3" fill="#7c3aed"/><text x="${x}" y="${yF-6}" text-anchor="middle" font-size="6" fill="#7c3aed" font-family="IBM Plex Mono,monospace">$${Math.round((m.valFac||0)/1e6)}M</text><text x="${x}" y="90" text-anchor="middle" font-size="6.5" fill="#374151" font-family="IBM Plex Sans,sans-serif">${m.mes.slice(0,3)}</text>`;}).join('')}
+    <rect x="5" y="83" width="8" height="4" rx="1" fill="#bfdbfe"/><text x="17" y="87" font-size="7" fill="#374151" font-family="IBM Plex Sans,sans-serif">Val.Acta</text>
+    <rect x="70" y="83" width="8" height="4" rx="1" fill="#7c3aed"/><text x="82" y="87" font-size="7" fill="#374151" font-family="IBM Plex Sans,sans-serif">Val.Factura CxP</text>
+  </svg>`;
+
+  // ── SVG Tendencia comparativo ─────────────────────────────
+  const prevMeses=igGetMeses(prevData);
+  const allMesNames=[...new Set([...meses.map(m=>m.mes),...prevMeses.map(m=>m.mes)])];
+  const getV=(arr,mes)=>arr.find(m=>m.mes===mes)?.total||0;
+  const maxCT=Math.max(...allMesNames.map(n=>Math.max(getV(meses,n),getV(prevMeses,n))),1);
+  const ptsCurr=allMesNames.map((n,i)=>`${10+i*(330/Math.max(allMesNames.length-1,1))},${70-Math.round((getV(meses,n)/maxCT)*58)}`).join(' ');
+  const ptsPrev=allMesNames.map((n,i)=>`${10+i*(330/Math.max(allMesNames.length-1,1))},${70-Math.round((getV(prevMeses,n)/maxCT)*58)}`).join(' ');
+  const svgCompMes=`<svg viewBox="0 0 350 85" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+    <polyline points="${ptsPrev}" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3" stroke-linejoin="round"/>
+    <polyline points="${ptsCurr}" fill="none" stroke="#059669" stroke-width="2" stroke-linejoin="round"/>
+    ${allMesNames.map((n,i)=>{const x=10+i*(330/Math.max(allMesNames.length-1,1)),yCurr=70-Math.round((getV(meses,n)/maxCT)*58);return `<circle cx="${x}" cy="${yCurr}" r="2.5" fill="#059669"/><text x="${x}" y="80" text-anchor="middle" font-size="6.5" fill="#374151" font-family="IBM Plex Sans,sans-serif">${n.slice(0,3)}</text>`;}).join('')}
+    <line x1="5" y1="76" x2="18" y2="76" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3,2"/><text x="22" y="79" font-size="7" fill="#374151" font-family="IBM Plex Sans,sans-serif">Per.Ant</text>
+    <line x1="80" y1="76" x2="93" y2="76" stroke="#059669" stroke-width="2"/><text x="97" y="79" font-size="7" fill="#374151" font-family="IBM Plex Sans,sans-serif">Per.Actual</text>
+  </svg>`;
+
+  // ── Tabla mensual ─────────────────────────────────────────
+  const rowsMeses=meses.map((m,i)=>`<tr style="background:${i%2===0?'#fff':'#f8fafc'}">
+    <td>${m.mes}</td><td class="num">${m.total}</td><td class="num ok">${m.pagadas}</td>
+    <td class="num warn">${m.aprobadas}</td><td class="num ${m.alertas>0?'err':''}">${m.alertas}</td>
+    <td class="num ${m.sinRec>0?'err':''}">${m.sinRec}</td><td class="num">${m.conFac}</td>
+    <td class="num bold">${igPct(m.conFac,m.total)}%</td>
+    <td class="num">${igFmtCOP(m.valActa)}</td><td class="num" style="color:#7c3aed">${igFmtCOP(m.valFac)}</td>
+  </tr>`).join('');
+
+  // ── Detalle alertas ───────────────────────────────────────
+  const alertRows=data.filter(r=>r.m3Status!=='pagado'&&(r.validREC===false||r.recStatus==='sin_recepcion'||r.recStatus==='revisar'||r.m3Status==='no_encontrado'||r.m3Status==='revisar'||!r.cxpBruto)).slice(0,50);
+  const rowsDetAlertas=alertRows.map((r,i)=>{
+    const rc=(r.validREC===true||r.recStatus==='recepcionado')?'#059669':(r.recStatus==='revisar')?'#d97706':'#dc2626';
+    const rl=(r.validREC===true||r.recStatus==='recepcionado')?'🟢 OK':(r.recStatus==='revisar')?'🟠 Rev.':'🔴 Sin';
+    return `<tr style="background:${i%2===0?'#fff':'#faf5ff'}">
+      <td class="num gray">${i+1}</td><td class="mono">${r.po||'—'}</td>
+      <td class="prov">${(r.prov||'—').slice(0,24)}</td><td class="mono">${r.inv||'—'}</td>
+      <td style="color:${rc};font-weight:700;font-size:8px;text-align:center">${rl}</td>
+      <td style="font-size:8px">${r.m3Status||'—'}</td>
+      <td class="num">${r.cxpBruto?igFmtCOP(r.cxpBruto):'<span style="color:#dc2626;font-size:7.5px">Sin Factura</span>'}</td>
+      <td style="font-size:7.5px;color:#64748b">${r.month||'—'}</td>
+    </tr>`;}).join('');
+
+  // ── PAGE COUNTER via CSS counters ─────────────────────────
+  const pgStyle=`
+    body { counter-reset: page-num; }
+    .chapter-break { counter-increment: page-num; }
+    .page-footer::after { content: "Página " counter(page-num); }
+    @page { counter-increment: page; }
+  `;
+
+  // ══ HTML DEL INFORME ══════════════════════════════════════
+  const pw=window.open('','_blank','width=1100,height=860');
+  pw.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+  <title>Informe Gerencial v3.1 — ARIS MINING · C-DZP-21-000-A</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
+    @page { size:A4 portrait; margin:0; @bottom-right { content:"Pág. " counter(page) " de " counter(pages); font-size:8px; font-family:"IBM Plex Mono",monospace; color:#94a3b8; margin-right:16mm; margin-bottom:8mm; } }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'IBM Plex Sans',sans-serif; background:#fff; color:#1a2535; font-size:10px; counter-reset:chap; }
+
+    /* ── PORTADA ── */
+    .cover { width:210mm; min-height:297mm; background:linear-gradient(160deg,#050d1a 0%,#0a1628 30%,#0f2544 55%,#1a3a6e 78%,#163d2a 100%); display:flex; flex-direction:column; position:relative; overflow:hidden; page-break-after:always; }
+    canvas.cover-canvas { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; opacity:0.55; }
+    .cover-deco  { position:absolute; top:-60px; right:-60px; width:360px; height:360px; border-radius:50%; border:1px solid rgba(0,180,200,0.1); }
+    .cover-deco2 { position:absolute; bottom:80px; left:-40px; width:220px; height:220px; border-radius:50%; border:1px solid rgba(255,255,255,0.04); }
+    .cover-deco3 { position:absolute; bottom:0; right:0; width:160px; height:160px; border-radius:50% 0 0 0; background:rgba(5,150,105,0.1); }
+    .cover-top { padding:44px 52px 0; flex:1; display:flex; flex-direction:column; justify-content:center; position:relative; z-index:2; }
+    .cover-brand-row { display:flex; align-items:center; gap:14px; margin-bottom:26px; }
+    .cover-brand-svg { flex-shrink:0; }
+    .cover-brand-txt { display:flex; flex-direction:column; }
+    .cover-brand-name { font-size:24px; font-weight:800; color:white; letter-spacing:1.8px; line-height:1.1; }
+    .cover-brand-sub  { font-size:9.5px; color:rgba(0,180,200,0.85); font-weight:700; letter-spacing:2.5px; text-transform:uppercase; margin-top:3px; }
+    .cover-div { width:56px; height:3px; background:linear-gradient(90deg,#00b4c8,#059669); border-radius:2px; margin-bottom:20px; }
+    .cover-eye { font-size:9.5px; font-weight:600; color:rgba(255,255,255,0.45); letter-spacing:2px; text-transform:uppercase; margin-bottom:11px; }
+    .cover-title { font-size:30px; font-weight:800; color:white; line-height:1.1; letter-spacing:-0.3px; margin-bottom:7px; }
+    .cover-title span { color:#00b4c8; }
+    .cover-sub { font-size:12px; color:rgba(255,255,255,0.5); font-weight:400; margin-bottom:24px; line-height:1.5; }
+    .cover-pills { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:24px; }
+    .cover-pill { background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); border-radius:20px; padding:3px 12px; font-size:9px; color:rgba(255,255,255,0.65); font-weight:600; }
+    .cover-pill.g { border-color:rgba(5,150,105,0.5); background:rgba(5,150,105,0.16); color:#6ee7b7; }
+    .cover-pill.r { border-color:rgba(220,38,38,0.5); background:rgba(220,38,38,0.16); color:#fca5a5; }
+    .cover-kpis { display:flex; gap:10px; margin-bottom:0; }
+    .cover-kpi { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:9px; padding:11px 14px; flex:1; }
+    .cover-kpi-v { font-size:20px; font-weight:800; color:white; font-family:'IBM Plex Mono',monospace; line-height:1; }
+    .cover-kpi-l { font-size:8px; color:rgba(255,255,255,0.4); font-weight:700; text-transform:uppercase; letter-spacing:0.7px; margin-top:3px; }
+    /* GEC credit - sutil */
+    .cover-gec { position:absolute; bottom:80px; left:52px; z-index:2; }
+    .cover-gec-text { font-size:8px; color:rgba(255,255,255,0.22); font-weight:400; letter-spacing:0.5px; line-height:1.5; }
+    .cover-gec-text strong { color:rgba(0,180,200,0.35); font-weight:600; }
+    .cover-bottom { padding:20px 52px 28px; border-top:1px solid rgba(255,255,255,0.08); background:rgba(0,0,0,0.2); position:relative; z-index:2; }
+    .cover-meta { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+    .cover-ml { font-size:7.5px; font-weight:700; color:rgba(255,255,255,0.28); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px; }
+    .cover-mv { font-size:11px; color:rgba(255,255,255,0.78); font-weight:600; }
+    .cover-stripe { position:absolute; bottom:0; left:0; right:0; height:4px; background:linear-gradient(90deg,#00b4c8,#059669,#7c3aed,#00b4c8); }
+
+    /* ── TOC ── */
+    .toc-page { padding:46px 52px 36px; min-height:297mm; page-break-after:always; }
+    .co-row { display:flex; align-items:center; gap:10px; margin-bottom:24px; padding-bottom:12px; border-bottom:1px solid #e2e8f0; }
+    .co-badge { background:linear-gradient(135deg,#059669,#047857); color:white; font-size:10.5px; font-weight:800; padding:4px 11px; border-radius:7px; letter-spacing:1px; }
+    .toc-hdr { display:flex; align-items:center; gap:11px; margin-bottom:22px; padding-bottom:11px; border-bottom:2px solid #00b4c8; }
+    .toc-ic { width:32px; height:32px; border-radius:8px; background:linear-gradient(135deg,#0f2544,#1a4a8a); display:flex; align-items:center; justify-content:center; font-size:16px; }
+    .toc-ti { font-size:18px; font-weight:800; color:#0f2544; }
+    .toc-item { display:flex; align-items:baseline; padding:9px 0; border-bottom:1px dashed #e2e8f0; }
+    .toc-item:last-child { border-bottom:none; }
+    .tn { font-size:10.5px; font-weight:800; color:#1a4a8a; width:24px; flex-shrink:0; }
+    .tt { font-size:11.5px; font-weight:600; color:#1a2535; flex:1; }
+    .ts { font-size:9.5px; color:#64748b; font-weight:400; margin-top:1px; display:block; }
+    .tdots { flex:1; border-bottom:2px dotted #e2e8f0; margin:0 8px 4px; }
+    .tpg { font-size:10.5px; font-weight:700; color:#1a4a8a; font-family:'IBM Plex Mono',monospace; width:20px; text-align:right; }
+
+    /* ── CHAPTERS ── */
+    .chapter-break { padding:38px 52px 34px; page-break-before:always; counter-increment:chap; }
+    .chapter-break:first-of-type { page-break-before:auto; }
+    .phs { height:3px; background:linear-gradient(90deg,#0f2544,#00b4c8,#059669); margin-bottom:0; }
+    .cht { font-size:16px; font-weight:800; color:#0f2544; margin-bottom:5px; margin-top:18px; display:flex; align-items:center; gap:7px; }
+    .cht::before { content:''; display:inline-block; width:4px; height:18px; background:#00b4c8; border-radius:2px; flex-shrink:0; }
+    .chr { height:1px; background:linear-gradient(90deg,#00b4c8,#e2e8f0); margin-bottom:18px; }
+    .it { font-size:10px; color:#374151; line-height:1.7; margin-bottom:14px; }
+
+    /* ── GRID ── */
+    .g2 { display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:17px; }
+    .g3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:17px; }
+    .g4 { display:grid; grid-template-columns:repeat(4,1fr); gap:9px; margin-bottom:16px; }
+    .cp { background:#f8fafc; border:1px solid #e2e8f0; border-radius:9px; padding:12px 14px; }
+    .cpt { font-size:9px; font-weight:700; color:#0f2544; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:9px; }
+
+    /* ── KPI BOXES ── */
+    .kb { border-radius:9px; padding:12px 10px; border:1px solid #e2e8f0; text-align:center; border-top:3px solid #e2e8f0; }
+    .kb.ts { border-top-color:#059669; background:#f0fdf4; }
+    .kb.tw { border-top-color:#d97706; background:#fffbeb; }
+    .kb.td { border-top-color:#dc2626; background:#fef2f2; }
+    .kb.ti { border-top-color:#2563eb; background:#eff6ff; }
+    .kb.tp { border-top-color:#7c3aed; background:#f5f3ff; }
+    .kb.tn2{ border-top-color:#0f2544; background:#f8fafc; }
+    .kb.tt2{ border-top-color:#0891b2; background:#f0f9ff; }
+    .kbv { font-size:20px; font-weight:800; color:#0f2544; font-family:'IBM Plex Mono',monospace; line-height:1; }
+    .kbl { font-size:7.5px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.4px; margin-top:3px; }
+    .kbs { font-size:7.5px; color:#94a3b8; margin-top:2px; font-family:'IBM Plex Mono',monospace; }
+
+    /* ── PROGRESS ── */
+    .pr { display:flex; align-items:center; gap:8px; margin-bottom:7px; }
+    .pl { font-size:9px; font-weight:600; width:155px; flex-shrink:0; color:#374151; }
+    .pt { flex:1; height:11px; background:#f1f5f9; border-radius:5px; overflow:hidden; }
+    .pf { height:100%; border-radius:5px; }
+    .pp { font-size:9px; font-weight:700; width:32px; text-align:right; font-family:'IBM Plex Mono',monospace; color:#0f2544; }
+    .pc { font-size:8.5px; color:#94a3b8; width:36px; text-align:right; font-family:'IBM Plex Mono',monospace; }
+
+    /* ── DONUT ROW ── */
+    .dr { display:flex; align-items:center; gap:14px; }
+    .dl { flex:1; }
+    .dli { display:flex; align-items:center; gap:6px; margin-bottom:5px; font-size:9px; }
+    .dld { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+    .dlv { margin-left:auto; font-weight:700; font-family:'IBM Plex Mono',monospace; font-size:9px; }
+
+    /* ── MONEY GRID ── */
+    .mg { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:16px; }
+    .mb2 { border-radius:8px; padding:11px 12px; text-align:center; border:1px solid #e2e8f0; }
+    .mv2 { font-size:11.5px; font-weight:800; font-family:'IBM Plex Mono',monospace; line-height:1.2; word-break:break-all; }
+    .ml2 { font-size:7.5px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.4px; margin-top:3px; }
+
+    /* ── TABLES ── */
+    .dt { width:100%; border-collapse:collapse; font-size:8.5px; margin-bottom:16px; }
+    .dt thead th { background:#0f2544; color:white; padding:5px 7px; text-align:left; font-size:7.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; border-right:1px solid rgba(255,255,255,0.1); white-space:nowrap; }
+    .dt thead th:last-child { border-right:none; }
+    .dt tbody tr { border-bottom:1px solid #f1f5f9; }
+    .dt tbody td { padding:5px 7px; vertical-align:middle; border-right:1px solid #f8fafc; }
+    .dt tbody td:last-child { border-right:none; }
+    .dt tfoot td { padding:5px 7px; font-size:8px; font-weight:700; color:#0f2544; background:#f8fafc; border-top:2px solid #e2e8f0; }
+    .num { text-align:right; font-family:'IBM Plex Mono',monospace; }
+    .mono { font-family:'IBM Plex Mono',monospace; font-size:7.5px; }
+    .prov { max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:8px; }
+    .bold { font-weight:700; }
+    .tc { text-align:center; }
+    .ok   { color:#059669; font-weight:700; }
+    .warn { color:#d97706; font-weight:700; }
+    .err  { color:#dc2626; font-weight:700; }
+    .gray { color:#94a3b8; }
+
+    /* ── HIGHLIGHT BOXES ── */
+    .hb { border-radius:8px; padding:10px 13px; margin-bottom:14px; font-size:9.5px; line-height:1.6; }
+    .hb-b { background:#eff6ff; border:1px solid #bfdbfe; border-left:4px solid #2563eb; color:#1e40af; }
+    .hb-g { background:#f0fdf4; border:1px solid #86efac; border-left:4px solid #059669; color:#166534; }
+    .hb-r { background:#fef2f2; border:1px solid #fca5a5; border-left:4px solid #dc2626; color:#991b1b; }
+    .hb-a { background:#fffbeb; border:1px solid #fcd34d; border-left:4px solid #d97706; color:#92400e; }
+    .an { background:#f0f9ff; border:1px solid #bae6fd; border-left:4px solid #0891b2; border-radius:8px; padding:10px 13px; margin-bottom:14px; font-size:9.5px; line-height:1.75; color:#0c4a6e; }
+
+    /* ── PAGE FOOTER ── */
+    .page-footer { display:flex; justify-content:space-between; align-items:center; padding:0 52px; font-size:7.5px; color:#94a3b8; font-family:'IBM Plex Mono',monospace; margin-top:18px; border-top:1px solid #f1f5f9; padding-top:8px; }
+
+    /* ── FIRMA ── */
+    .fs { margin-top:32px; border-top:1px dashed #e2e8f0; padding-top:20px; display:grid; grid-template-columns:1fr 1fr; gap:32px; }
+    .fb { text-align:center; }
+    .fl { border-top:1.5px solid #0f2544; margin:0 16px 7px; }
+    .fn { font-size:10.5px; font-weight:700; color:#0f2544; }
+    .fr { font-size:9px; color:#64748b; margin-top:2px; }
+
+    @media print {
+      .no-print { display:none; }
+      body { print-color-adjust:exact; -webkit-print-color-adjust:exact; }
+      .cover { width:100%; min-height:100vh; }
+      .chapter-break { page-break-before:always; }
+    }
+  </style></head><body>
+
+  <!-- ░░ PORTADA con constelaciones ░░ -->
+  <div class="cover" id="cover-div">
+    <canvas class="cover-canvas" id="cover-canvas"></canvas>
+    <div class="cover-deco"></div><div class="cover-deco2"></div><div class="cover-deco3"></div>
+    <div class="cover-top">
+      <div class="cover-brand-row">
+        <svg class="cover-brand-svg" width="56" height="56" viewBox="0 0 56 56">
+          <rect width="56" height="56" rx="15" fill="url(#cg)"/>
+          <defs><linearGradient id="cg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#059669"/><stop offset="100%" stop-color="#0f766e"/></linearGradient></defs>
+          <path d="M13 33 C13 22 18 15 28 15 C38 15 43 22 43 33 Z" fill="#00b4c8" opacity="0.95"/>
+          <rect x="11" y="33" width="34" height="5.5" rx="2.5" fill="#00b4c8"/>
+          <circle cx="28" cy="21" r="3.5" fill="white" opacity="0.9"/>
+          <line x1="18" y1="50" x2="38" y2="30" stroke="white" stroke-width="3.2" stroke-linecap="round"/>
+          <path d="M36 28 L46 24 L43.5 32.5 Z" fill="white"/>
+          <path d="M36 28 L28 22 L37.5 26 Z" fill="white"/>
+        </svg>
+        <div class="cover-brand-txt">
+          <div class="cover-brand-name">ARIS MINING</div>
+          <div class="cover-brand-sub">Cash Call v3.1 · Control Financiero</div>
+        </div>
+      </div>
+      <div class="cover-div"></div>
+      <div class="cover-eye">Informe Gerencial Ejecutivo</div>
+      <div class="cover-title">Control Financiero<br>Proyecto <span>C-DZP-21-000-A</span></div>
+      <div class="cover-sub">Seguimiento integral de recepciones Oracle, cuentas por pagar<br>y estado financiero del portafolio de facturas del proyecto.</div>
+      <div class="cover-pills">
+        <span class="cover-pill">📅 ${periodo}</span>
+        <span class="cover-pill">📊 ${total} Actas</span>
+        <span class="cover-pill g">✅ ${pagadas} Pagadas (${igPct(pagadas,total)}%)</span>
+        <span class="cover-pill r">⚠️ ${alertas} Alertas</span>
+        <span class="cover-pill">${cumpl}% Cumplimiento</span>
+      </div>
+      <div class="cover-kpis">
+        <div class="cover-kpi"><div class="cover-kpi-v">${total}</div><div class="cover-kpi-l">Total Actas</div></div>
+        <div class="cover-kpi"><div class="cover-kpi-v" style="color:#4ade80">${pagadas}</div><div class="cover-kpi-l">Pagadas</div></div>
+        <div class="cover-kpi"><div class="cover-kpi-v" style="color:#60a5fa">${conRec}</div><div class="cover-kpi-l">Con REC Oracle</div></div>
+        <div class="cover-kpi"><div class="cover-kpi-v" style="color:#f87171">${alertas}</div><div class="cover-kpi-l">Alertas</div></div>
+        <div class="cover-kpi"><div class="cover-kpi-v" style="color:#00b4c8">${cumpl}%</div><div class="cover-kpi-l">Cumplimiento</div></div>
+      </div>
+    </div>
+    <!-- GEC credit — sutil -->
+    <div class="cover-gec">
+      <div class="cover-gec-text"><strong>GREEN ENGINEERING CONSULTING</strong><br>Desarrollado por: Ing. Johan Manuel Cárdenas Leal, MSc</div>
+    </div>
+    <div class="cover-bottom">
+      <div class="cover-meta">
+        <div><div class="cover-ml">Elaborado por</div><div class="cover-mv">${autor}</div>${cargo?`<div style="font-size:9px;color:rgba(255,255,255,0.35)">${cargo}</div>`:''}</div>
+        <div><div class="cover-ml">Fecha del Informe</div><div class="cover-mv">${fechaFmt}</div></div>
+        <div><div class="cover-ml">Generado el</div><div class="cover-mv" style="font-size:9.5px">${now}</div></div>
+      </div>
+      <div class="cover-stripe"></div>
+    </div>
+  </div>
+
+  <!-- constellation script for cover -->
+  <script>
+  (function(){
+    const cv=document.getElementById('cover-canvas'); if(!cv)return;
+    const ctx=cv.getContext('2d'); let stars=[],W,H,animId;
+    function resize(){W=cv.width=cv.offsetWidth||794;H=cv.height=cv.offsetHeight||1123;}
+    resize();
+    for(let i=0;i<120;i++) stars.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.25,vy:(Math.random()-0.5)*0.25,r:Math.random()*1.8+0.4,a:Math.random()*6});
+    function draw(){
+      resize();ctx.clearRect(0,0,W,H);
+      stars.forEach(s=>{s.x+=s.vx;s.y+=s.vy;s.a+=0.005;
+        if(s.x<0)s.x=W;if(s.x>W)s.x=0;if(s.y<0)s.y=H;if(s.y>H)s.y=0;
+        const al=0.35+0.4*Math.abs(Math.sin(s.a));
+        ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=\`rgba(0,180,200,\${al})\`;ctx.fill();
+      });
+      for(let i=0;i<stars.length;i++) for(let j=i+1;j<stars.length;j++){
+        const dx=stars[i].x-stars[j].x,dy=stars[i].y-stars[j].y,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<100){ctx.beginPath();ctx.moveTo(stars[i].x,stars[i].y);ctx.lineTo(stars[j].x,stars[j].y);ctx.strokeStyle=\`rgba(0,180,200,\${0.14*(1-d/100)})\`;ctx.lineWidth=0.6;ctx.stroke();}
+      }
+      animId=requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('beforeprint',()=>cancelAnimationFrame(animId));
+  })();
+  <\/script>
+
+  <!-- ░░ TABLA DE CONTENIDO ░░ -->
+  <div class="toc-page">
+    <div class="co-row"><div class="co-badge">ARIS MINING</div><span style="font-size:10.5px;color:#64748b">C-DZP-21-000-A · Cash Call v3.1 · ${periodo}</span></div>
+    <div class="toc-hdr"><div class="toc-ic">📑</div><div class="toc-ti">Tabla de Contenido</div></div>
+    ${[
+      ['1','Introducción','Contexto, alcance metodológico y definiciones del proyecto'],
+      ['2','Resumen Ejecutivo','Indicadores clave, distribución de estados y flujo financiero'],
+      ['3','Análisis Financiero','Valores monetarios: actas, REC, CxP, pagado vs pendiente'],
+      ['4','Gestión Mensual','Evolución mes a mes con tendencias y gráficas comparativas'],
+      ['5','Diagrama de Pareto — Alertas','Análisis 80/20 de proveedores críticos con mayor impacto'],
+      ['6','Detalle de Alertas','Listado de facturas con brechas pendientes de gestión'],
+      ['7','Comparativo de Períodos','Variaciones vs período anterior · ${fechaPrev}'],
+      ['—','Firmas y Cierre','Elaborado por GREEN ENGINEERING CONSULTING'],
+    ].map(([n,t,s],i)=>`<div class="toc-item"><span class="tn">${n}.</span><div style="flex:1"><div class="tt">${t}</div><span class="ts">${s}</span></div><span class="tdots"></span><span class="tpg">${i+3}</span></div>`).join('')}
+  </div>
+
+  <!-- ░░ CAP 1: INTRODUCCIÓN ░░ -->
+  <div class="chapter-break">
+    <div class="phs"></div><h2 class="cht">1. Introducción</h2><div class="chr"></div>
+    <p class="it">Informe preparado para la Alta Dirección de <strong>ARIS MINING</strong> sobre el estado financiero y operativo del proyecto <strong>C-DZP-21-000-A</strong> · período <strong>${periodo}</strong>. Desarrollado mediante el sistema <strong>Cash Call v3.1</strong>, plataforma de control que integra actas, recepciones Oracle y cuentas por pagar (CxP).</p>
+    <p class="it">Se analizan <strong>${total} actas/facturas</strong>, cruces con Oracle REC, validación CxP, flujo de caja, tendencias mensuales y análisis de Pareto de alertas. Se incluye comparativo vs <strong>${fechaPrev}</strong>.</p>
+    <div class="hb ${cumpl>=80?'hb-g':cumpl>=60?'hb-a':'hb-r'}">
+      <strong>📌 Hallazgo Principal — ${periodo}:</strong> Cumplimiento <strong>${cumpl}%</strong> (${conFac}/${total} actas con CxP). <strong>${alertas} alertas activas</strong> — ${sinRec} sin REC Oracle · ${recRevisar} con REC a revisar · ${sinFac} sin factura CxP.
+    </div>
+    <div class="g2">
+      <div><p class="it"><strong>Alcance:</strong> Cruce Arch.1↔Arch.2 (Oracle REC por OC) · Cruce Arch.1↔Arch.3 (CxP por N°Factura/NIT) · Análisis brechas · Pareto alertas · Comparativo períodos</p></div>
+      <div><p class="it"><strong>Definiciones:</strong> <strong>REC:</strong> Recepción Oracle ERP · <strong>CxP:</strong> Cuenta por Pagar registrada · <strong>Alerta:</strong> Acta sin pago con alguna brecha · <strong>Cumplimiento:</strong> Actas c/CxP / Total</p></div>
+    </div>
+    <p class="it" style="color:#64748b;font-size:8.5px"><strong>Desarrollado por:</strong> GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc &nbsp;·&nbsp; <strong>Elaborado:</strong> ${autor}${cargo?' — '+cargo:''} &nbsp;·&nbsp; <strong>Fecha:</strong> ${fechaFmt}</p>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v3.1 · C-DZP-21-000-A</span><span>${periodo} · ${fechaFmt}</span></div>
+  </div>
+
+  <!-- ░░ CAP 2: RESUMEN EJECUTIVO ░░ -->
+  <div class="chapter-break">
+    <div class="phs"></div><h2 class="cht">2. Resumen Ejecutivo</h2><div class="chr"></div>
+    <div class="g4">
+      <div class="kb tn2"><div class="kbv">${total}</div><div class="kbl">Total Actas</div><div class="kbs">100%</div></div>
+      <div class="kb ts"><div class="kbv" style="color:#059669">${pagadas}</div><div class="kbl">Pagadas</div><div class="kbs">${igPct(pagadas,total)}%</div></div>
+      <div class="kb tw"><div class="kbv" style="color:#d97706">${aprobadas}</div><div class="kbl">Aprobadas</div><div class="kbs">${igPct(aprobadas,total)}%</div></div>
+      <div class="kb td"><div class="kbv" style="color:#dc2626">${alertas}</div><div class="kbl">Alertas</div><div class="kbs">${igPct(alertas,total)}%</div></div>
+      <div class="kb ti"><div class="kbv" style="color:#2563eb">${conRec}</div><div class="kbl">Con REC Oracle</div><div class="kbs">${igPct(conRec,total)}%</div></div>
+      <div class="kb td"><div class="kbv" style="color:#dc2626">${sinRec}</div><div class="kbl">Sin REC Oracle</div><div class="kbs">${igPct(sinRec,total)}%</div></div>
+      <div class="kb tp"><div class="kbv" style="color:#7c3aed">${conFac}</div><div class="kbl">Con Factura CxP</div><div class="kbs">${igPct(conFac,total)}%</div></div>
+      <div class="kb tt2"><div class="kbv" style="color:#0891b2">${cumpl}%</div><div class="kbl">Cumplimiento</div><div class="kbs">Meta ≥ 90%</div></div>
+    </div>
+    <div class="g2">
+      <div class="cp"><div class="cpt">🍩 Distribución de Estados</div><div class="dr">${svgDonut2}<div class="dl">
+        <div class="dli"><div class="dld" style="background:#059669"></div>Pagadas<div class="dlv ok">${pagadas}</div></div>
+        <div class="dli"><div class="dld" style="background:#d97706"></div>Aprobadas<div class="dlv warn">${aprobadas}</div></div>
+        <div class="dli"><div class="dld" style="background:#dc2626"></div>Alertas<div class="dlv err">${alertas}</div></div>
+        <div class="dli"><div class="dld" style="background:#94a3b8"></div>Otros<div class="dlv gray">${Math.max(0,total-pagadas-aprobadas-alertas)}</div></div>
+      </div></div></div>
+      <div class="cp"><div class="cpt">🎯 % Cumplimiento General</div><div class="dr">${svgDonut}<div class="dl">
+        <div class="dli"><div class="dld" style="background:#7c3aed"></div>Con CxP<div class="dlv" style="color:#7c3aed">${conFac}</div></div>
+        <div class="dli"><div class="dld" style="background:#f1f5f9"></div>Sin CxP<div class="dlv gray">${sinFac}</div></div>
+        <div class="dli" style="margin-top:8px;font-size:8.5px;color:${cumpl>=90?'#059669':cumpl>=70?'#d97706':'#dc2626'};font-weight:700">Estado: ${cumpl>=90?'✅ Cumple':cumpl>=70?'⚠️ En riesgo':'❌ Crítico'}</div>
+        <div class="dli" style="font-size:8px;color:#64748b">Meta institucional: ≥ 90%</div>
+      </div></div></div>
+    </div>
+    <div style="margin-bottom:12px">
+      <div class="pr"><span class="pl">✅ Pagadas</span><div class="pt"><div class="pf" style="width:${igPct(pagadas,total)}%;background:#059669"></div></div><span class="pp ok">${igPct(pagadas,total)}%</span><span class="pc">${pagadas}</span></div>
+      <div class="pr"><span class="pl">⏳ Aprobadas</span><div class="pt"><div class="pf" style="width:${igPct(aprobadas,total)}%;background:#d97706"></div></div><span class="pp warn">${igPct(aprobadas,total)}%</span><span class="pc">${aprobadas}</span></div>
+      <div class="pr"><span class="pl">📥 Con REC Oracle válida</span><div class="pt"><div class="pf" style="width:${igPct(conRec,total)}%;background:#2563eb"></div></div><span class="pp" style="color:#2563eb">${igPct(conRec,total)}%</span><span class="pc">${conRec}</span></div>
+      <div class="pr"><span class="pl">🟠 REC a Revisar</span><div class="pt"><div class="pf" style="width:${igPct(recRevisar,total)}%;background:#d97706"></div></div><span class="pp warn">${igPct(recRevisar,total)}%</span><span class="pc">${recRevisar}</span></div>
+      <div class="pr"><span class="pl">❌ Sin REC Oracle</span><div class="pt"><div class="pf" style="width:${igPct(sinRec,total)}%;background:#dc2626"></div></div><span class="pp err">${igPct(sinRec,total)}%</span><span class="pc">${sinRec}</span></div>
+      <div class="pr"><span class="pl">⚠️ Total Alertas</span><div class="pt"><div class="pf" style="width:${igPct(alertas,total)}%;background:#ef4444"></div></div><span class="pp err">${igPct(alertas,total)}%</span><span class="pc">${alertas}</span></div>
+    </div>
+    <div class="hb ${cumpl>=90?'hb-g':cumpl>=70?'hb-a':'hb-r'}" style="font-size:9.5px;margin-top:4px">
+      <strong>📊 Análisis de Indicadores:</strong>
+      De un universo de <strong>${total} actas</strong>, solo el <strong>${igPct(pagadas,total)}%</strong> (${pagadas}) han sido pagadas completamente.
+      El <strong>${igPct(aprobadas,total)}%</strong> (${aprobadas}) está aprobado pendiente de pago, y el <strong>${igPct(alertas,total)}%</strong> (${alertas}) presentan alertas activas que bloquean el ciclo de pago.
+      En cuanto a recepciones Oracle, el <strong>${igPct(conRec,total)}%</strong> de las actas tiene REC válida confirmada, mientras que <strong>${sinRec}</strong> actas (${igPct(sinRec,total)}%) no tienen ninguna recepción registrada — condición crítica para el flujo de pagos.
+      ${cumpl>=90?'✅ El cumplimiento general supera la meta institucional del 90%.':cumpl>=70?'⚠️ El cumplimiento está en zona de riesgo ('+cumpl+'%). Se requiere acelerar el registro de facturas CxP para alcanzar la meta del 90%.':'❌ El cumplimiento ('+cumpl+'%) está por debajo del umbral crítico. Requiere intervención gerencial inmediata.'}
+    </div>
+    <div class="an">
+      <strong>🔎 Análisis — Resumen Ejecutivo:</strong>&nbsp;
+      Al cierre del período <strong>${periodo}</strong>, el proyecto registra <strong>${total} actas</strong> en total.
+      El <strong>${igPct(pagadas,total)}%</strong> (${pagadas}) está pagado y el <strong>${igPct(aprobadas,total)}%</strong> (${aprobadas}) aprobado pendiente de desembolso.
+      El <strong>${igPct(alertas,total)}%</strong> (${alertas} actas) presenta alertas activas que bloquean el ciclo de pago.
+      En recepciones Oracle, el <strong>${igPct(conRec,total)}%</strong> cuenta con REC válida, mientras <strong>${sinRec}</strong> actas (${igPct(sinRec,total)}%) no tienen ninguna recepción registrada —condición crítica para pagos—.
+      ${cumpl>=90
+        ? '✅ <strong>Cumplimiento óptimo ('+cumpl+'%)</strong>: supera la meta institucional del 90%.'
+        : cumpl>=70
+        ? '⚠️ <strong>Cumplimiento en riesgo ('+cumpl+'%)</strong>: por debajo de la meta del 90%. Acelerar registro de facturas CxP.'
+        : '❌ <strong>Cumplimiento crítico ('+cumpl+'%)</strong>: intervención gerencial urgente requerida. Meta: ≥90%.'}
+    </div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v3.1 · C-DZP-21-000-A</span><span>Cap. 2 — Resumen Ejecutivo · ${periodo}</span></div>
+  </div>
+
+  <!-- ░░ CAP 3: ANÁLISIS FINANCIERO ░░ -->
+  <div class="chapter-break">
+    <div class="phs"></div><h2 class="cht">3. Análisis Financiero del Proyecto</h2><div class="chr"></div>
+    <div class="mg">
+      <div class="mb2" style="border-top:3px solid #1a4a8a;background:#f0f4ff"><div class="mv2" style="color:#1a4a8a">${igFmtCOP(sumActaSin)}</div><div class="ml2">Σ Val. Actas sin IVA</div></div>
+      <div class="mb2" style="border-top:3px solid #2563eb;background:#eff6ff"><div class="mv2" style="color:#2563eb">${igFmtCOP(sumActaCon)}</div><div class="ml2">Σ Val. Actas con IVA</div></div>
+      <div class="mb2" style="border-top:3px solid #0891b2;background:#f0f9ff"><div class="mv2" style="color:#0891b2">${igFmtCOP(sumRec)}</div><div class="ml2">Σ Val. Recepciones Oracle</div></div>
+      <div class="mb2" style="border-top:3px solid #7c3aed;background:#f5f3ff"><div class="mv2" style="color:#7c3aed">${igFmtCOP(sumFac)}</div><div class="ml2">Σ Val. Facturas CxP</div></div>
+      <div class="mb2" style="border-top:3px solid #059669;background:#f0fdf4"><div class="mv2" style="color:#059669">${igFmtCOP(sumPagado)}</div><div class="ml2">Σ Val. Pagado ✅</div></div>
+      <div class="mb2" style="border-top:3px solid #dc2626;background:#fef2f2"><div class="mv2" style="color:#dc2626">${igFmtCOP(sumPend)}</div><div class="ml2">Σ Val. Pendiente ⏳</div></div>
+    </div>
+    <table class="dt" style="margin-bottom:14px">
+      <thead><tr><th>Concepto Financiero</th><th class="num">Valor (COP)</th><th class="num">% s/Total</th><th class="num">Actas</th></tr></thead>
+      <tbody>
+        <tr><td>💰 Valor total actas con IVA</td><td class="num bold" style="color:#1a4a8a">${igFmtCOP(sumActaCon)}</td><td class="num">100%</td><td class="num">${total}</td></tr>
+        <tr><td>📥 Valor recepciones Oracle</td><td class="num bold" style="color:#0891b2">${igFmtCOP(sumRec)}</td><td class="num">${igPct(sumRec,sumActaCon)}%</td><td class="num">${conRec}</td></tr>
+        <tr><td>🧾 Valor facturas CxP</td><td class="num bold" style="color:#7c3aed">${igFmtCOP(sumFac)}</td><td class="num">${igPct(sumFac,sumActaCon)}%</td><td class="num">${conFac}</td></tr>
+        <tr><td>✅ Valor pagado</td><td class="num bold ok">${igFmtCOP(sumPagado)}</td><td class="num ok">${igPct(sumPagado,sumActaCon)}%</td><td class="num">${pagadas}</td></tr>
+        <tr style="background:#fef2f2"><td>⏳ Valor pendiente pago</td><td class="num bold err">${igFmtCOP(sumPend)}</td><td class="num err">${igPct(sumPend,sumActaCon)}%</td><td class="num">${total-pagadas}</td></tr>
+        <tr><td>⚠️ Brecha Acta–Factura CxP</td><td class="num bold" style="color:${sumActaCon-sumFac>0?'#dc2626':'#059669'}">${igFmtCOP(Math.abs(sumActaCon-sumFac))}</td><td class="num">${igPct(Math.abs(sumActaCon-sumFac),sumActaCon)}%</td><td class="num">—</td></tr>
+      </tbody>
+    </table>
+    <div class="g2">
+      <div class="cp"><div class="cpt">📊 Top Proveedores por Valor Acta</div>
+        <svg viewBox="0 0 280 ${topProvVal.length*20+16}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+          ${topProvVal.map(([p,v],i)=>{const w=Math.round((v/topProvVal[0][1])*160),y=8+i*20;const cs=['#1a4a8a','#2563eb','#3b82f6','#60a5fa','#93c5fd','#bfdbfe','#dbeafe','#eff6ff'];return `<text x="0" y="${y+10}" font-size="7.5" fill="#374151" font-family="IBM Plex Sans,sans-serif">${(p||'').slice(0,18)}</text><rect x="115" y="${y}" width="${w}" height="13" rx="3" fill="${cs[i%cs.length]}"/><text x="${115+w+4}" y="${y+10}" font-size="7" fill="#374151" font-family="IBM Plex Mono,monospace">$${Math.round(v/1e6)}M</text>`;}).join('')}
+        </svg>
+      </div>
+      <div class="cp"><div class="cpt">💰 Flujo de Caja — Indicadores</div>
+        <div class="pr"><span class="pl">REC / Actas</span><div class="pt"><div class="pf" style="width:${igPct(sumRec,sumActaCon)}%;background:#0891b2"></div></div><span class="pp" style="color:#0891b2">${igPct(sumRec,sumActaCon)}%</span></div>
+        <div class="pr"><span class="pl">Facturado CxP</span><div class="pt"><div class="pf" style="width:${igPct(sumFac,sumActaCon)}%;background:#7c3aed"></div></div><span class="pp" style="color:#7c3aed">${igPct(sumFac,sumActaCon)}%</span></div>
+        <div class="pr"><span class="pl">Pagado</span><div class="pt"><div class="pf" style="width:${igPct(sumPagado,sumActaCon)}%;background:#059669"></div></div><span class="pp ok">${igPct(sumPagado,sumActaCon)}%</span></div>
+        <div class="pr"><span class="pl">Pendiente</span><div class="pt"><div class="pf" style="width:${igPct(sumPend,sumActaCon)}%;background:#dc2626"></div></div><span class="pp err">${igPct(sumPend,sumActaCon)}%</span></div>
+        <div style="margin-top:11px;font-size:8.5px;color:#64748b;line-height:1.5">
+          Por cada $100 de actas:<br><strong style="color:#059669">$${igPct(sumPagado,sumActaCon)}</strong> pagado · <strong style="color:#dc2626">$${igPct(sumPend,sumActaCon)}</strong> pendiente
+        </div>
+      </div>
+    </div>
+    <div class="hb hb-b" style="font-size:9.5px;margin-top:4px">
+      <strong>💰 Análisis Financiero:</strong>
+      El valor total de actas con IVA asciende a <strong>${igFmtCOP(sumActaCon)}</strong>.
+      De este monto, las recepciones Oracle confirmadas representan el <strong>${igPct(sumRec,sumActaCon)}%</strong> (${igFmtCOP(sumRec)}),
+      mientras que las facturas CxP registradas alcanzan el <strong>${igPct(sumFac,sumActaCon)}%</strong> (${igFmtCOP(sumFac)}).
+      Solo el <strong>${igPct(sumPagado,sumActaCon)}%</strong> del valor total (${igFmtCOP(sumPagado)}) ha sido efectivamente pagado,
+      dejando <strong style="color:#dc2626">${igFmtCOP(sumPend)}</strong> (${igPct(sumPend,sumActaCon)}%) pendiente de desembolso.
+      ${sumActaCon-sumFac>0?'La brecha entre valor de actas y facturas CxP es de <strong>'+igFmtCOP(sumActaCon-sumFac)+'</strong> — indica actas sin factura CxP asociada que requieren regularización.':'Las facturas CxP cubren la totalidad del valor de actas.'}
+      El proveedor con mayor participación es <strong>${topProvVal[0]?.[0]||'—'}</strong> con ${igFmtCOP(topProvVal[0]?.[1]||0)} en valor de actas.
+    </div>
+    <div class="an">
+      <strong>💰 Análisis — Flujo Financiero:</strong>&nbsp;
+      El valor total de actas con IVA es <strong>${igFmtCOP(sumActaCon)}</strong>.
+      Las recepciones Oracle representan el <strong>${igPct(sumRec,sumActaCon)}%</strong> de ese valor (${igFmtCOP(sumRec)}),
+      y las facturas CxP registradas el <strong>${igPct(sumFac,sumActaCon)}%</strong> (${igFmtCOP(sumFac)}).
+      Solo el <strong>${igPct(sumPagado,sumActaCon)}%</strong> (${igFmtCOP(sumPagado)}) ha sido efectivamente pagado,
+      dejando <strong style="color:#dc2626">${igFmtCOP(sumPend)}</strong> (${igPct(sumPend,sumActaCon)}%) pendiente de desembolso.
+      ${sumActaCon > sumFac
+        ? 'Existe una brecha de <strong style="color:#dc2626">'+igFmtCOP(sumActaCon-sumFac)+'</strong> entre valor de actas y facturas CxP, indicando actas sin factura asociada que requieren regularización.'
+        : 'Las facturas CxP cubren la totalidad del valor de actas — sin brecha de registro.'}
+      El proveedor con mayor participación es <strong>${topProvVal[0]?.[0]||'—'}</strong> con ${igFmtCOP(topProvVal[0]?.[1]||0)}.
+    </div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v3.1 · C-DZP-21-000-A</span><span>Cap. 3 — Análisis Financiero · ${periodo}</span></div>
+  </div>
+
+  <!-- ░░ CAP 4: GESTIÓN MENSUAL ░░ -->
+  <div class="chapter-break">
+    <div class="phs"></div><h2 class="cht">4. Gestión Mensual del Proyecto</h2><div class="chr"></div>
+    <div class="g2">
+      <div class="cp"><div class="cpt">📅 Actas y Pagos por Mes</div>${svgMesBar}
+        <div style="display:flex;gap:12px;margin-top:6px;font-size:7px;color:#374151">
+          <span><span style="display:inline-block;width:8px;height:6px;background:#dbeafe;border-radius:1px;margin-right:3px"></span>Total</span>
+          <span><span style="display:inline-block;width:8px;height:6px;background:#059669;border-radius:1px;margin-right:3px"></span>Pagadas</span>
+          <span><span style="display:inline-block;width:4px;height:6px;background:#dc2626;border-radius:1px;margin-right:3px"></span>Alertas</span>
+        </div>
+      </div>
+      <div class="cp"><div class="cpt">📈 Tendencia Valor Facturado (COP)</div>${svgTendencia}</div>
+    </div>
+    <table class="dt">
+      <thead><tr><th>Mes</th><th class="num">Total</th><th class="num">Pag.</th><th class="num">Apr.</th><th class="num">Alert.</th><th class="num">SinREC</th><th class="num">c/Fac</th><th class="num">Cumpl%</th><th class="num">Val.Acta c/IVA</th><th class="num">Val.CxP</th></tr></thead>
+      <tbody>${rowsMeses}</tbody>
+      <tfoot><tr><td><strong>TOTAL</strong></td><td class="num">${total}</td><td class="num ok">${pagadas}</td><td class="num warn">${aprobadas}</td><td class="num err">${alertas}</td><td class="num err">${sinRec}</td><td class="num">${conFac}</td><td class="num bold">${cumpl}%</td><td class="num">${igFmtCOP(sumActaCon)}</td><td class="num" style="color:#7c3aed">${igFmtCOP(sumFac)}</td></tr></tfoot>
+    </table>
+    <div class="hb hb-b" style="font-size:9.5px;margin-top:4px">
+      <strong>📅 Análisis de Gestión Mensual:</strong>
+      Durante el período <strong>${periodo}</strong> se registraron <strong>${meses.length} meses</strong> con actividad.
+      El mes con mayor volumen de actas fue <strong>${meses.reduce((a,b)=>b.total>a.total?b:a,{total:0,mes:'—'}).mes}</strong>
+      con ${meses.reduce((a,b)=>b.total>a.total?b:a,{total:0}).total} actas,
+      y el mayor valor facturado CxP en un mes fue <strong>${igFmtCOP(Math.max(...meses.map(m=>m.valFac||0)))}</strong>.
+      La tasa de pagos mensual promedio es del <strong>${meses.length?Math.round(meses.reduce((s,m)=>s+igPct(m.pagadas,m.total),0)/meses.length):0}%</strong>.
+      ${meses.filter(m=>m.alertas>0).length>0?'Los meses con mayor concentración de alertas fueron: <strong>'+meses.sort((a,b)=>b.alertas-a.alertas).slice(0,3).map(m=>m.mes+' ('+m.alertas+')').join(', ')+'</strong>. Se recomienda revisar las causas de bloqueo en estos períodos.':'Ningún mes registra alertas activas — gestión óptima del período.'}
+      La tendencia del valor facturado ${meses.length>=2&&(meses[meses.length-1].valFac||0)>(meses[0].valFac||0)?'muestra <strong style="color:#059669">crecimiento sostenido</strong> a lo largo del período.':meses.length>=2?'presenta <strong style="color:#d97706">variaciones</strong> que requieren seguimiento.':'está en análisis.'}
+    </div>
+    <div class="an">
+      <strong>📅 Análisis — Gestión Mensual:</strong>&nbsp;
+      Durante <strong>${periodo}</strong> se registraron <strong>${meses.length} meses</strong> con actividad.
+      El mes de mayor volumen fue <strong>${(()=>{const m=meses.reduce((a,b)=>b.total>a.total?b:a,{total:0,mes:'—'});return m.mes+' ('+m.total+' actas)';})()}</strong>.
+      El mayor valor facturado CxP en un mes fue <strong>${igFmtCOP(Math.max(...meses.map(m=>m.valFac||0)))}</strong>.
+      Tasa de pagos mensual promedio: <strong>${meses.length?Math.round(meses.reduce((s,m)=>s+(m.total?Math.round(m.pagadas/m.total*100):0),0)/meses.length):0}%</strong>.
+      ${meses.filter(m=>m.alertas>0).length>0
+        ? 'Meses con mayor concentración de alertas: <strong>'
+          +[...meses].sort((a,b)=>b.alertas-a.alertas).slice(0,3).map(m=>m.mes+' ('+m.alertas+')').join(', ')
+          +'</strong>. Revisar causas de bloqueo en estos períodos.'
+        : '✅ Ningún mes registra alertas activas — gestión óptima del período.'}
+      ${meses.length>=2
+        ? ((meses[meses.length-1].valFac||0)>(meses[0].valFac||0)
+            ? '📈 La tendencia del valor facturado muestra <strong style="color:#059669">crecimiento positivo</strong> a lo largo del período.'
+            : '📉 La tendencia del valor facturado presenta <strong style="color:#d97706">variaciones descendentes</strong> que requieren seguimiento.')
+        : ''}
+    </div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v3.1 · C-DZP-21-000-A</span><span>Cap. 4 — Gestión Mensual · ${periodo}</span></div>
+  </div>
+
+  <!-- ░░ CAP 5: PARETO ░░ -->
+  <div class="chapter-break">
+    <div class="phs"></div><h2 class="cht">5. Diagrama de Pareto — Análisis de Alertas</h2><div class="chr"></div>
+    <p class="it">El análisis de Pareto (principio 80/20) identifica los proveedores que concentran la mayor cantidad de alertas. Los marcados en <strong style="color:#dc2626">rojo</strong> forman el grupo crítico que acumula el 80% de las alertas y requieren atención prioritaria de la gerencia.</p>
+    <div class="cp" style="margin-bottom:14px"><div class="cpt">📊 Pareto de Alertas por Proveedor — ${alertas} alertas totales</div>
+      ${svgPareto}
+    </div>
+    <table class="dt">
+      <thead><tr><th>#</th><th>Proveedor</th><th class="num">Alertas</th><th class="num">% Individual</th><th class="num">% Acumulado</th><th class="tc">Estado Pareto</th></tr></thead>
+      <tbody>${paretoRows.map((d,i)=>`<tr style="background:${d.acum<=80?'#fff5f5':'#f8fafc'}">
+        <td class="num gray">${i+1}</td><td class="prov">${d.p}</td>
+        <td class="num err bold">${d.v}</td><td class="num">${d.pct}%</td>
+        <td class="num bold" style="color:#1a4a8a">${d.acum}%</td>
+        <td class="tc"><span style="font-size:8px;padding:2px 7px;border-radius:4px;font-weight:700;${d.acum<=80?'background:#fef2f2;color:#dc2626':'background:#f1f5f9;color:#64748b'}">${d.acum<=80?'🔴 CRÍTICO':'⚪ Normal'}</span></td>
+      </tr>`).join('')}
+      </tbody>
+    </table>
+    <div class="hb hb-a" style="font-size:9.5px">
+      <strong>📊 Análisis del Diagrama de Pareto:</strong>
+      El análisis identifica <strong>${paretoRows.filter(d=>d.acum<=80).length} proveedores críticos</strong> que generan el 80% de las <strong>${alertas} alertas</strong> del proyecto.
+      El proveedor con mayor impacto es <strong>${paretoRows[0]?.p||'—'}</strong> con ${paretoRows[0]?.v||0} alertas (${paretoRows[0]?.pct||0}% del total).
+      Concentrar la gestión de cobro y regularización en estos ${paretoRows.filter(d=>d.acum<=80).length} proveedores
+      resolvería el <strong>80% de las alertas</strong> activas, liberando el flujo de pagos correspondiente.
+      ${paretoRows.filter(d=>d.acum<=80).length<=3?'⚠️ Alta concentración de riesgo: solo '+paretoRows.filter(d=>d.acum<=80).length+' proveedor(es) explican la mayoría de los problemas. Escalar a gerencia de contratos.':'La distribución de alertas es moderadamente dispersa entre '+paretoRows.filter(d=>d.acum<=80).length+' proveedores.'}
+    </div>
+    <div class="an">
+      <strong>📊 Análisis — Diagrama de Pareto:</strong>&nbsp;
+      Se identificaron <strong>${paretoRows.filter(d=>d.acum<=80).length} proveedores críticos</strong> que generan el <strong>80%</strong> de las <strong>${alertas} alertas</strong>.
+      El proveedor de mayor impacto es <strong>${paretoRows[0]?.p||'—'}</strong> con ${paretoRows[0]?.v||0} alertas
+      (${paretoRows[0]?.pct||0}% del total de alertas del proyecto).
+      ${paretoRows.filter(d=>d.acum<=80).length<=2
+        ? '⚠️ <strong>Alta concentración de riesgo</strong>: solo '+paretoRows.filter(d=>d.acum<=80).length+' proveedor(es) explican la mayoría de los problemas. Escalar a gerencia de contratos de forma inmediata.'
+        : paretoRows.filter(d=>d.acum<=80).length<=5
+        ? '⚠️ Riesgo moderadamente concentrado en '+paretoRows.filter(d=>d.acum<=80).length+' proveedores. Priorizar plan de acción con cada uno.'
+        : '📋 Riesgo distribuido en '+paretoRows.filter(d=>d.acum<=80).length+' proveedores. Gestionar mediante plan de regularización masivo.'}
+      Resolver únicamente estos proveedores críticos (<strong>${paretoRows.filter(d=>d.acum<=80).map(d=>d.p.slice(0,15)).join(', ')}</strong>)
+      liberaría el 80% de las alertas bloqueadas.
+    </div>
+    <div class="hb hb-r" style="font-size:9px"><strong>📌 Regla de Pareto:</strong> ${paretoRows.filter(d=>d.acum<=80).length} proveedores concentran el 80% de las ${alertas} alertas. Priorizar gestión con: <strong>${paretoRows.filter(d=>d.acum<=80).map(d=>d.p.slice(0,20)).join(', ')}</strong>.</div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v3.1 · C-DZP-21-000-A</span><span>Cap. 5 — Diagrama de Pareto · ${periodo}</span></div>
+  </div>
+
+  <!-- ░░ CAP 6: DETALLE ALERTAS ░░ -->
+  <div class="chapter-break">
+    <div class="phs"></div><h2 class="cht">6. Detalle de Alertas Pendientes</h2><div class="chr"></div>
+    <div class="hb hb-r"><strong>⚠️ Atención ARIS MINING:</strong> ${alertas} actas presentan brechas de riesgo financiero. ${sinRec} sin REC Oracle · ${recRevisar} REC a revisar · ${sinFac} sin factura CxP. Se requiere gestión con proveedores y área de pagos.</div>
+    <div class="g2" style="margin-bottom:14px">
+      <div class="cp"><div class="cpt">📋 Tipo de Alerta</div>
+        <div class="pr"><span class="pl">🔴 Sin REC Oracle</span><div class="pt"><div class="pf" style="width:${igPct(sinRec,alertas)}%;background:#dc2626"></div></div><span class="pp err">${sinRec}</span></div>
+        <div class="pr"><span class="pl">🟠 REC a Revisar</span><div class="pt"><div class="pf" style="width:${igPct(recRevisar,alertas)}%;background:#d97706"></div></div><span class="pp warn">${recRevisar}</span></div>
+        <div class="pr"><span class="pl">🟣 Sin Factura CxP</span><div class="pt"><div class="pf" style="width:${igPct(sinFac,total)}%;background:#7c3aed"></div></div><span class="pp" style="color:#7c3aed">${sinFac}</span></div>
+      </div>
+      <div class="cp"><div class="cpt">🔑 Semáforo REC Oracle</div>
+        <div class="dli" style="margin-bottom:8px"><div class="dld" style="background:#059669"></div>🟢 REC válida confirmada<div class="dlv ok">${conRec}</div></div>
+        <div class="dli" style="margin-bottom:8px"><div class="dld" style="background:#d97706"></div>🟠 REC registrada a revisar<div class="dlv warn">${recRevisar}</div></div>
+        <div class="dli" style="margin-bottom:8px"><div class="dld" style="background:#dc2626"></div>🔴 Sin REC Oracle<div class="dlv err">${sinRec}</div></div>
+      </div>
+    </div>
+    <div class="hb hb-a" style="font-size:9.5px">
+      <strong>🔍 Análisis de Brechas por Tipo:</strong>
+      Las <strong>${alertas} alertas</strong> se distribuyen así:
+      <strong style="color:#dc2626">${sinRec} actas sin REC Oracle</strong> (${igPct(sinRec,alertas)}% de alertas) — no pueden pagarse sin recepción registrada;
+      <strong style="color:#d97706">${recRevisar} con REC a revisar</strong> (${igPct(recRevisar,alertas)}%) — recepción registrada pero con inconsistencias de validación;
+      <strong style="color:#7c3aed">${sinFac} sin Factura CxP</strong> (${igPct(sinFac,total)}% del total) — factura no encontrada en cuentas por pagar.
+      La brecha de mayor impacto es <strong>${sinRec>=recRevisar&&sinRec>=sinFac?'Sin REC Oracle ('+sinRec+' actas)':recRevisar>=sinFac?'REC a Revisar ('+recRevisar+' actas)':'Sin Factura CxP ('+sinFac+' actas)'}</strong>.
+      Acción recomendada: coordinar con Oracle y área de pagos para regularizar las ${Math.min(alertas,50)} actas listadas, priorizando las de mayor valor.
+    </div>
+    <div class="an">
+      <strong>🔍 Análisis — Brechas por Tipo:</strong>&nbsp;
+      Las <strong>${alertas} alertas</strong> se distribuyen:
+      <strong style="color:#dc2626">${sinRec} Sin REC Oracle</strong> (${igPct(sinRec,Math.max(alertas,1))}% de alertas) — no pueden pagarse sin recepción;
+      <strong style="color:#d97706">${recRevisar} REC a Revisar</strong> (${igPct(recRevisar,Math.max(alertas,1))}%) — inconsistencias de validación;
+      <strong style="color:#7c3aed">${sinFac} Sin Factura CxP</strong> (${igPct(sinFac,Math.max(total,1))}% del total).
+      Brecha de mayor impacto: <strong>${sinRec>=recRevisar&&sinRec>=sinFac?'Sin REC Oracle ('+sinRec+' actas — coordinar con área Oracle)':recRevisar>=sinFac?'REC a Revisar ('+recRevisar+' actas — validar con contabilidad)':'Sin Factura CxP ('+sinFac+' actas — gestionar con proveedores)'}</strong>.
+      Acción recomendada: regularizar en orden de prioridad según valor de factura, iniciando por las actas más antiguas sin REC.
+    </div>
+    <table class="dt">
+      <thead><tr><th>#</th><th>OC</th><th>Proveedor</th><th>Factura</th><th class="tc">REC</th><th>Estado</th><th class="num">Val.Factura CxP</th><th>Mes</th></tr></thead>
+      <tbody>${rowsDetAlertas}</tbody>
+    </table>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v3.1 · C-DZP-21-000-A</span><span>Cap. 6 — Detalle Alertas · ${periodo}</span></div>
+  </div>
+
+  <!-- ░░ CAP 7: COMPARATIVO ░░ -->
+  <div class="chapter-break">
+    <div class="phs"></div><h2 class="cht">7. Comparativo de Períodos</h2><div class="chr"></div>
+    <p class="it">Análisis comparativo entre el período actual (<strong>${periodo}</strong>) y el período anterior exportado al <strong>${fechaPrev}</strong>.</p>
+    <div class="cp" style="margin-bottom:14px"><div class="cpt">📈 Tendencia de Actas Gestionadas por Mes</div>${svgCompMes}</div>
+    <table class="dt" style="margin-bottom:14px">
+      <thead><tr><th>Indicador</th><th>Período Anterior</th><th>Período Actual</th><th>Variación</th><th>Tendencia</th></tr></thead>
+      <tbody>
+        <tr><td>Total Actas</td><td class="num">${prevTotal}</td><td class="num">${total}</td>${vc(total-prevTotal,false)}<td class="tc">${total>=prevTotal?'📈':'📉'}</td></tr>
+        <tr><td>Pagadas</td><td class="num ok">${prevPag}</td><td class="num ok">${pagadas}</td>${vc(pagadas-prevPag,false)}<td class="tc">${pagadas>=prevPag?'📈':'📉'}</td></tr>
+        <tr><td>Alertas Pendientes</td><td class="num err">${prevAlert}</td><td class="num err">${alertas}</td>${vc(alertas-prevAlert,true)}<td class="tc">${alertas<=prevAlert?'✅':'⚠️'}</td></tr>
+        <tr><td>Con REC Oracle</td><td class="num">${prevConRec}</td><td class="num">${conRec}</td>${vc(conRec-prevConRec,false)}<td class="tc">${conRec>=prevConRec?'📈':'📉'}</td></tr>
+        <tr><td>Con Factura CxP</td><td class="num">${prevConFac}</td><td class="num">${conFac}</td>${vc(conFac-prevConFac,false)}<td class="tc">${conFac>=prevConFac?'📈':'📉'}</td></tr>
+        <tr><td>% Cumplimiento</td><td class="num">${igPct(prevConFac,prevTotal)}%</td><td class="num">${cumpl}%</td>${vc(cumpl-igPct(prevConFac,prevTotal),false)}<td class="tc">${cumpl>=igPct(prevConFac,prevTotal)?'📈':'📉'}</td></tr>
+        <tr><td>Σ Valor Facturas CxP</td><td class="num">${igFmtCOP(prevSumFac)}</td><td class="num">${igFmtCOP(sumFac)}</td>${vc(Math.round((sumFac-prevSumFac)/1e6),false)}<td class="tc">${sumFac>=prevSumFac?'📈':'📉'}</td></tr>
+        <tr><td>Σ Valor Pagado</td><td class="num">${igFmtCOP(prevSumPag)}</td><td class="num">${igFmtCOP(sumPagado)}</td>${vc(Math.round((sumPagado-prevSumPag)/1e6),false)}<td class="tc">${sumPagado>=prevSumPag?'📈':'📉'}</td></tr>
+      </tbody>
+    </table>
+    <div class="hb ${(pagadas-prevPag)>=0&&(alertas-prevAlert)<=0?'hb-g':(pagadas-prevPag)>=0||alertas<=prevAlert?'hb-a':'hb-r'}" style="font-size:9.5px;margin-top:4px">
+      <strong>📈 Análisis Comparativo:</strong>
+      Respecto al período anterior (${fechaPrev}):
+      ${total>prevTotal?'El volumen de actas <strong style="color:#059669">aumentó en '+(total-prevTotal)+'</strong> registros (+'+igPct(total-prevTotal,prevTotal)+'%).':'El volumen de actas se mantuvo estable o disminuyó en '+(prevTotal-total)+' registros.'}
+      ${pagadas>prevPag?'Las actas pagadas <strong style="color:#059669">mejoraron en '+(pagadas-prevPag)+'</strong> (+'+igPct(pagadas-prevPag,prevPag)+'%), indicando avance en el ciclo de pagos.':'Las actas pagadas disminuyeron en '+(prevPag-pagadas)+' — revisar bloqueos en el proceso de pago.'}
+      ${alertas<prevAlert?'Las alertas <strong style="color:#059669">se redujeron en '+(prevAlert-alertas)+'</strong> ('+igPct(prevAlert-alertas,prevAlert)+'% de mejora) — tendencia positiva en la gestión.':'Las alertas aumentaron en '+(alertas-prevAlert)+' respecto al período anterior — requiere atención gerencial.'}
+      ${cumpl>=igPct(prevConFac,prevTotal)?'El cumplimiento <strong style="color:#059669">mejoró '+(cumpl-igPct(prevConFac,prevTotal))+'pp</strong> ('+igPct(prevConFac,prevTotal)+'% → '+cumpl+'%).':'El cumplimiento <strong style="color:#dc2626">cayó '+(igPct(prevConFac,prevTotal)-cumpl)+'pp</strong> ('+igPct(prevConFac,prevTotal)+'% → '+cumpl+'%) — requiere plan de acción.'}
+      ${sumPagado>prevSumPag?'El valor pagado creció <strong style="color:#059669">'+igFmtCOP(sumPagado-prevSumPag)+'</strong> respecto al período anterior.':'El valor pagado disminuyó '+igFmtCOP(prevSumPag-sumPagado)+' — revisar causas de bloqueo.'}
+    </div>
+    <div class="an">
+      <strong>📈 Análisis — Comparativo de Períodos:</strong>&nbsp;
+      Respecto al período anterior (${fechaPrev}):
+      ${total>prevTotal
+        ? '📈 El volumen creció <strong style="color:#059669">+'+(total-prevTotal)+' actas</strong> (+'+igPct(total-prevTotal,Math.max(prevTotal,1))+'%).'
+        : total<prevTotal
+        ? '📉 El volumen <strong style="color:#d97706">disminuyó '+(prevTotal-total)+' actas</strong>.'
+        : '➡️ El volumen se mantuvo estable.'}
+      ${pagadas>prevPag
+        ? '✅ Pagadas: <strong style="color:#059669">mejora de +'+(pagadas-prevPag)+'</strong> (+'+igPct(pagadas-prevPag,Math.max(prevPag,1))+'%) — avance en el ciclo de pagos.'
+        : '⚠️ Pagadas: <strong style="color:#dc2626">reducción de '+(prevPag-pagadas)+'</strong> — revisar bloqueos en el proceso.'}
+      ${alertas<prevAlert
+        ? '✅ Alertas: <strong style="color:#059669">reducción de '+(prevAlert-alertas)+'</strong> ('+igPct(prevAlert-alertas,Math.max(prevAlert,1))+'% de mejora) — tendencia positiva.'
+        : '⚠️ Alertas: <strong style="color:#dc2626">aumento de '+(alertas-prevAlert)+'</strong> — requiere atención gerencial.'}
+      ${cumpl>=igPct(prevConFac,prevTotal)
+        ? '📈 Cumplimiento: <strong style="color:#059669">mejoró '+(cumpl-igPct(prevConFac,prevTotal))+'pp</strong> ('+igPct(prevConFac,prevTotal)+'% → '+cumpl+'%).'
+        : '📉 Cumplimiento: <strong style="color:#dc2626">cayó '+(igPct(prevConFac,prevTotal)-cumpl)+'pp</strong> ('+igPct(prevConFac,prevTotal)+'% → '+cumpl+'%) — plan de acción requerido.'}
+      ${sumPagado>prevSumPag
+        ? '💰 Valor pagado: <strong style="color:#059669">creció '+igFmtCOP(sumPagado-prevSumPag)+'</strong> vs período anterior.'
+        : '💰 Valor pagado: <strong style="color:#dc2626">disminuyó '+igFmtCOP(prevSumPag-sumPagado)+'</strong> vs período anterior — revisar causas.'}
+    </div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v3.1 · C-DZP-21-000-A</span><span>Cap. 7 — Comparativo de Períodos · ${periodo}</span></div>
+  </div>
+
+  <!-- ░░ FIRMAS ░░ -->
+  <div class="chapter-break">
+    <div class="phs"></div><h2 class="cht">Firmas y Cierre del Informe</h2><div class="chr"></div>
+    <p class="it">Informe generado por <strong>Cash Call v3.1 — ARIS MINING</strong> · período <strong>${periodo}</strong> · ${total} registros procesados · Cumplimiento: ${cumpl}%.</p>
+    <div class="hb hb-g">✅ Generado: ${now} &nbsp;·&nbsp; ARIS MINING / Cash Call v3.1 &nbsp;·&nbsp; Desarrollado por GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc</div>
+    <div class="fs">
+      <div class="fb"><div style="height:38px"></div><div class="fl"></div><div class="fn">${autor}</div><div class="fr">${cargo||'Analista / Elaborado por'}</div></div>
+      <div class="fb"><div style="height:38px"></div><div class="fl"></div><div class="fn">_________________________</div><div class="fr">Gerencia ARIS MINING / Aprobado por</div></div>
+    </div>
+    <div style="margin-top:26px;padding:12px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;font-size:8.5px;color:#94a3b8;text-align:center">
+      ARIS MINING &nbsp;·&nbsp; Cash Call v3.1 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; ${periodo} &nbsp;·&nbsp; Desarrollado: GREEN ENGINEERING CONSULTING &nbsp;·&nbsp; Confidencial
+    </div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v3.1 · GREEN ENGINEERING CONSULTING</span><span>Ing. Johan Manuel Cárdenas Leal, MSc · ${fechaFmt}</span></div>
+  </div>
+
+  <div class="no-print" style="margin-top:24px;text-align:center;padding:16px;background:#f8fafc;border-top:1px solid #e2e8f0">
+    <button onclick="window.print()" style="padding:10px 22px;background:linear-gradient(135deg,#0f2544,#1a4a8a);color:white;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(15,37,68,0.4)">🖨 Imprimir PDF</button>
+    <button onclick="window.close()" style="margin-left:10px;padding:10px 16px;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;border-radius:10px;font-size:12px;cursor:pointer">✕ Cerrar</button>
+    <p style="margin-top:8px;font-size:10px;color:#94a3b8">💡 Seleccione <strong>Orientación: Vertical</strong> y <strong>Sin márgenes</strong> para mejor resultado.</p>
+  </div>
+  </body></html>`);
+  pw.document.close();
+  cerrarModalInformeGerencial();
+}
+</script>
+
+</body></html>
