@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⛏ Cash Call v2.1 — Control Financiero Minero</title>
+<title>⛏ Cash Call v3.0 — Control Financiero Minero</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -969,7 +969,8 @@
   <!-- Pickaxe head right -->
   <path d="M20 14 L15 10 L22 13 Z" fill="white" opacity="0.75"/>
 </svg>Cash<span class="login-logo-dot"></span><span>Call</span></div>
-    <div class="login-version">v2.1 · Control Financiero</div>
+    <div class="login-version">v3.0 · Control Financiero</div>
+    <div style="text-align:center;margin-top:-22px;margin-bottom:28px;font-size:9px;letter-spacing:2.5px;color:rgba(255,255,255,0.2);font-family:'IBM Plex Mono',monospace;text-transform:uppercase">ARIS MINING</div>
     <div class="login-field">
       <label>Usuario</label>
       <input type="text" id="loginUser" placeholder="usuario.nombre" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
@@ -1122,7 +1123,7 @@
         </span>
         <span style="font-size:10px;opacity:0.6">✕</span>
       </span>
-      <div class="header-badge" id="headerBadge">v2.1</div>
+      <div class="header-badge" id="headerBadge">v3.0</div>
     </div>
   </div>
 </header>
@@ -1302,7 +1303,7 @@
           <div class="dzp-banner-icon">🏗️</div>
           <div>
             <div class="dzp-banner-title">C-DZP-21-000-A</div>
-            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v2.1</span></div>
+            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v3.0</span></div>
           </div>
         </div>
         <div class="dzp-banner-badges">
@@ -1365,6 +1366,21 @@
       <div class="dzp-sub-panel active" id="dzp-sp1">
         <!-- Filtros año / mes -->
         <div class="dzp-sv1-filter">
+          <!-- Fila 1: buscador inteligente -->
+          <div style="display:flex;align-items:center;gap:8px;width:100%;border-bottom:1px solid var(--col-border);padding-bottom:9px;margin-bottom:2px">
+            <span style="font-size:13px">🔍</span>
+            <input type="text" id="dzp-sv1-search"
+              placeholder="Buscar: OC · Factura · NIT · Proveedor · Recepción…"
+              oninput="renderDZPSV1()"
+              autocomplete="off"
+              style="flex:1;min-width:220px;font-size:12.5px">
+            <span id="dzp-sv1-search-badge" style="display:none;background:#7c3aed;color:white;border-radius:12px;padding:2px 10px;font-size:10.5px;font-weight:700;white-space:nowrap"></span>
+            <button class="btn btn-sm" id="dzp-sv1-search-cross-btn" onclick="dzpSV1CrossSearch()" title="Buscar en los 3 archivos (cruce completo)"
+              style="background:linear-gradient(135deg,#6d28d9,#7c3aed);color:white;font-size:10.5px;padding:5px 12px;display:none">
+              🔬 Diagnóstico cruzado
+            </button>
+          </div>
+          <!-- Fila 2: filtros existentes -->
           <span class="filter-label">AÑO</span>
           <select id="dzp-sv1-year" onchange="renderDZPSV1()"><option value="">Todos</option></select>
           <span class="filter-label">MES</span>
@@ -1380,7 +1396,14 @@
             <option value="">Todos los proveedores</option>
             <option value="1">Solo con alertas</option>
           </select>
-          <button class="btn btn-sm btn-outline" onclick="document.getElementById('dzp-sv1-year').value='';document.getElementById('dzp-sv1-month').value='';document.getElementById('dzp-sv1-only-alerts').value='';renderDZPSV1()">↺ Limpiar</button>
+          <button class="btn btn-sm btn-outline" onclick="
+            document.getElementById('dzp-sv1-year').value='';
+            document.getElementById('dzp-sv1-month').value='';
+            document.getElementById('dzp-sv1-only-alerts').value='';
+            document.getElementById('dzp-sv1-search').value='';
+            document.getElementById('dzp-sv1-search-badge').style.display='none';
+            document.getElementById('dzp-sv1-search-cross-btn').style.display='none';
+            renderDZPSV1()">↺ Limpiar</button>
           <div style="flex:1"></div>
           <button class="btn btn-sm" onclick="exportDZPpdf()" style="background:linear-gradient(135deg,#0f2544,#1a4a8a);color:white;font-size:11px;display:flex;align-items:center;gap:5px">📄 Exportar PDF</button>
         </div>
@@ -4314,7 +4337,7 @@ function normalStr(s) {
   const key = s;
   let r = _normalCache.get(key);
   if (r !== undefined) return r;
-  r = String(s).trim().toLowerCase().replace(/\s+/g, ' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  r = String(s).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\s\-_\/\\\.]+/g,'').replace(/[^\w]/g,'');
   if (_normalCache.size > 50000) _normalCache.clear(); // evitar memory leak
   _normalCache.set(key, r);
   return r;
@@ -4519,11 +4542,14 @@ function buildModules() {
     if (recNum && String(recNum).trim()) {
       const recKey = 'REC_' + normalStr(String(recNum));
       if (!recByREC[recKey]) {
-        // Solo guardar la PRIMERA línea encontrada para ese N° Recepción
+        // Inicializar acumulador — sumará TODAS las líneas de esta recepción
         const vt = normalNum(r['Valor Recepcionado por Línea'] || r['Valor Recepcionado por Linea'] || 0);
         recByREC[recKey] = { total: vt, rows: [r] };
       } else {
-        recByREC[recKey].rows.push(r); // guardar otras líneas para referencia
+        // SUMAR todas las líneas del mismo número de recepción (fix v3.0: antes solo tomaba la primera)
+        const vt = normalNum(r['Valor Recepcionado por Línea'] || r['Valor Recepcionado por Linea'] || 0);
+        recByREC[recKey].total += vt;
+        recByREC[recKey].rows.push(r);
       }
       if (!recByOC['REC_' + normalStr(String(recNum))]) recByOC['REC_' + normalStr(String(recNum))] = [];
       recByOC['REC_' + normalStr(String(recNum))].push(r);
@@ -6008,13 +6034,156 @@ function doQuickSearch() {
     })();
 
     if (termExistsOutside) {
+      // ── Diagnóstico cruzado de los 3 archivos ──────────────────────────────
+      const PROYECTO_ACTIVO = state.activeProject || 'C-DZP-21-000-A';
+
+      // ARCHIVO 1 — ¿La OC/Factura existe en m1data?
+      const a1Rows = state.m1data.filter(r => {
+        const hay = normalStr([r.inv, r.po, r.prov, r.nit, r.rec, r.recNums, r.afe, r.wbs].filter(Boolean).join(' '));
+        return hay.includes(term);
+      });
+      const a1EnProyecto = a1Rows.filter(r => {
+        const poN = normalStr(r.po || '');
+        return ocsProjActivo.has(poN);
+      });
+      const a1FueraProyecto = a1Rows.filter(r => {
+        const poN = normalStr(r.po || '');
+        return !ocsProjActivo.has(poN);
+      });
+
+      // ARCHIVO 2 — ¿Existe en df2rec? ¿Con qué proyecto?
+      const a2Rows = (state.df2rec||[]).filter(r2 => {
+        const hay2 = normalStr([r2.rec, r2.oc, r2.proveedor, r2.org, r2.proyecto, r2.desc].filter(Boolean).join(' '));
+        return hay2.includes(term);
+      });
+      const a2EnProyecto    = a2Rows.filter(r2 => r2.proyecto === PROYECTO_ACTIVO);
+      const a2FueraProyecto = a2Rows.filter(r2 => r2.proyecto !== PROYECTO_ACTIVO);
+      const a2SinProyecto   = a2Rows.filter(r2 => !r2.proyecto || r2.proyecto.toString().trim() === '');
+
+      // ARCHIVO 3 — ¿Tiene factura en df3cxp?
+      const a3Rows = (state.df3cxp||[]).filter(r3 => {
+        const hay3 = normalStr([r3.factura, r3.prov, r3.nit, r3.estado, r3.po || r3.oc || ''].filter(Boolean).join(' '));
+        return hay3.includes(term);
+      });
+
+      // Determinar razones explicativas
+      const razonA2 = a2SinProyecto.length > 0
+        ? `<span style="color:#d97706;font-weight:700">⚠️ Sin proyecto asignado</span> — la recepción existe en Archivo 2 pero no tiene proyecto vinculado (campo vacío).`
+        : a2FueraProyecto.length > 0
+        ? `<span style="color:#dc2626;font-weight:700">🚫 Proyecto diferente</span> — pertenece a <strong>"${[...new Set(a2FueraProyecto.map(r=>r.proyecto||'—'))].join(', ')}"</strong>, no a <strong>${PROYECTO_ACTIVO}</strong>.`
+        : `<span style="color:#6b7280">— No encontrada en Archivo 2</span>`;
+
+      const razonA3 = a3Rows.length > 0
+        ? `<span style="color:#059669;font-weight:700">✅ Encontrada en Archivo 3</span> — ${a3Rows.length} registro(s) de factura/CxP.`
+        : `<span style="color:#dc2626;font-weight:700">❌ No encontrada en Archivo 3</span> — no existe factura ni registro CxP para esta OC. No se ha facturado.`;
+
+      // Detalles de recepciones encontradas en A2
+      const a2DetailRows = [...a2SinProyecto, ...a2FueraProyecto, ...a2EnProyecto].slice(0, 5);
+      const a2DetailHtml = a2DetailRows.length > 0 ? `
+        <div style="margin-top:10px;background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:10px 14px">
+          <div style="font-size:10.5px;font-weight:700;color:#92400e;margin-bottom:7px;text-transform:uppercase;letter-spacing:0.5px">🗃 Detalle recepciones en Archivo 2</div>
+          ${a2DetailRows.map(r2 => `
+            <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:11.5px;padding:5px 0;border-bottom:1px solid #fde68a">
+              <span><b>OC:</b> <span style="font-family:monospace">${r2.oc||'—'}</span></span>
+              <span><b>REC:</b> <span style="font-family:monospace">${r2.rec||'—'}</span></span>
+              <span><b>Proveedor:</b> ${r2.proveedor||'—'}</span>
+              <span><b>Proyecto:</b> <span style="color:${r2.proyecto===PROYECTO_ACTIVO?'#059669':'#dc2626'};font-weight:700">${r2.proyecto||'<em style="color:#d97706">SIN PROYECTO</em>'}</span></span>
+              <span><b>Org:</b> ${r2.org||'—'}</span>
+              ${r2.fecha ? `<span><b>Fecha:</b> ${r2.fecha}</span>` : ''}
+            </div>`).join('')}
+        </div>` : '';
+
+      // Resumen de diagnóstico
+      const diagnosticLines = [];
+      if (a1FueraProyecto.length > 0) diagnosticLines.push(`📋 <b>Archivo 1:</b> La OC existe en ${a1FueraProyecto.length} acta(s) pero no está vinculada al proyecto activo.`);
+      else if (a1Rows.length === 0) diagnosticLines.push(`📋 <b>Archivo 1:</b> No existe ningún acta ni factura con esta OC en el proyecto <strong>${PROYECTO_ACTIVO}</strong>.`);
+      if (a2SinProyecto.length > 0) diagnosticLines.push(`📥 <b>Archivo 2:</b> Existe recepción Oracle pero <b>sin proyecto asignado</b>. Esto impide vincularla al proyecto activo.`);
+      if (a2FueraProyecto.length > 0) diagnosticLines.push(`📥 <b>Archivo 2:</b> Recepción registrada en otro proyecto — no aplica para ${PROYECTO_ACTIVO}.`);
+      if (a2Rows.length === 0) diagnosticLines.push(`📥 <b>Archivo 2:</b> No existe recepción Oracle para esta OC. No se ha recepcionado en el sistema.`);
+      if (a3Rows.length === 0) diagnosticLines.push(`🧾 <b>Archivo 3:</b> Sin factura ni registro CxP asociado. La OC no ha sido facturada.`);
+
       document.getElementById('qsResults').innerHTML = `
-        <div style="text-align:center;padding:50px 20px">
-          <div style="font-size:48px;margin-bottom:16px">🚫</div>
-          <div style="font-size:16px;font-weight:700;color:#dc2626;margin-bottom:8px">No corresponde al Proyecto C-DZP-21-000-A</div>
-          <div style="font-size:13px;color:var(--col-muted);max-width:420px;margin:0 auto;line-height:1.6">
-            La búsqueda <strong>"${raw}"</strong> existe en los datos pero <strong>no pertenece</strong> al proyecto activo.<br>
-            Solo se muestran resultados del proyecto <span style="color:#059669;font-weight:700">C-DZP-21-000-A</span>.
+        <div style="max-width:780px;margin:0 auto">
+          <!-- Header diagnóstico -->
+          <div style="display:flex;align-items:center;gap:14px;padding:20px 24px;background:linear-gradient(135deg,#1e3a5f,#0f2544);border-radius:14px 14px 0 0">
+            <div style="font-size:36px">🔬</div>
+            <div>
+              <div style="font-size:15px;font-weight:700;color:white;margin-bottom:4px">Diagnóstico de Cruce — <span style="font-family:monospace;color:#fbbf24">${raw}</span></div>
+              <div style="font-size:11.5px;color:rgba(255,255,255,0.65)">La búsqueda existe en los datos pero requiere atención. Revise el estado en cada archivo.</div>
+            </div>
+          </div>
+
+          <!-- Tarjetas de los 3 archivos -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border:1px solid var(--col-border);border-top:none;border-radius:0 0 14px 14px;overflow:hidden">
+
+            <!-- ARCHIVO 1 -->
+            <div style="padding:16px 18px;border-right:1px solid var(--col-border);background:${a1EnProyecto.length>0?'#f0fdf4':a1Rows.length>0?'#fffbeb':'#fef2f2'}">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--col-muted);margin-bottom:8px">📋 Archivo 1 — Actas / Facturas</div>
+              ${a1EnProyecto.length > 0
+                ? `<div style="display:inline-flex;align-items:center;gap:5px;background:#dcfce7;color:#166534;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;margin-bottom:8px">✅ En proyecto activo</div>`
+                : a1Rows.length > 0
+                ? `<div style="display:inline-flex;align-items:center;gap:5px;background:#fef3c7;color:#92400e;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;margin-bottom:8px">⚠️ Fuera del proyecto</div>`
+                : `<div style="display:inline-flex;align-items:center;gap:5px;background:#fee2e2;color:#991b1b;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;margin-bottom:8px">❌ No encontrada</div>`
+              }
+              <div style="font-size:11.5px;color:var(--col-muted);line-height:1.5">
+                ${a1Rows.length === 0
+                  ? `Esta OC no aparece en ningún acta del Archivo 1. No tiene acta de cobro registrada.`
+                  : a1FueraProyecto.length > 0 && a1EnProyecto.length === 0
+                  ? `Existe en ${a1Rows.length} acta(s) pero la OC no está vinculada al proyecto activo en Archivo 2.`
+                  : `${a1EnProyecto.length} registro(s) en el proyecto activo.`
+                }
+              </div>
+            </div>
+
+            <!-- ARCHIVO 2 -->
+            <div style="padding:16px 18px;border-right:1px solid var(--col-border);background:${a2EnProyecto.length>0?'#f0fdf4':a2SinProyecto.length>0?'#fffbeb':a2FueraProyecto.length>0?'#fff7ed':'#fef2f2'}">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--col-muted);margin-bottom:8px">📥 Archivo 2 — Recepciones Oracle</div>
+              ${a2EnProyecto.length > 0
+                ? `<div style="display:inline-flex;align-items:center;gap:5px;background:#dcfce7;color:#166534;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;margin-bottom:8px">✅ En proyecto activo</div>`
+                : a2SinProyecto.length > 0
+                ? `<div style="display:inline-flex;align-items:center;gap:5px;background:#fef3c7;color:#92400e;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;margin-bottom:8px">⚠️ Sin proyecto asignado</div>`
+                : a2FueraProyecto.length > 0
+                ? `<div style="display:inline-flex;align-items:center;gap:5px;background:#ffedd5;color:#9a3412;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;margin-bottom:8px">🚫 Otro proyecto</div>`
+                : `<div style="display:inline-flex;align-items:center;gap:5px;background:#fee2e2;color:#991b1b;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;margin-bottom:8px">❌ Sin recepción</div>`
+              }
+              <div style="font-size:11.5px;color:var(--col-muted);line-height:1.5">${razonA2}</div>
+            </div>
+
+            <!-- ARCHIVO 3 -->
+            <div style="padding:16px 18px;background:${a3Rows.length>0?'#f0fdf4':'#fef2f2'}">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--col-muted);margin-bottom:8px">🧾 Archivo 3 — CxP / Facturas</div>
+              ${a3Rows.length > 0
+                ? `<div style="display:inline-flex;align-items:center;gap:5px;background:#dcfce7;color:#166534;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;margin-bottom:8px">✅ Factura encontrada</div>`
+                : `<div style="display:inline-flex;align-items:center;gap:5px;background:#fee2e2;color:#991b1b;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;margin-bottom:8px">❌ Sin factura</div>`
+              }
+              <div style="font-size:11.5px;color:var(--col-muted);line-height:1.5">${razonA3}</div>
+            </div>
+          </div>
+
+          <!-- Detalle de recepciones A2 -->
+          ${a2DetailHtml}
+
+          <!-- Líneas de diagnóstico -->
+          ${diagnosticLines.length > 0 ? `
+          <div style="margin-top:14px;background:#f8fafc;border:1px solid var(--col-border);border-radius:10px;padding:14px 18px">
+            <div style="font-size:10.5px;font-weight:700;color:var(--col-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">🩺 Conclusión del diagnóstico</div>
+            ${diagnosticLines.map(l => `<div style="font-size:12px;color:var(--col-text);padding:4px 0;border-bottom:1px solid var(--col-border);line-height:1.5">${l}</div>`).join('')}
+          </div>` : ''}
+
+          <!-- Acción sugerida -->
+          <div style="margin-top:10px;background:#eff6ff;border:1px solid #93c5fd;border-radius:10px;padding:12px 16px;display:flex;align-items:flex-start;gap:10px">
+            <div style="font-size:20px">💡</div>
+            <div style="font-size:12px;color:#1e40af;line-height:1.6">
+              <strong>Acción sugerida:</strong>
+              ${a2SinProyecto.length > 0
+                ? `Abra el <strong>Excel del Archivo 2 (Recepciones Oracle)</strong>, ubique la fila con la OC <code style="background:#dbeafe;padding:1px 6px;border-radius:3px;font-family:monospace">${raw}</code> y complete la columna <strong>Proyecto</strong> con el valor <strong>${PROYECTO_ACTIVO}</strong>. Guarde y recargue el archivo en la plataforma para que aparezca vinculado.`
+                : a2FueraProyecto.length > 0
+                ? `Verifique si la recepción fue registrada en el proyecto correcto en Oracle. Si corresponde a <strong>${PROYECTO_ACTIVO}</strong>, corrija la columna <strong>Proyecto</strong> en el <strong>Excel del Archivo 2</strong> y recargue.`
+                : a2Rows.length === 0 && a3Rows.length === 0
+                ? `La OC no tiene recepción Oracle ni factura registrada. Cuando se realice la entrega, registre la recepción en Oracle y asegúrese de asignar el proyecto <strong>${PROYECTO_ACTIVO}</strong> en la columna Proyecto del <strong>Excel Archivo 2</strong>.`
+                : `Revise el estado de la OC con el área de recepciones y CxP para determinar el siguiente paso.`
+              }
+            </div>
           </div>
         </div>`;
     } else {
@@ -7797,10 +7966,115 @@ function renderDZPSV1() {
   const yearF   = (document.getElementById('dzp-sv1-year')||{value:''}).value;
   const monthF  = normalStr((document.getElementById('dzp-sv1-month')||{value:''}).value);
   const onlyA   = (document.getElementById('dzp-sv1-only-alerts')||{value:''}).value;
+  const sv1Q    = normalStr((document.getElementById('dzp-sv1-search')||{value:''}).value);
 
   let data = [...m1];
   if (yearF)  data = data.filter(r => String(r.year) === String(yearF));
   if (monthF) data = data.filter(r => normalStr(r.month) === monthF);
+
+  // ── Filtro de búsqueda libre (OC, Factura, NIT, Proveedor, Recepción) ───────
+  let sv1SearchHit = 0;
+  if (sv1Q) {
+    data = data.filter(r => {
+      const hay = normalStr([r.inv, r.po, r.prov, r.nit, r.rec, r.recNums, r.recBy, r.obs, r.afe, r.wbs].filter(Boolean).join(' '));
+      return hay.includes(sv1Q);
+    });
+    sv1SearchHit = data.length;
+  }
+
+  // ── Badge de resultados de búsqueda ──────────────────────────────────────────
+  const sv1Badge = document.getElementById('dzp-sv1-search-badge');
+  const sv1CrossBtn = document.getElementById('dzp-sv1-search-cross-btn');
+  if (sv1Badge) {
+    if (sv1Q) {
+      sv1Badge.style.display = 'inline-flex';
+      sv1Badge.textContent = sv1SearchHit + ' resultado' + (sv1SearchHit!==1?'s':'');
+      // Mostrar botón diagnóstico cruzado si hay búsqueda activa
+      if (sv1CrossBtn) sv1CrossBtn.style.display = 'inline-flex';
+    } else {
+      sv1Badge.style.display = 'none';
+      if (sv1CrossBtn) sv1CrossBtn.style.display = 'none';
+    }
+  }
+
+  // ── Sin resultados dentro del proyecto → diagnosticar en los 3 archivos ──────
+  if (sv1Q && sv1SearchHit === 0) {
+    const PROYECTO_ACTIVO = state.activeProject || 'C-DZP-21-000-A';
+    const enA2SinProyecto = (state.df2rec||[]).filter(r2 => {
+      const hay2 = normalStr([r2.rec, r2.oc, r2.proveedor, r2.org, r2.proyecto, r2.desc].filter(Boolean).join(' '));
+      return hay2.includes(sv1Q) && (!r2.proyecto || r2.proyecto.toString().trim() === '');
+    });
+    const enA2OtroProyecto = (state.df2rec||[]).filter(r2 => {
+      const hay2 = normalStr([r2.rec, r2.oc, r2.proveedor, r2.org, r2.proyecto, r2.desc].filter(Boolean).join(' '));
+      return hay2.includes(sv1Q) && r2.proyecto && r2.proyecto.toString().trim() !== '' && r2.proyecto !== PROYECTO_ACTIVO;
+    });
+    const enA1 = (state.m1data||[]).filter(r => {
+      const hay = normalStr([r.inv, r.po, r.prov, r.nit, r.rec, r.recNums].filter(Boolean).join(' '));
+      return hay.includes(sv1Q);
+    });
+    const enA3 = (state.df3cxp||[]).filter(r3 => {
+      const hay3 = normalStr([r3.factura, r3.prov, r3.nit, r3.estado].filter(Boolean).join(' '));
+      return hay3.includes(sv1Q);
+    });
+    const existeEnAlgunLado = enA2SinProyecto.length > 0 || enA2OtroProyecto.length > 0 || enA1.length > 0 || enA3.length > 0;
+
+    document.getElementById('dzp-sv1-content').innerHTML = `
+      <div style="max-width:720px">
+        <div style="display:flex;align-items:center;gap:14px;padding:16px 20px;background:linear-gradient(135deg,#1e3a5f,#0f2544);border-radius:14px 14px 0 0">
+          <div style="font-size:30px">🔬</div>
+          <div>
+            <div style="font-size:14px;font-weight:700;color:white;margin-bottom:3px">Diagnóstico — <span style="font-family:monospace;color:#fbbf24">${document.getElementById('dzp-sv1-search').value.trim()}</span></div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.6)">No encontrado en el proyecto activo <strong style="color:#34d399">${PROYECTO_ACTIVO}</strong></div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border:1px solid var(--col-border);border-top:none;border-radius:0 0 14px 14px;overflow:hidden">
+          <div style="padding:14px 16px;border-right:1px solid var(--col-border);background:${enA1.length>0?'#fffbeb':'#fef2f2'}">
+            <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--col-muted);margin-bottom:7px">📋 Archivo 1 — Actas</div>
+            <div style="display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:2px 9px;font-size:10.5px;font-weight:700;margin-bottom:6px;${enA1.length>0?'background:#fef3c7;color:#92400e':'background:#fee2e2;color:#991b1b'}">
+              ${enA1.length>0?'⚠️ '+enA1.length+' acta(s) fuera del proyecto':'❌ No encontrado'}
+            </div>
+            <div style="font-size:11px;color:var(--col-muted);line-height:1.5">${enA1.length>0?'Existe en actas pero la OC no está vinculada al proyecto activo en Archivo 2.':'Sin actas ni facturas registradas para este término.'}</div>
+          </div>
+          <div style="padding:14px 16px;border-right:1px solid var(--col-border);background:${enA2SinProyecto.length>0?'#fffbeb':enA2OtroProyecto.length>0?'#fff7ed':'#fef2f2'}">
+            <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--col-muted);margin-bottom:7px">📥 Archivo 2 — Recepciones</div>
+            <div style="display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:2px 9px;font-size:10.5px;font-weight:700;margin-bottom:6px;${enA2SinProyecto.length>0?'background:#fef3c7;color:#92400e':enA2OtroProyecto.length>0?'background:#ffedd5;color:#9a3412':'background:#fee2e2;color:#991b1b'}">
+              ${enA2SinProyecto.length>0?'⚠️ Sin proyecto asignado':enA2OtroProyecto.length>0?'🚫 Otro proyecto':'❌ Sin recepción'}
+            </div>
+            <div style="font-size:11px;color:var(--col-muted);line-height:1.5">${
+              enA2SinProyecto.length>0
+                ? `Recepción existe <strong>pero sin proyecto</strong> en Oracle. Asigne <strong>${PROYECTO_ACTIVO}</strong> en el Excel.`
+                : enA2OtroProyecto.length>0
+                ? `Pertenece a otro proyecto: <strong>${[...new Set(enA2OtroProyecto.map(r=>r.proyecto||'?'))].join(', ')}</strong>`
+                : 'No existe recepción Oracle. Aún no se ha recepcionado.'
+            }</div>
+          </div>
+          <div style="padding:14px 16px;background:${enA3.length>0?'#f0fdf4':'#fef2f2'}">
+            <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--col-muted);margin-bottom:7px">🧾 Archivo 3 — CxP</div>
+            <div style="display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:2px 9px;font-size:10.5px;font-weight:700;margin-bottom:6px;${enA3.length>0?'background:#dcfce7;color:#166534':'background:#fee2e2;color:#991b1b'}">
+              ${enA3.length>0?'✅ '+enA3.length+' factura(s)':'❌ Sin factura'}
+            </div>
+            <div style="font-size:11px;color:var(--col-muted);line-height:1.5">${enA3.length>0?'Existe factura en CxP pero no vinculada al proyecto activo.':'No existe factura ni registro CxP. La OC no ha sido facturada.'}</div>
+          </div>
+        </div>
+        ${existeEnAlgunLado ? `
+        <div style="margin-top:10px;background:#eff6ff;border:1px solid #93c5fd;border-radius:10px;padding:12px 16px;display:flex;align-items:flex-start;gap:10px">
+          <div style="font-size:22px">📂</div>
+          <div style="font-size:12px;color:#1e40af;line-height:1.7">
+            <strong>👉 Acción requerida — Asigne el proyecto en el Excel:</strong><br>
+            ${enA2SinProyecto.length>0
+              ? `Abra el archivo Excel de <strong>Recepciones Oracle (Archivo 2)</strong>, ubique la fila con OC <code style="background:#dbeafe;padding:1px 5px;border-radius:3px">${enA2SinProyecto[0].oc||document.getElementById('dzp-sv1-search').value.trim()}</code> y complete la columna <strong>Proyecto</strong> con el valor <strong>${PROYECTO_ACTIVO}</strong>. Guarde y recargue el archivo en la plataforma.`
+              : enA2OtroProyecto.length>0
+              ? `Verifique si la recepción fue registrada en el proyecto correcto. Si corresponde, corrija la columna <strong>Proyecto</strong> en el Excel de <strong>Archivo 2</strong> a <strong>${PROYECTO_ACTIVO}</strong>.`
+              : `Registre la recepción en Oracle para esta OC, asegurándose de asignar el proyecto <strong>${PROYECTO_ACTIVO}</strong> en la columna correspondiente del Archivo 2.`
+            }
+          </div>
+        </div>` : `
+        <div style="margin-top:10px;text-align:center;padding:16px;background:#f8fafc;border:1px solid var(--col-border);border-radius:10px;color:var(--col-muted);font-size:12px">
+          🔎 El término <strong>"${document.getElementById('dzp-sv1-search').value.trim()}"</strong> no existe en ninguno de los 3 archivos cargados.
+        </div>`}
+      </div>`;
+    return;
+  }
 
   // Agrupar por proveedor
   const provMap = {};
@@ -7918,6 +8192,16 @@ function dzpOpenProvOC(prov, alertCount) {
   const lbl = document.getElementById('dzp-snbtn2-label');
   if(lbl) lbl.textContent = 'Órdenes de Compra';
   dzpSwitchSub(2);
+}
+
+// ── Botón "Diagnóstico cruzado" desde Proveedores & Alertas ──────────────────
+function dzpSV1CrossSearch() {
+  const q = (document.getElementById('dzp-sv1-search')||{value:''}).value.trim();
+  if (!q) return;
+  // Enviar la misma búsqueda a Búsqueda Rápida con contexto completo
+  switchTab('busqueda');
+  const inp = document.getElementById('qsInput');
+  if (inp) { inp.value = q; doQuickSearch(); }
 }
 
 // ── Sub-ventana 2: OC del proveedor ─────────────────────────
@@ -8421,7 +8705,7 @@ function exportDZPpdf() {
   </style></head><body>
   <div class="hdr">
     <div><div class="hdr-title">⛏ C-DZP-21-000-A — Reporte por Proveedor</div>
-    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v2.1</div></div>
+    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v3.0</div></div>
     <div class="hdr-meta">Generado: ${now}<br>Filtro: ${filterDesc}</div>
   </div>
   <div class="kpi-row">
@@ -8445,7 +8729,7 @@ function exportDZPpdf() {
       <tbody>${tableRows||'<tr><td colspan="9" style="text-align:center;padding:20px;color:#94a3b8">Sin datos</td></tr>'}</tbody>
     </table>
   </div>
-  <div class="footer"><span>Cash Call v2.1 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
+  <div class="footer"><span>Cash Call v3.0 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
   <div class="no-print" style="text-align:center;padding:16px">
     <button onclick="window.print()" style="padding:10px 28px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
     <button onclick="window.close()" style="margin-left:10px;padding:10px 20px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
@@ -8530,7 +8814,7 @@ function exportDZPSP2pdf() {
   </style></head><body>
   <div class="hdr">
     <div><div class="hdr-title">⛏ C-DZP-21-000-A — Órdenes de Compra por Proveedor</div>
-    <div class="hdr-sub">Tablero de Control · Cash Call v2.1</div></div>
+    <div class="hdr-sub">Tablero de Control · Cash Call v3.0</div></div>
     <div class="hdr-meta">Generado: ${now}</div>
   </div>
   <div class="kpi-row">
@@ -8550,7 +8834,7 @@ function exportDZPSP2pdf() {
       <tbody>${tableRows}</tbody>
     </table>
   </div>
-  <div class="footer"><span>Cash Call v2.1 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
+  <div class="footer"><span>Cash Call v3.0 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
   <div class="no-print" style="text-align:center;padding:14px">
     <button onclick="window.print()" style="padding:9px 26px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
     <button onclick="window.close()" style="margin-left:8px;padding:9px 18px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
@@ -8707,7 +8991,7 @@ function exportDZPSP3pdf() {
   <div class="hdr">
     <div class="hdr-left">
       <div class="hdr-title">⛏ C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</div>
-      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v2.1</div>
+      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v3.0</div>
     </div>
     <div class="hdr-right">Generado: ${now}<br>${data.length} registros exportados</div>
   </div>
@@ -8755,7 +9039,7 @@ function exportDZPSP3pdf() {
   </div>
 
   <div class="footer">
-    <span>Cash Call v2.1 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
+    <span>Cash Call v3.0 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
     <span>${data.length} registros &nbsp;·&nbsp; Filtro: ${filterDesc}</span>
   </div>
 
