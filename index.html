@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⛏ Cash Call v3.1 — Control Financiero Minero · ARIS MINING</title>
+<title>⛏ Cash Call v3.2 — Control Financiero Minero · ARIS MINING</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -529,16 +529,9 @@
     border-right: 2.5px solid #94a3b8; border-bottom: 2.5px solid #94a3b8;
     border-radius: 0 0 3px 0;
   }
-  /* Month popup resizable */
+  /* Month popup — no resize needed */
   #m1-month-popup {
-    resize: both; overflow: auto;
-    min-width: 260px; min-height: 160px;
-  }
-  #m1-month-popup::after {
-    content: ''; position: absolute; bottom: 4px; right: 4px;
-    width: 10px; height: 10px; pointer-events: none;
-    border-right: 2px solid #94a3b8; border-bottom: 2px solid #94a3b8;
-    border-radius: 0 0 3px 0;
+    overflow: visible;
   }
 
   /* ── M0 SUBWINDOW TRIGGERS ───────────────── */
@@ -569,6 +562,33 @@
   .mora-range-track { flex: 1; height: 20px; background: #f1f5f9; border-radius: 6px; overflow: hidden; }
   .mora-range-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 8px; font-size: 11px; font-weight: 700; color: white; }
   .mora-range-count { width: 30px; text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700; }
+
+  /* ── CHART ZOOM OVERLAY ──────────────────────────── */
+  .chart-zoom-overlay {
+    position: fixed; inset: 0; background: rgba(10,22,40,0.75);
+    z-index: 8500; display: none; align-items: center; justify-content: center;
+    backdrop-filter: blur(3px);
+  }
+  .chart-zoom-overlay.open { display: flex; }
+  .chart-zoom-box {
+    background: white; border-radius: 16px; padding: 20px 24px;
+    max-width: 95vw; max-height: 90vh; overflow: auto;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+    position: relative; min-width: 640px;
+  }
+  .chart-zoom-close {
+    position: absolute; top: 12px; right: 14px;
+    background: #f1f5f9; border: none; border-radius: 8px;
+    padding: 5px 10px; cursor: pointer; font-size: 13px; color: #64748b;
+    font-weight: 700; transition: background 0.15s;
+  }
+  .chart-zoom-close:hover { background: #e2e8f0; }
+  .chart-zoom-hint {
+    display: block; font-size: 10px; color: #94a3b8; margin-top: 6px;
+    text-align: right; pointer-events: none;
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .chart-card:hover .chart-zoom-hint { opacity: 1; }
 
   /* ── EMPTY STATE ─────────────────────────── */
   .empty-state { text-align: center; padding: 50px 20px; color: var(--col-muted); }
@@ -846,14 +866,14 @@
     background: transparent;
   }
   .dzp-subnav-btn {
-    flex: 1; padding: 12px 16px; border: 2px solid var(--col-border);
-    background: var(--col-surface); cursor: pointer;
+    flex: 1; padding: 12px 16px; border: 2px solid #e2e8f0;
+    background: #f1f5f9; cursor: pointer;
     display: flex; align-items: center; gap: 10px; justify-content: center;
-    font-size: 12.5px; font-weight: 600; color: var(--col-muted);
+    font-size: 12.5px; font-weight: 600; color: #94a3b8;
     transition: all 0.2s; position: relative; font-family: 'IBM Plex Sans', sans-serif;
-    border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.04);
   }
-  .dzp-subnav-btn:hover { background: #f0f4f9; color: var(--col-primary); border-color: var(--col-secondary); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .dzp-subnav-btn:hover { background: #e0e9f5; color: var(--col-primary); border-color: var(--col-secondary); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
   .dzp-subnav-btn.active {
     background: linear-gradient(135deg, #0f2544 0%, #1a4a8a 100%);
     color: white; border-color: #0f2544;
@@ -864,7 +884,7 @@
     width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
     background: rgba(255,255,255,0.15); font-size: 12px; font-weight: 800; flex-shrink: 0;
   }
-  .dzp-subnav-btn:not(.active) .dsb-num { background: #e2e8f0; color: var(--col-primary); font-weight: 800; }
+  .dzp-subnav-btn:not(.active) .dsb-num { background: #cbd5e1; color: #64748b; font-weight: 800; }
   .dzp-subnav-btn .dsb-badge {
     background: #dc2626; color: white; border-radius: 20px;
     padding: 2px 8px; font-size: 10px; font-weight: 700; margin-left: auto; flex-shrink: 0;
@@ -873,6 +893,9 @@
   .dzp-subnav-btn:not(.active) .dsb-badge { background: #ef4444; color: white; }
   .dzp-sub-panel { display: none; }
   .dzp-sub-panel.active { display: block; }
+  /* M0 KPI card hover highlight */
+  .kpi-card[onclick]:hover { background: #eff6ff; border-color: var(--col-accent); box-shadow: 0 6px 18px rgba(0,180,200,0.18); transform: translateY(-3px); }
+  .kpi-card[onclick]:active { background: #dbeafe; border-color: var(--col-secondary); }
 
   /* Sub-ventana 1: tabla de proveedores con alertas */
   .dzp-prov-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
@@ -986,7 +1009,7 @@
         Desarrollado por<br>
         <span style="color:rgba(0,180,200,0.7);font-weight:600">Ing. Johan Manuel Cárdenas Leal, MSc</span><br>
         Todos los derechos reservados © 2026<br>
-        <span style="color:rgba(255,255,255,0.18);font-size:9px;letter-spacing:1.5px;font-family:'IBM Plex Mono',monospace">v3.1</span>
+        <span style="color:rgba(255,255,255,0.18);font-size:9px;letter-spacing:1.5px;font-family:'IBM Plex Mono',monospace">v3.2</span>
       </div>
     </div>
   </div>
@@ -1077,12 +1100,12 @@
 
 
 <!-- M1 chart month popup -->
-<div id="m1-month-popup" style="display:none;position:fixed;z-index:9500;background:white;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.18);border:1.5px solid #e2e8f0;min-width:280px;max-width:380px;padding:0;overflow:hidden">
-  <div style="background:#0f2544;color:white;padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+<div id="m1-month-popup" style="display:none;position:fixed;z-index:9500;background:white;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.22);border:1.5px solid #e2e8f0;width:580px;max-width:calc(100vw - 20px);padding:0;overflow:visible">
+  <div style="background:#0f2544;color:white;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-radius:12px 12px 0 0">
     <span id="m1-popup-title" style="font-weight:700;font-size:13px"></span>
     <button onclick="document.getElementById('m1-month-popup').style.display='none'" style="background:rgba(255,255,255,0.2);border:none;color:white;cursor:pointer;border-radius:6px;padding:2px 8px;font-size:12px">✕</button>
   </div>
-  <div id="m1-popup-body" style="padding:12px 14px;max-height:340px;overflow-y:auto"></div>
+  <div id="m1-popup-body" style="padding:12px 14px"></div>
 </div>
 
 <!-- ══ INSTRUCTIVE MODAL ════════════════════════════════════ -->
@@ -1124,7 +1147,7 @@
         </span>
         <span style="font-size:10px;opacity:0.6">✕</span>
       </span>
-      <div class="header-badge" id="headerBadge">v3.1</div>
+      <div class="header-badge" id="headerBadge">v3.2</div>
       <button onclick="abrirModalInformeGerencial()" title="Generar Informe Gerencial ejecutivo con PDF y Anexo Excel"
         style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:9px;border:none;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.2px;background:linear-gradient(135deg,#059669,#047857);color:white;box-shadow:0 2px 10px rgba(5,150,105,0.45);transition:opacity 0.18s;white-space:nowrap"
         onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
@@ -1191,9 +1214,14 @@
         <span class="nav-label">Módulo 5<span class="nav-sub">Ficha Proveedor</span></span>
         <span class="nav-badge" id="cnt5">0</span>
       </div>
+      <div class="nav-item" data-tab="discrepancias" id="nav-discrepancias" onclick="switchTab('discrepancias')" style="display:flex">
+        <span class="nav-icon">🔀</span>
+        <span class="nav-label">Discrepancias<span class="nav-sub">Duplicados y conflictos</span></span>
+        <span class="nav-badge" id="cntDisc" style="background:#dc2626;color:white">0</span>
+      </div>
             <div class="nav-item" data-tab="auditorias" id="nav-auditorias" onclick="switchTab('auditorias')" style="display:flex">
         <span class="nav-icon">🗂️</span>
-        <span class="nav-label">Auditorías<span class="nav-sub">Historial de cambios</span></span>
+        <span class="nav-label">Auditorías<span class="nav-sub">Bitácora persistente</span></span>
         <span class="nav-badge" id="cntAudit">0</span>
       </div>
       <div id="ctrlm-hint" style="display:none"></div>
@@ -1239,8 +1267,8 @@
         <button class="btn btn-primary" id="btnProcess" onclick="processData()" disabled>
           ⚙️ Procesar y Cruzar Datos
         </button>
-        <button class="btn btn-success" id="btnExportJSON" onclick="exportCashCallJSON()" disabled title="Exporta todos los datos procesados en formato JSON">
-          📦 Exportar JSON
+        <button class="btn btn-success" id="btnExportJSON" onclick="exportCashCallJSON()" disabled title="Exporta todos los datos procesados en formato JSON (sesión actual, sin bitácora)">
+          📦 Exportar JSON Actual
         </button>
         <button class="btn btn-outline" onclick="document.getElementById('fileInputJSON').click()" title="Carga un JSON exportado previamente para comparar contra los datos actuales">
           📂 Cargar JSON
@@ -1309,14 +1337,14 @@
           <div class="dzp-banner-icon">🏗️</div>
           <div>
             <div class="dzp-banner-title">C-DZP-21-000-A</div>
-            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v3.1</span></div>
+            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v3.2</span></div>
           </div>
         </div>
-        <div class="dzp-banner-badges">
-          <span class="dzp-badge-pill green" id="dzp-badge-act">— Actas</span>
-          <span class="dzp-badge-pill" id="dzp-badge-rec">— REC</span>
-          <span class="dzp-badge-pill" id="dzp-badge-fac">— Facturas</span>
-          <span class="dzp-badge-pill purple" id="dzp-badge-comply">—% Cumpl.</span>
+        <div class="dzp-banner-badges" style="display:none">
+          <span id="dzp-badge-act-old"></span>
+          <span id="dzp-badge-rec-old"></span>
+          <span id="dzp-badge-fac-old"></span>
+          <span id="dzp-badge-comply-old"></span>
         </div>
       </div>
 
@@ -1349,6 +1377,13 @@
           <div class="dzp-kpi-val" id="dzp-k-revisar">—</div>
           <div class="dzp-kpi-sub">Requieren atención</div>
         </div>
+      </div>
+      <!-- Summary pills below KPI cards -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;margin-top:-6px">
+        <span class="dzp-badge-pill green" id="dzp-badge-act" style="background:rgba(5,150,105,0.15);border-color:#34d399;color:#059669">— Actas</span>
+        <span class="dzp-badge-pill" id="dzp-badge-rec" style="background:rgba(37,99,235,0.1);border-color:#93c5fd;color:#1d4ed8">— REC</span>
+        <span class="dzp-badge-pill" id="dzp-badge-fac" style="background:rgba(217,119,6,0.1);border-color:#fcd34d;color:#b45309">— Facturas</span>
+        <span class="dzp-badge-pill purple" id="dzp-badge-comply" style="background:rgba(124,58,237,0.12);border-color:#a78bfa;color:#7c3aed">—% Cumpl.</span>
       </div>
 
       <!-- ══ SUB-NAVEGACIÓN (3 sub-ventanas) ══ -->
@@ -1646,12 +1681,12 @@
         <div id="m1-rec-chart" style="overflow-x:auto"></div>
       </div>
 
-      <!-- ── M1 Filtros: Fila 1 — Búsquedas ── -->
+      <!-- ── M1 Filtros: Fila 1 — Búsqueda unificada ── -->
       <div class="filter-bar" style="flex-wrap:nowrap;gap:8px;margin-bottom:6px">
         <span class="filter-label" style="flex-shrink:0">🔍</span>
-        <input type="text" id="f1oc"      placeholder="Buscar OC..."        oninput="renderM1()" style="min-width:160px;flex:1">
-        <input type="text" id="f1factura" placeholder="Buscar N° Factura..."  oninput="renderM1()" style="min-width:160px;flex:1">
-        <!-- Proyecto fijo: C-DZP-21-000-A -->
+        <input type="text" id="f1oc" placeholder="Buscar OC · N° Factura · Recepción · Proveedor..." oninput="renderM1()" style="flex:1;min-width:260px">
+        <!-- Campo legacy para compatibilidad con syncGlobalFilter -->
+        <input type="hidden" id="f1factura">
         <select id="f1proyecto" style="display:none"></select>
         <input type="hidden" id="f1search">
       </div>
@@ -1682,22 +1717,22 @@
           <!-- Vista ACUMULADA (por defecto) -->
           <table id="tbl-m1-acum">
             <thead><tr>
-              <th>Estado</th><th>Año</th><th>Mes</th><th>Orden de Compra</th>
+              <th>Estado</th><th>Fecha</th><th>F. Recepción</th><th title="Días entre Fecha factura y Fecha recepción">Días</th><th>Orden de Compra</th>
               <th>Proveedor</th><th>N° Factura</th><th>N° REC (A1)</th>
               <th>Recepciones Oracle</th><th class="currency">Valor Acta (sin IVA)</th>
               <th class="currency">Val. Recepcionado</th><th>Diferencia</th>
-              <th>Fecha Recepción</th><th>Recepcionado Por</th>
+              <th>Recepcionado Por</th>
             </tr></thead>
             <tbody id="tbody1"></tbody>
           </table>
           <!-- Vista INDIVIDUAL (desagregada por N° recepción) -->
           <table id="tbl-m1-ind" style="display:none">
             <thead><tr>
-              <th>Estado Factura</th><th>Año</th><th>Mes</th><th>Orden de Compra</th>
+              <th>Estado Factura</th><th>Fecha</th><th>F. Recepción</th><th title="Días entre Fecha factura y Fecha recepción">Días</th><th>Orden de Compra</th>
               <th>Proveedor</th><th>N° Factura</th><th>N° REC (A1)</th>
               <th>N° Recepción Oracle</th><th class="currency">Valor Acta (sin IVA)</th>
               <th class="currency">Val. Recepcionado</th><th>Diferencia Individual</th>
-              <th>Fecha Recepción</th><th>Recepcionado Por</th>
+              <th>Recepcionado Por</th>
             </tr></thead>
             <tbody id="tbody1-ind"></tbody>
           </table>
@@ -1735,7 +1770,7 @@
         <div class="table-scroll">
           <table>
             <thead><tr>
-              <th>Estado Línea</th><th>Fecha Recepción</th><th>Año</th><th>Mes</th>
+              <th>Estado Línea</th><th>Fecha Recepción</th>
               <th>N° Recepción</th><th>OC (Nro. Documento)</th>
               <th>Proveedor (Origen)</th><th>Descripción Artículo</th>
               <th>Organización</th>
@@ -1780,12 +1815,12 @@
         <div class="table-scroll">
           <table>
             <thead><tr>
-              <th>Estado</th><th>Año</th><th>Mes</th>
-              <th>NIT</th><th>Proveedor</th><th>N° Factura</th>
+              <th>Estado</th><th>Fecha Contable</th>
+              <th>OC</th><th>NIT</th><th>Proveedor</th><th>N° Factura</th>
               <th class="currency">Valor Bruto + IVA</th>
               <th class="currency">Aplicación Anticipos</th>
               <th class="currency">Saldo Factura</th>
-              <th>Fecha Transacción</th><th>Fecha Contable</th>
+              <th>Fecha Transacción</th>
             </tr></thead>
             <tbody id="tbody3"></tbody>
           </table>
@@ -1897,10 +1932,11 @@
 
       <!-- Detalle de facturas -->
       <div class="chart-card" style="padding:14px 16px;margin-bottom:14px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
           <div class="chart-card-title" style="margin:0">📋 Detalle de Facturas</div>
           <span id="m5-inv-count" style="font-size:11px;color:var(--col-muted)"></span>
         </div>
+        <div id="m5-prov-title-bar" style="display:none;background:#f0f9ff;border-left:3px solid var(--col-accent);border-radius:0 6px 6px 0;padding:5px 10px;margin-bottom:8px;font-size:11.5px;font-weight:600;color:var(--col-primary)"></div>
         <div style="overflow-x:auto">
           <table style="width:100%;border-collapse:collapse;font-size:11.5px">
             <thead><tr style="background:#0f2544;color:white">
@@ -1927,17 +1963,107 @@
       </div>
     </div>
 
-<!-- ═══ PANEL: AUDITORÍAS ════════════════════════════════ -->
+<!-- ═══ PANEL: DISCREPANCIAS ════════════════════════════════ -->
+    <div class="panel" id="panel-discrepancias">
+      <div class="section-title" style="justify-content:space-between">
+        <span>🔀 Módulo de Discrepancias — Duplicados y Conflictos</span>
+        <button class="info-btn" onclick="showInstructive('discrepancias')" title="Ver instructivo">i</button>
+      </div>
+      <div class="alert alert-warning">
+        ⚠️ <div>Este módulo detecta <strong>facturas duplicadas en proveedores distintos</strong>, <strong>OC asignadas a múltiples proveedores</strong> y <strong>recepciones vinculadas a más de una factura</strong>. Use estos hallazgos como evidencia ante auditorías.</div>
+      </div>
+      <!-- Resumen KPIs discrepancias -->
+      <div class="summary-grid" id="disc-kpis" style="margin-bottom:20px">
+        <div class="summary-card s-danger"><div class="summary-label">Facturas duplicadas</div><div class="summary-value" id="disc-k1">—</div><div class="summary-sub">mismo número, prov. distintos</div></div>
+        <div class="summary-card s-warning"><div class="summary-label">OC multi-proveedor</div><div class="summary-value" id="disc-k2">—</div><div class="summary-sub">OC asignada a + de 1 proveedor</div></div>
+        <div class="summary-card s-info"><div class="summary-label">REC multi-factura</div><div class="summary-value" id="disc-k3">—</div><div class="summary-sub">recepción en + de 1 factura</div></div>
+        <div class="summary-card s-pending"><div class="summary-label">Prov. inconsistente CxP</div><div class="summary-value" id="disc-k4">—</div><div class="summary-sub">factura diferente proveedor M1/M3</div></div>
+      </div>
+
+      <!-- Tabs internas -->
+      <div style="display:flex;gap:4px;margin-bottom:14px;border-bottom:2px solid var(--col-border);padding-bottom:0">
+        <button class="disc-tab-btn active" id="disc-tbtn-1" onclick="discSwitchTab(1)" style="padding:8px 18px;font-size:12px;font-weight:600;border:none;border-bottom:2px solid var(--col-accent);cursor:pointer;background:none;color:var(--col-primary);margin-bottom:-2px">📄 Facturas dup.</button>
+        <button class="disc-tab-btn" id="disc-tbtn-2" onclick="discSwitchTab(2)" style="padding:8px 18px;font-size:12px;font-weight:600;border:none;border-bottom:2px solid transparent;cursor:pointer;background:none;color:var(--col-muted);margin-bottom:-2px">📦 OC multi-prov.</button>
+        <button class="disc-tab-btn" id="disc-tbtn-3" onclick="discSwitchTab(3)" style="padding:8px 18px;font-size:12px;font-weight:600;border:none;border-bottom:2px solid transparent;cursor:pointer;background:none;color:var(--col-muted);margin-bottom:-2px">📥 REC multi-fac.</button>
+        <button class="disc-tab-btn" id="disc-tbtn-4" onclick="discSwitchTab(4)" style="padding:8px 18px;font-size:12px;font-weight:600;border:none;border-bottom:2px solid transparent;cursor:pointer;background:none;color:var(--col-muted);margin-bottom:-2px">⚡ Prov. incosistente</button>
+        <div style="flex:1"></div>
+        <button class="btn btn-sm btn-outline" onclick="exportDiscrepancias()" style="margin-bottom:4px;font-size:11px">📥 Exportar Excel</button>
+      </div>
+
+      <div id="disc-panel-1" class="disc-panel">
+        <div class="filter-bar" style="margin-bottom:10px">
+          <span class="filter-label">🔍</span>
+          <input type="text" id="disc-s1" placeholder="Buscar factura, proveedor..." oninput="renderDisc1()" style="min-width:200px">
+          <button class="btn btn-sm btn-outline" onclick="document.getElementById('disc-s1').value='';renderDisc1()">↺</button>
+        </div>
+        <div id="disc-content-1"><div class="empty-state"><div class="empty-icon">🔀</div><div>Procese archivos para detectar discrepancias</div></div></div>
+      </div>
+      <div id="disc-panel-2" class="disc-panel" style="display:none">
+        <div class="filter-bar" style="margin-bottom:10px">
+          <span class="filter-label">🔍</span>
+          <input type="text" id="disc-s2" placeholder="Buscar OC, proveedor..." oninput="renderDisc2()" style="min-width:200px">
+          <button class="btn btn-sm btn-outline" onclick="document.getElementById('disc-s2').value='';renderDisc2()">↺</button>
+        </div>
+        <div id="disc-content-2"><div class="empty-state"><div class="empty-icon">📦</div><div>Procese archivos para detectar OC multi-proveedor</div></div></div>
+      </div>
+      <div id="disc-panel-3" class="disc-panel" style="display:none">
+        <div class="filter-bar" style="margin-bottom:10px">
+          <span class="filter-label">🔍</span>
+          <input type="text" id="disc-s3" placeholder="Buscar REC, OC, proveedor..." oninput="renderDisc3()" style="min-width:200px">
+          <button class="btn btn-sm btn-outline" onclick="document.getElementById('disc-s3').value='';renderDisc3()">↺</button>
+        </div>
+        <div id="disc-content-3"><div class="empty-state"><div class="empty-icon">📥</div><div>Procese archivos para detectar REC multi-factura</div></div></div>
+      </div>
+      <div id="disc-panel-4" class="disc-panel" style="display:none">
+        <div class="filter-bar" style="margin-bottom:10px">
+          <span class="filter-label">🔍</span>
+          <input type="text" id="disc-s4" placeholder="Buscar factura, proveedor..." oninput="renderDisc4()" style="min-width:200px">
+          <button class="btn btn-sm btn-outline" onclick="document.getElementById('disc-s4').value='';renderDisc4()">↺</button>
+        </div>
+        <div id="disc-content-4"><div class="empty-state"><div class="empty-icon">⚡</div><div>Procese archivos para detectar inconsistencias de proveedor entre M1 y CxP</div></div></div>
+      </div>
+    </div>
+
+<!-- ═══ PANEL: AUDITORÍAS (v3.2 — Bitácora Persistente) ══════ -->
     <div class="panel" id="panel-auditorias">
-      <div class="section-title" style="justify-content:space-between"><span>🗂️ Módulo de Auditorías — Historial de Cambios</span><button class="info-btn" onclick="showInstructive('auditorias')" title="Ver instructivo">i</button></div>
+      <div class="section-title" style="justify-content:space-between"><span>🗂️ Auditorías — Bitácora Persistente de Novedades</span><button class="info-btn" onclick="showInstructive('auditorias')" title="Ver instructivo">i</button></div>
       <div class="alert alert-info">
-        ℹ️ <div>Registro automático de cada carga de archivos y exportación JSON. Compara snapshots sucesivos para detectar <strong>diferencias en conteos, valores y estados</strong> entre sesiones de trabajo.</div>
+        ℹ️ <div>Bitácora persistente: cada vez que exporta el JSON, el sistema <strong>compara factura por factura</strong> con el histórico acumulado y registra cualquier cambio de estado como una novedad. El JSON se <strong>alimenta y crece</strong> — nunca sobreescribe. Evidencia irrefutable de cada movimiento.</div>
       </div>
       <div style="display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap">
-        <button class="btn btn-danger-outline btn-sm" onclick="clearAuditLog()">🗑 Limpiar historial</button>
-        <button class="btn btn-outline btn-sm" onclick="exportAuditLog()">⬇ Exportar log JSON</button>
+        <button class="btn btn-success btn-sm" onclick="exportCashCallJSONBitacora()">📦 Exportar + Guardar en Bitácora</button>
+        <label class="btn btn-outline btn-sm" style="cursor:pointer">
+          📥 Importar JSON (Bitácora)
+          <input type="file" accept=".json" style="display:none" onchange="importBitacoraJSON(this)">
+        </label>
+        <button class="btn btn-outline btn-sm" onclick="exportSoloNovedades()">📋 Exportar solo Novedades</button>
+        <button class="btn btn-danger-outline btn-sm" onclick="clearAuditLog()">🗑 Limpiar historial sesión</button>
+        <button class="btn btn-outline btn-sm" onclick="exportAuditLog()">⬇ Exportar log sesión</button>
         <span id="auditSummaryBadge" style="font-size:11px;color:var(--col-muted);font-family:'IBM Plex Mono',monospace"></span>
       </div>
+
+      <!-- Bitácora de novedades por factura -->
+      <div id="bitacora-panel" style="margin-bottom:24px">
+        <div style="font-size:13px;font-weight:700;color:var(--col-primary);margin-bottom:12px;display:flex;align-items:center;gap:8px;border-bottom:2px solid var(--col-accent);padding-bottom:8px">
+          📋 Bitácora de Novedades por Factura
+          <span id="bitacora-count-badge" style="background:var(--col-danger);color:white;border-radius:12px;padding:2px 10px;font-size:10.5px;font-weight:700">0 novedades</span>
+          <div style="flex:1"></div>
+          <input type="text" id="bitacora-search" placeholder="🔍 Buscar factura, proveedor..." oninput="renderBitacoraPanel()" style="padding:5px 10px;border:1px solid var(--col-border);border-radius:7px;font-size:12px;min-width:220px">
+          <select id="bitacora-filter-tipo" onchange="renderBitacoraPanel()" style="padding:5px 8px;border:1px solid var(--col-border);border-radius:7px;font-size:12px">
+            <option value="">Todas las novedades</option>
+            <option value="estado_cambio">🔄 Cambio de estado</option>
+            <option value="asignacion_proyecto">📌 Asignación a proyecto</option>
+            <option value="nuevo_pago">💰 Nuevo pago</option>
+            <option value="nueva_recepcion">📥 Nueva recepción</option>
+            <option value="nueva_factura">📄 Factura nueva</option>
+            <option value="factura_eliminada">🗑 Factura eliminada</option>
+          </select>
+        </div>
+        <div id="bitacora-content"><div class="empty-state"><div class="empty-icon">📋</div><div>Importe un JSON de bitácora y procese nuevos datos para ver novedades</div></div></div>
+      </div>
+
+      <!-- Timeline de sesión (igual que antes) -->
+      <div style="font-size:13px;font-weight:700;color:var(--col-primary);margin-bottom:12px;border-bottom:2px solid var(--col-border);padding-bottom:8px">⏱ Historial de Sesión Actual</div>
       <div id="auditTimeline"></div>
     </div>
 
@@ -1966,7 +2092,7 @@ const USERS = {
 let currentUser = null;
 
 // Módulos ocultos por defecto — se activan con triple X
-const activatedModules = new Set(['busqueda','dzp','modulo0','modulo1','modulo2','modulo3','modulo4','modulo5','auditorias']); // todos visibles por defecto
+const activatedModules = new Set(['busqueda','dzp','modulo0','modulo1','modulo2','modulo3','modulo4','modulo5','discrepancias','auditorias']); // todos visibles por defecto
 
 function doLogin() {
   const u = (document.getElementById('loginUser').value || '').trim().toUpperCase();
@@ -2190,7 +2316,7 @@ function renderTrimestral() {
     xlabs += `<text x="${cx}" y="${svgH-8}" text-anchor="middle" font-size="11" font-weight="600" fill="#1a2535">${q.label}</text>`;
   });
 
-  el.innerHTML = `<svg viewBox="0 0 ${svgW} ${svgH}" style="width:100%;height:140px;display:block">
+  el.innerHTML = `<svg viewBox="0 0 ${svgW} ${svgH}" style="width:100%;height:160px;display:block">
     ${guides}${bars}${xlabs}
     <line x1="70" y1="${20+chartH}" x2="${svgW-10}" y2="${20+chartH}" stroke="#cbd5e1" stroke-width="2"/>
   </svg>
@@ -2276,7 +2402,7 @@ function renderPareto() {
   const umbralLine = `<line x1="70" y1="${umbralY}" x2="${svgW-10}" y2="${umbralY}" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="6,4"/>
     <text x="${svgW-12}" y="${umbralY-4}" font-size="11" fill="#dc2626" text-anchor="end" font-weight="700">80%</text>`;
 
-  el.innerHTML = `<svg viewBox="0 0 ${svgW} ${svgH}" style="width:100%;height:150px;display:block">
+  el.innerHTML = `<svg viewBox="0 0 ${svgW} ${svgH}" style="width:100%;height:170px;display:block">
     <defs><linearGradient id="paretoGrad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#1a4a8a"/><stop offset="100%" stop-color="#00b4c8"/>
     </linearGradient></defs>
@@ -2287,7 +2413,7 @@ function renderPareto() {
     <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:linear-gradient(#1a4a8a,#00b4c8);border-radius:3px;display:inline-block"></span><strong>Valor Facturado</strong></span>
     <span style="display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:18px;height:3px;background:#f59e0b;vertical-align:middle;border-radius:2px"></span><strong>% Acumulado</strong></span>
     <span style="display:flex;align-items:center;gap:6px;color:#dc2626"><span style="display:inline-block;width:18px;height:2px;background:#dc2626;border-top:2px dashed #dc2626;vertical-align:middle"></span><strong>Umbral 80%</strong></span>
-    <span style="font-size:10px;color:var(--col-muted)">💡 Clic en barra → análisis del proveedor</span>
+    <span style="font-size:10px;color:var(--col-muted)">💡 Clic en barra → análisis del proveedor &nbsp;·&nbsp; 🔍 Clic en gráfico → ampliar</span>
   </div>`;
 }
 
@@ -4472,11 +4598,32 @@ function fmtCurrency(v) {
   return _currencyFmt.format(v);
 }
 function fmtDate(v) {
-  if (!v) return '—';
-  if (v instanceof Date) return v.toLocaleDateString('es-CO');
-  const s = String(v);
-  if (s.match(/\d{4}-\d{2}-\d{2}/)) return s.substring(0,10);
-  return s.substring(0, 10);
+  if (!v || v === '—') return '—';
+  if (v instanceof Date) {
+    if (isNaN(v)) return '—';
+    const d = v.getDate(), m = v.getMonth()+1, y = v.getFullYear();
+    return `${String(d).padStart(2,'0')}/${String(m).padStart(2,'0')}/${y}`;
+  }
+  const s = String(v).trim();
+  if (!s || s==='0' || s==='null' || s==='undefined') return '—';
+  // ISO yyyy-mm-dd → dd/mm/yyyy
+  let mt = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+  if (mt) return `${mt[3].padStart(2,'0')}/${mt[2].padStart(2,'0')}/${mt[1]}`;
+  // Already dd/mm/yyyy or dd/mm/yy
+  mt = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
+  if (mt) {
+    const y = mt[3].length===2 ? '20'+mt[3] : mt[3];
+    return `${mt[1].padStart(2,'0')}/${mt[2].padStart(2,'0')}/${y}`;
+  }
+  // Spanish abbreviated: 21-ene-25, 1-abr-25
+  const esMonths = {ene:1,feb:2,mar:3,abr:4,may:5,jun:6,jul:7,ago:8,sep:9,oct:10,nov:11,dic:12};
+  mt = s.match(/^(\d{1,2})[\/\-]([a-záéíóúñ]{3})[\/\-](\d{2,4})$/i);
+  if (mt) {
+    const mNum = esMonths[mt[2].toLowerCase().substring(0,3)];
+    const y = mt[3].length===2 ? '20'+mt[3] : mt[3];
+    if (mNum) return `${mt[1].padStart(2,'0')}/${String(mNum).padStart(2,'0')}/${y}`;
+  }
+  return s.substring(0,10);
 }
 function pct(n, t) { return t ? Math.round(n/t*100) : 0; }
 function emptyRow(cols) {
@@ -4818,13 +4965,14 @@ function buildModules() {
     };
   });
 
-  // Cross-ref df3cxp with m1data to add recepción numbers per invoice
+  // Cross-ref df3cxp with m1data to add recepción numbers and OC per invoice
   { const m1ByInv = {};
     state.m1data.forEach(r => { if (r.inv) m1ByInv[normalStr(r.inv)] = r; });
     state.df3cxp.forEach(r => {
       const m1r = m1ByInv[normalStr(r.factura||'')];
       r.recNums = m1r ? (m1r.recNums||'') : '';
       r.rec     = m1r ? (m1r.rec||'') : '';
+      r.po      = m1r ? (m1r.po||'') : '';   // OC from M1
     });
   }
 
@@ -5360,21 +5508,21 @@ function renderM0RecTable() {
 
 // ── MODULE 1 ──────────────────────────────────────────────────
 function renderM1() {
-  // Nuevos campos de búsqueda (v1.8)
-  const searchOC      = normalStr((document.getElementById('f1oc')?.value      || document.getElementById('f1search')?.value || ''));
-  const searchFact    = normalStr(document.getElementById('f1factura')?.value   || '');
-  const filterProyM1  = (document.getElementById('f1proyecto')?.value           || '');
+  // Búsqueda unificada v3.2: un solo campo busca en OC, Factura, Recepción y Proveedor
+  const searchAll    = normalStr((document.getElementById('f1oc')?.value || document.getElementById('f1search')?.value || ''));
+  const filterProyM1 = (document.getElementById('f1proyecto')?.value || '');
   const estado = document.getElementById('f1estado').value;
   const year1  = document.getElementById('f1year')?.value  || '';
   const month1 = document.getElementById('f1month')?.value || '';
   let data = state.m1data.filter(r => {
-    // Proyecto siempre fijo a C-DZP-21-000-A vía passesProjectFilter
     if (!passesProjectFilter(r)) return false;
     if (estado  && r.recStatus !== estado)                  return false;
     if (year1   && String(r.year) !== String(year1))        return false;
     if (month1  && normalStr(r.month) !== month1)           return false;
-    if (searchOC   ) { if (!normalStr(r.po  ||'').includes(searchOC))  return false; }
-    if (searchFact ) { if (!normalStr(r.inv ||'').includes(searchFact)) return false; }
+    if (searchAll) {
+      const hay = normalStr([r.po, r.inv, r.rec, r.prov, r.recNums].join(' '));
+      if (!hay.includes(searchAll)) return false;
+    }
     return true;
   });
   const total = data.length;
@@ -5468,16 +5616,34 @@ function renderM1() {
       : '<span class="badge badge-danger">❌ Sin Recepción</span>';
     const diff = r.valSinIva && r.totalRec ? r.totalRec - r.valSinIva : null;
     const diffStr = diff!=null ? `<div class="val-diff ${Math.abs(diff)<r.valSinIva*0.05?'ok':'err'}">${diff>=0?'+':''}${fmtCurrency(diff)}</div>` : '—';
+    const mNum = monthStrToNum(r.month||'');
+    const fechaCell = (mNum && r.year) ? `${String(1).padStart(2,'0')}/${String(mNum).padStart(2,'0')}/${r.year}` : `${r.month||'—'} ${r.year||''}`.trim();
+    // Days between invoice date (fechaCell) and reception date
+    const recDateFmt = r.recDate && r.recDate !== '—' ? fmtDate(r.recDate) : '—';
+    let diasStr = '—';
+    if (r.recDate && r.recDate !== '—' && mNum && r.year) {
+      try {
+        const [rd, rm, ry] = recDateFmt.split('/').map(Number);
+        const dtRec = new Date(ry, rm-1, rd);
+        const dtFac = new Date(r.year, mNum-1, 1);
+        const dias = Math.round((dtRec - dtFac) / 86400000);
+        if (!isNaN(dias)) {
+          const color = dias > 60 ? '#dc2626' : dias > 30 ? '#d97706' : '#059669';
+          diasStr = `<span style="font-weight:700;color:${color};font-family:'IBM Plex Mono',monospace">${dias}d</span>`;
+        }
+      } catch(e) {}
+    }
     return `<tr>
-      <td>${badgeRec}</td><td>${r.year||'—'}</td><td>${r.month||'—'}</td>
-      <td class="td-mono">${r.po||'—'}</td>
-      <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${r.prov||'—'}</td>
+      <td>${badgeRec}</td><td class="td-mono" style="white-space:nowrap">${fechaCell}</td>
+      <td class="td-mono" style="white-space:nowrap">${recDateFmt}</td>
+      <td style="text-align:center">${diasStr}</td>
+      <td class="td-mono" style="cursor:pointer;color:var(--col-secondary);text-decoration:underline" onclick="filterM1ByOC('${(r.po||'').replace(/'/g,"\\'")}');" title="Filtrar por esta OC">${r.po||'—'}</td>
+      <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;color:var(--col-secondary);text-decoration:underline" title="Filtrar por proveedor" onclick="filterM1ByProv('${(r.prov||'').replace(/'/g,"\\'")}')">${r.prov||'—'}</td>
       <td class="td-mono">${r.inv||'—'}</td><td class="td-mono">${r.rec||'—'}</td>
       <td class="td-mono" style="font-size:11px">${r.recNums||'—'} <span style="color:var(--col-muted)">(${r.recRows})</span></td>
       <td class="currency">${fmtCurrency(r.valSinIva)}</td>
       <td class="currency">${fmtCurrency(r.totalRec||null)}</td>
       <td class="currency">${diffStr}</td>
-      <td>${r.recDate}</td>
       <td style="font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis" title="${r.recBy}">${r.recBy}</td>
     </tr>`;
   };
@@ -5571,10 +5737,26 @@ function renderM1Individual(filteredData) {
     const rowStyle = r._recIdx > 0 ? ' style="background:#fafbff"' : '';
     // Only show factura data on first sub-row to make grouping visually clear
     const isFirst = !r._isExpanded || r._recIdx === 0;
+    const mNumInd = monthStrToNum(r.month||'');
+    const fechaInd = (mNumInd && r.year) ? `${String(1).padStart(2,'0')}/${String(mNumInd).padStart(2,'0')}/${r.year}` : `${r.month||'—'} ${r.year||''}`.trim();
+    const recDateFmtInd = r.recDate && r.recDate !== '—' ? fmtDate(r.recDate) : '—';
+    let diasStrInd = '—';
+    if (isFirst && r.recDate && r.recDate !== '—' && mNumInd && r.year) {
+      try {
+        const [rd,rm,ry] = recDateFmtInd.split('/').map(Number);
+        const dtRec = new Date(ry,rm-1,rd), dtFac = new Date(r.year,mNumInd-1,1);
+        const dias = Math.round((dtRec-dtFac)/86400000);
+        if (!isNaN(dias)) {
+          const color = dias>60?'#dc2626':dias>30?'#d97706':'#059669';
+          diasStrInd = `<span style="font-weight:700;color:${color};font-family:'IBM Plex Mono',monospace">${dias}d</span>`;
+        }
+      } catch(e) {}
+    }
     return `<tr${rowStyle}>
       <td>${isFirst ? badgeRec : ''}</td>
-      <td>${isFirst ? (r.year||'—') : ''}</td>
-      <td>${isFirst ? (r.month||'—') : ''}</td>
+      <td class="td-mono" style="white-space:nowrap">${isFirst ? fechaInd : ''}</td>
+      <td class="td-mono" style="white-space:nowrap">${isFirst ? recDateFmtInd : ''}</td>
+      <td style="text-align:center">${isFirst ? diasStrInd : ''}</td>
       <td class="td-mono">${isFirst ? (r.po||'—') : ''}</td>
       <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${isFirst ? (r.prov||'—') : '↳'}</td>
       <td class="td-mono">${isFirst ? (r.inv||'—') : ''}</td>
@@ -5583,7 +5765,6 @@ function renderM1Individual(filteredData) {
       <td class="currency">${isFirst ? fmtCurrency(r.valSinIva) : ''}</td>
       <td class="currency">${showVal}</td>
       <td class="currency">${diffStr}</td>
-      <td>${r.recDate||'—'}</td>
       <td style="font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis" title="${r.recBy||''}">${r.recBy||'—'}</td>
     </tr>`;
   };
@@ -5643,11 +5824,11 @@ function renderM2() {
       : `<span class="badge badge-info">${r.estadoLinea}</span>`;
     return `<tr>
       <td>${badge}</td>
-      <td>${r.fecha}</td><td>${r._yr||'—'}</td><td style="text-transform:capitalize">${r._mo||'—'}</td>
+      <td style="white-space:nowrap">${r.fecha}</td>
       <td class="td-mono">${r.rec}</td>
-      <td class="td-mono" style="font-size:11px">${r.oc}</td>
+      <td class="td-mono" style="font-size:11px;cursor:pointer;color:var(--col-secondary);text-decoration:underline" onclick="filterM2ByOC('${(r.oc||'').replace(/'/g,"\\'")}');" title="Filtrar por esta OC">${r.oc}</td>
       <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.proveedor}">${r.proveedor}</td>
-      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.desc}">${r.desc}</td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-transform:uppercase" title="${r.desc}">${r.desc}</td>
       <td style="font-size:11px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.org}</td>
       <td style="font-size:11px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.proyecto||''}">${r.proyecto||'—'}</td>
       <td class="currency">${fmtCurrency(r.valRec)}</td>
@@ -5720,16 +5901,15 @@ function renderM3() {
       : `<span class="badge badge-gray">${r.estado||'—'}</span>`;
     return `<tr>
       <td>${badge}</td>
-      <td>${r._yr||'—'}</td>
-      <td style="text-transform:capitalize">${r._mo||'—'}</td>
+      <td style="font-size:11px;white-space:nowrap">${r.fechaContable !== '—' ? fmtDate(r.fechaContable) : '—'}</td>
+      <td class="td-mono" style="font-size:11px;cursor:pointer;color:var(--col-secondary);text-decoration:underline" onclick="filterM1ByOC('${(r.po||'').replace(/'/g,"\\'")}');" title="Filtrar por OC">${r.po||'—'}</td>
       <td class="td-mono" style="font-size:11px">${r.nit}</td>
       <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov}">${r.prov}</td>
       <td class="td-mono" style="font-size:11px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.factura}">${r.factura}</td>
       <td class="currency">${fmtCurrency(r.valorBruto)}</td>
       <td class="currency">${r.anticipos ? fmtCurrency(r.anticipos) : '—'}</td>
       <td class="currency">${fmtCurrency(r.saldoFact)}</td>
-      <td style="font-size:11px">${r.fechaTrans !== '—' ? fmtDate(r.fechaTrans) : '—'}</td>
-      <td style="font-size:11px">${r.fechaContable !== '—' ? fmtDate(r.fechaContable) : '—'}</td>
+      <td style="font-size:11px;white-space:nowrap">${r.fechaTrans !== '—' ? fmtDate(r.fechaTrans) : '—'}</td>
     </tr>`;
   };
   _renderTablePaged('tbody3', 'cnt3table', data, rowFn3, 11);
@@ -5794,13 +5974,14 @@ function renderM4() {
       <td style="text-align:center">${recBadge}</td>
       <td style="text-align:center">${cxpBadge}</td>
       <td style="text-align:center">${pagBadge}</td>
-      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${r.prov||'—'}</td>
-      <td class="td-mono">${r.inv||'—'}</td><td class="td-mono">${r.po||'—'}</td>
+      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;color:var(--col-secondary);text-decoration:underline" title="Filtrar por proveedor" onclick="filterM4ByProv('${(r.prov||'').replace(/'/g,"\\'")}');">${r.prov||'—'}</td>
+      <td class="td-mono">${r.inv||'—'}</td>
+      <td class="td-mono" style="cursor:pointer;color:var(--col-secondary);text-decoration:underline" onclick="filterM4ByOC('${(r.po||'').replace(/'/g,"\\'")}');" title="Filtrar por OC">${r.po||'—'}</td>
       <td class="currency">${fmtCurrency(r.valSinIva)}</td>
       <td class="currency" style="font-size:11px">${r.totalRec ? fmtCurrency(r.totalRec) : '—'}</td>
-      <td style="font-size:11px">${r.invDate ? fmtDate(r.invDate) : '—'}</td>
-      <td style="font-size:11px">${r.recDate && r.recDate !== '—' ? r.recDate : '—'}</td>
-      <td style="font-size:11px">${fmtDate(r.payDate)}</td>
+      <td style="font-size:11px;white-space:nowrap">${r.invDate ? fmtDate(r.invDate) : '—'}</td>
+      <td style="font-size:11px;white-space:nowrap">${r.recDate && r.recDate !== '—' ? fmtDate(r.recDate) : '—'}</td>
+      <td style="font-size:11px;white-space:nowrap">${fmtDate(r.payDate)}</td>
       <td style="text-align:center">${verifBadge}</td>
       <td style="font-size:11px;color:var(--col-danger);max-width:180px">${brechaStr}</td>
     </tr>`;
@@ -6365,59 +6546,90 @@ function showM1MonthPopup(monthKey, evt) {
   const mNames = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   title.textContent = `📅 ${mNames[+mn]} ${yr} — ${total} recepciones`;
 
-  // Per-person breakdown
   const persons = Object.keys(d.byPersonMap).sort();
   const colors = ['#1a4a8a','#059669','#d97706','#7c3aed','#dc2626','#0891b2','#65a30d','#ea580c','#8b5cf6','#0284c7'];
-  const personRows = persons.map((p,pi) => {
+
+  // Per-person breakdown — compact chips (clickable)
+  const personChips = persons.map((p, pi) => {
     const cnt = (d.byPersonMap[p] && d.byPersonMap[p][monthKey]) || 0;
     if (!cnt) return '';
-    const pct = Math.round(cnt/total*100);
-    return `<div style="margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:3px">
-        <span style="font-size:11px;font-weight:600;color:#1e293b">${p.length>32?p.substring(0,31)+'…':p}</span>
-        <span style="font-size:11px;font-weight:700;color:${colors[pi%colors.length]}">${cnt}</span>
-      </div>
-      <div style="height:8px;background:#f1f5f9;border-radius:4px;overflow:hidden">
-        <div style="height:100%;width:${pct}%;background:${colors[pi%colors.length]};border-radius:4px"></div>
-      </div>
+    const pct = Math.round(cnt / total * 100);
+    const shortName = p.split(' ').slice(0,3).join(' ');
+    const encP = encodeURIComponent(p), encMK = encodeURIComponent(monthKey);
+    return `<div onclick="showM1PersonFacturas('${encP}','${encMK}')" style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:#f8fafc;border-radius:8px;border-left:3px solid ${colors[pi%colors.length]};cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='#e0f2fe'" onmouseout="this.style.background='#f8fafc'" title="Clic para ver facturas de ${shortName}">
+      <span style="font-size:10px;font-weight:700;color:#1e293b;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${shortName}</span>
+      <span style="font-size:13px;font-weight:800;color:${colors[pi%colors.length]};flex-shrink:0">${cnt}</span>
+      <span style="font-size:9.5px;color:#94a3b8;flex-shrink:0">${pct}%</span>
+      <span style="font-size:9px;color:${colors[pi%colors.length]};flex-shrink:0">👁</span>
     </div>`;
   }).filter(Boolean).join('');
 
-  // Facturas detail for that month
+  // Facturas detail for that month — ALL of them, no limit
   const facts = state.m1data.filter(r => {
     const my = getMonthYear(r); if (!my) return false;
     const k = `${my.y}-${String(my.m).padStart(2,'0')}`;
     return k === monthKey && (r.recStatus === 'recepcionado' || r.recStatus === 'parcial');
   });
-  const totalVal = facts.reduce((s,r) => s+(r.totalRec||r.valSinIva||0), 0);
+  const totalVal = facts.reduce((s,r) => s + (r.totalRec||r.valSinIva||0), 0);
+
+  // Facturas as compact table rows
+  const factRows = facts.map(r => {
+    const badgeColor = r.recStatus === 'recepcionado' ? '#059669' : '#d97706';
+    return `<tr style="border-bottom:1px solid #f1f5f9">
+      <td style="padding:3px 6px;font-family:monospace;font-size:10.5px;color:#1a4a8a;font-weight:600;white-space:nowrap">${r.inv||'—'}</td>
+      <td style="padding:3px 6px;font-size:10.5px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${r.prov||'—'}</td>
+      <td style="padding:3px 6px;font-size:10px;color:#64748b;white-space:nowrap">${r.po||'—'}</td>
+      <td style="padding:3px 6px;text-align:right;font-size:10.5px;font-weight:700;white-space:nowrap">${fmtCurrency(r.totalRec||r.valSinIva||0)}</td>
+      <td style="padding:3px 6px"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${badgeColor}"></span></td>
+    </tr>`;
+  }).join('');
 
   body.innerHTML = `
-    <div style="background:#f8fafc;border-radius:8px;padding:8px 10px;margin-bottom:12px;display:flex;gap:16px">
-      <div><div style="font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase">Total</div><div style="font-size:16px;font-weight:700;color:#1a4a8a">${total}</div></div>
-      <div><div style="font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase">Valor Recep.</div><div style="font-size:14px;font-weight:700;color:#059669">${fmtCurrency(totalVal)}</div></div>
+    <div style="display:flex;gap:12px;margin-bottom:10px">
+      <div style="background:#eff6ff;border-radius:8px;padding:8px 14px;flex:1;text-align:center">
+        <div style="font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;margin-bottom:2px">Total rec.</div>
+        <div style="font-size:22px;font-weight:800;color:#1a4a8a">${total}</div>
+      </div>
+      <div style="background:#f0fdf4;border-radius:8px;padding:8px 14px;flex:1;text-align:center">
+        <div style="font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;margin-bottom:2px">Valor</div>
+        <div style="font-size:13px;font-weight:800;color:#059669">${fmtCurrency(totalVal)}</div>
+      </div>
     </div>
-    <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;margin-bottom:8px;letter-spacing:.5px">Por Responsable</div>
-    ${personRows}
-    ${facts.length ? `<div style="border-top:1px solid #f1f5f9;padding-top:10px;margin-top:4px">
-      <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;margin-bottom:6px">Facturas recepcionadas</div>
-      ${facts.slice(0,10).map(r => `<div style="display:flex;justify-content:space-between;font-size:10.5px;padding:3px 0;border-bottom:1px solid #f8fafc">
-        <span style="font-family:monospace;color:#1a4a8a;font-weight:600">${r.inv||'—'}</span>
-        <span style="color:#64748b">${r.prov?(r.prov.length>20?r.prov.substring(0,19)+'…':r.prov):'—'}</span>
-        <span style="font-weight:600">${fmtCurrency(r.totalRec||r.valSinIva||0)}</span>
-      </div>`).join('')}
-      ${facts.length>10?`<div style="font-size:10px;color:#94a3b8;text-align:center;margin-top:6px">+${facts.length-10} más</div>`:''}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:10px">
+      ${personChips}
+    </div>
+    ${facts.length ? `
+    <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;margin-bottom:5px;letter-spacing:.4px">📄 Facturas recepcionadas (${facts.length})</div>
+    <div style="border:1px solid #e2e8f0;border-radius:8px;overflow:hidden">
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="background:#f5f8fc">
+          <th style="padding:4px 6px;text-align:left;font-size:9px;color:#94a3b8;font-weight:700;text-transform:uppercase">Factura</th>
+          <th style="padding:4px 6px;text-align:left;font-size:9px;color:#94a3b8;font-weight:700;text-transform:uppercase">Proveedor</th>
+          <th style="padding:4px 6px;text-align:left;font-size:9px;color:#94a3b8;font-weight:700;text-transform:uppercase">OC</th>
+          <th style="padding:4px 6px;text-align:right;font-size:9px;color:#94a3b8;font-weight:700;text-transform:uppercase">Valor</th>
+          <th></th>
+        </tr></thead>
+        <tbody>${factRows}</tbody>
+      </table>
     </div>` : ''}
   `;
 
-  // Position popup near click
+  // Auto-size popup to fit all content without scroll
   popup.style.display = 'block';
-  const rect = popup.getBoundingClientRect();
-  let x = evt ? evt.clientX + 12 : window.innerWidth/2;
-  let y = evt ? evt.clientY - 20 : window.innerHeight/2;
-  if (x + 380 > window.innerWidth) x = window.innerWidth - 390;
-  if (y + 400 > window.innerHeight) y = window.innerHeight - 410;
-  popup.style.left = Math.max(10,x) + 'px';
-  popup.style.top  = Math.max(10,y) + 'px';
+  popup.style.overflow = 'visible';
+  popup.style.maxHeight = 'none';
+  // Width: wider to fit the two-column grid nicely
+  const popW = Math.min(580, window.innerWidth - 30);
+  popup.style.width = popW + 'px';
+  popup.style.maxWidth = popW + 'px';
+
+  // Position: prefer right of click, fall back to left; prefer below, fall back to above
+  let x = evt ? evt.clientX + 14 : window.innerWidth / 2 - popW / 2;
+  let y = evt ? evt.clientY - 10 : window.innerHeight / 2;
+  if (x + popW + 10 > window.innerWidth) x = (evt ? evt.clientX - popW - 14 : 10);
+  x = Math.max(8, x);
+  popup.style.left = x + 'px';
+  popup.style.top  = Math.max(8, y) + 'px';
 }
 // Close popup when clicking outside
 document.addEventListener('click', e => {
@@ -6554,6 +6766,12 @@ function renderM5() {
     return;
   }
   if (placeholder) placeholder.style.display = 'none';
+  // Update provider title bar
+  const provTitleBar = document.getElementById('m5-prov-title-bar');
+  if (provTitleBar) {
+    provTitleBar.style.display = 'block';
+    provTitleBar.textContent = `🏢 ${provName}`;
+  }
 
   // ── Filtrar por proveedor + año + mes ──
   const provNorm = provName.trim().toLowerCase();
@@ -6723,23 +6941,48 @@ function renderM5() {
   // ── Recepciones Oracle ──
   const recsEl = document.getElementById('m5-recs');
   if (recsEl) {
-    const recRows2 = state.df2.filter(r => {
-      const oc = normalStr(r['Número de Documento']||r['Numero de Documento']||'');
-      return m1rows.some(m => normalStr(m.po||'') === oc || normalStr(m.po||'').includes(oc));
-    }).slice(0, 20);
-    // Use m1rows recepcionados data
-    const recData = m1rows.filter(r => r.recStatus !== 'sin_recepcion' && r.recNums);
-    if (recData.length) {
-      recsEl.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:11px">
-        <thead><tr style="background:#f8fafc"><th style="padding:5px 7px;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0;text-align:left">N° REC</th><th style="padding:5px 7px;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0;text-align:left">OC</th><th style="padding:5px 7px;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0;text-align:right">VAL. REC.</th><th style="padding:5px 7px;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0;text-align:center">RECEP. POR</th></tr></thead>
-        <tbody>${recData.slice(0,15).map((r,i) => `<tr style="background:${i%2?'#f8fafc':'white'};border-bottom:1px solid #f1f5f9">
-          <td style="padding:5px 7px;font-family:'IBM Plex Mono',monospace;font-size:10px">${r.recNums||'—'}</td>
-          <td style="padding:5px 7px;font-family:'IBM Plex Mono',monospace;font-size:10px">${r.po||'—'}</td>
-          <td style="padding:5px 7px;text-align:right;font-weight:600">${r.totalRec?fmtCurrency(r.totalRec):'—'}</td>
-          <td style="padding:5px 7px;text-align:center;font-size:9.5px;color:#6b7280">${r.recBy&&r.recBy!=='—'?r.recBy.split(' ').slice(0,2).join(' '):'—'}</td>
+    // Get full rec data from df2rec joined with m1rows
+    const m1OCs = new Set(m1rows.map(r => normalStr(r.po||'')).filter(Boolean));
+    const recData2 = state.df2rec.filter(r => m1OCs.has(normalStr(r.oc||'')));
+    if (recData2.length) {
+      recsEl.innerHTML = `<div style="overflow-x:auto;max-height:280px;overflow-y:auto"><table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead style="position:sticky;top:0;background:#f8fafc;z-index:1"><tr>
+          <th style="padding:5px 7px;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0;text-align:left;white-space:nowrap">N° REC</th>
+          <th style="padding:5px 7px;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0;text-align:left;white-space:nowrap">FECHA</th>
+          <th style="padding:5px 7px;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0;text-align:left;white-space:nowrap">OC</th>
+          <th style="padding:5px 7px;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0;text-align:right;white-space:nowrap">VAL. REC.</th>
+          <th style="padding:5px 7px;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0;text-align:center;white-space:nowrap">RECEP. POR</th>
+        </tr></thead>
+        <tbody>${recData2.map((r,i) => `<tr style="background:${i%2?'#f8fafc':'white'};border-bottom:1px solid #f1f5f9">
+          <td style="padding:5px 7px;font-family:'IBM Plex Mono',monospace;font-size:10px;white-space:nowrap">${r.rec||'—'}</td>
+          <td style="padding:5px 7px;font-size:10px;white-space:nowrap">${r.fecha||'—'}</td>
+          <td style="padding:5px 7px;font-family:'IBM Plex Mono',monospace;font-size:10px;white-space:nowrap">${r.oc||'—'}</td>
+          <td style="padding:5px 7px;text-align:right;font-weight:600;white-space:nowrap">${r.valRec?fmtCurrency(r.valRec):'—'}</td>
+          <td style="padding:5px 7px;text-align:center;font-size:9.5px;color:#6b7280;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.comprador||''}">${r.comprador&&r.comprador!=='—'?r.comprador.split(' ').slice(0,2).join(' '):'—'}</td>
         </tr>`).join('')}</tbody>
-      </table>`;
-    } else recsEl.innerHTML = '<div style="color:var(--col-muted);padding:14px;font-size:12px">Sin recepciones Oracle vinculadas.</div>';
+      </table></div>`;
+    } else {
+      // Fallback to m1rows if df2rec has no match
+      const recData = m1rows.filter(r => r.recStatus !== 'sin_recepcion' && r.recNums);
+      if (recData.length) {
+        recsEl.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:11px">
+          <thead><tr style="background:#f8fafc">
+            <th style="padding:5px 7px;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0;text-align:left">N° REC</th>
+            <th style="padding:5px 7px;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0;text-align:left">FECHA</th>
+            <th style="padding:5px 7px;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0;text-align:left">OC</th>
+            <th style="padding:5px 7px;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0;text-align:right">VAL. REC.</th>
+            <th style="padding:5px 7px;font-weight:700;font-size:10px;color:#64748b;border-bottom:1.5px solid #e2e8f0;text-align:center">RECEP. POR</th>
+          </tr></thead>
+          <tbody>${recData.map((r,i) => `<tr style="background:${i%2?'#f8fafc':'white'};border-bottom:1px solid #f1f5f9">
+            <td style="padding:5px 7px;font-family:'IBM Plex Mono',monospace;font-size:10px">${r.recNums||'—'}</td>
+            <td style="padding:5px 7px;font-size:10px;white-space:nowrap">${r.recDate&&r.recDate!=='—'?fmtDate(r.recDate):'—'}</td>
+            <td style="padding:5px 7px;font-family:'IBM Plex Mono',monospace;font-size:10px">${r.po||'—'}</td>
+            <td style="padding:5px 7px;text-align:right;font-weight:600">${r.totalRec?fmtCurrency(r.totalRec):'—'}</td>
+            <td style="padding:5px 7px;text-align:center;font-size:9.5px;color:#6b7280">${r.recBy&&r.recBy!=='—'?r.recBy.split(' ').slice(0,2).join(' '):'—'}</td>
+          </tr>`).join('')}</tbody>
+        </table>`;
+      } else recsEl.innerHTML = '<div style="color:var(--col-muted);padding:14px;font-size:12px">Sin recepciones Oracle vinculadas.</div>';
+    }
   }
 
   // ── Detalle facturas — vista Acumulado o Individual ──
@@ -6816,9 +7059,13 @@ function renderM5() {
       tbody5.innerHTML = mesKeys.map((k,i) => {
         const m = mesMap[k];
         const pctPag = m.facturas>0 ? Math.round(m.pagadas/m.facturas*100) : 0;
+        // Build the key to pass to popup (year-month)
+        const encK = encodeURIComponent(k);
         return `<tr style="background:${i%2===0?'white':'#f8fafc'};border-bottom:1px solid #f1f5f9">
           <td style="padding:6px 8px;font-weight:700;font-size:11px;text-transform:capitalize;color:#0f2544">${m.label}</td>
-          <td style="padding:6px 8px;text-align:center;font-family:'IBM Plex Mono',monospace;font-weight:700">${m.facturas}</td>
+          <td style="padding:6px 8px;text-align:center;font-family:'IBM Plex Mono',monospace;font-weight:700">
+            <span onclick="showM5FacturasPopup('${encK}')" style="cursor:pointer;color:var(--col-secondary);text-decoration:underline;font-weight:800" title="Ver detalle de facturas">${m.facturas} 🔍</span>
+          </td>
           <td style="padding:6px 8px;text-align:right;font-weight:700;font-family:'IBM Plex Mono',monospace">${fmtCurrency(m.valor)}</td>
           <td style="padding:6px 8px;text-align:right;color:#059669;font-family:'IBM Plex Mono',monospace">${m.valRec?fmtCurrency(m.valRec):'—'}</td>
           <td style="padding:6px 8px;text-align:center"><span style="background:${pctPag===100?'#d1fae5':'#fef3c7'};color:${pctPag===100?'#059669':'#d97706'};padding:2px 8px;border-radius:10px;font-size:10.5px;font-weight:700">${m.pagadas}/${m.facturas} · ${pctPag}%</span></td>
@@ -7273,11 +7520,12 @@ function exportTableRaw(dataKey, filename) {
       if (search) { const hay = normalStr(r.factura+' '+r.prov+' '+r.nit); if (!hay.includes(search)) return false; }
       return true;
     }).map(r => ({
-      'Estado': r.estado, 'Año': r._yr, 'Mes': r._mo,
+      'Estado': r.estado,
+      'Fecha Contable': r.fechaContable,
+      'OC': r.po || '—',
       'NIT': r.nit, 'Proveedor': r.prov, 'N° Factura': r.factura,
       'Valor Bruto + IVA': r.valorBruto, 'Anticipos': r.anticipos,
       'Saldo Factura': r.saldoFact, 'Fecha Transacción': r.fechaTrans,
-      'Fecha Contable': r.fechaContable,
     }));
   }
   if (!data || !data.length) { alert('No hay datos para exportar.'); return; }
@@ -7584,7 +7832,7 @@ function exportCashCallJSON() {
   const filename = `CashCall_${fecha}.json`;
   const payload = {
     meta: {
-      app: 'Cash Call v1.8',
+      app: 'Cash Call v3.2',
       exportedBy: currentUser || '—',
       exportedAt: new Date().toISOString(),
       filename,
@@ -8765,7 +9013,7 @@ function exportDZPpdf() {
   </style></head><body>
   <div class="hdr">
     <div><div class="hdr-title">⛏ C-DZP-21-000-A — Reporte por Proveedor</div>
-    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v3.1</div></div>
+    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v3.2</div></div>
     <div class="hdr-meta">Generado: ${now}<br>Filtro: ${filterDesc}</div>
   </div>
   <div class="kpi-row">
@@ -8789,7 +9037,7 @@ function exportDZPpdf() {
       <tbody>${tableRows||'<tr><td colspan="9" style="text-align:center;padding:20px;color:#94a3b8">Sin datos</td></tr>'}</tbody>
     </table>
   </div>
-  <div class="footer"><span>Cash Call v3.1 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
+  <div class="footer"><span>Cash Call v3.2 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
   <div class="no-print" style="text-align:center;padding:16px">
     <button onclick="window.print()" style="padding:10px 28px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
     <button onclick="window.close()" style="margin-left:10px;padding:10px 20px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
@@ -8874,7 +9122,7 @@ function exportDZPSP2pdf() {
   </style></head><body>
   <div class="hdr">
     <div><div class="hdr-title">⛏ C-DZP-21-000-A — Órdenes de Compra por Proveedor</div>
-    <div class="hdr-sub">Tablero de Control · Cash Call v3.1</div></div>
+    <div class="hdr-sub">Tablero de Control · Cash Call v3.2</div></div>
     <div class="hdr-meta">Generado: ${now}</div>
   </div>
   <div class="kpi-row">
@@ -8894,7 +9142,7 @@ function exportDZPSP2pdf() {
       <tbody>${tableRows}</tbody>
     </table>
   </div>
-  <div class="footer"><span>Cash Call v3.1 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
+  <div class="footer"><span>Cash Call v3.2 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
   <div class="no-print" style="text-align:center;padding:14px">
     <button onclick="window.print()" style="padding:9px 26px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
     <button onclick="window.close()" style="margin-left:8px;padding:9px 18px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
@@ -9070,7 +9318,7 @@ function exportDZPSP3pdf() {
   <div class="hdr">
     <div class="hdr-left">
       <div class="hdr-title">⛏ C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</div>
-      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v3.1</div>
+      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v3.2</div>
     </div>
     <div class="hdr-right">Generado: ${now}<br>${data.length} registros exportados</div>
   </div>
@@ -9118,7 +9366,7 @@ function exportDZPSP3pdf() {
   </div>
 
   <div class="footer">
-    <span>Cash Call v3.1 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
+    <span>Cash Call v3.2 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
     <span>${data.length} registros &nbsp;·&nbsp; Filtro: ${filterDesc}</span>
   </div>
 
@@ -9133,7 +9381,7 @@ function exportDZPSP3pdf() {
 
 </script>
 
-<!-- ══ MODAL: INFORME GERENCIAL v3.1 ═════════════════════════ -->
+<!-- ══ MODAL: INFORME GERENCIAL v3.2 ═════════════════════════ -->
 <div id="modal-informe-gerencial" style="display:none;position:fixed;inset:0;z-index:8000;background:rgba(10,22,40,0.88);backdrop-filter:blur(6px);align-items:center;justify-content:center;overflow-y:auto">
   <canvas id="ig-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.3"></canvas>
   <div style="background:#fff;border-radius:18px;padding:0;max-width:600px;width:96%;box-shadow:0 28px 80px rgba(0,0,0,0.55);position:relative;z-index:1;animation:cashCallSlideIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;overflow:hidden;margin:24px auto">
@@ -9152,7 +9400,7 @@ function exportDZPSP3pdf() {
           <path d="M30 24 L24 19 L32 22 Z" fill="white"/>
         </svg>
         <div>
-          <div style="font-size:9.5px;font-weight:700;color:rgba(0,180,200,0.85);letter-spacing:2.2px;text-transform:uppercase;margin-bottom:3px">ARIS MINING · CASH CALL v3.1</div>
+          <div style="font-size:9.5px;font-weight:700;color:rgba(0,180,200,0.85);letter-spacing:2.2px;text-transform:uppercase;margin-bottom:3px">ARIS MINING · CASH CALL v3.2</div>
           <div style="font-size:17px;font-weight:800;color:white">Informe Gerencial Ejecutivo</div>
           <div style="font-size:10px;color:rgba(255,255,255,0.45);margin-top:3px">C-DZP-21-000-A &nbsp;·&nbsp; <kbd style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:4px;padding:1px 6px;font-size:9px;font-family:monospace;color:rgba(255,255,255,0.7)">Ctrl+G</kbd> para abrir</div>
         </div>
@@ -9218,13 +9466,15 @@ function exportDZPSP3pdf() {
       </div>
       <!-- Opciones Anexos -->
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 16px;margin-bottom:18px">
-        <div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:10px">📥 Anexos Excel a incluir</div>
+        <div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:10px">📥 Módulos a incluir en el Excel</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <label style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#374151;cursor:pointer"><input type="checkbox" id="ig-anx-dzp" checked style="width:14px;height:14px"> Análisis Acta/Factura (DZP)</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#374151;cursor:pointer"><input type="checkbox" id="ig-anx-dzp" checked style="width:14px;height:14px"> Resumen DZP (Acta/Factura)</label>
           <label style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#374151;cursor:pointer"><input type="checkbox" id="ig-anx-alertas" checked style="width:14px;height:14px"> Alertas Pendientes</label>
           <label style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#374151;cursor:pointer"><input type="checkbox" id="ig-anx-meses" checked style="width:14px;height:14px"> Gestión por Mes</label>
           <label style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#374151;cursor:pointer"><input type="checkbox" id="ig-anx-m1" checked style="width:14px;height:14px"> Módulo 1 – Facturas</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#374151;cursor:pointer"><input type="checkbox" id="ig-anx-m2" checked style="width:14px;height:14px"> Módulo 2 – Recepciones</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#374151;cursor:pointer"><input type="checkbox" id="ig-anx-m2" checked style="width:14px;height:14px"> Módulo 2 – Recepciones Oracle</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#374151;cursor:pointer"><input type="checkbox" id="ig-anx-m3" checked style="width:14px;height:14px"> Módulo 3 – Cuentas por Pagar</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#374151;cursor:pointer"><input type="checkbox" id="ig-anx-m4" checked style="width:14px;height:14px"> Módulo 4 – Análisis Brechas</label>
           <label style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#374151;cursor:pointer"><input type="checkbox" id="ig-anx-comp" checked style="width:14px;height:14px"> Comparativo Períodos</label>
         </div>
       </div>
@@ -9278,17 +9528,19 @@ function igAutorAutocomplete(input) {
 }
 
 function igUnlockButtons() {
-  const ok = !!_igJsonAnterior && !document.getElementById('ig-json-date-error').style.display.includes('block') || (document.getElementById('ig-json-date-error')&&document.getElementById('ig-json-date-error').style.display==='none'&&!!_igJsonAnterior);
-  const unlocked = !!_igJsonAnterior;
-  ['ig-btn-excel','ig-btn-pdf'].forEach(id=>{
-    const btn=document.getElementById(id); if(!btn)return;
-    if(unlocked){btn.disabled=false;btn.style.opacity='1';btn.style.pointerEvents='auto';}
-    else{btn.disabled=true;btn.style.opacity='0.45';btn.style.pointerEvents='none';}
+  // Buttons unlock when data is processed. JSON anterior is optional (comparative section will be skipped if not loaded).
+  const dataReady = state.processed && (state.m1data || []).length > 0;
+  const jsonOk = !!_igJsonAnterior;
+  ['ig-btn-excel','ig-btn-pdf'].forEach(id => {
+    const btn = document.getElementById(id); if (!btn) return;
+    if (dataReady) { btn.disabled=false; btn.style.opacity='1'; btn.style.pointerEvents='auto'; }
+    else           { btn.disabled=true;  btn.style.opacity='0.45'; btn.style.pointerEvents='none'; }
   });
-  const box=document.getElementById('ig-json-box');
-  if(box) box.style.borderColor=unlocked?'#86efac':'#fca5a5';
-  const warn=document.getElementById('ig-json-warning');
-  if(warn) warn.style.display=unlocked?'none':'block';
+  const box = document.getElementById('ig-json-box');
+  if (box) box.style.borderColor = jsonOk ? '#86efac' : '#fed7aa';
+  const warn = document.getElementById('ig-json-warning');
+  if (warn) warn.style.display = jsonOk ? 'none' : 'block';
+  if (warn && !jsonOk) warn.innerHTML = '⚠️ El JSON del período anterior es <strong>opcional</strong>. Sin él, el informe no incluirá la sección comparativa. Puede generar el PDF directamente.';
 }
 
 function abrirModalInformeGerencial() {
@@ -9349,11 +9601,13 @@ function igCargarJSON(input) {
 
 // ══ HELPERS COMPARTIDOS ═══════════════════════════════════════
 function igGetData() {
-  if (typeof getDZPData !== 'undefined') {
+  if (!state.processed) return [];
+  // Use getDZPData if available (DZP filtered), else fall back to all m1data
+  if (typeof getDZPData === 'function') {
     const { m1 } = getDZPData();
-    return m1 || [];
+    return (m1 && m1.length) ? m1 : (state.m1data || []);
   }
-  return [];
+  return state.m1data || [];
 }
 function igFmtCOP(v) {
   if (!v && v !== 0) return '$ —';
@@ -9391,9 +9645,14 @@ function exportAnexoExcel() {
   const autor  = document.getElementById('ig-autor').value  || 'Diana Carolina Escobar';
   const periodo = document.getElementById('ig-periodo').value || 'General';
   const fecha  = document.getElementById('ig-fecha').value  || new Date().toLocaleDateString('es-CO');
-  const wb = XLSX.utils.book_new();
-
-  // ── Hoja 1: Resumen Ejecutivo ──────────────────────────────
+  const inclDZP  = document.getElementById('ig-anx-dzp')?.checked !== false;
+  const inclMeses= document.getElementById('ig-anx-meses')?.checked !== false;
+  const inclAlert= document.getElementById('ig-anx-alertas')?.checked !== false;
+  const inclM1   = document.getElementById('ig-anx-m1')?.checked !== false;
+  const inclM2   = document.getElementById('ig-anx-m2')?.checked !== false;
+  const inclM3   = document.getElementById('ig-anx-m3')?.checked !== false;
+  const inclM4   = document.getElementById('ig-anx-m4')?.checked !== false;
+  const inclComp = document.getElementById('ig-anx-comp')?.checked !== false;
   const total     = data.length;
   const pagadas   = data.filter(r=>r.m3Status==='pagado').length;
   const aprobadas = data.filter(r=>r.m3Status==='aprobado').length;
@@ -9422,37 +9681,95 @@ function exportAnexoExcel() {
     ['Σ Valor Facturas CxP', sumFac],
     ['Diferencia (Acta − Factura)', sumActa - sumFac],
   ]);
+  const wb = XLSX.utils.book_new();
+
+  // ── Hoja 1: Resumen Ejecutivo (siempre incluida) ────────────
   wsResumen['!cols'] = [{wch:36},{wch:22},{wch:12}];
   XLSX.utils.book_append_sheet(wb, wsResumen, '1. Resumen Ejecutivo');
 
   // ── Hoja 2: Gestión por Mes ────────────────────────────────
-  const meses = igGetMeses(data);
-  const wsMeses = XLSX.utils.aoa_to_sheet([
-    ['MES','TOTAL','PAGADAS','APROBADAS','ALERTAS','SIN REC','CON FACTURA','% CUMPL.','Σ VAL.ACTA c/IVA','Σ VAL.FACTURA CxP'],
-    ...meses.map(m=>[m.mes,m.total,m.pagadas,m.aprobadas,m.alertas,m.sinRec,m.conFac,igPct(m.conFac,m.total)+'%',m.valActa,m.valFac])
-  ]);
-  wsMeses['!cols']=[{wch:14},{wch:8},{wch:10},{wch:12},{wch:10},{wch:10},{wch:14},{wch:10},{wch:20},{wch:20}];
-  XLSX.utils.book_append_sheet(wb, wsMeses, '2. Gestión por Mes');
+  if (inclMeses) {
+    const meses = igGetMeses(data);
+    const wsMeses = XLSX.utils.aoa_to_sheet([
+      ['MES','TOTAL','PAGADAS','APROBADAS','ALERTAS','SIN REC','CON FACTURA','% CUMPL.','Σ VAL.ACTA c/IVA','Σ VAL.FACTURA CxP'],
+      ...meses.map(m=>[m.mes,m.total,m.pagadas,m.aprobadas,m.alertas,m.sinRec,m.conFac,igPct(m.conFac,m.total)+'%',m.valActa,m.valFac])
+    ]);
+    wsMeses['!cols']=[{wch:14},{wch:8},{wch:10},{wch:12},{wch:10},{wch:10},{wch:14},{wch:10},{wch:20},{wch:20}];
+    XLSX.utils.book_append_sheet(wb, wsMeses, '2. Gestión por Mes');
+  }
 
   // ── Hoja 3: Alertas Pendientes ─────────────────────────────
-  const alertRows = data.filter(r => r.m3Status!=='pagado' && (r.validREC===false||r.recStatus==='sin_recepcion'||r.recStatus==='revisar'||r.m3Status==='no_encontrado'||r.m3Status==='revisar'||!r.cxpBruto));
-  const wsAlertas = XLSX.utils.aoa_to_sheet([
-    ['#','OC','PROVEEDOR','FACTURA','ESTADO','REC','VALOR ACTA c/IVA','VALOR FACTURA','MES','AÑO'],
-    ...alertRows.map((r,i)=>[i+1,r.po||'',r.prov||'',r.inv||'',r.m3Status||'',r.recStatus||'',r.valConIva||'',r.cxpBruto||'',r.month||'',r.year||''])
-  ]);
-  wsAlertas['!cols']=[{wch:4},{wch:18},{wch:28},{wch:18},{wch:16},{wch:16},{wch:18},{wch:18},{wch:12},{wch:6}];
-  XLSX.utils.book_append_sheet(wb, wsAlertas, '3. Alertas Pendientes');
+  if (inclAlert) {
+    const alertRows = data.filter(r => r.m3Status!=='pagado' && (r.validREC===false||r.recStatus==='sin_recepcion'||r.recStatus==='revisar'||r.m3Status==='no_encontrado'||r.m3Status==='revisar'||!r.cxpBruto));
+    const wsAlertas = XLSX.utils.aoa_to_sheet([
+      ['#','OC','PROVEEDOR','FACTURA','ESTADO','REC','VALOR ACTA c/IVA','VALOR FACTURA','MES','AÑO'],
+      ...alertRows.map((r,i)=>[i+1,r.po||'',r.prov||'',r.inv||'',r.m3Status||'',r.recStatus||'',r.valConIva||'',r.cxpBruto||'',r.month||'',r.year||''])
+    ]);
+    wsAlertas['!cols']=[{wch:4},{wch:18},{wch:28},{wch:18},{wch:16},{wch:16},{wch:18},{wch:18},{wch:12},{wch:6}];
+    XLSX.utils.book_append_sheet(wb, wsAlertas, '3. Alertas Pendientes');
+  }
 
-  // ── Hoja 4: Detalle Completo ───────────────────────────────
-  const wsDetalle = XLSX.utils.aoa_to_sheet([
-    ['#','OC','PROVEEDOR','FACTURA','ESTADO','REC STATUS','REC #','VAL.ACTA s/IVA','VAL.ACTA c/IVA','VAL.REC','VAL.FACTURA CxP','MES','AÑO'],
-    ...data.map((r,i)=>[i+1,r.po||'',r.prov||'',r.inv||'',r.m3Status||'',r.recStatus||'',r.recNums||r.rec||'',r.valSinIva||'',r.valConIva||'',r.totalRec||'',r.cxpBruto||'',r.month||'',r.year||''])
-  ]);
-  wsDetalle['!cols']=[{wch:4},{wch:18},{wch:28},{wch:18},{wch:16},{wch:16},{wch:14},{wch:18},{wch:18},{wch:18},{wch:18},{wch:12},{wch:6}];
-  XLSX.utils.book_append_sheet(wb, wsDetalle, '4. Detalle Completo');
+  // ── Hoja 4: Detalle DZP (Resumen) ─────────────────────────
+  if (inclDZP) {
+    const wsDetalle = XLSX.utils.aoa_to_sheet([
+      ['#','OC','PROVEEDOR','FACTURA','ESTADO','REC STATUS','REC #','VAL.ACTA s/IVA','VAL.ACTA c/IVA','VAL.REC','VAL.FACTURA CxP','MES','AÑO'],
+      ...data.map((r,i)=>[i+1,r.po||'',r.prov||'',r.inv||'',r.m3Status||'',r.recStatus||'',r.recNums||r.rec||'',r.valSinIva||'',r.valConIva||'',r.totalRec||'',r.cxpBruto||'',r.month||'',r.year||''])
+    ]);
+    wsDetalle['!cols']=[{wch:4},{wch:18},{wch:28},{wch:18},{wch:16},{wch:16},{wch:14},{wch:18},{wch:18},{wch:18},{wch:18},{wch:12},{wch:6}];
+    XLSX.utils.book_append_sheet(wb, wsDetalle, '4. Detalle DZP');
+  }
 
-  // ── Hoja 5: Comparativo con período anterior ───────────────
-  if (_igJsonAnterior) {
+  // ── Hoja 5: M1 — Módulo 1 Facturas ────────────────────────
+  if (inclM1) {
+    const wsM1 = XLSX.utils.aoa_to_sheet([
+      ['#','ESTADO REC','AÑO','MES','OC','PROVEEDOR','N° FACTURA','N° REC (A1)','RECEPCIONES ORACLE','VAL.SIN IVA','VAL.RECEPCIONADO','DIFERENCIA','F.RECEPCIÓN','RECEPCIONADO POR'],
+      ...data.map((r,i)=>[i+1, r.recStatus||'', r.year||'', r.month||'', r.po||'', r.prov||'', r.inv||'', r.rec||'', r.recNums||'', r.valSinIva||0, r.totalRec||0, (r.totalRec||0)-(r.valSinIva||0), r.recDate||'', r.recBy||''])
+    ]);
+    wsM1['!cols']=[{wch:4},{wch:16},{wch:6},{wch:12},{wch:18},{wch:28},{wch:16},{wch:12},{wch:18},{wch:18},{wch:18},{wch:14},{wch:14},{wch:22}];
+    XLSX.utils.book_append_sheet(wb, wsM1, '5. M1 Facturas');
+  }
+
+  // ── Hoja 6: M2 — Recepciones Oracle ───────────────────────
+  if (inclM2) {
+    const recData2 = state.df2rec || [];
+    if (recData2.length) {
+      const wsM2 = XLSX.utils.aoa_to_sheet([
+        ['#','ESTADO LÍNEA','FECHA RECEPCIÓN','N° RECEPCIÓN','OC','PROVEEDOR','DESCRIPCIÓN ARTÍCULO','ORGANIZACIÓN','PROYECTO','VAL.RECEPCIONADO','VAL.TOTAL OC','COMPRADOR'],
+        ...recData2.map((r,i)=>[i+1, r.estadoLinea||'', r.fecha||'', r.rec||'', r.oc||'', r.proveedor||'', r.desc||'', r.org||'', r.proyecto||'', r.valRec||0, r.valTot||0, r.comprador||''])
+      ]);
+      wsM2['!cols']=[{wch:4},{wch:18},{wch:16},{wch:14},{wch:18},{wch:28},{wch:30},{wch:22},{wch:20},{wch:18},{wch:18},{wch:22}];
+      XLSX.utils.book_append_sheet(wb, wsM2, '6. M2 Recepciones Oracle');
+    }
+  }
+
+  // ── Hoja 7: M3 — Cuentas por Pagar ────────────────────────
+  if (inclM3) {
+    const cxpData = state.df3cxp || [];
+    if (cxpData.length) {
+      const wsM3 = XLSX.utils.aoa_to_sheet([
+        ['#','ESTADO','FECHA CONTABLE','FECHA TRANSACCIÓN','OC','NIT','PROVEEDOR','N° FACTURA','VALOR BRUTO+IVA','ANTICIPOS','SALDO FACTURA'],
+        ...cxpData.map((r,i)=>[i+1, r.estado||'', r.fechaContable||'', r.fechaTrans||'', r.po||'', r.nit||'', r.prov||'', r.factura||'', r.valorBruto||0, r.anticipos||0, r.saldoFact||0])
+      ]);
+      wsM3['!cols']=[{wch:4},{wch:12},{wch:16},{wch:18},{wch:18},{wch:14},{wch:28},{wch:18},{wch:18},{wch:14},{wch:16}];
+      XLSX.utils.book_append_sheet(wb, wsM3, '7. M3 Cuentas por Pagar');
+    }
+  }
+
+  // ── Hoja 8: M4 — Análisis Brechas ─────────────────────────
+  if (inclM4) {
+    const brechasData = state.m4data || [];
+    if (brechasData.length) {
+      const wsM4 = XLSX.utils.aoa_to_sheet([
+        ['#','FLUJO','PROVEEDOR','N° FACTURA','OC','VAL.SIN IVA','VAL.RECEPCIONADO','ESTADO REC','ESTADO CXP','ESTADO PAGO','F.FACTURA','F.RECEPCIÓN','F.PAGO','BRECHAS'],
+        ...brechasData.map((r,i)=>[i+1, r.flujo||'', r.prov||'', r.inv||'', r.po||'', r.valSinIva||0, r.totalRec||0, r.recStatus||'', r.m2Status||'', r.m3Status||'', r.invDate||'', r.recDate||'', r.payDate||'', (r.brechas||[]).join('; ')])
+      ]);
+      wsM4['!cols']=[{wch:4},{wch:14},{wch:28},{wch:16},{wch:18},{wch:18},{wch:18},{wch:14},{wch:12},{wch:12},{wch:14},{wch:14},{wch:14},{wch:36}];
+      XLSX.utils.book_append_sheet(wb, wsM4, '8. M4 Brechas');
+    }
+  }
+
+  // ── Hoja 9: Comparativo con período anterior ───────────────
+  if (inclComp && _igJsonAnterior) {
     const prevData = _igJsonAnterior.data?.m1 || _igJsonAnterior.m1 || [];
     const prevTotal = prevData.length;
     const prevPag   = prevData.filter(r=>r.m3Status==='pagado').length;
@@ -9467,10 +9784,10 @@ function exportAnexoExcel() {
       ['% Cumplimiento', igPct(prevConFac,prevTotal)+'%', cumpl+'%',''],
     ]);
     wsComp['!cols']=[{wch:28},{wch:12},{wch:12},{wch:14}];
-    XLSX.utils.book_append_sheet(wb, wsComp, '5. Comparativo Períodos');
+    XLSX.utils.book_append_sheet(wb, wsComp, '9. Comparativo Períodos');
   }
 
-  XLSX.writeFile(wb, `InformeGerencial_C-DZP-21-000-A_${fecha}.xlsx`);
+  XLSX.writeFile(wb, `InformeGerencial_Completo_${fecha}.xlsx`);
   if (typeof showToast !== 'undefined') showToast('✅ Anexo Excel exportado correctamente', 'success');
 }
 
@@ -9478,7 +9795,10 @@ function exportAnexoExcel() {
 function exportInformeGerencialPDF() {
   const data = igGetData();
   if (!data.length) { showToast('Sin datos para generar informe','warning'); return; }
-  if (!_igJsonAnterior) { showToast('⛔ Debe cargar el JSON del período anterior primero','warning'); return; }
+  if (!_igJsonAnterior) {
+    // JSON not loaded: generate report without comparative section
+    console.warn('[InformeGerencial] JSON anterior no cargado — se generará sin comparativo');
+  }
 
   const autor   = document.getElementById('ig-autor').value    || 'Diana Carolina Escobar';
   const cargo   = document.getElementById('ig-cargo').value    || '';
@@ -9520,8 +9840,8 @@ function exportInformeGerencialPDF() {
   data.forEach(r=>{const p=r.prov||'—';provVal[p]=(provVal[p]||0)+(r.valConIva||0);});
   const topProvVal=Object.entries(provVal).sort((a,b)=>b[1]-a[1]).slice(0,8);
 
-  // ── Comparativo ───────────────────────────────────────────
-  const prevData  = _igJsonAnterior.data?.m1||_igJsonAnterior.m1||[];
+  // ── Comparativo (opcional) ────────────────────────────────
+  const prevData  = _igJsonAnterior ? (_igJsonAnterior.data?.m1||_igJsonAnterior.m1||[]) : [];
   const prevTotal = prevData.length;
   const prevPag   = prevData.filter(r=>r.m3Status==='pagado').length;
   const prevAlert = prevData.filter(r=>r.m3Status!=='pagado'&&(r.validREC===false||r.recStatus==='sin_recepcion'||r.recStatus==='revisar'||r.m3Status==='no_encontrado'||!r.cxpBruto)).length;
@@ -9529,7 +9849,7 @@ function exportInformeGerencialPDF() {
   const prevConRec= prevData.filter(r=>r.recStatus==='recepcionado'||r.validREC===true).length;
   const prevSumFac= prevData.reduce((s,r)=>s+(r.cxpBruto||0),0);
   const prevSumPag= prevData.filter(r=>r.m3Status==='pagado').reduce((s,r)=>s+(r.cxpBruto||0),0);
-  const fechaPrev = _igJsonAnterior.meta?.fecha||_igJsonAnterior.fecha||'período anterior';
+  const fechaPrev = _igJsonAnterior ? (_igJsonAnterior.meta?.fecha||_igJsonAnterior.fecha||'período anterior') : 'No disponible';
   const vc=(v,inv)=>`<td class="num" style="color:${(inv?v<0:v>0)?'#059669':(inv?v>0:v<0)?'#dc2626':'#64748b'};font-weight:700">${v>0?'+':''}${v}</td>`;
 
   // ── SVG helpers ───────────────────────────────────────────
@@ -9658,7 +9978,7 @@ function exportInformeGerencialPDF() {
   // ══ HTML DEL INFORME ══════════════════════════════════════
   const pw=window.open('','_blank','width=1100,height=860');
   pw.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
-  <title>Informe Gerencial v3.1 — ARIS MINING · C-DZP-21-000-A</title>
+  <title>Informe Gerencial v3.2 — ARIS MINING · C-DZP-21-000-A</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
     @page { size:A4 portrait; margin:0; @bottom-right { content:"Pág. " counter(page) " de " counter(pages); font-size:8px; font-family:"IBM Plex Mono",monospace; color:#94a3b8; margin-right:16mm; margin-bottom:8mm; } }
@@ -9827,7 +10147,7 @@ function exportInformeGerencialPDF() {
         </svg>
         <div class="cover-brand-txt">
           <div class="cover-brand-name">ARIS MINING</div>
-          <div class="cover-brand-sub">Cash Call v3.1 · Control Financiero</div>
+          <div class="cover-brand-sub">Cash Call v3.2 · Control Financiero</div>
         </div>
       </div>
       <div class="cover-div"></div>
@@ -9891,7 +10211,7 @@ function exportInformeGerencialPDF() {
 
   <!-- ░░ TABLA DE CONTENIDO ░░ -->
   <div class="toc-page">
-    <div class="co-row"><div class="co-badge">ARIS MINING</div><span style="font-size:10.5px;color:#64748b">C-DZP-21-000-A · Cash Call v3.1 · ${periodo}</span></div>
+    <div class="co-row"><div class="co-badge">ARIS MINING</div><span style="font-size:10.5px;color:#64748b">C-DZP-21-000-A · Cash Call v3.2 · ${periodo}</span></div>
     <div class="toc-hdr"><div class="toc-ic">📑</div><div class="toc-ti">Tabla de Contenido</div></div>
     ${[
       ['1','Introducción','Contexto, alcance metodológico y definiciones del proyecto'],
@@ -9908,7 +10228,7 @@ function exportInformeGerencialPDF() {
   <!-- ░░ CAP 1: INTRODUCCIÓN ░░ -->
   <div class="chapter-break">
     <div class="phs"></div><h2 class="cht">1. Introducción</h2><div class="chr"></div>
-    <p class="it">Informe preparado para la Alta Dirección de <strong>ARIS MINING</strong> sobre el estado financiero y operativo del proyecto <strong>C-DZP-21-000-A</strong> · período <strong>${periodo}</strong>. Desarrollado mediante el sistema <strong>Cash Call v3.1</strong>, plataforma de control que integra actas, recepciones Oracle y cuentas por pagar (CxP).</p>
+    <p class="it">Informe preparado para la Alta Dirección de <strong>ARIS MINING</strong> sobre el estado financiero y operativo del proyecto <strong>C-DZP-21-000-A</strong> · período <strong>${periodo}</strong>. Desarrollado mediante el sistema <strong>Cash Call v3.2</strong>, plataforma de control que integra actas, recepciones Oracle y cuentas por pagar (CxP).</p>
     <p class="it">Se analizan <strong>${total} actas/facturas</strong>, cruces con Oracle REC, validación CxP, flujo de caja, tendencias mensuales y análisis de Pareto de alertas. Se incluye comparativo vs <strong>${fechaPrev}</strong>.</p>
     <div class="hb ${cumpl>=80?'hb-g':cumpl>=60?'hb-a':'hb-r'}">
       <strong>📌 Hallazgo Principal — ${periodo}:</strong> Cumplimiento <strong>${cumpl}%</strong> (${conFac}/${total} actas con CxP). <strong>${alertas} alertas activas</strong> — ${sinRec} sin REC Oracle · ${recRevisar} con REC a revisar · ${sinFac} sin factura CxP.
@@ -9918,7 +10238,7 @@ function exportInformeGerencialPDF() {
       <div><p class="it"><strong>Definiciones:</strong> <strong>REC:</strong> Recepción Oracle ERP · <strong>CxP:</strong> Cuenta por Pagar registrada · <strong>Alerta:</strong> Acta sin pago con alguna brecha · <strong>Cumplimiento:</strong> Actas c/CxP / Total</p></div>
     </div>
     <p class="it" style="color:#64748b;font-size:8.5px"><strong>Desarrollado por:</strong> GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc &nbsp;·&nbsp; <strong>Elaborado:</strong> ${autor}${cargo?' — '+cargo:''} &nbsp;·&nbsp; <strong>Fecha:</strong> ${fechaFmt}</p>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v3.1 · C-DZP-21-000-A</span><span>${periodo} · ${fechaFmt}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v3.2 · C-DZP-21-000-A</span><span>${periodo} · ${fechaFmt}</span></div>
   </div>
 
   <!-- ░░ CAP 2: RESUMEN EJECUTIVO ░░ -->
@@ -9975,7 +10295,7 @@ function exportInformeGerencialPDF() {
         ? '⚠️ <strong>Cumplimiento en riesgo ('+cumpl+'%)</strong>: por debajo de la meta del 90%. Acelerar registro de facturas CxP.'
         : '❌ <strong>Cumplimiento crítico ('+cumpl+'%)</strong>: intervención gerencial urgente requerida. Meta: ≥90%.'}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v3.1 · C-DZP-21-000-A</span><span>Cap. 2 — Resumen Ejecutivo · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v3.2 · C-DZP-21-000-A</span><span>Cap. 2 — Resumen Ejecutivo · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 3: ANÁLISIS FINANCIERO ░░ -->
@@ -10038,7 +10358,7 @@ function exportInformeGerencialPDF() {
         : 'Las facturas CxP cubren la totalidad del valor de actas — sin brecha de registro.'}
       El proveedor con mayor participación es <strong>${topProvVal[0]?.[0]||'—'}</strong> con ${igFmtCOP(topProvVal[0]?.[1]||0)}.
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v3.1 · C-DZP-21-000-A</span><span>Cap. 3 — Análisis Financiero · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v3.2 · C-DZP-21-000-A</span><span>Cap. 3 — Análisis Financiero · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 4: GESTIÓN MENSUAL ░░ -->
@@ -10086,7 +10406,7 @@ function exportInformeGerencialPDF() {
             : '📉 La tendencia del valor facturado presenta <strong style="color:#d97706">variaciones descendentes</strong> que requieren seguimiento.')
         : ''}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v3.1 · C-DZP-21-000-A</span><span>Cap. 4 — Gestión Mensual · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v3.2 · C-DZP-21-000-A</span><span>Cap. 4 — Gestión Mensual · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 5: PARETO ░░ -->
@@ -10128,7 +10448,7 @@ function exportInformeGerencialPDF() {
       liberaría el 80% de las alertas bloqueadas.
     </div>
     <div class="hb hb-r" style="font-size:9px"><strong>📌 Regla de Pareto:</strong> ${paretoRows.filter(d=>d.acum<=80).length} proveedores concentran el 80% de las ${alertas} alertas. Priorizar gestión con: <strong>${paretoRows.filter(d=>d.acum<=80).map(d=>d.p.slice(0,20)).join(', ')}</strong>.</div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v3.1 · C-DZP-21-000-A</span><span>Cap. 5 — Diagrama de Pareto · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v3.2 · C-DZP-21-000-A</span><span>Cap. 5 — Diagrama de Pareto · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 6: DETALLE ALERTAS ░░ -->
@@ -10169,7 +10489,7 @@ function exportInformeGerencialPDF() {
       <thead><tr><th>#</th><th>OC</th><th>Proveedor</th><th>Factura</th><th class="tc">REC</th><th>Estado</th><th class="num">Val.Factura CxP</th><th>Mes</th></tr></thead>
       <tbody>${rowsDetAlertas}</tbody>
     </table>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v3.1 · C-DZP-21-000-A</span><span>Cap. 6 — Detalle Alertas · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v3.2 · C-DZP-21-000-A</span><span>Cap. 6 — Detalle Alertas · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 7: COMPARATIVO ░░ -->
@@ -10220,22 +10540,22 @@ function exportInformeGerencialPDF() {
         ? '💰 Valor pagado: <strong style="color:#059669">creció '+igFmtCOP(sumPagado-prevSumPag)+'</strong> vs período anterior.'
         : '💰 Valor pagado: <strong style="color:#dc2626">disminuyó '+igFmtCOP(prevSumPag-sumPagado)+'</strong> vs período anterior — revisar causas.'}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v3.1 · C-DZP-21-000-A</span><span>Cap. 7 — Comparativo de Períodos · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v3.2 · C-DZP-21-000-A</span><span>Cap. 7 — Comparativo de Períodos · ${periodo}</span></div>
   </div>
 
   <!-- ░░ FIRMAS ░░ -->
   <div class="chapter-break">
     <div class="phs"></div><h2 class="cht">Firmas y Cierre del Informe</h2><div class="chr"></div>
-    <p class="it">Informe generado por <strong>Cash Call v3.1 — ARIS MINING</strong> · período <strong>${periodo}</strong> · ${total} registros procesados · Cumplimiento: ${cumpl}%.</p>
-    <div class="hb hb-g">✅ Generado: ${now} &nbsp;·&nbsp; ARIS MINING / Cash Call v3.1 &nbsp;·&nbsp; Desarrollado por GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc</div>
+    <p class="it">Informe generado por <strong>Cash Call v3.2 — ARIS MINING</strong> · período <strong>${periodo}</strong> · ${total} registros procesados · Cumplimiento: ${cumpl}%.</p>
+    <div class="hb hb-g">✅ Generado: ${now} &nbsp;·&nbsp; ARIS MINING / Cash Call v3.2 &nbsp;·&nbsp; Desarrollado por GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc</div>
     <div class="fs">
       <div class="fb"><div style="height:38px"></div><div class="fl"></div><div class="fn">${autor}</div><div class="fr">${cargo||'Analista / Elaborado por'}</div></div>
       <div class="fb"><div style="height:38px"></div><div class="fl"></div><div class="fn">_________________________</div><div class="fr">Gerencia ARIS MINING / Aprobado por</div></div>
     </div>
     <div style="margin-top:26px;padding:12px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;font-size:8.5px;color:#94a3b8;text-align:center">
-      ARIS MINING &nbsp;·&nbsp; Cash Call v3.1 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; ${periodo} &nbsp;·&nbsp; Desarrollado: GREEN ENGINEERING CONSULTING &nbsp;·&nbsp; Confidencial
+      ARIS MINING &nbsp;·&nbsp; Cash Call v3.2 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; ${periodo} &nbsp;·&nbsp; Desarrollado: GREEN ENGINEERING CONSULTING &nbsp;·&nbsp; Confidencial
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v3.1 · GREEN ENGINEERING CONSULTING</span><span>Ing. Johan Manuel Cárdenas Leal, MSc · ${fechaFmt}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v3.2 · GREEN ENGINEERING CONSULTING</span><span>Ing. Johan Manuel Cárdenas Leal, MSc · ${fechaFmt}</span></div>
   </div>
 
   <div class="no-print" style="margin-top:24px;text-align:center;padding:16px;background:#f8fafc;border-top:1px solid #e2e8f0">
@@ -10247,6 +10567,983 @@ function exportInformeGerencialPDF() {
   pw.document.close();
   cerrarModalInformeGerencial();
 }
+// ═══════════════════════════════════════════════════════════════
+// M5 — Popup detalle facturas por mes
+// ═══════════════════════════════════════════════════════════════
+function showM5FacturasPopup(encodedKey) {
+  const k = decodeURIComponent(encodedKey);
+  // Find the current provider from the select
+  const sel5 = document.getElementById('m5prov-select');
+  const provName = sel5 && sel5.selectedIndex > 0 ? (sel5.options[sel5.selectedIndex].getAttribute('data-prov') || '') : '';
+  if (!provName) return;
+  const provNorm = provName.trim().toLowerCase();
+  const yearSel = document.getElementById('m5year-select')?.value || '';
+
+  const m4rows = state.m4data.filter(r => r.prov && r.prov.trim().toLowerCase() === provNorm
+    && (!yearSel || parseInt(String(r.year).replace('.0','')) === parseInt(yearSel)));
+  const m1rows = state.m1data.filter(r => r.prov && r.prov.trim().toLowerCase() === provNorm
+    && (!yearSel || parseInt(String(r.year).replace('.0','')) === parseInt(yearSel)));
+
+  // Filter to the clicked month key (year-monthName)
+  const rows = (m4rows.length ? m4rows : m1rows).filter(r => {
+    const yk = `${r.year||'?'}-${normalStr(r.month||'?')}`;
+    return yk === k;
+  });
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const mNames = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const [ky, km] = k.split('-');
+  const mNum = monthStrToNum(km);
+  const titleLabel = `${mNames[mNum]||km} ${ky} — ${rows.length} factura${rows.length!==1?'s':''}`;
+
+  const tableRows = rows.map((r,i) => {
+    const recB = r.recStatus==='recepcionado'?'<span class="badge badge-success">✅ Rec.</span>':r.recStatus==='parcial'?'<span class="badge badge-warning">⚠️ Parcial</span>':'<span class="badge badge-danger">❌ Sin Rec.</span>';
+    const pagB = r.m3Status==='pagado'?'<span class="badge badge-success">✅ Pagado</span>':r.m3Status==='aprobado'?'<span class="badge badge-warning">⏳ Aprobado</span>':'<span class="badge badge-danger">❌ Sin CxP</span>';
+    const d = r.dueDate ? parseAnyDate(r.dueDate) : null;
+    const diasMora = d && r.m3Status!=='pagado' ? Math.max(0,Math.floor((today-d)/86400000)) : 0;
+    const moraStr = diasMora>0 ? `<span style="color:#dc2626;font-weight:700">${diasMora}d</span>` : '<span style="color:#94a3b8">—</span>';
+    const fFac = r.invDate ? fmtDate(r.invDate) : '—';
+    const fRec = r.recDate && r.recDate !== '—' ? fmtDate(r.recDate) : '—';
+    const fPag = r.payDate ? fmtDate(r.payDate) : '—';
+    return `<tr style="background:${i%2?'#f8fafc':'white'};border-bottom:1px solid #f1f5f9">
+      <td style="padding:6px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:#1a4a8a">${r.inv||'—'}</td>
+      <td style="padding:6px 10px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#5c6f8a">${r.po||'—'}</td>
+      <td style="padding:6px 10px;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700">${fmtCurrency(r.valSinIva)}</td>
+      <td style="padding:6px 10px;text-align:right;color:#059669;font-family:'IBM Plex Mono',monospace">${r.totalRec?fmtCurrency(r.totalRec):'—'}</td>
+      <td style="padding:6px 10px">${recB}</td>
+      <td style="padding:6px 10px">${pagB}</td>
+      <td style="padding:6px 10px;text-align:center">${moraStr}</td>
+      <td style="padding:6px 10px;font-size:10.5px;white-space:nowrap">${fFac}</td>
+      <td style="padding:6px 10px;font-size:10.5px;white-space:nowrap">${fRec}</td>
+      <td style="padding:6px 10px;font-size:10.5px;white-space:nowrap;color:${r.m3Status==='pagado'?'#059669':'#94a3b8'}">${fPag}</td>
+      <td style="padding:6px 10px;font-size:10px;color:#6b7280;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.obs||'—'}</td>
+    </tr>`;
+  }).join('');
+
+  // Open via subwindow mechanism
+  const bd = document.getElementById('sw-prov-detail');
+  const ttl = document.getElementById('sw-prov-title');
+  const body = document.getElementById('sw-prov-body');
+  if (!bd || !ttl || !body) return;
+  ttl.textContent = `📋 Facturas — ${titleLabel}`;
+  body.innerHTML = `<div style="padding:4px 0 10px">
+    <div style="background:#f0f9ff;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:11.5px;color:#0369a1">
+      📊 <strong>${provName}</strong> · ${titleLabel}
+    </div>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr style="background:#0f2544;color:white">
+          <th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700">N° FACTURA</th>
+          <th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700">OC</th>
+          <th style="padding:7px 10px;text-align:right;font-size:10px;font-weight:700">VALOR S/IVA</th>
+          <th style="padding:7px 10px;text-align:right;font-size:10px;font-weight:700">VAL. REC.</th>
+          <th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700">RECEPCIÓN</th>
+          <th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700">PAGO</th>
+          <th style="padding:7px 10px;text-align:center;font-size:10px;font-weight:700">MORA</th>
+          <th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700">F. FACTURA</th>
+          <th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700">F. RECEPCIÓN</th>
+          <th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700">F. PAGO</th>
+          <th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700">OBSERVACIONES</th>
+        </tr></thead>
+        <tbody>${tableRows || '<tr><td colspan="8" style="text-align:center;padding:20px;color:#94a3b8">Sin datos</td></tr>'}</tbody>
+      </table>
+    </div>
+  </div>`;
+  openSubwin('sw-prov-detail');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CLICK-FILTER HELPERS v3.2
+// M1: click on OC → filter M1 by that OC
+// M2: click on OC → filter M2 by that OC
+// M4: click on prov or OC → filter M4
+// ═══════════════════════════════════════════════════════════════
+function _navigateM5ByProv(prov) {
+  if (!prov || !prov.trim()) return;
+  try {
+    const sel5 = document.getElementById('m5prov-select');
+    if (!sel5 || sel5.options.length <= 1) return;
+    const provNorm = prov.trim().toLowerCase();
+    let bestIdx = -1, bestScore = 0;
+    for (let i = 1; i < sel5.options.length; i++) {
+      const dp = (sel5.options[i].getAttribute('data-prov') || '').toLowerCase().trim();
+      // Exact match wins immediately
+      if (dp === provNorm) { bestIdx = i; break; }
+      // Calculate similarity score
+      let score = 0;
+      if (dp.includes(provNorm) || provNorm.includes(dp)) {
+        score = Math.min(dp.length, provNorm.length) * 2;
+      } else {
+        // Word-level overlap
+        const dpWords = dp.split(/[\s,&\-\.]+/).filter(w => w.length > 2);
+        const pvWords = provNorm.split(/[\s,&\-\.]+/).filter(w => w.length > 2);
+        const matched = dpWords.filter(w => pvWords.some(pw => pw.startsWith(w.substring(0,5)) || w.startsWith(pw.substring(0,5)))).length;
+        score = matched * 15;
+      }
+      if (score > bestScore) { bestScore = score; bestIdx = i; }
+    }
+    if (bestIdx > 0) {
+      sel5.selectedIndex = bestIdx;
+      // Switch to M5 tab and render
+      switchTab('modulo5');
+      setTimeout(() => { try { renderM5(); } catch(e) { console.warn('renderM5:', e); } }, 80);
+    }
+  } catch(e) { console.warn('_navigateM5ByProv:', e); }
+}
+
+function filterM1ByOC(oc) {
+  const f = document.getElementById('f1oc');
+  if (!f) return;
+  f.value = oc;
+  const f2 = document.getElementById('f2search'); if (f2) { f2.value = oc; }
+  const f4 = document.getElementById('f4search'); if (f4) { f4.value = oc; }
+  switchTab('modulo1');
+  renderM1();
+  try { renderM2(); } catch(e) {}
+  try { renderM4(); } catch(e) {}
+  // Find exact prov from m1data using the OC — not the truncated display value
+  const ocNorm = oc.trim().toUpperCase().replace(/\s+/g,'');
+  const m1row = state.m1data.find(r => (r.po||'').trim().toUpperCase().replace(/\s+/g,'') === ocNorm);
+  if (m1row && m1row.prov) {
+    _navigateM5ByProv(m1row.prov);
+  }
+  showToast(`🔗 OC ${oc} — filtro en M1, M2, M4 y M5`, 'info');
+}
+
+function filterM1ByProv(prov) {
+  const f = document.getElementById('f1oc');
+  if (!f) return;
+  f.value = prov;
+  // Sync M2, M4
+  const f2 = document.getElementById('f2search'); if (f2) { f2.value = prov; }
+  const f4 = document.getElementById('f4search'); if (f4) { f4.value = prov; }
+  switchTab('modulo1');
+  renderM1();
+  try { renderM2(); } catch(e) {}
+  try { renderM4(); } catch(e) {}
+  // Navigate M5 using the exact prov value from m1data
+  _navigateM5ByProv(prov);
+  showToast(`🔗 Proveedor "${prov}" — filtro en M1, M2, M4 y M5`, 'info');
+}
+
+function filterM2ByOC(oc) {
+  const f = document.getElementById('f2search');
+  if (!f) return;
+  f.value = oc;
+  switchTab('modulo2');
+  renderM2();
+  showToast(`🔍 M2 filtrado por OC: ${oc}`, 'info');
+}
+
+function filterM4ByOC(oc) {
+  const f = document.getElementById('f4search');
+  if (!f) return;
+  f.value = oc;
+  switchTab('modulo4');
+  renderM4();
+  showToast(`🔍 M4 filtrado por OC: ${oc}`, 'info');
+}
+
+function filterM4ByProv(prov) {
+  const f = document.getElementById('f4search');
+  if (!f) return;
+  f.value = prov;
+  switchTab('modulo4');
+  renderM4();
+  showToast(`🔍 M4 filtrado por proveedor: ${prov}`, 'info');
+}
+
+function showM1PersonFacturas(encodedPerson, encodedMonthKey) {
+  const person = decodeURIComponent(encodedPerson);
+  const monthKey = decodeURIComponent(encodedMonthKey);
+  const [yr, mn] = monthKey.split('-');
+  const mNames = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+  const facts = state.m1data.filter(r => {
+    const my = getMonthYear(r); if (!my) return false;
+    const k = `${my.y}-${String(my.m).padStart(2,'0')}`;
+    return k === monthKey && (r.recBy || '').trim().toLowerCase() === person.trim().toLowerCase()
+      && (r.recStatus === 'recepcionado' || r.recStatus === 'parcial');
+  });
+
+  const bd = document.getElementById('sw-prov-detail');
+  const ttl = document.getElementById('sw-prov-title');
+  const body = document.getElementById('sw-prov-body');
+  if (!bd || !ttl || !body) return;
+
+  ttl.textContent = `👤 ${person} — ${mNames[+mn]||mn} ${yr} (${facts.length} facturas)`;
+  const shortName = person.split(' ').slice(0,2).join(' ');
+  const rows = facts.map((r,i) => {
+    const fFac = r.invDate ? fmtDate(r.invDate) : '—';
+    const fRec = r.recDate && r.recDate !== '—' ? fmtDate(r.recDate) : '—';
+    const recB = r.recStatus==='recepcionado'?'<span class="badge badge-success">✅ Rec.</span>':'<span class="badge badge-warning">⚠️ Parcial</span>';
+    return `<tr style="background:${i%2?'#f8fafc':'white'};border-bottom:1px solid #f1f5f9">
+      <td style="padding:6px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:#1a4a8a">${r.inv||'—'}</td>
+      <td style="padding:6px 10px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#5c6f8a">${r.po||'—'}</td>
+      <td style="padding:6px 10px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">${r.prov||'—'}</td>
+      <td style="padding:6px 10px;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700">${fmtCurrency(r.valSinIva)}</td>
+      <td style="padding:6px 10px;text-align:right;color:#059669;font-family:'IBM Plex Mono',monospace">${r.totalRec?fmtCurrency(r.totalRec):'—'}</td>
+      <td style="padding:6px 10px">${recB}</td>
+      <td style="padding:6px 10px;font-size:10.5px;white-space:nowrap">${fFac}</td>
+      <td style="padding:6px 10px;font-size:10.5px;white-space:nowrap">${fRec}</td>
+    </tr>`;
+  }).join('');
+
+  body.innerHTML = `<div style="padding:4px 0 10px">
+    <div style="background:#f0f9ff;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:11.5px;color:#0369a1">
+      👤 <strong>${person}</strong> — ${mNames[+mn]||mn} ${yr} · ${facts.length} factura${facts.length!==1?'s':''}
+    </div>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr style="background:#0f2544;color:white">
+          <th style="padding:7px 10px;font-size:10px;font-weight:700">N° FACTURA</th>
+          <th style="padding:7px 10px;font-size:10px;font-weight:700">OC</th>
+          <th style="padding:7px 10px;font-size:10px;font-weight:700">PROVEEDOR</th>
+          <th style="padding:7px 10px;text-align:right;font-size:10px;font-weight:700">VALOR S/IVA</th>
+          <th style="padding:7px 10px;text-align:right;font-size:10px;font-weight:700">VAL. REC.</th>
+          <th style="padding:7px 10px;font-size:10px;font-weight:700">ESTADO</th>
+          <th style="padding:7px 10px;font-size:10px;font-weight:700">F. FACTURA</th>
+          <th style="padding:7px 10px;font-size:10px;font-weight:700">F. RECEPCIÓN</th>
+        </tr></thead>
+        <tbody>${rows||'<tr><td colspan="8" style="text-align:center;padding:20px;color:#94a3b8">Sin facturas recepcionadas en este período</td></tr>'}</tbody>
+      </table>
+    </div>
+  </div>`;
+  openSubwin('sw-prov-detail');
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+const discState = {
+  facDup: [],      // facturas con mismo N° pero distintos proveedores
+  ocMultiProv: [], // OC que aparecen para más de 1 proveedor
+  recMultiFac: [], // Recepciones vinculadas a más de 1 factura
+  provIncons: []   // Facturas donde proveedor M1 ≠ proveedor M3
+};
+
+function computeDiscrepancias() {
+  const m1 = state.m1data, m2 = state.m2data, m3 = state.m3data;
+  if (!m1.length && !m3.length) return;
+
+  // ── 1. FACTURAS CON MISMO N° EN DISTINTOS PROVEEDORES (M1 + M3) ──
+  const facMap = {};
+  m1.forEach(r => {
+    const k = normalStr(r.factura || r.numFactura || r.invoice || '');
+    if (!k) return;
+    if (!facMap[k]) facMap[k] = { facturaNum: k, entries: [] };
+    facMap[k].entries.push({ fuente: 'M1', prov: r.prov, oc: r.oc, mes: r.month, año: r.year, valor: r.valSinIva || 0, estado: r.recStatus || '—' });
+  });
+  m3.forEach(r => {
+    const k = normalStr(r.factura || '');
+    if (!k) return;
+    if (!facMap[k]) facMap[k] = { facturaNum: k, entries: [] };
+    facMap[k].entries.push({ fuente: 'CxP', prov: normalStr(r.prov || ''), oc: '—', mes: r._mo, año: r._yr, valor: r.valorBruto || 0, estado: r.estado || '—' });
+  });
+  discState.facDup = Object.values(facMap).filter(f => {
+    const provs = [...new Set(f.entries.map(e => normalStr(e.prov || '')).filter(Boolean))];
+    return provs.length > 1;
+  });
+
+  // ── 2. OC ASIGNADAS A MÁS DE UN PROVEEDOR ──
+  const ocMap = {};
+  m1.forEach(r => {
+    const oc = normalStr(r.oc || r.po || '');
+    if (!oc) return;
+    if (!ocMap[oc]) ocMap[oc] = { oc, entries: [] };
+    ocMap[oc].entries.push({ prov: r.prov, mes: r.month, año: r.year, factura: r.factura || r.numFactura, valor: r.valSinIva || 0 });
+  });
+  // Also from M2 (recepciones)
+  m2.forEach(r => {
+    const oc = normalStr(r.oc || r.po || r.docNum || '');
+    if (!oc) return;
+    if (!ocMap[oc]) ocMap[oc] = { oc, entries: [] };
+    // Only if the proveedor is explicitly mapped
+    if (r.prov || r.proveedor) {
+      ocMap[oc].entries.push({ prov: r.prov || r.proveedor, mes: r._mo, año: r._yr, factura: '(REC: '+(r.rec||'?')+')', valor: r.valRec || 0 });
+    }
+  });
+  discState.ocMultiProv = Object.values(ocMap).filter(o => {
+    const provs = [...new Set(o.entries.map(e => normalStr(e.prov || '')).filter(Boolean))];
+    return provs.length > 1;
+  });
+
+  // ── 3. RECEPCIONES VINCULADAS A MÁS DE 1 FACTURA ──
+  // Una recepción (N° REC) es única para una sola factura; si aparece en M1 asociada a múltiples facturas → discrepancia
+  const recMap = {};
+  m1.forEach(r => {
+    const recs = r.recs || []; // array de recepciones cruzadas
+    recs.forEach(rec => {
+      const rNum = normalStr(rec.rec || rec.recNum || '');
+      if (!rNum) return;
+      if (!recMap[rNum]) recMap[rNum] = { rec: rNum, facturas: [], proveedores: [] };
+      const fac = r.factura || r.numFactura || '—';
+      if (!recMap[rNum].facturas.includes(fac)) recMap[rNum].facturas.push(fac);
+      if (!recMap[rNum].proveedores.includes(r.prov)) recMap[rNum].proveedores.push(r.prov);
+    });
+    // Also check recNum field directly
+    const rNum1 = normalStr(r.recNum || r.rec || '');
+    if (rNum1 && rNum1 !== '' && rNum1 !== '-' && rNum1 !== 'n/a') {
+      if (!recMap[rNum1]) recMap[rNum1] = { rec: rNum1, facturas: [], proveedores: [] };
+      const fac = r.factura || r.numFactura || '—';
+      if (!recMap[rNum1].facturas.includes(fac)) recMap[rNum1].facturas.push(fac);
+      if (!recMap[rNum1].proveedores.includes(r.prov)) recMap[rNum1].proveedores.push(r.prov);
+    }
+  });
+  discState.recMultiFac = Object.values(recMap).filter(r => r.facturas.length > 1);
+
+  // ── 4. PROVEEDOR INCONSISTENTE M1 vs CxP ──
+  const provIncons = [];
+  m1.forEach(r1 => {
+    const fk = normalStr(r1.factura || r1.numFactura || '');
+    if (!fk) return;
+    const m3Match = m3.find(r3 => normalStr(r3.factura || '') === fk);
+    if (!m3Match) return;
+    const p1 = normalStr(r1.prov || '');
+    const p3 = normalStr(m3Match.prov || '');
+    if (!p1 || !p3) return;
+    // Check if they are substantially different (allow partial match)
+    if (p1 === p3) return;
+    // Avoid false positives: check if one contains the other
+    if (p1.includes(p3) || p3.includes(p1)) return;
+    provIncons.push({
+      factura: r1.factura || r1.numFactura,
+      provM1: r1.prov, ocM1: r1.oc, mesM1: r1.month, añoM1: r1.year, estadoM1: r1.recStatus,
+      provCxP: m3Match.prov, estadoCxP: m3Match.estado, valorCxP: m3Match.valorBruto
+    });
+  });
+  discState.provIncons = provIncons;
+
+  // Update KPI badges
+  document.getElementById('disc-k1').textContent = discState.facDup.length;
+  document.getElementById('disc-k2').textContent = discState.ocMultiProv.length;
+  document.getElementById('disc-k3').textContent = discState.recMultiFac.length;
+  document.getElementById('disc-k4').textContent = discState.provIncons.length;
+
+  const total = discState.facDup.length + discState.ocMultiProv.length + discState.recMultiFac.length + discState.provIncons.length;
+  const badge = document.getElementById('cntDisc');
+  if (badge) { badge.textContent = total; badge.style.background = total > 0 ? '#dc2626' : '#059669'; }
+}
+
+function discSwitchTab(n) {
+  for (let i=1;i<=4;i++) {
+    const btn = document.getElementById(`disc-tbtn-${i}`);
+    const panel = document.getElementById(`disc-panel-${i}`);
+    if (!btn || !panel) continue;
+    const active = i === n;
+    btn.style.borderBottomColor = active ? 'var(--col-accent)' : 'transparent';
+    btn.style.color = active ? 'var(--col-primary)' : 'var(--col-muted)';
+    panel.style.display = active ? 'block' : 'none';
+  }
+  if (n===1) renderDisc1();
+  if (n===2) renderDisc2();
+  if (n===3) renderDisc3();
+  if (n===4) renderDisc4();
+}
+
+function renderDiscTable(containerId, rows, cols, emptyMsg) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  if (!rows.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><div style="color:var(--col-success);font-weight:600">${emptyMsg || 'Sin discrepancias detectadas'}</div></div>`;
+    return;
+  }
+  el.innerHTML = `<div class="table-wrap"><div style="padding:8px 14px;border-bottom:1px solid var(--col-border);display:flex;justify-content:space-between;align-items:center"><span class="table-title">Discrepancias detectadas</span><span class="table-count">${rows.length} registros</span></div><div class="table-scroll">${cols}</div></div>`;
+}
+
+function renderDisc1() {
+  const search = normalStr(document.getElementById('disc-s1')?.value || '');
+  let data = discState.facDup;
+  if (search) data = data.filter(f => normalStr(JSON.stringify(f)).includes(search));
+  if (!data.length && !state.processed) {
+    document.getElementById('disc-content-1').innerHTML = `<div class="empty-state"><div class="empty-icon">🔀</div><div>Procese archivos primero</div></div>`;
+    return;
+  }
+  if (!data.length) {
+    document.getElementById('disc-content-1').innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><div style="color:var(--col-success);font-weight:600">No se detectaron facturas duplicadas en proveedores distintos</div></div>`;
+    return;
+  }
+  const rows = data.map(f => {
+    const provs = [...new Set(f.entries.map(e=>e.prov||'—'))].join(' / ');
+    const fuentes = [...new Set(f.entries.map(e=>e.fuente))].join(', ');
+    const ocs = [...new Set(f.entries.map(e=>e.oc||'—').filter(x=>x!=='—'))].join(', ');
+    return `<tr style="background:#fef2f2">
+      <td><span class="badge badge-danger">⚠️ DUP</span></td>
+      <td class="td-mono" style="font-weight:700;color:var(--col-danger)">${f.facturaNum}</td>
+      <td>${f.entries.length}</td>
+      <td style="color:var(--col-danger);font-weight:600">${provs}</td>
+      <td>${ocs}</td>
+      <td>${fuentes}</td>
+      <td style="font-size:11px;color:var(--col-muted)">${f.entries.map(e=>`<span style="background:#f1f5f9;border-radius:4px;padding:1px 6px;margin:1px;display:inline-block">${e.fuente}: ${e.prov} · ${e.estado}</span>`).join('')}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('disc-content-1').innerHTML = `<div class="alert alert-warning" style="margin-bottom:12px">⚠️ <div>Se detectaron <strong>${data.length}</strong> números de factura asignados a <strong>proveedores distintos</strong> en M1 (facturas) y/o CxP. Esta situación puede indicar errores de registro o reasignaciones no documentadas.</div></div>
+  <div class="table-wrap"><div class="table-header"><span class="table-title">Facturas con proveedor en conflicto</span><span class="table-count">${data.length} registros</span></div><div class="table-scroll"><table><thead><tr><th>Tipo</th><th>N° Factura</th><th>Apariciones</th><th>Proveedores</th><th>OC(s)</th><th>Fuentes</th><th>Detalle por fuente</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+function renderDisc2() {
+  const search = normalStr(document.getElementById('disc-s2')?.value || '');
+  let data = discState.ocMultiProv;
+  if (search) data = data.filter(o => normalStr(JSON.stringify(o)).includes(search));
+  if (!data.length && !state.processed) {
+    document.getElementById('disc-content-2').innerHTML = `<div class="empty-state"><div class="empty-icon">📦</div><div>Procese archivos primero</div></div>`;
+    return;
+  }
+  if (!data.length) {
+    document.getElementById('disc-content-2').innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><div style="color:var(--col-success);font-weight:600">Todas las OC tienen un único proveedor asignado</div></div>`;
+    return;
+  }
+  const rows = data.map(o => {
+    const provs = [...new Set(o.entries.map(e=>e.prov||'—'))];
+    const facturas = [...new Set(o.entries.map(e=>e.factura||'—').filter(x=>x!=='—'))];
+    const val = o.entries.reduce((s,e)=>s+(e.valor||0),0);
+    return `<tr style="background:#fffbeb">
+      <td><span class="badge badge-warning">⚠️ OC-MP</span></td>
+      <td class="td-mono" style="font-weight:700;color:var(--col-warning)">${o.oc}</td>
+      <td style="font-weight:700;color:var(--col-danger)">${provs.length}</td>
+      <td style="color:var(--col-warning);font-size:12px">${provs.map(p=>`<span style="background:#fef3c7;border-radius:4px;padding:1px 6px;display:inline-block;margin:1px">${p}</span>`).join('')}</td>
+      <td style="font-size:11px">${facturas.join(', ')}</td>
+      <td class="currency">${fmtCurrency(val)}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('disc-content-2').innerHTML = `<div class="alert alert-warning" style="margin-bottom:12px">⚠️ <div><strong>${data.length}</strong> órdenes de compra están asignadas a <strong>más de un proveedor</strong>. Una OC debe corresponder a un único proveedor. Verifique si hubo cesiones de contrato o errores de digitación.</div></div>
+  <div class="table-wrap"><div class="table-header"><span class="table-title">OC con múltiples proveedores</span><span class="table-count">${data.length} registros</span></div><div class="table-scroll"><table><thead><tr><th>Tipo</th><th>N° OC</th><th>N° Proveedores</th><th>Proveedores</th><th>Facturas asociadas</th><th class="currency">Valor acum.</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+function renderDisc3() {
+  const search = normalStr(document.getElementById('disc-s3')?.value || '');
+  let data = discState.recMultiFac;
+  if (search) data = data.filter(r => normalStr(JSON.stringify(r)).includes(search));
+  if (!data.length && !state.processed) {
+    document.getElementById('disc-content-3').innerHTML = `<div class="empty-state"><div class="empty-icon">📥</div><div>Procese archivos primero</div></div>`;
+    return;
+  }
+  if (!data.length) {
+    document.getElementById('disc-content-3').innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><div style="color:var(--col-success);font-weight:600">Cada recepción está vinculada a una única factura</div></div>`;
+    return;
+  }
+  const rows = data.map(r => {
+    return `<tr style="background:#fef2f2">
+      <td><span class="badge badge-danger">⚠️ REC-MF</span></td>
+      <td class="td-mono" style="font-weight:700;color:var(--col-danger)">${r.rec}</td>
+      <td style="font-weight:700;color:var(--col-danger)">${r.facturas.length}</td>
+      <td style="font-size:11.5px">${r.facturas.map(f=>`<span style="background:#fee2e2;border-radius:4px;padding:1px 6px;display:inline-block;margin:1px">${f}</span>`).join('')}</td>
+      <td style="font-size:11.5px">${r.proveedores.join(', ')}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('disc-content-3').innerHTML = `<div class="alert alert-warning" style="margin-bottom:12px">⚠️ <div><strong>${data.length}</strong> recepciones están vinculadas a <strong>más de una factura</strong>. Una recepción Oracle debe ser única por factura y proveedor. Puede indicar errores de cruce o reutilización indebida de números de recepción.</div></div>
+  <div class="table-wrap"><div class="table-header"><span class="table-title">Recepciones con múltiples facturas</span><span class="table-count">${data.length} registros</span></div><div class="table-scroll"><table><thead><tr><th>Tipo</th><th>N° Recepción</th><th>N° Facturas</th><th>Facturas asociadas</th><th>Proveedores</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+function renderDisc4() {
+  const search = normalStr(document.getElementById('disc-s4')?.value || '');
+  let data = discState.provIncons;
+  if (search) data = data.filter(r => normalStr(JSON.stringify(r)).includes(search));
+  if (!data.length && !state.processed) {
+    document.getElementById('disc-content-4').innerHTML = `<div class="empty-state"><div class="empty-icon">⚡</div><div>Procese archivos primero</div></div>`;
+    return;
+  }
+  if (!data.length) {
+    document.getElementById('disc-content-4').innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><div style="color:var(--col-success);font-weight:600">El proveedor de cada factura es consistente entre M1 y CxP</div></div>`;
+    return;
+  }
+  const rows = data.map(r => {
+    return `<tr>
+      <td><span class="badge badge-pending">⚡ PROV</span></td>
+      <td class="td-mono" style="font-weight:700">${r.factura}</td>
+      <td style="color:var(--col-info);font-weight:600">${r.provM1}</td>
+      <td style="color:var(--col-warning);font-weight:600">${r.provCxP}</td>
+      <td class="td-mono">${r.ocM1}</td>
+      <td>${r.mesM1||'—'} ${r.añoM1||''}</td>
+      <td><span class="badge ${r.estadoCxP==='pagado'?'badge-success':r.estadoCxP==='aprobado'?'badge-warning':'badge-danger'}">${r.estadoCxP||'—'}</span></td>
+      <td class="currency">${fmtCurrency(r.valorCxP||0)}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('disc-content-4').innerHTML = `<div class="alert alert-warning" style="margin-bottom:12px">⚠️ <div><strong>${data.length}</strong> facturas tienen <strong>proveedor diferente</strong> entre el registro M1 (Archivo 1) y CxP Oracle (Archivo 3). Este es el tipo de discrepancia más crítico — puede indicar reasignaciones no comunicadas. Use esta evidencia para demostrar que el error no fue suyo.</div></div>
+  <div class="table-wrap"><div class="table-header"><span class="table-title">Proveedor inconsistente M1 vs CxP</span><span class="table-count">${data.length} registros</span></div><div class="table-scroll"><table><thead><tr><th>Tipo</th><th>N° Factura</th><th>Prov. M1</th><th>Prov. CxP</th><th>OC</th><th>Período</th><th>Estado CxP</th><th class="currency">Valor</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+function exportDiscrepancias() {
+  if (!state.processed) { alert('Procese los archivos primero.'); return; }
+  const wb = XLSX.utils.book_new();
+  // Sheet 1: Facturas duplicadas
+  const s1 = discState.facDup.flatMap(f => f.entries.map(e => ({ 'N° Factura': f.facturaNum, 'Fuente': e.fuente, 'Proveedor': e.prov, 'OC': e.oc, 'Mes': e.mes, 'Año': e.año, 'Valor': e.valor, 'Estado': e.estado })));
+  if (s1.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(s1), 'Facturas Duplicadas');
+  // Sheet 2: OC multi-proveedor
+  const s2 = discState.ocMultiProv.flatMap(o => o.entries.map(e => ({ 'OC': o.oc, 'Proveedor': e.prov, 'Factura': e.factura, 'Mes': e.mes, 'Año': e.año, 'Valor': e.valor })));
+  if (s2.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(s2), 'OC Multi-Proveedor');
+  // Sheet 3: REC multi-factura
+  const s3 = discState.recMultiFac.map(r => ({ 'N° Recepción': r.rec, 'N° Facturas': r.facturas.length, 'Facturas': r.facturas.join(', '), 'Proveedores': r.proveedores.join(', ') }));
+  if (s3.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(s3), 'REC Multi-Factura');
+  // Sheet 4: Prov inconsistente
+  const s4 = discState.provIncons.map(r => ({ 'N° Factura': r.factura, 'Proveedor M1': r.provM1, 'OC M1': r.ocM1, 'Proveedor CxP': r.provCxP, 'Estado CxP': r.estadoCxP, 'Valor CxP': r.valorCxP }));
+  if (s4.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(s4), 'Prov Inconsistente');
+
+  if (!wb.SheetNames.length) { alert('No hay discrepancias para exportar.'); return; }
+  XLSX.writeFile(wb, `CashCall_Discrepancias_${new Date().toISOString().slice(0,10)}.xlsx`);
+  showToast('📊 Discrepancias exportadas a Excel', 'success');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BITÁCORA PERSISTENTE v3.2
+// ═══════════════════════════════════════════════════════════════
+// La bitácora se carga de un JSON externo y se enriquece con cada sesión.
+// Estructura: { meta, bitacora: [ { id, ts, user, tipo, factura, prov, detalle, estadoAnterior, estadoNuevo } ] }
+
+let bitacoraData = null; // JSON importado (bitácora anterior)
+
+const TIPOS_NOVEDAD = {
+  estado_cambio: { label: '🔄 Cambio de estado', color: '#2563eb', bg: '#dbeafe' },
+  asignacion_proyecto: { label: '📌 Asignación a proyecto', color: '#7c3aed', bg: '#ede9fe' },
+  nuevo_pago: { label: '💰 Nuevo pago', color: '#059669', bg: '#d1fae5' },
+  nueva_recepcion: { label: '📥 Nueva recepción', color: '#0891b2', bg: '#e0f2fe' },
+  nueva_factura: { label: '📄 Factura nueva', color: '#d97706', bg: '#fef3c7' },
+  factura_eliminada: { label: '🗑 Factura eliminada', color: '#dc2626', bg: '#fee2e2' }
+};
+
+function getFacturaKey(r) {
+  return normalStr(r.factura || r.numFactura || r.invoice || '');
+}
+
+function getFacturaEstadoActual(r) {
+  // Build a canonical state string for a factura in m4data or m1data
+  const recStatus = r.recStatus || '—';
+  const m3Status = r.m3Status || '—';
+  const pagado = m3Status === 'pagado';
+  const oc = r.oc || r.po || '—';
+  const prov = r.prov || '—';
+  const proj = r.proyecto || r.project || '—';
+  return { recStatus, m3Status, pagado, oc, prov, proyecto: proj };
+}
+
+function computeBitacoraNovedades() {
+  // Requires: bitacoraData loaded (previous JSON), state.m1data current
+  if (!bitacoraData || !state.processed) return [];
+
+  const prevM1 = bitacoraData.modulo1 || [];
+  const currM1 = state.m1data;
+  const currM3map = {};
+  state.m3data.forEach(r => {
+    const k = normalStr(r.factura || '');
+    if (k) currM3map[k] = r;
+  });
+
+  const prevMap = {};
+  prevM1.forEach(r => {
+    const k = getFacturaKey(r);
+    if (k) prevMap[k] = r;
+  });
+
+  const novedades = [];
+  const now = new Date().toISOString();
+  const user = currentUser || '—';
+
+  // Check each current factura against previous
+  currM1.forEach(curr => {
+    const k = getFacturaKey(curr);
+    if (!k) return;
+    const prev = prevMap[k];
+    const currM3 = currM3map[k];
+
+    if (!prev) {
+      // Nueva factura
+      novedades.push({
+        id: `${k}_${Date.now()}_new`,
+        ts: now, user, tipo: 'nueva_factura',
+        factura: curr.factura || curr.numFactura,
+        prov: curr.prov, oc: curr.oc,
+        estadoAnterior: '(no existía)',
+        estadoNuevo: curr.recStatus || '—',
+        detalle: `Factura nueva detectada: ${curr.prov} · OC: ${curr.oc} · Estado: ${curr.recStatus}`,
+        valor: curr.valSinIva || 0, mes: curr.month, año: curr.year
+      });
+      return;
+    }
+
+    // Compare states
+    const prevRec = prev.recStatus || prev.recepcionStatus || '—';
+    const currRec = curr.recStatus || '—';
+    const prevM3s = prev.m3Status || '—';
+    const currM3s = currM3 ? (currM3.estado || currM3.m3Status || '—') : '—';
+
+    if (prevRec !== currRec) {
+      novedades.push({
+        id: `${k}_${Date.now()}_rec`,
+        ts: now, user, tipo: 'estado_cambio',
+        factura: curr.factura || curr.numFactura,
+        prov: curr.prov, oc: curr.oc,
+        estadoAnterior: prevRec,
+        estadoNuevo: currRec,
+        detalle: `Estado de recepción cambió: "${prevRec}" → "${currRec}"`,
+        valor: curr.valSinIva || 0, mes: curr.month, año: curr.year
+      });
+    }
+    if (prevM3s !== currM3s && currM3s !== '—') {
+      const tipo = currM3s === 'pagado' ? 'nuevo_pago' : 'estado_cambio';
+      novedades.push({
+        id: `${k}_${Date.now()}_cxp`,
+        ts: now, user, tipo,
+        factura: curr.factura || curr.numFactura,
+        prov: curr.prov, oc: curr.oc,
+        estadoAnterior: prevM3s,
+        estadoNuevo: currM3s,
+        detalle: `Estado CxP cambió: "${prevM3s}" → "${currM3s}"`,
+        valor: currM3 ? (currM3.valorBruto || curr.valSinIva || 0) : (curr.valSinIva || 0),
+        mes: curr.month, año: curr.year
+      });
+    }
+    // Detect project assignment change
+    const prevProj = normalStr(prev.proyecto || prev.project || '');
+    const currProj = normalStr(curr.proyecto || curr.project || '');
+    if (prevProj !== currProj && currProj && currProj !== prevProj) {
+      novedades.push({
+        id: `${k}_${Date.now()}_proj`,
+        ts: now, user, tipo: 'asignacion_proyecto',
+        factura: curr.factura || curr.numFactura,
+        prov: curr.prov, oc: curr.oc,
+        estadoAnterior: prevProj || '(sin proyecto)',
+        estadoNuevo: currProj,
+        detalle: `Proyecto asignado cambió: "${prevProj||'ninguno'}" → "${currProj}"`,
+        valor: curr.valSinIva || 0, mes: curr.month, año: curr.year
+      });
+    }
+  });
+
+  // Detect eliminated invoices
+  prevM1.forEach(prev => {
+    const k = getFacturaKey(prev);
+    if (!k) return;
+    const curr = currM1.find(r => getFacturaKey(r) === k);
+    if (!curr) {
+      novedades.push({
+        id: `${k}_${Date.now()}_del`,
+        ts: now, user, tipo: 'factura_eliminada',
+        factura: prev.factura || prev.numFactura,
+        prov: prev.prov, oc: prev.oc,
+        estadoAnterior: prev.recStatus || '—',
+        estadoNuevo: '(eliminada del archivo)',
+        detalle: `Factura desapareció del Archivo 1 en esta sesión`,
+        valor: prev.valSinIva || 0, mes: prev.month, año: prev.year
+      });
+    }
+  });
+
+  return novedades;
+}
+
+function renderBitacoraPanel() {
+  const container = document.getElementById('bitacora-content');
+  const countBadge = document.getElementById('bitacora-count-badge');
+  if (!container) return;
+
+  // Merge: novedades de sesión actual + novedades históricas del JSON importado
+  const sessionNovedades = bitacoraData && state.processed ? computeBitacoraNovedades() : [];
+  const historicNovedades = (bitacoraData && bitacoraData.novedades) ? bitacoraData.novedades : [];
+
+  // Combine, session first
+  let all = [...sessionNovedades, ...historicNovedades];
+
+  // Filter
+  const search = normalStr(document.getElementById('bitacora-search')?.value || '');
+  const tipo = document.getElementById('bitacora-filter-tipo')?.value || '';
+  if (search) all = all.filter(n => normalStr(JSON.stringify(n)).includes(search));
+  if (tipo) all = all.filter(n => n.tipo === tipo);
+
+  if (countBadge) {
+    const total = sessionNovedades.length + historicNovedades.length;
+    countBadge.textContent = `${total} novedades`;
+    countBadge.style.background = total > 0 ? '#dc2626' : '#059669';
+  }
+
+  if (!all.length) {
+    container.innerHTML = bitacoraData
+      ? `<div class="empty-state"><div class="empty-icon">✅</div><div style="color:var(--col-success);font-weight:600">Sin novedades${tipo||search?' con ese filtro':' detectadas'}</div></div>`
+      : `<div class="empty-state"><div class="empty-icon">📋</div><div>Importe un JSON de bitácora y procese datos para ver novedades</div></div>`;
+    return;
+  }
+
+  const rows = all.map(n => {
+    const t = TIPOS_NOVEDAD[n.tipo] || { label: n.tipo, color: '#64748b', bg: '#f1f5f9' };
+    const ts = new Date(n.ts).toLocaleString('es-CO', { day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit' });
+    const isSession = sessionNovedades.includes(n);
+    return `<tr style="${isSession?'background:#f0fdf7':''}">
+      <td><span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:10.5px;font-weight:700;background:${t.bg};color:${t.color}">${t.label}</span></td>
+      <td class="td-mono" style="font-weight:700">${n.factura||'—'}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${n.prov||''}">${n.prov||'—'}</td>
+      <td class="td-mono">${n.oc||'—'}</td>
+      <td style="color:var(--col-danger)">${n.estadoAnterior||'—'}</td>
+      <td style="color:var(--col-success);font-weight:600">→ ${n.estadoNuevo||'—'}</td>
+      <td style="font-size:11px;color:var(--col-muted)">${n.detalle||''}</td>
+      <td style="font-size:10.5px;color:var(--col-muted);white-space:nowrap">${ts}</td>
+      <td>${isSession ? '<span style="background:#d1fae5;color:#059669;border-radius:8px;padding:1px 7px;font-size:10px;font-weight:700">NUEVA</span>' : ''}</td>
+    </tr>`;
+  }).join('');
+
+  container.innerHTML = `<div class="table-wrap"><div class="table-header" style="justify-content:space-between"><span class="table-title">📋 Novedades registradas</span><span class="table-count">${all.length} registros${sessionNovedades.length?' · '+sessionNovedades.length+' nuevas en esta sesión':''}</span></div><div class="table-scroll" style="max-height:480px"><table><thead><tr><th>Tipo</th><th>Factura</th><th>Proveedor</th><th>OC</th><th>Estado Anterior</th><th>Estado Nuevo</th><th>Detalle</th><th>Fecha</th><th>Sesión</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+function importBitacoraJSON(input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = '';
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.meta) { alert('⚠️ No parece ser un JSON válido de Cash Call.'); return; }
+      bitacoraData = data;
+      showToast(`📋 Bitácora importada: ${file.name} · ${(data.novedades||[]).length} novedades históricas`, 'success');
+      renderBitacoraPanel();
+      // Also run the old import for the diff table in the audit session panel
+      importCashCallJSON_silent(data, file.name);
+    } catch(err) {
+      alert('⚠️ Error al leer el JSON: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function importCashCallJSON_silent(data, filename) {
+  const importedSnap = data.summary;
+  const importedMeta = data.meta;
+  const currentSnap = state.processed ? getSnapshot() : null;
+  const diffFields = [
+    { key:'m1_total', label:'M1 Facturas totales' },
+    { key:'m1_recepcionado', label:'M1 Recepcionadas' },
+    { key:'m1_sinRec', label:'M1 Sin recepción', warnInc:true },
+    { key:'m1_valTotal', label:'M1 Valor total', currency:true },
+    { key:'m3_total', label:'M3 Registros CxP' },
+    { key:'m3_pagado', label:'M3 Pagadas' },
+    { key:'m3_mora', label:'M3 En mora', warnInc:true },
+    { key:'m4_brechas', label:'M4 Brechas', warnInc:true }
+  ];
+  const diff = currentSnap && importedSnap ? diffFields.map(f => {
+    const prev = importedSnap[f.key]||0;
+    const curr = currentSnap[f.key]||0;
+    return { ...f, prev, curr, delta: curr - prev };
+  }).filter(f => f.delta !== 0) : null;
+
+  const currentFiles = state.files.filter(f=>f.wb).map(f=>({nombre:f.name, slot:f.slot, hojas:f.sheets}));
+  addAuditEntry('import', `JSON importado: ${filename}`, {
+    importedMeta, importedSnap: importedSnap||{},
+    importedFiles: importedMeta?.archivos||[], currentFiles,
+    jsonDiff: diff, filename, files: currentFiles
+  });
+  switchTab('auditorias');
+}
+
+function exportCashCallJSONBitacora() {
+  if (!state.processed) { alert('Procese los archivos antes de exportar.'); return; }
+  const fecha = new Date().toISOString().slice(0,10);
+  const filename = `CashCall_${fecha}.json`;
+
+  // Compute new novedades
+  const newNovedades = bitacoraData && state.processed ? computeBitacoraNovedades() : [];
+  const prevNovedades = (bitacoraData && bitacoraData.novedades) ? bitacoraData.novedades : [];
+  // Merge: evitar duplicados por id
+  const prevIds = new Set(prevNovedades.map(n=>n.id));
+  const mergedNovedades = [...prevNovedades, ...newNovedades.filter(n=>!prevIds.has(n.id))];
+
+  const payload = {
+    meta: {
+      app: 'Cash Call v3.2',
+      exportedBy: currentUser || '—',
+      exportedAt: new Date().toISOString(),
+      filename,
+      archivos: state.files.filter(f=>f.wb).map(f=>({ nombre:f.name, slot:f.slot, hojas:f.sheets })),
+      totalNovedades: mergedNovedades.length,
+      ultimaExportacion: fecha
+    },
+    summary: getSnapshot(),
+    novedades: mergedNovedades,
+    modulo1: state.m1data.map(r=>{
+      const out={};
+      Object.keys(r).forEach(k=>{ if(!Array.isArray(r[k]))out[k]=r[k]; else out[k+'_count']=r[k].length; });
+      return out;
+    }),
+    modulo2: state.m2data,
+    modulo3: state.m3data.map(r=>{
+      const out={}; Object.keys(r).forEach(k=>{ out[k]=r[k] instanceof Date?r[k].toISOString().slice(0,10):r[k]; }); return out;
+    }),
+    modulo4: state.m4data.map(r=>{
+      const out={}; Object.keys(r).forEach(k=>{
+        if(Array.isArray(r[k])&&k==='brechas') out[k]=r[k];
+        else if(Array.isArray(r[k])) out[k+'_count']=r[k].length;
+        else out[k]=r[k] instanceof Date?r[k].toISOString().slice(0,10):r[k];
+      }); return out;
+    })
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+
+  // Update in-memory bitacoraData so next comparison is against the just-exported state
+  bitacoraData = payload;
+
+  addAuditEntry('export', `Exportado con Bitácora: ${filename} · ${newNovedades.length} novedades nuevas`, {
+    filename,
+    novedadesNuevas: newNovedades.length,
+    novedadesTotal: mergedNovedades.length,
+    recordCounts: { m1: state.m1data.length, m2: state.m2data.length, m3: state.m3data.length, m4: state.m4data.length },
+    files: state.files.filter(f=>f.wb).map(f=>({ nombre:f.name, slot:f.slot, hojas:f.sheets }))
+  });
+  renderBitacoraPanel();
+  showToast(`📦 JSON exportado con bitácora: ${newNovedades.length} novedades nuevas registradas`, 'success');
+}
+
+function exportSoloNovedades() {
+  const newNovedades = bitacoraData && state.processed ? computeBitacoraNovedades() : [];
+  const prevNovedades = (bitacoraData && bitacoraData.novedades) ? bitacoraData.novedades : [];
+  const all = [...prevNovedades, ...newNovedades];
+  if (!all.length) { alert('No hay novedades registradas.'); return; }
+  const wb = XLSX.utils.book_new();
+  const rows = all.map(n => ({
+    'Tipo': TIPOS_NOVEDAD[n.tipo]?.label || n.tipo,
+    'N° Factura': n.factura,
+    'Proveedor': n.prov,
+    'OC': n.oc,
+    'Estado Anterior': n.estadoAnterior,
+    'Estado Nuevo': n.estadoNuevo,
+    'Detalle': n.detalle,
+    'Fecha': n.ts ? new Date(n.ts).toLocaleString('es-CO') : '',
+    'Usuario': n.user,
+    'Sesión': newNovedades.includes(n) ? 'Sesión actual' : 'Histórico'
+  }));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), 'Novedades');
+  XLSX.writeFile(wb, `CashCall_Novedades_${new Date().toISOString().slice(0,10)}.xlsx`);
+  showToast('📋 Novedades exportadas a Excel', 'success');
+}
+
+// ── Hook: after processing, compute discrepancias ──
+const _origProcess = window.procesarDatos;
+
+// ═══════════════════════════════════════════════════════════════
+// CHART ZOOM OVERLAY v3.2
+// ═══════════════════════════════════════════════════════════════
+(function initChartZoom() {
+  // Create overlay
+  const overlay = document.createElement('div');
+  overlay.id = 'chart-zoom-overlay';
+  overlay.className = 'chart-zoom-overlay';
+  overlay.innerHTML = `<div class="chart-zoom-box" id="chart-zoom-box">
+    <button class="chart-zoom-close" onclick="closeChartZoom()">✕ Cerrar</button>
+    <div id="chart-zoom-title" style="font-size:14px;font-weight:700;color:#0f2544;margin-bottom:14px;padding-right:50px"></div>
+    <div id="chart-zoom-content"></div>
+    <div id="chart-zoom-legend" style="margin-top:10px"></div>
+  </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeChartZoom(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeChartZoom(); });
+
+  // Add hover triggers to trimestral and pareto chart cards after a delay
+  setTimeout(() => {
+    const trimCard = document.getElementById('chart-trimestral')?.closest('.chart-card');
+    const paretoCard = document.getElementById('chart-pareto')?.closest('.chart-card');
+    [
+      { card: trimCard, id: 'chart-trimestral', key: 'trimestral' },
+      { card: paretoCard, id: 'chart-pareto', key: 'pareto' }
+    ].forEach(({ card, id, key }) => {
+      if (!card) return;
+      // Add hint label
+      const hint = document.createElement('span');
+      hint.className = 'chart-zoom-hint';
+      hint.textContent = '🔍 Pasa el mouse o haz clic para ampliar';
+      card.style.position = 'relative';
+      card.appendChild(hint);
+      // Click on the SVG area opens zoom
+      card.addEventListener('click', e => {
+        if (e.target.closest('button')) return; // don't intercept buttons
+        openChartZoom(id, key);
+      });
+      card.style.cursor = 'zoom-in';
+    });
+  }, 800);
+})();
+
+function openChartZoom(sourceId, key) {
+  const source = document.getElementById(sourceId);
+  if (!source) return;
+  const svg = source.querySelector('svg');
+  const legend = source.querySelector('div[style*="display:flex"]') || source.lastElementChild;
+  const title = {
+    trimestral: '📊 Comportamiento Trimestral — Valor Facturado vs Pagado',
+    pareto: '📉 Diagrama de Pareto — Proveedores Críticos por Valor'
+  }[key] || 'Gráfico';
+
+  document.getElementById('chart-zoom-title').textContent = title;
+  const content = document.getElementById('chart-zoom-content');
+  const legEl = document.getElementById('chart-zoom-legend');
+
+  if (svg) {
+    // Clone SVG and make it large
+    const clone = svg.cloneNode(true);
+    // Remove height constraint, fill available width
+    clone.style.cssText = 'width:100%;height:auto;display:block;max-height:60vh';
+    clone.removeAttribute('style');
+    clone.setAttribute('style','width:100%;height:auto;display:block');
+    content.innerHTML = '';
+    content.appendChild(clone);
+    // If pareto: re-enable click on bars
+    if (key === 'pareto') {
+      clone.querySelectorAll('rect[onclick]').forEach(r => {
+        r.style.cursor = 'pointer';
+      });
+    }
+  } else {
+    content.innerHTML = source.innerHTML;
+  }
+  legEl.innerHTML = legend && legend !== svg ? legend.outerHTML : '';
+
+  document.getElementById('chart-zoom-overlay').classList.add('open');
+}
+
+function closeChartZoom() {
+  document.getElementById('chart-zoom-overlay')?.classList.remove('open');
+}
+
+
+(function patchPostProcess() {
+  const origCnt = document.getElementById('cnt0');
+  if (origCnt) {
+    const mo = new MutationObserver(() => {
+      if (state.processed) {
+        computeDiscrepancias();
+        if (bitacoraData) renderBitacoraPanel();
+      }
+    });
+    mo.observe(origCnt, { childList: true, characterData: true, subtree: true });
+  }
+})();
+
+// Also add discrepancias instructivo
+INSTRUCTIVOS.discrepancias = {
+  icon: '🔀', title: 'Discrepancias — Duplicados y Conflictos',
+  html: `
+    <div class="inst-section-title">¿Qué detecta este módulo?</div>
+    <p>El módulo de <b>Discrepancias</b> cruza los tres archivos para detectar inconsistencias que no deberían existir: facturas duplicadas entre proveedores, órdenes de compra con múltiples proveedores, recepciones reutilizadas y proveedor diferente entre M1 y CxP.</p>
+    <div class="inst-section-title">Las 4 tipos de discrepancia</div>
+    <div class="inst-step"><div class="inst-step-num" style="background:linear-gradient(135deg,#dc2626,#b91c1c)">1</div><div class="inst-step-body"><div class="inst-step-title">Facturas duplicadas en distintos proveedores</div><div class="inst-step-desc">El mismo número de factura aparece asignado a dos proveedores diferentes. Esto puede indicar un error de reasignación o un registro incorrecto.</div></div></div>
+    <div class="inst-step"><div class="inst-step-num" style="background:linear-gradient(135deg,#d97706,#b45309)">2</div><div class="inst-step-body"><div class="inst-step-title">OC multi-proveedor</div><div class="inst-step-desc">Una OC debe tener un único proveedor. Si aparece para más de uno, puede indicar cesión de contrato no documentada o error de digitación.</div></div></div>
+    <div class="inst-step"><div class="inst-step-num" style="background:linear-gradient(135deg,#2563eb,#1d4ed8)">3</div><div class="inst-step-body"><div class="inst-step-title">Recepción vinculada a más de una factura</div><div class="inst-step-desc">Un número de recepción Oracle es único. Si aparece en dos facturas distintas en M1, es una señal de error en el archivo de seguimiento.</div></div></div>
+    <div class="inst-step"><div class="inst-step-num" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)">4</div><div class="inst-step-body"><div class="inst-step-title">Proveedor inconsistente M1 vs CxP</div><div class="inst-step-desc">La factura tiene un proveedor en M1 diferente al registrado en CxP Oracle. Este caso es el más crítico — es evidencia de reasignación posterior.</div></div></div>
+    <div class="inst-tip">💡 <b>Evidencia:</b> Use el botón <b>Exportar Excel</b> para tener un documento fechado de las inconsistencias detectadas como prueba ante auditorías.</div>
+    <div class="inst-warn">⚠️ Las discrepancias se calculan automáticamente al procesar los archivos.</div>`
+};
+
+INSTRUCTIVOS.auditorias = {
+  icon: '🗂️', title: 'Auditorías — Bitácora Persistente v3.2',
+  html: `
+    <div class="inst-section-title">¿Qué es la Bitácora Persistente?</div>
+    <p>La <b>Bitácora Persistente</b> acumula el historial de cambios en el propio JSON exportado. Cada vez que exporta, el sistema detecta qué cambió factura por factura y lo registra como novedad. El JSON va creciendo con el histórico completo.</p>
+    <div class="inst-section-title">Flujo de trabajo recomendado</div>
+    <div class="inst-step"><div class="inst-step-num">1</div><div class="inst-step-body"><div class="inst-step-title">Primera sesión</div><div class="inst-step-desc">Procese los archivos Excel. Use <b>"Exportar + Guardar en Bitácora"</b> para generar el primer JSON.</div></div></div>
+    <div class="inst-step"><div class="inst-step-num">2</div><div class="inst-step-body"><div class="inst-step-title">Siguientes sesiones</div><div class="inst-step-desc">Use <b>"Importar JSON (Bitácora)"</b> primero. Cargue y procese los nuevos Excel. El sistema comparará factura a factura.</div></div></div>
+    <div class="inst-step"><div class="inst-step-num">3</div><div class="inst-step-body"><div class="inst-step-title">Exportar acumulado</div><div class="inst-step-desc">Al exportar de nuevo, el JSON incluirá todas las novedades anteriores MÁS las nuevas. Nunca se sobreescribe.</div></div></div>
+    <div class="inst-warn">⚠️ <b>Caso de uso real:</b> Si una factura fue asignada a su proyecto sin notificación, la bitácora registrará exactamente cuándo apareció — demostrando que usted no lo sabía antes de ese momento.</div>`
+};
+
 </script>
 
 </body></html>
