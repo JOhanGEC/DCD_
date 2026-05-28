@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⛏ Cash Call v3.2 — Control Financiero Minero · ARIS MINING</title>
+<title>⛏ Cash Call v4.0 — Control Financiero Minero · ARIS MINING</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -594,6 +594,142 @@
   .empty-state { text-align: center; padding: 50px 20px; color: var(--col-muted); }
   .empty-state .empty-icon { font-size: 44px; margin-bottom: 10px; }
 
+  /* ── EXPORT EXCEL MODAL v4 — TABS ──────────── */
+  .expxl-backdrop {
+    position: fixed; inset: 0; background: rgba(10,22,40,0.72);
+    z-index: 9100; display: none; align-items: center; justify-content: center;
+    backdrop-filter: blur(3px);
+  }
+  .expxl-backdrop.open { display: flex; }
+  .expxl-modal {
+    background: #fff; border-radius: 18px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+    width: 92vw; max-width: 820px; height: 82vh;
+    display: flex; flex-direction: column; overflow: hidden;
+    animation: expxlSlideIn .28s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes expxlSlideIn {
+    0%   { opacity:0; transform:translateY(-18px) scale(.95); }
+    100% { opacity:1; transform:none; }
+  }
+  /* Header */
+  .expxl-header {
+    background: linear-gradient(135deg, #0f2544 0%, #1a4a8a 100%);
+    color: white; padding: 14px 22px;
+    display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+    border-radius: 18px 18px 0 0;
+  }
+  .expxl-header-title { font-size: 15px; font-weight: 700; flex: 1; }
+  .expxl-header-sub { font-size: 11px; opacity: .65; margin-top: 2px; }
+  .expxl-close {
+    background: rgba(255,255,255,.15); border: none; color: white;
+    border-radius: 8px; padding: 5px 10px; cursor: pointer; font-size: 13px;
+    transition: background .15s;
+  }
+  .expxl-close:hover { background: rgba(255,255,255,.28); }
+
+  /* Tab bar */
+  .expxl-tabbar {
+    display: flex; border-bottom: 2px solid var(--col-border);
+    background: #f5f8fc; flex-shrink: 0; padding: 0 22px; gap: 2px;
+  }
+  .expxl-tab {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 18px 10px; font-size: 13px; font-weight: 600;
+    color: var(--col-muted); cursor: pointer; border: none; background: none;
+    border-bottom: 3px solid transparent; margin-bottom: -2px;
+    font-family: 'IBM Plex Sans', sans-serif; transition: all .18s;
+    white-space: nowrap; position: relative;
+  }
+  .expxl-tab:hover { color: var(--col-primary); background: rgba(15,37,68,.04); border-radius: 8px 8px 0 0; }
+  .expxl-tab.active { color: var(--col-primary); border-bottom-color: var(--col-accent); }
+  .expxl-tab-icon { font-size: 16px; }
+  .expxl-tab-badge {
+    font-size: 10px; font-weight: 800; padding: 1px 7px; border-radius: 10px;
+    font-family: 'IBM Plex Mono', monospace; min-width: 28px; text-align: center;
+    transition: all .18s;
+  }
+  .expxl-tab-badge.zero { background: #f1f5f9; color: var(--col-muted); }
+  .expxl-tab-badge.has  { background: #d1fae5; color: #059669; }
+
+  /* Tab panels */
+  .expxl-tabpanels { flex: 1; overflow: hidden; position: relative; }
+  .expxl-tabpanel {
+    display: none; flex-direction: column; height: 100%; padding: 18px 22px 10px;
+    overflow: hidden;
+  }
+  .expxl-tabpanel.active { display: flex; }
+
+  /* Panel top info bar */
+  .expxl-panel-info {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-shrink: 0;
+    padding: 10px 16px; border-radius: 10px; border: 1px solid var(--col-border);
+    background: #f8fafc;
+  }
+  .expxl-panel-info-icon { font-size: 24px; }
+  .expxl-panel-info-title { font-size: 13px; font-weight: 700; color: var(--col-primary); }
+  .expxl-panel-info-sub { font-size: 11px; color: var(--col-muted); margin-top: 1px; }
+  .expxl-panel-info-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+
+  /* Quick buttons */
+  .expxl-qbtn {
+    padding: 5px 14px; border-radius: 16px; font-size: 11.5px; font-weight: 600;
+    border: 1.5px solid var(--col-border); background: white; cursor: pointer;
+    color: var(--col-muted); transition: all .15s; font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .expxl-qbtn:hover { border-color: var(--col-secondary); color: var(--col-secondary); background: #eff6ff; }
+  .expxl-qbtn.q-all  { border-color: #86efac; color: #059669; }
+  .expxl-qbtn.q-all:hover  { background: #f0fdf7; border-color: #059669; }
+  .expxl-qbtn.q-key  { border-color: #fcd34d; color: #d97706; }
+  .expxl-qbtn.q-key:hover  { background: #fffbeb; border-color: #d97706; }
+
+  /* Columns grid — fills remaining space with scroll */
+  .expxl-cols-wrap {
+    flex: 1; overflow-y: auto; padding: 4px 2px 6px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 7px;
+    scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent;
+    align-content: start;
+  }
+  .expxl-cols-wrap::-webkit-scrollbar { width: 6px; }
+  .expxl-cols-wrap::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  .expxl-cols-wrap::-webkit-scrollbar-track { background: transparent; }
+  .expxl-col-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; border-radius: 8px; cursor: pointer;
+    border: 1.5px solid var(--col-border); background: var(--col-bg);
+    font-size: 12.5px; transition: all .15s; user-select: none;
+  }
+  .expxl-col-item:hover { border-color: var(--col-accent); background: #f0fafc; }
+  .expxl-col-item.selected {
+    border-color: var(--col-success); background: #f0fdf7;
+    color: var(--col-success); font-weight: 600;
+  }
+  .expxl-col-item input[type=checkbox] { accent-color: var(--col-success); width: 14px; height: 14px; flex-shrink: 0; }
+  .expxl-col-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* No data state */
+  .expxl-no-data { text-align:center; padding: 50px 20px; color: var(--col-muted); }
+  .expxl-no-data .nd-icon { font-size: 40px; margin-bottom: 10px; }
+
+  /* Footer */
+  .expxl-footer {
+    padding: 12px 22px; border-top: 1px solid var(--col-border);
+    display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+    background: #f8fafc; border-radius: 0 0 18px 18px;
+  }
+  .expxl-summary { flex: 1; font-size: 12px; color: var(--col-muted); line-height: 1.5; }
+  .expxl-summary strong { color: var(--col-primary); }
+  .btn-expxl-export {
+    background: linear-gradient(135deg, #059669, #047857);
+    color: white; border: none; border-radius: 9px;
+    padding: 10px 22px; font-size: 13px; font-weight: 700;
+    cursor: pointer; font-family: 'IBM Plex Sans', sans-serif;
+    display: inline-flex; align-items: center; gap: 7px;
+    box-shadow: 0 2px 10px rgba(5,150,105,.4); transition: opacity .18s;
+  }
+  .btn-expxl-export:hover { opacity: .88; }
+  .btn-expxl-export:disabled { opacity: .45; cursor: not-allowed; }
+
   /* ── RESPONSIVE ──────────────────────────── */
   @media (max-width: 768px) {
     .sidebar { display: none; }
@@ -1009,7 +1145,7 @@
         Desarrollado por<br>
         <span style="color:rgba(0,180,200,0.7);font-weight:600">Ing. Johan Manuel Cárdenas Leal, MSc</span><br>
         Todos los derechos reservados © 2026<br>
-        <span style="color:rgba(255,255,255,0.18);font-size:9px;letter-spacing:1.5px;font-family:'IBM Plex Mono',monospace">v3.2</span>
+        <span style="color:rgba(255,255,255,0.18);font-size:9px;letter-spacing:1.5px;font-family:'IBM Plex Mono',monospace">v4.0</span>
       </div>
     </div>
   </div>
@@ -1108,6 +1244,41 @@
   <div id="m1-popup-body" style="padding:12px 14px"></div>
 </div>
 
+<!-- ══ EXPORT EXCEL GENERAL MODAL v4 ════════════════════════ -->
+<div class="expxl-backdrop" id="expxl-backdrop">
+  <div class="expxl-modal" id="expxl-modal">
+
+    <!-- Header -->
+    <div class="expxl-header">
+      <div>
+        <div class="expxl-header-title">📊 Exportar Excel General</div>
+        <div class="expxl-header-sub">Selecciona columnas por archivo · Se combinan en una sola hoja</div>
+      </div>
+      <button class="expxl-close" onclick="closeExpXL()">✕ Cerrar</button>
+    </div>
+
+    <!-- Tab bar -->
+    <div class="expxl-tabbar" id="expxl-tabbar">
+      <!-- tabs injected by JS -->
+    </div>
+
+    <!-- Tab panels container -->
+    <div class="expxl-tabpanels" id="expxl-tabpanels">
+      <!-- panels injected by JS -->
+    </div>
+
+    <!-- Footer -->
+    <div class="expxl-footer">
+      <div class="expxl-summary" id="expxl-summary">Seleccione al menos una columna para exportar</div>
+      <button class="btn btn-outline btn-sm" onclick="expxlSelectNone()">☐ Limpiar todo</button>
+      <button class="btn-expxl-export" id="expxl-btn-export" onclick="doExportExcelGeneral()" disabled>
+        ⬇ Descargar Excel
+      </button>
+    </div>
+
+  </div>
+</div>
+
 <!-- ══ INSTRUCTIVE MODAL ════════════════════════════════════ -->
 <div id="instructive-backdrop">
   <div id="instructive-modal">
@@ -1147,7 +1318,12 @@
         </span>
         <span style="font-size:10px;opacity:0.6">✕</span>
       </span>
-      <div class="header-badge" id="headerBadge">v3.2</div>
+      <div class="header-badge" id="headerBadge">v4.0</div>
+      <button onclick="openExpXL()" title="Exportar columnas seleccionadas de los 3 archivos en una sola hoja Excel"
+        style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:9px;border:none;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.2px;background:linear-gradient(135deg,#0891b2,#0e7490);color:white;box-shadow:0 2px 10px rgba(8,145,178,0.45);transition:opacity 0.18s;white-space:nowrap"
+        onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+        📊 Exportar Excel
+      </button>
       <button onclick="abrirModalInformeGerencial()" title="Generar Informe Gerencial ejecutivo con PDF y Anexo Excel"
         style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:9px;border:none;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.2px;background:linear-gradient(135deg,#059669,#047857);color:white;box-shadow:0 2px 10px rgba(5,150,105,0.45);transition:opacity 0.18s;white-space:nowrap"
         onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
@@ -1337,7 +1513,7 @@
           <div class="dzp-banner-icon">🏗️</div>
           <div>
             <div class="dzp-banner-title">C-DZP-21-000-A</div>
-            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v3.2</span></div>
+            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v4.0</span></div>
           </div>
         </div>
         <div class="dzp-banner-badges" style="display:none">
@@ -2024,7 +2200,7 @@
       </div>
     </div>
 
-<!-- ═══ PANEL: AUDITORÍAS (v3.2 — Bitácora Persistente) ══════ -->
+<!-- ═══ PANEL: AUDITORÍAS (v4.0 — Bitácora Persistente) ══════ -->
     <div class="panel" id="panel-auditorias">
       <div class="section-title" style="justify-content:space-between"><span>🗂️ Auditorías — Bitácora Persistente de Novedades</span><button class="info-btn" onclick="showInstructive('auditorias')" title="Ver instructivo">i</button></div>
       <div class="alert alert-info">
@@ -5508,7 +5684,7 @@ function renderM0RecTable() {
 
 // ── MODULE 1 ──────────────────────────────────────────────────
 function renderM1() {
-  // Búsqueda unificada v3.2: un solo campo busca en OC, Factura, Recepción y Proveedor
+  // Búsqueda unificada v4.0: un solo campo busca en OC, Factura, Recepción y Proveedor
   const searchAll    = normalStr((document.getElementById('f1oc')?.value || document.getElementById('f1search')?.value || ''));
   const filterProyM1 = (document.getElementById('f1proyecto')?.value || '');
   const estado = document.getElementById('f1estado').value;
@@ -7832,7 +8008,7 @@ function exportCashCallJSON() {
   const filename = `CashCall_${fecha}.json`;
   const payload = {
     meta: {
-      app: 'Cash Call v3.2',
+      app: 'Cash Call v4.0',
       exportedBy: currentUser || '—',
       exportedAt: new Date().toISOString(),
       filename,
@@ -9013,7 +9189,7 @@ function exportDZPpdf() {
   </style></head><body>
   <div class="hdr">
     <div><div class="hdr-title">⛏ C-DZP-21-000-A — Reporte por Proveedor</div>
-    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v3.2</div></div>
+    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v4.0</div></div>
     <div class="hdr-meta">Generado: ${now}<br>Filtro: ${filterDesc}</div>
   </div>
   <div class="kpi-row">
@@ -9037,7 +9213,7 @@ function exportDZPpdf() {
       <tbody>${tableRows||'<tr><td colspan="9" style="text-align:center;padding:20px;color:#94a3b8">Sin datos</td></tr>'}</tbody>
     </table>
   </div>
-  <div class="footer"><span>Cash Call v3.2 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
+  <div class="footer"><span>Cash Call v4.0 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
   <div class="no-print" style="text-align:center;padding:16px">
     <button onclick="window.print()" style="padding:10px 28px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
     <button onclick="window.close()" style="margin-left:10px;padding:10px 20px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
@@ -9122,7 +9298,7 @@ function exportDZPSP2pdf() {
   </style></head><body>
   <div class="hdr">
     <div><div class="hdr-title">⛏ C-DZP-21-000-A — Órdenes de Compra por Proveedor</div>
-    <div class="hdr-sub">Tablero de Control · Cash Call v3.2</div></div>
+    <div class="hdr-sub">Tablero de Control · Cash Call v4.0</div></div>
     <div class="hdr-meta">Generado: ${now}</div>
   </div>
   <div class="kpi-row">
@@ -9142,7 +9318,7 @@ function exportDZPSP2pdf() {
       <tbody>${tableRows}</tbody>
     </table>
   </div>
-  <div class="footer"><span>Cash Call v3.2 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
+  <div class="footer"><span>Cash Call v4.0 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
   <div class="no-print" style="text-align:center;padding:14px">
     <button onclick="window.print()" style="padding:9px 26px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
     <button onclick="window.close()" style="margin-left:8px;padding:9px 18px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
@@ -9318,7 +9494,7 @@ function exportDZPSP3pdf() {
   <div class="hdr">
     <div class="hdr-left">
       <div class="hdr-title">⛏ C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</div>
-      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v3.2</div>
+      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v4.0</div>
     </div>
     <div class="hdr-right">Generado: ${now}<br>${data.length} registros exportados</div>
   </div>
@@ -9366,7 +9542,7 @@ function exportDZPSP3pdf() {
   </div>
 
   <div class="footer">
-    <span>Cash Call v3.2 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
+    <span>Cash Call v4.0 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
     <span>${data.length} registros &nbsp;·&nbsp; Filtro: ${filterDesc}</span>
   </div>
 
@@ -9381,7 +9557,7 @@ function exportDZPSP3pdf() {
 
 </script>
 
-<!-- ══ MODAL: INFORME GERENCIAL v3.2 ═════════════════════════ -->
+<!-- ══ MODAL: INFORME GERENCIAL v4.0 ═════════════════════════ -->
 <div id="modal-informe-gerencial" style="display:none;position:fixed;inset:0;z-index:8000;background:rgba(10,22,40,0.88);backdrop-filter:blur(6px);align-items:center;justify-content:center;overflow-y:auto">
   <canvas id="ig-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.3"></canvas>
   <div style="background:#fff;border-radius:18px;padding:0;max-width:600px;width:96%;box-shadow:0 28px 80px rgba(0,0,0,0.55);position:relative;z-index:1;animation:cashCallSlideIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;overflow:hidden;margin:24px auto">
@@ -9400,7 +9576,7 @@ function exportDZPSP3pdf() {
           <path d="M30 24 L24 19 L32 22 Z" fill="white"/>
         </svg>
         <div>
-          <div style="font-size:9.5px;font-weight:700;color:rgba(0,180,200,0.85);letter-spacing:2.2px;text-transform:uppercase;margin-bottom:3px">ARIS MINING · CASH CALL v3.2</div>
+          <div style="font-size:9.5px;font-weight:700;color:rgba(0,180,200,0.85);letter-spacing:2.2px;text-transform:uppercase;margin-bottom:3px">ARIS MINING · CASH CALL v4.0</div>
           <div style="font-size:17px;font-weight:800;color:white">Informe Gerencial Ejecutivo</div>
           <div style="font-size:10px;color:rgba(255,255,255,0.45);margin-top:3px">C-DZP-21-000-A &nbsp;·&nbsp; <kbd style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:4px;padding:1px 6px;font-size:9px;font-family:monospace;color:rgba(255,255,255,0.7)">Ctrl+G</kbd> para abrir</div>
         </div>
@@ -9978,7 +10154,7 @@ function exportInformeGerencialPDF() {
   // ══ HTML DEL INFORME ══════════════════════════════════════
   const pw=window.open('','_blank','width=1100,height=860');
   pw.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
-  <title>Informe Gerencial v3.2 — ARIS MINING · C-DZP-21-000-A</title>
+  <title>Informe Gerencial v4.0 — ARIS MINING · C-DZP-21-000-A</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
     @page { size:A4 portrait; margin:0; @bottom-right { content:"Pág. " counter(page) " de " counter(pages); font-size:8px; font-family:"IBM Plex Mono",monospace; color:#94a3b8; margin-right:16mm; margin-bottom:8mm; } }
@@ -10147,7 +10323,7 @@ function exportInformeGerencialPDF() {
         </svg>
         <div class="cover-brand-txt">
           <div class="cover-brand-name">ARIS MINING</div>
-          <div class="cover-brand-sub">Cash Call v3.2 · Control Financiero</div>
+          <div class="cover-brand-sub">Cash Call v4.0 · Control Financiero</div>
         </div>
       </div>
       <div class="cover-div"></div>
@@ -10211,7 +10387,7 @@ function exportInformeGerencialPDF() {
 
   <!-- ░░ TABLA DE CONTENIDO ░░ -->
   <div class="toc-page">
-    <div class="co-row"><div class="co-badge">ARIS MINING</div><span style="font-size:10.5px;color:#64748b">C-DZP-21-000-A · Cash Call v3.2 · ${periodo}</span></div>
+    <div class="co-row"><div class="co-badge">ARIS MINING</div><span style="font-size:10.5px;color:#64748b">C-DZP-21-000-A · Cash Call v4.0 · ${periodo}</span></div>
     <div class="toc-hdr"><div class="toc-ic">📑</div><div class="toc-ti">Tabla de Contenido</div></div>
     ${[
       ['1','Introducción','Contexto, alcance metodológico y definiciones del proyecto'],
@@ -10228,7 +10404,7 @@ function exportInformeGerencialPDF() {
   <!-- ░░ CAP 1: INTRODUCCIÓN ░░ -->
   <div class="chapter-break">
     <div class="phs"></div><h2 class="cht">1. Introducción</h2><div class="chr"></div>
-    <p class="it">Informe preparado para la Alta Dirección de <strong>ARIS MINING</strong> sobre el estado financiero y operativo del proyecto <strong>C-DZP-21-000-A</strong> · período <strong>${periodo}</strong>. Desarrollado mediante el sistema <strong>Cash Call v3.2</strong>, plataforma de control que integra actas, recepciones Oracle y cuentas por pagar (CxP).</p>
+    <p class="it">Informe preparado para la Alta Dirección de <strong>ARIS MINING</strong> sobre el estado financiero y operativo del proyecto <strong>C-DZP-21-000-A</strong> · período <strong>${periodo}</strong>. Desarrollado mediante el sistema <strong>Cash Call v4.0</strong>, plataforma de control que integra actas, recepciones Oracle y cuentas por pagar (CxP).</p>
     <p class="it">Se analizan <strong>${total} actas/facturas</strong>, cruces con Oracle REC, validación CxP, flujo de caja, tendencias mensuales y análisis de Pareto de alertas. Se incluye comparativo vs <strong>${fechaPrev}</strong>.</p>
     <div class="hb ${cumpl>=80?'hb-g':cumpl>=60?'hb-a':'hb-r'}">
       <strong>📌 Hallazgo Principal — ${periodo}:</strong> Cumplimiento <strong>${cumpl}%</strong> (${conFac}/${total} actas con CxP). <strong>${alertas} alertas activas</strong> — ${sinRec} sin REC Oracle · ${recRevisar} con REC a revisar · ${sinFac} sin factura CxP.
@@ -10238,7 +10414,7 @@ function exportInformeGerencialPDF() {
       <div><p class="it"><strong>Definiciones:</strong> <strong>REC:</strong> Recepción Oracle ERP · <strong>CxP:</strong> Cuenta por Pagar registrada · <strong>Alerta:</strong> Acta sin pago con alguna brecha · <strong>Cumplimiento:</strong> Actas c/CxP / Total</p></div>
     </div>
     <p class="it" style="color:#64748b;font-size:8.5px"><strong>Desarrollado por:</strong> GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc &nbsp;·&nbsp; <strong>Elaborado:</strong> ${autor}${cargo?' — '+cargo:''} &nbsp;·&nbsp; <strong>Fecha:</strong> ${fechaFmt}</p>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v3.2 · C-DZP-21-000-A</span><span>${periodo} · ${fechaFmt}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v4.0 · C-DZP-21-000-A</span><span>${periodo} · ${fechaFmt}</span></div>
   </div>
 
   <!-- ░░ CAP 2: RESUMEN EJECUTIVO ░░ -->
@@ -10295,7 +10471,7 @@ function exportInformeGerencialPDF() {
         ? '⚠️ <strong>Cumplimiento en riesgo ('+cumpl+'%)</strong>: por debajo de la meta del 90%. Acelerar registro de facturas CxP.'
         : '❌ <strong>Cumplimiento crítico ('+cumpl+'%)</strong>: intervención gerencial urgente requerida. Meta: ≥90%.'}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v3.2 · C-DZP-21-000-A</span><span>Cap. 2 — Resumen Ejecutivo · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v4.0 · C-DZP-21-000-A</span><span>Cap. 2 — Resumen Ejecutivo · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 3: ANÁLISIS FINANCIERO ░░ -->
@@ -10358,7 +10534,7 @@ function exportInformeGerencialPDF() {
         : 'Las facturas CxP cubren la totalidad del valor de actas — sin brecha de registro.'}
       El proveedor con mayor participación es <strong>${topProvVal[0]?.[0]||'—'}</strong> con ${igFmtCOP(topProvVal[0]?.[1]||0)}.
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v3.2 · C-DZP-21-000-A</span><span>Cap. 3 — Análisis Financiero · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v4.0 · C-DZP-21-000-A</span><span>Cap. 3 — Análisis Financiero · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 4: GESTIÓN MENSUAL ░░ -->
@@ -10406,7 +10582,7 @@ function exportInformeGerencialPDF() {
             : '📉 La tendencia del valor facturado presenta <strong style="color:#d97706">variaciones descendentes</strong> que requieren seguimiento.')
         : ''}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v3.2 · C-DZP-21-000-A</span><span>Cap. 4 — Gestión Mensual · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v4.0 · C-DZP-21-000-A</span><span>Cap. 4 — Gestión Mensual · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 5: PARETO ░░ -->
@@ -10448,7 +10624,7 @@ function exportInformeGerencialPDF() {
       liberaría el 80% de las alertas bloqueadas.
     </div>
     <div class="hb hb-r" style="font-size:9px"><strong>📌 Regla de Pareto:</strong> ${paretoRows.filter(d=>d.acum<=80).length} proveedores concentran el 80% de las ${alertas} alertas. Priorizar gestión con: <strong>${paretoRows.filter(d=>d.acum<=80).map(d=>d.p.slice(0,20)).join(', ')}</strong>.</div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v3.2 · C-DZP-21-000-A</span><span>Cap. 5 — Diagrama de Pareto · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v4.0 · C-DZP-21-000-A</span><span>Cap. 5 — Diagrama de Pareto · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 6: DETALLE ALERTAS ░░ -->
@@ -10489,7 +10665,7 @@ function exportInformeGerencialPDF() {
       <thead><tr><th>#</th><th>OC</th><th>Proveedor</th><th>Factura</th><th class="tc">REC</th><th>Estado</th><th class="num">Val.Factura CxP</th><th>Mes</th></tr></thead>
       <tbody>${rowsDetAlertas}</tbody>
     </table>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v3.2 · C-DZP-21-000-A</span><span>Cap. 6 — Detalle Alertas · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v4.0 · C-DZP-21-000-A</span><span>Cap. 6 — Detalle Alertas · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 7: COMPARATIVO ░░ -->
@@ -10540,22 +10716,22 @@ function exportInformeGerencialPDF() {
         ? '💰 Valor pagado: <strong style="color:#059669">creció '+igFmtCOP(sumPagado-prevSumPag)+'</strong> vs período anterior.'
         : '💰 Valor pagado: <strong style="color:#dc2626">disminuyó '+igFmtCOP(prevSumPag-sumPagado)+'</strong> vs período anterior — revisar causas.'}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v3.2 · C-DZP-21-000-A</span><span>Cap. 7 — Comparativo de Períodos · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v4.0 · C-DZP-21-000-A</span><span>Cap. 7 — Comparativo de Períodos · ${periodo}</span></div>
   </div>
 
   <!-- ░░ FIRMAS ░░ -->
   <div class="chapter-break">
     <div class="phs"></div><h2 class="cht">Firmas y Cierre del Informe</h2><div class="chr"></div>
-    <p class="it">Informe generado por <strong>Cash Call v3.2 — ARIS MINING</strong> · período <strong>${periodo}</strong> · ${total} registros procesados · Cumplimiento: ${cumpl}%.</p>
-    <div class="hb hb-g">✅ Generado: ${now} &nbsp;·&nbsp; ARIS MINING / Cash Call v3.2 &nbsp;·&nbsp; Desarrollado por GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc</div>
+    <p class="it">Informe generado por <strong>Cash Call v4.0 — ARIS MINING</strong> · período <strong>${periodo}</strong> · ${total} registros procesados · Cumplimiento: ${cumpl}%.</p>
+    <div class="hb hb-g">✅ Generado: ${now} &nbsp;·&nbsp; ARIS MINING / Cash Call v4.0 &nbsp;·&nbsp; Desarrollado por GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc</div>
     <div class="fs">
       <div class="fb"><div style="height:38px"></div><div class="fl"></div><div class="fn">${autor}</div><div class="fr">${cargo||'Analista / Elaborado por'}</div></div>
       <div class="fb"><div style="height:38px"></div><div class="fl"></div><div class="fn">_________________________</div><div class="fr">Gerencia ARIS MINING / Aprobado por</div></div>
     </div>
     <div style="margin-top:26px;padding:12px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;font-size:8.5px;color:#94a3b8;text-align:center">
-      ARIS MINING &nbsp;·&nbsp; Cash Call v3.2 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; ${periodo} &nbsp;·&nbsp; Desarrollado: GREEN ENGINEERING CONSULTING &nbsp;·&nbsp; Confidencial
+      ARIS MINING &nbsp;·&nbsp; Cash Call v4.0 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; ${periodo} &nbsp;·&nbsp; Desarrollado: GREEN ENGINEERING CONSULTING &nbsp;·&nbsp; Confidencial
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v3.2 · GREEN ENGINEERING CONSULTING</span><span>Ing. Johan Manuel Cárdenas Leal, MSc · ${fechaFmt}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v4.0 · GREEN ENGINEERING CONSULTING</span><span>Ing. Johan Manuel Cárdenas Leal, MSc · ${fechaFmt}</span></div>
   </div>
 
   <div class="no-print" style="margin-top:24px;text-align:center;padding:16px;background:#f8fafc;border-top:1px solid #e2e8f0">
@@ -10653,7 +10829,7 @@ function showM5FacturasPopup(encodedKey) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// CLICK-FILTER HELPERS v3.2
+// CLICK-FILTER HELPERS v4.0
 // M1: click on OC → filter M1 by that OC
 // M2: click on OC → filter M2 by that OC
 // M4: click on prov or OC → filter M4
@@ -11084,7 +11260,7 @@ function exportDiscrepancias() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// BITÁCORA PERSISTENTE v3.2
+// BITÁCORA PERSISTENTE v4.0
 // ═══════════════════════════════════════════════════════════════
 // La bitácora se carga de un JSON externo y se enriquece con cada sesión.
 // Estructura: { meta, bitacora: [ { id, ts, user, tipo, factura, prov, detalle, estadoAnterior, estadoNuevo } ] }
@@ -11345,7 +11521,7 @@ function exportCashCallJSONBitacora() {
 
   const payload = {
     meta: {
-      app: 'Cash Call v3.2',
+      app: 'Cash Call v4.0',
       exportedBy: currentUser || '—',
       exportedAt: new Date().toISOString(),
       filename,
@@ -11416,11 +11592,266 @@ function exportSoloNovedades() {
   showToast('📋 Novedades exportadas a Excel', 'success');
 }
 
-// ── Hook: after processing, compute discrepancias ──
-const _origProcess = window.procesarDatos;
 
 // ═══════════════════════════════════════════════════════════════
-// CHART ZOOM OVERLAY v3.2
+// EXPORTAR EXCEL GENERAL v4.0
+// Permite seleccionar columnas de cada archivo y exportarlas
+// todas en una sola hoja de un archivo Excel.
+// ═══════════════════════════════════════════════════════════════
+
+const EXPXL_FILE_META = [
+  { key: 'df1',    label: 'Archivo 1 — Facturas (Seguimiento)',        icon: '📋', color: '#2563eb', bgColor: '#dbeafe' },
+  { key: 'df2rec', label: 'Archivo 2 — Recepciones Oracle',            icon: '🔄', color: '#059669', bgColor: '#d1fae5' },
+  { key: 'df3cxp', label: 'Archivo 3 — Cuentas por Pagar (CxP Oracle)',icon: '💰', color: '#7c3aed', bgColor: '#ede9fe' }
+];
+
+// State del modal: columnas seleccionadas por archivo
+const expxlState = {
+  selected: { df1: new Set(), df2rec: new Set(), df3cxp: new Set() }
+};
+
+let expxlActiveTab = 0;
+
+function openExpXL() {
+  if (!state.processed) {
+    showToast('⚠️ Primero debe procesar los archivos antes de exportar.', 'warning');
+    return;
+  }
+  expxlActiveTab = 0;
+  _buildExpXLTabs();
+  document.getElementById('expxl-backdrop').classList.add('open');
+  _updateExpXLSummary();
+}
+
+function closeExpXL() {
+  document.getElementById('expxl-backdrop').classList.remove('open');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeExpXL();
+});
+document.getElementById('expxl-backdrop')?.addEventListener('click', e => {
+  if (e.target === document.getElementById('expxl-backdrop')) closeExpXL();
+});
+
+function _getExpXLCols(fileKey) {
+  const arr = state[fileKey];
+  if (!arr || !arr.length) return [];
+  const colSet = new Set();
+  arr.slice(0, 300).forEach(row => Object.keys(row).forEach(k => { if (k) colSet.add(k); }));
+  return [...colSet];
+}
+
+function _buildExpXLTabs() {
+  const tabbar = document.getElementById('expxl-tabbar');
+  const panels = document.getElementById('expxl-tabpanels');
+  tabbar.innerHTML = '';
+  panels.innerHTML = '';
+
+  EXPXL_FILE_META.forEach((meta, fi) => {
+    const cols     = _getExpXLCols(meta.key);
+    const rowCount = (state[meta.key] || []).length;
+    const selCount = expxlState.selected[meta.key].size;
+
+    // Tab button
+    const tab = document.createElement('button');
+    tab.className = 'expxl-tab' + (fi === expxlActiveTab ? ' active' : '');
+    tab.dataset.tabIdx = fi;
+    tab.innerHTML = `
+      <span class="expxl-tab-icon">${meta.icon}</span>
+      <span>Archivo ${fi + 1}</span>
+      <span class="expxl-tab-badge ${selCount > 0 ? 'has' : 'zero'}" id="expxl-tbadge-${meta.key}">${selCount > 0 ? selCount + ' ✓' : '0'}</span>`;
+    tab.addEventListener('click', () => switchExpXLTab(fi));
+    tabbar.appendChild(tab);
+
+    // Panel
+    const panel = document.createElement('div');
+    panel.className = 'expxl-tabpanel' + (fi === expxlActiveTab ? ' active' : '');
+    panel.id = `expxl-panel-${fi}`;
+
+    if (!cols.length) {
+      panel.innerHTML = `<div class="expxl-no-data"><div class="nd-icon">${meta.icon}</div>
+        <div style="font-size:14px;font-weight:700;color:var(--col-primary);margin-bottom:6px">Sin datos cargados</div>
+        <div style="font-size:12px">Este archivo no fue detectado o no tiene columnas</div></div>`;
+      panels.appendChild(panel);
+      return;
+    }
+
+    // Info bar
+    const infoBar = document.createElement('div');
+    infoBar.className = 'expxl-panel-info';
+    infoBar.innerHTML = `
+      <span class="expxl-panel-info-icon">${meta.icon}</span>
+      <div>
+        <div class="expxl-panel-info-title">${meta.label}</div>
+        <div class="expxl-panel-info-sub">${cols.length} columnas disponibles · ${rowCount.toLocaleString('es-CO')} filas</div>
+      </div>
+      <div class="expxl-panel-info-right">
+        <button class="expxl-qbtn q-all" onclick="expxlSelectAll('${meta.key}')">✅ Todas</button>
+        <button class="expxl-qbtn"       onclick="expxlSelectNoneFile('${meta.key}')">☐ Ninguna</button>
+        <button class="expxl-qbtn q-key" onclick="expxlSelectKey('${meta.key}')">🔑 Clave</button>
+      </div>`;
+    panel.appendChild(infoBar);
+
+    // Columns grid
+    const colsWrap = document.createElement('div');
+    colsWrap.className = 'expxl-cols-wrap';
+    colsWrap.id = `expxl-cols-${meta.key}`;
+
+    cols.forEach(col => {
+      const item = document.createElement('label');
+      item.className = 'expxl-col-item' + (expxlState.selected[meta.key].has(col) ? ' selected' : '');
+      item.dataset.col = col;
+      item.innerHTML = `<input type="checkbox" ${expxlState.selected[meta.key].has(col) ? 'checked' : ''}>
+        <span class="expxl-col-label" title="${col}">${col}</span>`;
+      item.querySelector('input').addEventListener('change', ev => {
+        ev.stopPropagation();
+        _expxlToggleCol(meta.key, col, ev.target.checked, item);
+      });
+      colsWrap.appendChild(item);
+    });
+    panel.appendChild(colsWrap);
+    panels.appendChild(panel);
+  });
+}
+
+function switchExpXLTab(idx) {
+  expxlActiveTab = idx;
+  document.querySelectorAll('.expxl-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+  document.querySelectorAll('.expxl-tabpanel').forEach((p, i) => p.classList.toggle('active', i === idx));
+}
+
+function _expxlToggleCol(fileKey, col, checked, itemEl) {
+  if (checked) { expxlState.selected[fileKey].add(col); itemEl.classList.add('selected'); }
+  else         { expxlState.selected[fileKey].delete(col); itemEl.classList.remove('selected'); }
+  _updateExpXLSummary();
+  _updateExpXLTabBadge(fileKey);
+}
+
+function _updateExpXLTabBadge(fileKey) {
+  const badge = document.getElementById(`expxl-tbadge-${fileKey}`);
+  if (!badge) return;
+  const n = expxlState.selected[fileKey].size;
+  badge.textContent = n > 0 ? n + ' ✓' : '0';
+  badge.className   = 'expxl-tab-badge ' + (n > 0 ? 'has' : 'zero');
+}
+
+function _updateExpXLSummary() {
+  const total = EXPXL_FILE_META.reduce((s, m) => s + expxlState.selected[m.key].size, 0);
+  const sumEl = document.getElementById('expxl-summary');
+  const btnEl = document.getElementById('expxl-btn-export');
+  if (total === 0) {
+    sumEl.innerHTML = 'Seleccione al menos una columna para exportar';
+    if (btnEl) btnEl.disabled = true;
+  } else {
+    const parts = EXPXL_FILE_META
+      .filter(m => expxlState.selected[m.key].size > 0)
+      .map(m => {
+        const fi = EXPXL_FILE_META.indexOf(m) + 1;
+        return `${m.icon} A${fi}: <strong>${expxlState.selected[m.key].size}</strong> col.`;
+      });
+    sumEl.innerHTML = parts.join(' &nbsp;·&nbsp; ') + ` &nbsp;→ <strong>${total}</strong> total`;
+    if (btnEl) btnEl.disabled = false;
+  }
+}
+
+function expxlSelectAll(fileKey) {
+  const cols = _getExpXLCols(fileKey);
+  cols.forEach(c => expxlState.selected[fileKey].add(c));
+  document.querySelectorAll(`#expxl-cols-${fileKey} .expxl-col-item`).forEach(item => {
+    item.classList.add('selected'); item.querySelector('input').checked = true;
+  });
+  _updateExpXLSummary(); _updateExpXLTabBadge(fileKey);
+}
+
+function expxlSelectNoneFile(fileKey) {
+  expxlState.selected[fileKey].clear();
+  document.querySelectorAll(`#expxl-cols-${fileKey} .expxl-col-item`).forEach(item => {
+    item.classList.remove('selected'); item.querySelector('input').checked = false;
+  });
+  _updateExpXLSummary(); _updateExpXLTabBadge(fileKey);
+}
+
+function expxlSelectNone() {
+  EXPXL_FILE_META.forEach(m => expxlSelectNoneFile(m.key));
+}
+
+// Campos clave por archivo
+const EXPXL_KEY_COLS = {
+  df1: ['invoice number','Invoice Number','supplier name','Supplier Name','year','Year','month','Month',
+        'po','PO','NuevaP0','nuevapo','NuevaPO','vaule without iva','value without iva','Valor acta sin iva',
+        'invoice date','Invoice Date','due date','Due Date','status','Status','rec','REC','observations','Observations'],
+  df2rec: ['Fecha de recepcion','Fecha de Recepción','Recepcion','Número de Documento','Numero de Documento',
+           'Recepcionado Por','Valor Recepcionado por Linea','Estado de Linea','Organización','Organizacion',
+           'OC','Proveedor','Descripción del artículo','Proyecto','Valor Total'],
+  df3cxp: ['Proveedor','NIT','Factura','Fecha contable','Estado','Valor Bruto','Anticipos','Saldo Factura',
+           'Fecha de transaccion','OC','REC','Número de Documento']
+};
+
+function expxlSelectKey(fileKey) {
+  const keyCols = EXPXL_KEY_COLS[fileKey] || [];
+  const allCols = _getExpXLCols(fileKey);
+  const keyNorm = keyCols.map(k => k.trim().toLowerCase());
+  expxlState.selected[fileKey].clear();
+  allCols.forEach(col => { if (keyNorm.includes(col.trim().toLowerCase())) expxlState.selected[fileKey].add(col); });
+  if (expxlState.selected[fileKey].size === 0) allCols.slice(0, 8).forEach(c => expxlState.selected[fileKey].add(c));
+  document.querySelectorAll(`#expxl-cols-${fileKey} .expxl-col-item`).forEach(item => {
+    const sel = expxlState.selected[fileKey].has(item.dataset.col);
+    item.classList.toggle('selected', sel);
+    item.querySelector('input').checked = sel;
+  });
+  _updateExpXLSummary(); _updateExpXLTabBadge(fileKey);
+}
+
+function doExportExcelGeneral() {
+  const selectedFiles = EXPXL_FILE_META.filter(m => expxlState.selected[m.key].size > 0);
+  if (!selectedFiles.length) { showToast('Seleccione al menos una columna.', 'warning'); return; }
+
+  const arrays  = selectedFiles.map(m => state[m.key] || []);
+  const cols    = selectedFiles.map(m => [...expxlState.selected[m.key]]);
+  const icons   = selectedFiles.map(m => m.icon);
+  const maxRows = Math.max(...arrays.map(a => a.length));
+
+  // Header row
+  const headerRow = [];
+  selectedFiles.forEach((m, fi) => {
+    const fileNum = EXPXL_FILE_META.findIndex(x => x.key === m.key) + 1;
+    cols[fi].forEach(col => headerRow.push(`${icons[fi]} [A${fileNum}] ${col}`));
+  });
+
+  // Data rows (array-of-arrays, lightest format)
+  const aoa = [headerRow];
+  for (let i = 0; i < maxRows; i++) {
+    const row = [];
+    selectedFiles.forEach((m, fi) => {
+      const srcRow = arrays[fi][i] || {};
+      cols[fi].forEach(col => {
+        const val = srcRow[col];
+        if (val === null || val === undefined) row.push('');
+        else if (val instanceof Date) row.push(val.toLocaleDateString('es-CO'));
+        else if (typeof val === 'object') row.push(String(val));
+        else row.push(val);
+      });
+    });
+    aoa.push(row);
+  }
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  ws['!cols'] = headerRow.map(h => ({ wch: Math.min(Math.max(h.length - 6, 12), 36) }));
+  XLSX.utils.book_append_sheet(wb, ws, 'Datos Combinados');
+
+  const fecha = new Date().toISOString().slice(0, 10);
+  XLSX.writeFile(wb, `CashCall_ExportGeneral_${fecha}.xlsx`);
+  showToast(`✅ Excel exportado — ${maxRows.toLocaleString('es-CO')} filas · ${headerRow.length} columnas`, 'success');
+  closeExpXL();
+}
+
+
+
+
+// ═══════════════════════════════════════════════════════════════
+// CHART ZOOM OVERLAY v4.0
 // ═══════════════════════════════════════════════════════════════
 (function initChartZoom() {
   // Create overlay
@@ -11533,7 +11964,7 @@ INSTRUCTIVOS.discrepancias = {
 };
 
 INSTRUCTIVOS.auditorias = {
-  icon: '🗂️', title: 'Auditorías — Bitácora Persistente v3.2',
+  icon: '🗂️', title: 'Auditorías — Bitácora Persistente v4.0',
   html: `
     <div class="inst-section-title">¿Qué es la Bitácora Persistente?</div>
     <p>La <b>Bitácora Persistente</b> acumula el historial de cambios en el propio JSON exportado. Cada vez que exporta, el sistema detecta qué cambió factura por factura y lo registra como novedad. El JSON va creciendo con el histórico completo.</p>
