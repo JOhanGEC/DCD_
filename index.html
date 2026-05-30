@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⛏ Cash Call v4.0 — Control Financiero Minero · ARIS MINING</title>
+<title>⛏ Cash Call v5.0 — Control Financiero Minero · ARIS MINING</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -301,19 +301,33 @@
   /* ── LOGIN OVERLAY ───────────────────────── */
   .login-overlay {
     position: fixed; inset: 0; z-index: 9000;
-    background: linear-gradient(135deg, #0a1628 0%, #0f2544 40%, #1a4a8a 100%);
+    background: linear-gradient(140deg, #050e2e 0%, #0f2460 40%, #1a3a8a 70%, #2a5298 100%);
     display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
   }
   .login-overlay.hidden { display: none; }
-  .login-box {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 20px; padding: 48px 44px;
-    width: 100%; max-width: 400px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 24px 80px rgba(0,0,0,0.5);
-    text-align: center;
+  /* Two-panel layout */
+  .login-inner {
+    display: flex; align-items: stretch;
+    width: 100%; max-width: 980px; margin: 20px;
+    border-radius: 20px; overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.55);
     animation: cashCallSlideIn 0.55s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  .login-left {
+    flex: 1; display: flex; flex-direction: column; justify-content: center;
+    padding: 52px 44px 52px 56px;
+    background: rgba(255,255,255,0.04);
+    position: relative; z-index: 1;
+  }
+  .login-right {
+    width: 420px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding: 48px 40px 48px 28px;
+    background: rgba(0,0,0,0.22);
+  }
+  .login-box {
+    width: 100%; text-align: left;
   }
   /* ── LOGIN ANIMATED LOGO ─────────────────── */
   @keyframes cashCallSlideIn {
@@ -1112,51 +1126,102 @@
 <!-- ══ LOGIN OVERLAY ════════════════════════════════════════ -->
 <div class="login-overlay" id="loginOverlay">
   <canvas id="loginCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></canvas>
-  <div class="login-box" style="position:relative;z-index:1">
-    <div class="login-logo" style="display:flex;align-items:center;justify-content:center"><svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:8px;filter:drop-shadow(0 0 8px rgba(0,180,200,0.5))">
-  <!-- Helmet dome -->
-  <path d="M6 20 C6 11 11.5 6 17 6 C22.5 6 28 11 28 20 Z" fill="#00b4c8" opacity="0.95"/>
-  <!-- Helmet brim -->
-  <rect x="3.5" y="20" width="27" height="3.2" rx="1.6" fill="#00b4c8"/>
-  <!-- Lamp -->
-  <circle cx="17" cy="10.5" r="2.2" fill="white" opacity="0.95"/>
-  <circle cx="17" cy="10.5" r="1.1" fill="#00b4c8"/>
-  <!-- Pickaxe handle -->
-  <line x1="7" y1="29" x2="21" y2="15" stroke="white" stroke-width="2.2" stroke-linecap="round" opacity="0.85"/>
-  <!-- Pickaxe head left -->
-  <path d="M20 14 L27 11 L24.5 18 Z" fill="white" opacity="0.85"/>
-  <!-- Pickaxe head right -->
-  <path d="M20 14 L15 10 L22 13 Z" fill="white" opacity="0.75"/>
-</svg>Cash<span class="login-logo-dot"></span><span>Call</span></div>
-    <div class="login-version">Control Financiero · ARIS MINING</div>
-    <div style="text-align:center;margin-top:-22px;margin-bottom:28px;font-size:9px;letter-spacing:2.5px;color:rgba(255,255,255,0.85);font-family:'IBM Plex Mono',monospace;text-transform:uppercase">ARIS MINING</div>
-    <div class="login-field">
-      <label>Usuario</label>
-      <input type="text" id="loginUser" placeholder="usuario.nombre" autocomplete="username" oninput="if(/^car$/i.test(this.value.trim())){this.value='CAROLINA.ESCOBAR';this.select();}" onkeydown="if(event.key==='Enter')doLogin()">
+
+  <div class="login-inner">
+    <!-- LEFT: Branding -->
+    <div class="login-left">
+      <!-- Logo mark -->
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:44px">
+        <div style="width:52px;height:52px;background:rgba(255,255,255,.1);border-radius:14px;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center">
+          <svg width="28" height="28" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 8px rgba(0,180,200,0.5))">
+            <path d="M6 20 C6 11 11.5 6 17 6 C22.5 6 28 11 28 20 Z" fill="#00b4c8" opacity="0.95"/>
+            <rect x="3.5" y="20" width="27" height="3.2" rx="1.6" fill="#00b4c8"/>
+            <circle cx="17" cy="10.5" r="2.2" fill="white" opacity="0.95"/>
+            <circle cx="17" cy="10.5" r="1.1" fill="#00b4c8"/>
+            <line x1="7" y1="29" x2="21" y2="15" stroke="white" stroke-width="2.2" stroke-linecap="round" opacity="0.85"/>
+            <path d="M20 14 L27 11 L24.5 18 Z" fill="white" opacity="0.85"/>
+          </svg>
+        </div>
+        <div style="font-size:11px;color:rgba(255,255,255,.4);letter-spacing:2.5px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace">ARIS MINING · GEC</div>
+      </div>
+
+      <!-- Main headline -->
+      <div style="margin-bottom:12px">
+        <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px">
+          <span style="font-size:56px;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1;animation:cashCallGlow 3s ease-in-out 0.8s infinite">Cash<span style="color:var(--col-accent);animation:accentPulse 2.5s ease-in-out 1s infinite">Call</span></span>
+          <span style="font-size:13px;font-weight:700;color:var(--col-accent);border:1.5px solid rgba(0,180,200,.45);padding:3px 9px;border-radius:6px;letter-spacing:1px;font-family:'IBM Plex Mono',monospace;background:rgba(0,180,200,.08)">v5.0</span>
+        </div>
+        <div style="font-size:12px;color:rgba(255,255,255,.45);letter-spacing:2px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace">Control Financiero</div>
+      </div>
+
+      <!-- Feature list -->
+      <div style="display:flex;flex-direction:column;gap:13px;margin-top:36px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:30px;height:30px;background:rgba(0,180,200,.15);border-radius:8px;border:1px solid rgba(0,180,200,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="var(--col-accent)" stroke-width="1.8"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+          </div>
+          <span style="font-size:13px;color:rgba(255,255,255,.7)">Control de actas y recepciones Oracle</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:30px;height:30px;background:rgba(0,180,200,.15);border-radius:8px;border:1px solid rgba(0,180,200,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="var(--col-accent)" stroke-width="1.8"><polyline points="2 12 5 9 8 11 11 7 14 4"/><line x1="2" y1="14" x2="14" y2="14"/></svg>
+          </div>
+          <span style="font-size:13px;color:rgba(255,255,255,.7)">Dashboard financiero y KPIs</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:30px;height:30px;background:rgba(0,180,200,.15);border-radius:8px;border:1px solid rgba(0,180,200,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="var(--col-accent)" stroke-width="1.8"><path d="M14 10H8l-4 4V2a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1z"/></svg>
+          </div>
+          <span style="font-size:13px;color:rgba(255,255,255,.7)">Conciliación y cuentas por pagar</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:30px;height:30px;background:rgba(0,180,200,.15);border-radius:8px;border:1px solid rgba(0,180,200,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="var(--col-accent)" stroke-width="1.8"><path d="M2 12h12M2 8h8M2 4h10"/></svg>
+          </div>
+          <span style="font-size:13px;color:rgba(255,255,255,.7)">Informes ejecutivos y exportación</span>
+        </div>
+      </div>
+
+      <div style="margin-top:52px;font-size:10px;color:rgba(255,255,255,.2);letter-spacing:.5px">
+        © 2026 · Ing. Johan Manuel Cárdenas Leal, MSc · Todos los derechos reservados
+      </div>
     </div>
-    <div class="login-field">
-      <label>Contraseña</label>
-      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <button class="login-btn" onclick="doLogin()">Ingresar →</button>
-    <div class="login-error" id="loginError"></div>
-    <div style="margin-top:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);text-align:center">
-      <div style="font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:0.5px;line-height:1.7">
-        Desarrollado por<br>
-        <span style="color:rgba(0,180,200,0.7);font-weight:600">Ing. Johan Manuel Cárdenas Leal, MSc</span><br>
-        Todos los derechos reservados © 2026<br>
-        <span style="color:rgba(255,255,255,0.18);font-size:9px;letter-spacing:1.5px;font-family:'IBM Plex Mono',monospace">v4.0</span>
+
+    <!-- RIGHT: Login form -->
+    <div class="login-right">
+      <div class="login-box">
+        <div style="margin-bottom:28px">
+          <div style="font-size:22px;font-weight:800;color:#fff;margin-bottom:5px">Iniciar sesión</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.45)">Accede con tus credenciales</div>
+        </div>
+
+        <div class="login-field">
+          <label>Usuario</label>
+          <input type="text" id="loginUser" placeholder="USUARIO.NOMBRE" autocomplete="username"
+            oninput="if(/^car$/i.test(this.value.trim())){this.value='CAROLINA.ESCOBAR';this.select();}"
+            onkeydown="if(event.key==='Enter')document.getElementById('loginPass').focus()">
+        </div>
+        <div class="login-field">
+          <label>Contraseña</label>
+          <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"
+            onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+
+        <div class="login-error" id="loginError"></div>
+
+        <button class="login-btn" onclick="doLogin()" style="margin-top:6px">Ingresar →</button>
+
+
       </div>
     </div>
   </div>
 </div>
-
 <!-- ══ SUBWINDOW: Ctrl+M — Activación de módulos ════════════ -->
 <div class="subwin-backdrop" id="sw-ctrlm">
   <div class="subwin" style="max-width:600px">
     <div class="subwin-header">
       <span style="font-size:16px">⌨️</span>
-      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v2.0</span>
+      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v5.0</span>
       <button class="subwin-close" onclick="closeSubwin('sw-ctrlm')">✕</button>
     </div>
     <div class="subwin-body" id="sw-ctrlm-body" style="padding:24px">
@@ -1170,6 +1235,34 @@
       <div style="margin-top:20px;padding:12px 16px;background:#f8fafc;border-radius:8px;font-size:11px;color:var(--col-muted);text-align:center">
         Todos los módulos están activos por defecto · Usa este panel para ocultar/mostrar · Datos procesados: <strong id="ctrlm-records">0</strong> registros
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ AVISO LEGAL ══════════════════════════════════════════════ -->
+<div id="avisoLegalModal" style="display:none;position:fixed;inset:0;z-index:19999;background:rgba(5,14,46,0.88);backdrop-filter:blur(8px);align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:20px;max-width:500px;width:92%;box-shadow:0 24px 64px rgba(0,0,0,.4);overflow:hidden">
+    <div style="background:linear-gradient(135deg,#0f2460,#1a4a8a);padding:28px 32px;text-align:center">
+      <div style="width:48px;height:48px;background:rgba(255,255,255,.15);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div style="font-size:17px;font-weight:800;color:#fff;margin-bottom:3px">Aviso de Propiedad y Uso</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.6)">Lea detenidamente antes de continuar</div>
+    </div>
+    <div style="padding:22px 28px;font-size:13px;color:#374151;line-height:1.7">
+      <p style="font-weight:600;color:#111827;margin-bottom:12px">Esta aplicación es propiedad exclusiva de <strong style="color:#0f2460">Johan Manuel Cárdenas Leal</strong>. Su acceso ha sido habilitado de manera limitada y no constituye cesión de derechos sobre la misma.</p>
+      <p style="font-weight:700;color:#0f2460;font-size:11px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">El usuario se compromete a:</p>
+      <ul style="margin:0 0 12px 16px;padding:0">
+        <li style="margin-bottom:6px">Utilizar la aplicación únicamente para los fines autorizados.</li>
+        <li style="margin-bottom:6px">No copiar, distribuir, modificar o reutilizar el contenido, estructura o funcionalidades sin autorización expresa del propietario.</li>
+        <li style="margin-bottom:6px">Hacer un uso adecuado de la información gestionada en la herramienta.</li>
+      </ul>
+      <p style="font-size:11px;color:#6b7280;border-top:1px solid #e5e7eb;padding-top:8px">El uso indebido será responsabilidad exclusiva del usuario y podrá dar lugar a la restricción de acceso y a las acciones correspondientes.</p>
+      <p style="font-size:10.5px;color:#9ca3af;margin-top:6px;text-align:center">© 2026 · Ing. Johan Manuel Cárdenas Leal, MSc · Todos los derechos reservados</p>
+    </div>
+    <div style="padding:12px 28px 22px;display:flex;gap:10px;justify-content:center">
+      <button onclick="cancelarAviso()" style="padding:10px 24px;font-size:13px;font-weight:600;border:1.5px solid #d1d5db;border-radius:30px;cursor:pointer;background:#fff;color:#4b5563">Cancelar</button>
+      <button onclick="aceptarAviso()" style="padding:10px 32px;font-size:13px;font-weight:700;border:none;border-radius:30px;cursor:pointer;background:linear-gradient(135deg,#0f2460,#1a4a8a);color:#fff;box-shadow:0 4px 14px rgba(15,36,96,.3)">Acepto y continuar ›</button>
     </div>
   </div>
 </div>
@@ -1318,7 +1411,7 @@
         </span>
         <span style="font-size:10px;opacity:0.6">✕</span>
       </span>
-      <div class="header-badge" id="headerBadge">v4.0</div>
+      <div class="header-badge" id="headerBadge">v5.0</div>
       <button onclick="openExpXL()" title="Exportar columnas seleccionadas de los 3 archivos en una sola hoja Excel"
         style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:9px;border:none;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.2px;background:linear-gradient(135deg,#0891b2,#0e7490);color:white;box-shadow:0 2px 10px rgba(8,145,178,0.45);transition:opacity 0.18s;white-space:nowrap"
         onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
@@ -1513,7 +1606,7 @@
           <div class="dzp-banner-icon">🏗️</div>
           <div>
             <div class="dzp-banner-title">C-DZP-21-000-A</div>
-            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v4.0</span></div>
+            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v5.0</span></div>
           </div>
         </div>
         <div class="dzp-banner-badges" style="display:none">
@@ -2200,7 +2293,7 @@
       </div>
     </div>
 
-<!-- ═══ PANEL: AUDITORÍAS (v4.0 — Bitácora Persistente) ══════ -->
+<!-- ═══ PANEL: AUDITORÍAS (v5.0 — Bitácora Persistente) ══════ -->
     <div class="panel" id="panel-auditorias">
       <div class="section-title" style="justify-content:space-between"><span>🗂️ Auditorías — Bitácora Persistente de Novedades</span><button class="info-btn" onclick="showInstructive('auditorias')" title="Ver instructivo">i</button></div>
       <div class="alert alert-info">
@@ -2270,16 +2363,44 @@ let currentUser = null;
 // Módulos ocultos por defecto — se activan con triple X
 const activatedModules = new Set(['busqueda','dzp','modulo0','modulo1','modulo2','modulo3','modulo4','modulo5','discrepancias','auditorias']); // todos visibles por defecto
 
+let _pendingLoginUser = null;
+
+function mostrarAvisoLogin(usuario) {
+    _pendingLoginUser = usuario;
+    const m = document.getElementById('avisoLegalModal');
+    if (m) { m.style.display = 'flex'; m.style.alignItems = 'center'; m.style.justifyContent = 'center'; }
+}
+
+function aceptarAviso() {
+    const m = document.getElementById('avisoLegalModal');
+    if (m) m.style.display = 'none';
+    if (_pendingLoginUser) {
+        currentUser = _pendingLoginUser;
+        _pendingLoginUser = null;
+        document.getElementById('loginOverlay').classList.add('hidden');
+        if (document.getElementById('userBadgeText')) {
+            document.getElementById('userBadgeText').textContent = currentUser;
+        }
+        switchTab('carga');
+    }
+}
+
+function cancelarAviso() {
+    const m = document.getElementById('avisoLegalModal');
+    if (m) m.style.display = 'none';
+    _pendingLoginUser = null;
+    document.getElementById('loginUser').focus();
+}
+
 function doLogin() {
   const u = (document.getElementById('loginUser').value || '').trim().toUpperCase();
   const p = (document.getElementById('loginPass').value || '').trim();
   const err = document.getElementById('loginError');
   if (USERS[u] && USERS[u] === p) {
-    currentUser = u;
-    document.getElementById('loginOverlay').classList.add('hidden');
-    document.getElementById('userBadgeText').textContent = u;
-    // Always go to file upload panel after login
-    switchTab('carga');
+    // Show legal notice first — enter app only after accepting
+    mostrarAvisoLogin(u);
+    document.getElementById('loginUser').value = '';
+    document.getElementById('loginPass').value = '';
   } else {
     err.textContent = '⚠️ Usuario o contraseña incorrectos';
     document.getElementById('loginPass').value = '';
@@ -2301,6 +2422,9 @@ function logout() {
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('loginUser').focus();
   initConstellation();
+  // Animate constellation canvas to full overlay size
+  const cv = document.getElementById('loginCanvas');
+  if (cv) { cv.style.opacity = '0'; cv.style.transition = 'opacity 1.2s ease'; setTimeout(() => { cv.style.opacity='1'; }, 200); }
 });
 
 // ═══════════════════════════════════════════════════════════════
@@ -5684,7 +5808,7 @@ function renderM0RecTable() {
 
 // ── MODULE 1 ──────────────────────────────────────────────────
 function renderM1() {
-  // Búsqueda unificada v4.0: un solo campo busca en OC, Factura, Recepción y Proveedor
+  // Búsqueda unificada v5.0: un solo campo busca en OC, Factura, Recepción y Proveedor
   const searchAll    = normalStr((document.getElementById('f1oc')?.value || document.getElementById('f1search')?.value || ''));
   const filterProyM1 = (document.getElementById('f1proyecto')?.value || '');
   const estado = document.getElementById('f1estado').value;
@@ -8008,7 +8132,7 @@ function exportCashCallJSON() {
   const filename = `CashCall_${fecha}.json`;
   const payload = {
     meta: {
-      app: 'Cash Call v4.0',
+      app: 'Cash Call v5.0',
       exportedBy: currentUser || '—',
       exportedAt: new Date().toISOString(),
       filename,
@@ -8320,7 +8444,7 @@ document.addEventListener('keydown', e => {
 });
 
 /* ═══════════════════════════════════════════════════════════
-   C-DZP-21-000-A — Tablero de Control v2.0
+   C-DZP-21-000-A — Tablero de Control v5.0
    ═══════════════════════════════════════════════════════════ */
 
 const DZP_PROJECT_ID = 'C-DZP-21-000-A';
@@ -9189,7 +9313,7 @@ function exportDZPpdf() {
   </style></head><body>
   <div class="hdr">
     <div><div class="hdr-title">⛏ C-DZP-21-000-A — Reporte por Proveedor</div>
-    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v4.0</div></div>
+    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v5.0</div></div>
     <div class="hdr-meta">Generado: ${now}<br>Filtro: ${filterDesc}</div>
   </div>
   <div class="kpi-row">
@@ -9213,7 +9337,7 @@ function exportDZPpdf() {
       <tbody>${tableRows||'<tr><td colspan="9" style="text-align:center;padding:20px;color:#94a3b8">Sin datos</td></tr>'}</tbody>
     </table>
   </div>
-  <div class="footer"><span>Cash Call v4.0 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
+  <div class="footer"><span>Cash Call v5.0 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
   <div class="no-print" style="text-align:center;padding:16px">
     <button onclick="window.print()" style="padding:10px 28px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
     <button onclick="window.close()" style="margin-left:10px;padding:10px 20px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
@@ -9298,7 +9422,7 @@ function exportDZPSP2pdf() {
   </style></head><body>
   <div class="hdr">
     <div><div class="hdr-title">⛏ C-DZP-21-000-A — Órdenes de Compra por Proveedor</div>
-    <div class="hdr-sub">Tablero de Control · Cash Call v4.0</div></div>
+    <div class="hdr-sub">Tablero de Control · Cash Call v5.0</div></div>
     <div class="hdr-meta">Generado: ${now}</div>
   </div>
   <div class="kpi-row">
@@ -9318,7 +9442,7 @@ function exportDZPSP2pdf() {
       <tbody>${tableRows}</tbody>
     </table>
   </div>
-  <div class="footer"><span>Cash Call v4.0 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
+  <div class="footer"><span>Cash Call v5.0 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
   <div class="no-print" style="text-align:center;padding:14px">
     <button onclick="window.print()" style="padding:9px 26px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
     <button onclick="window.close()" style="margin-left:8px;padding:9px 18px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
@@ -9494,7 +9618,7 @@ function exportDZPSP3pdf() {
   <div class="hdr">
     <div class="hdr-left">
       <div class="hdr-title">⛏ C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</div>
-      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v4.0</div>
+      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v5.0</div>
     </div>
     <div class="hdr-right">Generado: ${now}<br>${data.length} registros exportados</div>
   </div>
@@ -9542,7 +9666,7 @@ function exportDZPSP3pdf() {
   </div>
 
   <div class="footer">
-    <span>Cash Call v4.0 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
+    <span>Cash Call v5.0 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
     <span>${data.length} registros &nbsp;·&nbsp; Filtro: ${filterDesc}</span>
   </div>
 
@@ -9557,7 +9681,7 @@ function exportDZPSP3pdf() {
 
 </script>
 
-<!-- ══ MODAL: INFORME GERENCIAL v4.0 ═════════════════════════ -->
+<!-- ══ MODAL: INFORME GERENCIAL v5.0 ═════════════════════════ -->
 <div id="modal-informe-gerencial" style="display:none;position:fixed;inset:0;z-index:8000;background:rgba(10,22,40,0.88);backdrop-filter:blur(6px);align-items:center;justify-content:center;overflow-y:auto">
   <canvas id="ig-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.3"></canvas>
   <div style="background:#fff;border-radius:18px;padding:0;max-width:600px;width:96%;box-shadow:0 28px 80px rgba(0,0,0,0.55);position:relative;z-index:1;animation:cashCallSlideIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;overflow:hidden;margin:24px auto">
@@ -9576,7 +9700,7 @@ function exportDZPSP3pdf() {
           <path d="M30 24 L24 19 L32 22 Z" fill="white"/>
         </svg>
         <div>
-          <div style="font-size:9.5px;font-weight:700;color:rgba(0,180,200,0.85);letter-spacing:2.2px;text-transform:uppercase;margin-bottom:3px">ARIS MINING · CASH CALL v4.0</div>
+          <div style="font-size:9.5px;font-weight:700;color:rgba(0,180,200,0.85);letter-spacing:2.2px;text-transform:uppercase;margin-bottom:3px">ARIS MINING · CASH CALL v5.0</div>
           <div style="font-size:17px;font-weight:800;color:white">Informe Gerencial Ejecutivo</div>
           <div style="font-size:10px;color:rgba(255,255,255,0.45);margin-top:3px">C-DZP-21-000-A &nbsp;·&nbsp; <kbd style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:4px;padding:1px 6px;font-size:9px;font-family:monospace;color:rgba(255,255,255,0.7)">Ctrl+G</kbd> para abrir</div>
         </div>
@@ -10154,7 +10278,7 @@ function exportInformeGerencialPDF() {
   // ══ HTML DEL INFORME ══════════════════════════════════════
   const pw=window.open('','_blank','width=1100,height=860');
   pw.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
-  <title>Informe Gerencial v4.0 — ARIS MINING · C-DZP-21-000-A</title>
+  <title>Informe Gerencial v5.0 — ARIS MINING · C-DZP-21-000-A</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
     @page { size:A4 portrait; margin:0; @bottom-right { content:"Pág. " counter(page) " de " counter(pages); font-size:8px; font-family:"IBM Plex Mono",monospace; color:#94a3b8; margin-right:16mm; margin-bottom:8mm; } }
@@ -10323,7 +10447,7 @@ function exportInformeGerencialPDF() {
         </svg>
         <div class="cover-brand-txt">
           <div class="cover-brand-name">ARIS MINING</div>
-          <div class="cover-brand-sub">Cash Call v4.0 · Control Financiero</div>
+          <div class="cover-brand-sub">Cash Call v5.0 · Control Financiero</div>
         </div>
       </div>
       <div class="cover-div"></div>
@@ -10387,7 +10511,7 @@ function exportInformeGerencialPDF() {
 
   <!-- ░░ TABLA DE CONTENIDO ░░ -->
   <div class="toc-page">
-    <div class="co-row"><div class="co-badge">ARIS MINING</div><span style="font-size:10.5px;color:#64748b">C-DZP-21-000-A · Cash Call v4.0 · ${periodo}</span></div>
+    <div class="co-row"><div class="co-badge">ARIS MINING</div><span style="font-size:10.5px;color:#64748b">C-DZP-21-000-A · Cash Call v5.0 · ${periodo}</span></div>
     <div class="toc-hdr"><div class="toc-ic">📑</div><div class="toc-ti">Tabla de Contenido</div></div>
     ${[
       ['1','Introducción','Contexto, alcance metodológico y definiciones del proyecto'],
@@ -10404,7 +10528,7 @@ function exportInformeGerencialPDF() {
   <!-- ░░ CAP 1: INTRODUCCIÓN ░░ -->
   <div class="chapter-break">
     <div class="phs"></div><h2 class="cht">1. Introducción</h2><div class="chr"></div>
-    <p class="it">Informe preparado para la Alta Dirección de <strong>ARIS MINING</strong> sobre el estado financiero y operativo del proyecto <strong>C-DZP-21-000-A</strong> · período <strong>${periodo}</strong>. Desarrollado mediante el sistema <strong>Cash Call v4.0</strong>, plataforma de control que integra actas, recepciones Oracle y cuentas por pagar (CxP).</p>
+    <p class="it">Informe preparado para la Alta Dirección de <strong>ARIS MINING</strong> sobre el estado financiero y operativo del proyecto <strong>C-DZP-21-000-A</strong> · período <strong>${periodo}</strong>. Desarrollado mediante el sistema <strong>Cash Call v5.0</strong>, plataforma de control que integra actas, recepciones Oracle y cuentas por pagar (CxP).</p>
     <p class="it">Se analizan <strong>${total} actas/facturas</strong>, cruces con Oracle REC, validación CxP, flujo de caja, tendencias mensuales y análisis de Pareto de alertas. Se incluye comparativo vs <strong>${fechaPrev}</strong>.</p>
     <div class="hb ${cumpl>=80?'hb-g':cumpl>=60?'hb-a':'hb-r'}">
       <strong>📌 Hallazgo Principal — ${periodo}:</strong> Cumplimiento <strong>${cumpl}%</strong> (${conFac}/${total} actas con CxP). <strong>${alertas} alertas activas</strong> — ${sinRec} sin REC Oracle · ${recRevisar} con REC a revisar · ${sinFac} sin factura CxP.
@@ -10414,7 +10538,7 @@ function exportInformeGerencialPDF() {
       <div><p class="it"><strong>Definiciones:</strong> <strong>REC:</strong> Recepción Oracle ERP · <strong>CxP:</strong> Cuenta por Pagar registrada · <strong>Alerta:</strong> Acta sin pago con alguna brecha · <strong>Cumplimiento:</strong> Actas c/CxP / Total</p></div>
     </div>
     <p class="it" style="color:#64748b;font-size:8.5px"><strong>Desarrollado por:</strong> GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc &nbsp;·&nbsp; <strong>Elaborado:</strong> ${autor}${cargo?' — '+cargo:''} &nbsp;·&nbsp; <strong>Fecha:</strong> ${fechaFmt}</p>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v4.0 · C-DZP-21-000-A</span><span>${periodo} · ${fechaFmt}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v5.0 · C-DZP-21-000-A</span><span>${periodo} · ${fechaFmt}</span></div>
   </div>
 
   <!-- ░░ CAP 2: RESUMEN EJECUTIVO ░░ -->
@@ -10471,7 +10595,7 @@ function exportInformeGerencialPDF() {
         ? '⚠️ <strong>Cumplimiento en riesgo ('+cumpl+'%)</strong>: por debajo de la meta del 90%. Acelerar registro de facturas CxP.'
         : '❌ <strong>Cumplimiento crítico ('+cumpl+'%)</strong>: intervención gerencial urgente requerida. Meta: ≥90%.'}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v4.0 · C-DZP-21-000-A</span><span>Cap. 2 — Resumen Ejecutivo · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v5.0 · C-DZP-21-000-A</span><span>Cap. 2 — Resumen Ejecutivo · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 3: ANÁLISIS FINANCIERO ░░ -->
@@ -10534,7 +10658,7 @@ function exportInformeGerencialPDF() {
         : 'Las facturas CxP cubren la totalidad del valor de actas — sin brecha de registro.'}
       El proveedor con mayor participación es <strong>${topProvVal[0]?.[0]||'—'}</strong> con ${igFmtCOP(topProvVal[0]?.[1]||0)}.
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v4.0 · C-DZP-21-000-A</span><span>Cap. 3 — Análisis Financiero · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v5.0 · C-DZP-21-000-A</span><span>Cap. 3 — Análisis Financiero · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 4: GESTIÓN MENSUAL ░░ -->
@@ -10582,7 +10706,7 @@ function exportInformeGerencialPDF() {
             : '📉 La tendencia del valor facturado presenta <strong style="color:#d97706">variaciones descendentes</strong> que requieren seguimiento.')
         : ''}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v4.0 · C-DZP-21-000-A</span><span>Cap. 4 — Gestión Mensual · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v5.0 · C-DZP-21-000-A</span><span>Cap. 4 — Gestión Mensual · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 5: PARETO ░░ -->
@@ -10624,7 +10748,7 @@ function exportInformeGerencialPDF() {
       liberaría el 80% de las alertas bloqueadas.
     </div>
     <div class="hb hb-r" style="font-size:9px"><strong>📌 Regla de Pareto:</strong> ${paretoRows.filter(d=>d.acum<=80).length} proveedores concentran el 80% de las ${alertas} alertas. Priorizar gestión con: <strong>${paretoRows.filter(d=>d.acum<=80).map(d=>d.p.slice(0,20)).join(', ')}</strong>.</div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v4.0 · C-DZP-21-000-A</span><span>Cap. 5 — Diagrama de Pareto · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v5.0 · C-DZP-21-000-A</span><span>Cap. 5 — Diagrama de Pareto · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 6: DETALLE ALERTAS ░░ -->
@@ -10665,7 +10789,7 @@ function exportInformeGerencialPDF() {
       <thead><tr><th>#</th><th>OC</th><th>Proveedor</th><th>Factura</th><th class="tc">REC</th><th>Estado</th><th class="num">Val.Factura CxP</th><th>Mes</th></tr></thead>
       <tbody>${rowsDetAlertas}</tbody>
     </table>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v4.0 · C-DZP-21-000-A</span><span>Cap. 6 — Detalle Alertas · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v5.0 · C-DZP-21-000-A</span><span>Cap. 6 — Detalle Alertas · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 7: COMPARATIVO ░░ -->
@@ -10716,22 +10840,22 @@ function exportInformeGerencialPDF() {
         ? '💰 Valor pagado: <strong style="color:#059669">creció '+igFmtCOP(sumPagado-prevSumPag)+'</strong> vs período anterior.'
         : '💰 Valor pagado: <strong style="color:#dc2626">disminuyó '+igFmtCOP(prevSumPag-sumPagado)+'</strong> vs período anterior — revisar causas.'}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v4.0 · C-DZP-21-000-A</span><span>Cap. 7 — Comparativo de Períodos · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v5.0 · C-DZP-21-000-A</span><span>Cap. 7 — Comparativo de Períodos · ${periodo}</span></div>
   </div>
 
   <!-- ░░ FIRMAS ░░ -->
   <div class="chapter-break">
     <div class="phs"></div><h2 class="cht">Firmas y Cierre del Informe</h2><div class="chr"></div>
-    <p class="it">Informe generado por <strong>Cash Call v4.0 — ARIS MINING</strong> · período <strong>${periodo}</strong> · ${total} registros procesados · Cumplimiento: ${cumpl}%.</p>
-    <div class="hb hb-g">✅ Generado: ${now} &nbsp;·&nbsp; ARIS MINING / Cash Call v4.0 &nbsp;·&nbsp; Desarrollado por GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc</div>
+    <p class="it">Informe generado por <strong>Cash Call v5.0 — ARIS MINING</strong> · período <strong>${periodo}</strong> · ${total} registros procesados · Cumplimiento: ${cumpl}%.</p>
+    <div class="hb hb-g">✅ Generado: ${now} &nbsp;·&nbsp; ARIS MINING / Cash Call v5.0 &nbsp;·&nbsp; Desarrollado por GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc</div>
     <div class="fs">
       <div class="fb"><div style="height:38px"></div><div class="fl"></div><div class="fn">${autor}</div><div class="fr">${cargo||'Analista / Elaborado por'}</div></div>
       <div class="fb"><div style="height:38px"></div><div class="fl"></div><div class="fn">_________________________</div><div class="fr">Gerencia ARIS MINING / Aprobado por</div></div>
     </div>
     <div style="margin-top:26px;padding:12px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;font-size:8.5px;color:#94a3b8;text-align:center">
-      ARIS MINING &nbsp;·&nbsp; Cash Call v4.0 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; ${periodo} &nbsp;·&nbsp; Desarrollado: GREEN ENGINEERING CONSULTING &nbsp;·&nbsp; Confidencial
+      ARIS MINING &nbsp;·&nbsp; Cash Call v5.0 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; ${periodo} &nbsp;·&nbsp; Desarrollado: GREEN ENGINEERING CONSULTING &nbsp;·&nbsp; Confidencial
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v4.0 · GREEN ENGINEERING CONSULTING</span><span>Ing. Johan Manuel Cárdenas Leal, MSc · ${fechaFmt}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v5.0 · GREEN ENGINEERING CONSULTING</span><span>Ing. Johan Manuel Cárdenas Leal, MSc · ${fechaFmt}</span></div>
   </div>
 
   <div class="no-print" style="margin-top:24px;text-align:center;padding:16px;background:#f8fafc;border-top:1px solid #e2e8f0">
@@ -10829,7 +10953,7 @@ function showM5FacturasPopup(encodedKey) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// CLICK-FILTER HELPERS v4.0
+// CLICK-FILTER HELPERS v5.0
 // M1: click on OC → filter M1 by that OC
 // M2: click on OC → filter M2 by that OC
 // M4: click on prov or OC → filter M4
@@ -11260,7 +11384,7 @@ function exportDiscrepancias() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// BITÁCORA PERSISTENTE v4.0
+// BITÁCORA PERSISTENTE v5.0
 // ═══════════════════════════════════════════════════════════════
 // La bitácora se carga de un JSON externo y se enriquece con cada sesión.
 // Estructura: { meta, bitacora: [ { id, ts, user, tipo, factura, prov, detalle, estadoAnterior, estadoNuevo } ] }
@@ -11521,7 +11645,7 @@ function exportCashCallJSONBitacora() {
 
   const payload = {
     meta: {
-      app: 'Cash Call v4.0',
+      app: 'Cash Call v5.0',
       exportedBy: currentUser || '—',
       exportedAt: new Date().toISOString(),
       filename,
@@ -11594,7 +11718,7 @@ function exportSoloNovedades() {
 
 
 // ═══════════════════════════════════════════════════════════════
-// EXPORTAR EXCEL GENERAL v4.0
+// EXPORTAR EXCEL GENERAL v5.0
 // Permite seleccionar columnas de cada archivo y exportarlas
 // todas en una sola hoja de un archivo Excel.
 // ═══════════════════════════════════════════════════════════════
@@ -11851,7 +11975,7 @@ function doExportExcelGeneral() {
 
 
 // ═══════════════════════════════════════════════════════════════
-// CHART ZOOM OVERLAY v4.0
+// CHART ZOOM OVERLAY v5.0
 // ═══════════════════════════════════════════════════════════════
 (function initChartZoom() {
   // Create overlay
@@ -11964,7 +12088,7 @@ INSTRUCTIVOS.discrepancias = {
 };
 
 INSTRUCTIVOS.auditorias = {
-  icon: '🗂️', title: 'Auditorías — Bitácora Persistente v4.0',
+  icon: '🗂️', title: 'Auditorías — Bitácora Persistente v5.0',
   html: `
     <div class="inst-section-title">¿Qué es la Bitácora Persistente?</div>
     <p>La <b>Bitácora Persistente</b> acumula el historial de cambios en el propio JSON exportado. Cada vez que exporta, el sistema detecta qué cambió factura por factura y lo registra como novedad. El JSON va creciendo con el histórico completo.</p>
