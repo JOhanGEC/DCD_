@@ -329,6 +329,52 @@
   .login-box {
     width: 100%; text-align: left;
   }
+
+  /* ── MOBILE RESPONSIVE LOGIN ─────────────── */
+  @media (max-width: 700px) {
+    .login-overlay {
+      align-items: flex-start;
+      overflow-y: auto;
+    }
+    .login-inner {
+      flex-direction: column;
+      margin: 0;
+      border-radius: 0;
+      min-height: 100vh;
+      box-shadow: none;
+    }
+    .login-left {
+      padding: 36px 28px 28px;
+      order: 2;
+    }
+    .login-left > div:first-child { margin-bottom: 20px; }
+    /* Hide feature list on mobile — keep it clean */
+    .login-left > div:nth-child(3) { display: none; }
+    /* Shrink headline on mobile */
+    .login-left span[style*="font-size:56px"] { font-size: 38px !important; }
+    .login-right {
+      width: 100%;
+      padding: 40px 24px 24px;
+      order: 1;
+      background: rgba(0,0,0,0.3);
+    }
+    .login-box {
+      max-width: 100%;
+    }
+    .login-field input {
+      font-size: 16px; /* prevent iOS zoom on focus */
+    }
+    .login-btn {
+      font-size: 15px;
+      padding: 14px;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .login-right { padding: 32px 18px 20px; }
+    .login-left  { padding: 24px 18px 28px; }
+  }
+
   /* ── LOGIN ANIMATED LOGO ─────────────────── */
   @keyframes cashCallSlideIn {
     0%   { opacity: 0; transform: translateY(-28px) scale(0.85); }
