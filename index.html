@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⛏ Cash Call v5.4 — Control Financiero Minero · ARIS MINING</title>
+<title>⛏ Cash Call v5.5 — Control Financiero Minero · ARIS MINING</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -702,7 +702,58 @@
   }
   .chart-card:hover .chart-zoom-hint { opacity: 1; }
 
-  /* ── EMPTY STATE ─────────────────────────── */
+  /* ── FULLSCREEN TABLE OVERLAY v5.5 ─────────────── */
+  #dzp-fullscreen-overlay {
+    position: fixed; inset: 0; z-index: 9200;
+    background: var(--col-bg);
+    display: none; flex-direction: column;
+  }
+  #dzp-fullscreen-overlay.open { display: flex; }
+  #dzp-fs-header {
+    background: linear-gradient(135deg,#0f2544,#1a4a8a);
+    color: white; padding: 10px 18px;
+    display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+  }
+  #dzp-fs-title { font-size: 14px; font-weight: 700; flex: 1; }
+  #dzp-fs-count { font-size: 11px; background: rgba(255,255,255,0.15); border-radius: 20px; padding: 3px 10px; font-family: 'IBM Plex Mono',monospace; font-weight: 700; }
+  #dzp-fs-close {
+    background: rgba(255,255,255,0.15); border: none; color: white;
+    border-radius: 8px; padding: 6px 14px; cursor: pointer; font-size: 12px; font-weight: 700;
+    transition: background 0.15s; font-family: 'IBM Plex Sans',sans-serif;
+  }
+  #dzp-fs-close:hover { background: rgba(220,38,38,0.7); }
+  #dzp-fs-filters {
+    background: var(--col-surface); border-bottom: 1px solid var(--col-border);
+    padding: 8px 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  #dzp-fs-body { flex: 1; overflow: auto; padding: 14px; min-height: 0; }
+
+  /* ── CONTEXT MENU v5.5 ──────────────────────── */
+  #dzp-context-menu {
+    position: fixed; z-index: 99999; display: none;
+    background: white; border: 1px solid var(--col-border);
+    border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    min-width: 200px; overflow: hidden;
+    animation: ctxFadeIn 0.12s ease;
+  }
+  @keyframes ctxFadeIn { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }
+  .ctx-menu-header {
+    background: linear-gradient(135deg,#0f2544,#1a4a8a);
+    color: white; padding: 8px 14px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+  }
+  .ctx-menu-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px; font-size: 13px; color: var(--col-text);
+    cursor: pointer; transition: background 0.12s; font-family: 'IBM Plex Sans',sans-serif;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .ctx-menu-item:last-child { border-bottom: none; }
+  .ctx-menu-item:hover { background: #f0f7ff; color: var(--col-secondary); }
+  .ctx-menu-item .ctx-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+  .ctx-menu-item .ctx-sub { font-size: 10px; color: var(--col-muted); display: block; margin-top: 1px; }
+
+
   .empty-state { text-align: center; padding: 50px 20px; color: var(--col-muted); }
   .empty-state .empty-icon { font-size: 44px; margin-bottom: 10px; }
 
@@ -1040,33 +1091,34 @@
   /* Filtro row */
   .dzp-filter-row {
     background: var(--col-surface); border-radius: 10px; border: 1px solid var(--col-border);
-    padding: 8px 14px; display: flex; align-items: center; gap: 0; flex-wrap: nowrap; margin-bottom: 14px;
-    overflow-x: auto;
+    padding: 7px 10px; display: flex; align-items: center; gap: 0; flex-wrap: nowrap; margin-bottom: 14px;
+    overflow-x: hidden;
   }
   .dzp-filter-row .flt-group {
-    display: flex; align-items: center; gap: 5px;
-    padding: 0 10px; border-right: 1px solid var(--col-border); flex-shrink: 0;
+    display: flex; align-items: center; gap: 4px;
+    padding: 0 7px; border-right: 1px solid var(--col-border); flex-shrink: 1; min-width: 0;
   }
   .dzp-filter-row .flt-group:first-child { padding-left: 0; }
-  .dzp-filter-row .flt-group.flt-search { flex: 0 0 auto; }
-  .dzp-filter-row .flt-actions { display: flex; align-items: center; gap: 5px; margin-left: auto; padding-left: 10px; flex-shrink: 0; border-left: 1px solid var(--col-border); }
-  .flt-icon-btn { width: 32px !important; height: 32px !important; padding: 0 !important; font-size: 15px !important; display: flex !important; align-items: center; justify-content: center; border-radius: 8px !important; }
+  .dzp-filter-row .flt-group.flt-search { flex: 0 1 auto; min-width: 0; }
+  .dzp-filter-row .flt-actions { display: flex; align-items: center; gap: 4px; margin-left: auto; padding-left: 7px; flex-shrink: 0; border-left: 1px solid var(--col-border); }
+  .flt-icon-btn { width: 28px !important; height: 28px !important; padding: 0 !important; font-size: 13px !important; display: flex !important; align-items: center; justify-content: center; border-radius: 7px !important; }
   .dzp-filter-row input, .dzp-filter-row select {
-    border: 1px solid var(--col-border); border-radius: 7px;
-    padding: 5px 8px; font-size: 12px; color: var(--col-text); background: var(--col-bg);
+    border: 1px solid var(--col-border); border-radius: 6px;
+    padding: 4px 5px; font-size: 11px; color: var(--col-text); background: var(--col-bg);
     outline: none; transition: border 0.15s; font-family: 'IBM Plex Sans', sans-serif;
-    flex-shrink: 0;
+    flex-shrink: 1; min-width: 0;
   }
   .dzp-filter-row input:focus, .dzp-filter-row select:focus { border-color: #7c3aed; }
-  .dzp-filter-row input#dzp-search { width: 160px; }
-  .dzp-filter-row select#dzp-year   { width: 72px; }
-  .dzp-filter-row select#dzp-month  { width: 100px; }
-  .dzp-filter-row select#dzp-month-rec { width: 100px; }
-  .dzp-filter-row select#dzp-estado { width: 118px; }
-  .dzp-filter-row select#dzp-rec-filter { width: 130px; }
+  .dzp-filter-row input#dzp-search { width: 130px; }
+  .dzp-filter-row select#dzp-year   { width: 60px; }
+  .dzp-filter-row select#dzp-month  { width: 82px; }
+  .dzp-filter-row select#dzp-month-rec { width: 82px; }
+  .dzp-filter-row select#dzp-estado { width: 94px; }
+  .dzp-filter-row select#dzp-rec-filter { width: 100px; }
+  .dzp-filter-row select#dzp-check-filter { width: 76px; }
   .dzp-filter-row .filter-label {
     white-space: nowrap; flex-shrink: 0;
-    font-size: 10px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
     color: var(--col-muted);
   }
   .dzp-filter-row .btn { flex-shrink: 0; white-space: nowrap; }
@@ -1103,7 +1155,7 @@
     transform: none;
     white-space: nowrap;
   }
-  /* Column widths for Análisis Actas y Facturas v5.4 */
+  /* Column widths for Análisis Actas y Facturas v5.5 */
   .dzp-table th:nth-child(1)  { width: 28px; }   /* # */
   .dzp-table th:nth-child(2)  { width: 110px; }  /* Orden de Compra */
   .dzp-table th:nth-child(3)  { width: 22%; }    /* Proveedor / Factura */
@@ -1297,7 +1349,7 @@
       <div style="margin-bottom:12px">
         <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px">
           <span style="font-size:56px;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1;animation:cashCallGlow 3s ease-in-out 0.8s infinite">Cash<span style="color:var(--col-accent);animation:accentPulse 2.5s ease-in-out 1s infinite">Call</span></span>
-          <span style="font-size:13px;font-weight:700;color:var(--col-accent);border:1.5px solid rgba(0,180,200,.45);padding:3px 9px;border-radius:6px;letter-spacing:1px;font-family:'IBM Plex Mono',monospace;background:rgba(0,180,200,.08)">v5.4</span>
+          <span style="font-size:13px;font-weight:700;color:var(--col-accent);border:1.5px solid rgba(0,180,200,.45);padding:3px 9px;border-radius:6px;letter-spacing:1px;font-family:'IBM Plex Mono',monospace;background:rgba(0,180,200,.08)">v5.5</span>
         </div>
         <div style="font-size:12px;color:rgba(255,255,255,.45);letter-spacing:2px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace">Control Financiero</div>
       </div>
@@ -1386,7 +1438,7 @@
               font-family:'IBM Plex Mono',monospace;
               background:rgba(0,180,200,.08);
               animation:versionFadeIn 1s ease 0.6s both;
-            ">v5.4</span>
+            ">v5.5</span>
           </div>
 
           <!-- Subtítulo -->
@@ -1433,7 +1485,7 @@
   <div class="subwin" style="max-width:600px">
     <div class="subwin-header">
       <span style="font-size:16px">⌨️</span>
-      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v5.4</span>
+      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v5.5</span>
       <button class="subwin-close" onclick="closeSubwin('sw-ctrlm')">✕</button>
     </div>
     <div class="subwin-body" id="sw-ctrlm-body" style="padding:24px">
@@ -1592,7 +1644,84 @@
   </div>
 </div>
 
-<!-- ══ INSTRUCTIVE MODAL ════════════════════════════════════ -->
+<!-- ══ FULLSCREEN TABLE OVERLAY v5.5 ════════════════════════ -->
+<div id="dzp-fullscreen-overlay">
+  <div id="dzp-fs-header">
+    <span style="font-size:18px">🏗️</span>
+    <span id="dzp-fs-title">Análisis Actas y Facturas — C-DZP-21-000-A</span>
+    <span id="dzp-fs-count"></span>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+      <button onclick="exportDZPxls()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:700;font-family:'IBM Plex Sans',sans-serif" title="Exportar Excel">📥 Excel</button>
+      <button onclick="exportDZPSP3pdf()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:700;font-family:'IBM Plex Sans',sans-serif" title="Exportar PDF">📄 PDF</button>
+      <button id="dzp-fs-close" onclick="closeDZPFullscreen()">✕ Salir pantalla completa</button>
+    </div>
+  </div>
+  <!-- Filtros espejados -->
+  <div id="dzp-fs-filters">
+    <span style="font-size:11px;font-weight:700;color:var(--col-muted);white-space:nowrap">🔍</span>
+    <input type="text" id="dzp-fs-search" placeholder="OC, factura, proveedor, REC…" oninput="syncFsFilters()" autocomplete="off" style="border:1px solid var(--col-border);border-radius:7px;padding:5px 8px;font-size:12px;color:var(--col-text);background:var(--col-bg);outline:none;width:160px">
+    <span style="font-size:11px;font-weight:700;color:var(--col-muted);white-space:nowrap">AÑO</span>
+    <select id="dzp-fs-year" onchange="syncFsFilters()" style="border:1px solid var(--col-border);border-radius:7px;padding:5px 8px;font-size:12px;background:var(--col-bg);outline:none;width:72px"><option value="">Todos</option></select>
+    <span style="font-size:11px;font-weight:700;color:var(--col-muted);white-space:nowrap">MES FAC.</span>
+    <select id="dzp-fs-month" onchange="syncFsFilters()" style="border:1px solid var(--col-border);border-radius:7px;padding:5px 8px;font-size:12px;background:var(--col-bg);outline:none;width:100px">
+      <option value="">Todos</option>
+      <option>Enero</option><option>Febrero</option><option>Marzo</option><option>Abril</option><option>Mayo</option><option>Junio</option>
+      <option>Julio</option><option>Agosto</option><option>Septiembre</option><option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
+    </select>
+    <span style="font-size:11px;font-weight:700;color:var(--col-muted);white-space:nowrap">MES REC.</span>
+    <select id="dzp-fs-month-rec" onchange="syncFsFilters()" style="border:1px solid var(--col-border);border-radius:7px;padding:5px 8px;font-size:12px;background:var(--col-bg);outline:none;width:100px">
+      <option value="">Todos</option>
+      <option>Enero</option><option>Febrero</option><option>Marzo</option><option>Abril</option><option>Mayo</option><option>Junio</option>
+      <option>Julio</option><option>Agosto</option><option>Septiembre</option><option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
+    </select>
+    <span style="font-size:11px;font-weight:700;color:var(--col-muted);white-space:nowrap">ESTADO</span>
+    <select id="dzp-fs-estado" onchange="syncFsFilters()" style="border:1px solid var(--col-border);border-radius:7px;padding:5px 8px;font-size:12px;background:var(--col-bg);outline:none;width:118px">
+      <option value="">Todos</option>
+      <option value="pagado">✅ Pagado</option><option value="aprobado">⏳ Aprobado</option>
+      <option value="revisar">⚠️ Revisar</option><option value="sin_rec">❌ Sin Recepción</option>
+    </select>
+    <span style="font-size:11px;font-weight:700;color:var(--col-muted);white-space:nowrap">REC</span>
+    <select id="dzp-fs-rec-filter" onchange="syncFsFilters()" style="border:1px solid var(--col-border);border-radius:7px;padding:5px 8px;font-size:12px;background:var(--col-bg);outline:none;width:130px">
+      <option value="">Todos</option>
+      <option value="con_rec">🟢 REC válida</option><option value="sin_rec">🔴 Sin REC</option>
+      <option value="revisar">🟠 A revisar</option><option value="con_num">🔵 Con número</option><option value="ant">📋 ANT</option>
+    </select>
+    <span style="font-size:11px;font-weight:700;color:var(--col-muted);white-space:nowrap">✓/✗</span>
+    <select id="dzp-fs-check-filter" onchange="syncFsFilters()" style="border:1px solid var(--col-border);border-radius:7px;padding:5px 8px;font-size:12px;background:var(--col-bg);outline:none;width:90px">
+      <option value="">Todos</option><option value="check">✔ Chulos</option><option value="cross">✘ Con X</option>
+    </select>
+    <button onclick="clearFsFilters()" title="Limpiar filtros" style="border:1px solid var(--col-border);border-radius:7px;padding:5px 10px;font-size:12px;background:white;cursor:pointer">↺</button>
+  </div>
+  <div id="dzp-fs-body"></div>
+</div>
+
+<!-- ══ CONTEXT MENU TABLA v5.5 ══════════════════════════════ -->
+<div id="dzp-context-menu">
+  <div class="ctx-menu-header">⚙️ EXPORTAR TABLA — C-DZP-21-000-A</div>
+  <div class="ctx-menu-item" onclick="exportDZPxls(); hideCtxMenu()">
+    <span class="ctx-icon">📥</span>
+    <span>
+      Exportar Excel
+      <span class="ctx-sub">Tabla actual con filtros aplicados</span>
+    </span>
+  </div>
+  <div class="ctx-menu-item" onclick="exportDZPSP3pdf(); hideCtxMenu()">
+    <span class="ctx-icon">📄</span>
+    <span>
+      Exportar PDF
+      <span class="ctx-sub">Reporte PDF con filtros aplicados</span>
+    </span>
+  </div>
+  <div class="ctx-menu-item" onclick="openDZPFullscreen(); hideCtxMenu()">
+    <span class="ctx-icon">⛶</span>
+    <span>
+      Pantalla completa
+      <span class="ctx-sub">Ver tabla en modo pantalla completa</span>
+    </span>
+  </div>
+</div>
+
+
 <div id="instructive-backdrop">
   <div id="instructive-modal">
     <div id="instructive-header">
@@ -1631,7 +1760,7 @@
         </span>
         <span style="font-size:10px;opacity:0.6">✕</span>
       </span>
-      <div class="header-badge" id="headerBadge">v5.4</div>
+      <div class="header-badge" id="headerBadge">v5.5</div>
       <button onclick="openExpXL()" title="Exportar columnas seleccionadas de los 3 archivos en una sola hoja Excel"
         style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:9px;border:none;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.2px;background:linear-gradient(135deg,#0891b2,#0e7490);color:white;box-shadow:0 2px 10px rgba(8,145,178,0.45);transition:opacity 0.18s;white-space:nowrap"
         onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
@@ -1826,7 +1955,7 @@
           <div class="dzp-banner-icon">🏗️</div>
           <div>
             <div class="dzp-banner-title">C-DZP-21-000-A</div>
-            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v5.4</span></div>
+            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v5.5</span></div>
           </div>
         </div>
         <div class="dzp-banner-badges" style="display:none">
@@ -2021,10 +2150,19 @@
               <option value="ant">📋 ANT</option>
             </select>
           </div>
+          <div class="flt-group">
+            <span class="filter-label">✓ / ✗</span>
+            <select id="dzp-check-filter" onchange="renderDZP()" style="width:76px">
+              <option value="">Todos</option>
+              <option value="check">✔ Chulos</option>
+              <option value="cross">✘ Con X</option>
+            </select>
+          </div>
           <div class="flt-actions">
             <button class="btn btn-sm btn-outline flt-icon-btn" onclick="dzpClearSP3Filters()" title="Limpiar filtros">↺</button>
             <button class="btn btn-sm btn-outline flt-icon-btn" onclick="exportDZPxls()" title="Exportar Excel">📥</button>
             <button class="btn btn-sm flt-icon-btn" onclick="exportDZPSP3pdf()" title="Exportar PDF" style="background:linear-gradient(135deg,#0f2544,#1a4a8a);color:white">📄</button>
+            <button class="btn btn-sm btn-outline flt-icon-btn" onclick="openDZPFullscreen()" title="Pantalla completa" id="dzp-fullscreen-btn" style="font-size:13px">⛶</button>
           </div>
         </div>
         <!-- Result area -->
@@ -2552,7 +2690,7 @@
       </div>
     </div>
 
-<!-- ═══ PANEL: AUDITORÍAS (v5.4 — Bitácora Persistente) ══════ -->
+<!-- ═══ PANEL: AUDITORÍAS (v5.5 — Bitácora Persistente) ══════ -->
     <div class="panel" id="panel-auditorias">
       <div class="section-title" style="justify-content:space-between"><span>🗂️ Auditorías — Bitácora Persistente de Novedades</span><button class="info-btn" onclick="showInstructive('auditorias')" title="Ver instructivo">i</button></div>
       <div class="alert alert-info">
@@ -6067,7 +6205,7 @@ function renderM0RecTable() {
 
 // ── MODULE 1 ──────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════
-// CHART FILTROS — renderM1ChartFiltered v5.4
+// CHART FILTROS — renderM1ChartFiltered v5.5
 // Renderiza la gráfica de Facturas por Mes/Año/Responsable
 // respetando filtros independientes: año, mes, estado, recepcionado por
 // ═══════════════════════════════════════════════════════════════
@@ -6190,7 +6328,7 @@ function renderM1ChartFiltered() {
 }
 
 function renderM1() {
-  // Búsqueda unificada v5.4: un solo campo busca en OC, Factura, Recepción y Proveedor
+  // Búsqueda unificada v5.5: un solo campo busca en OC, Factura, Recepción y Proveedor
   const searchAll    = normalStr((document.getElementById('f1oc')?.value || document.getElementById('f1search')?.value || ''));
   const filterProyM1 = (document.getElementById('f1proyecto')?.value || '');
   const estado = document.getElementById('f1estado').value;
@@ -8542,7 +8680,7 @@ function exportCashCallJSON() {
   const filename = `CashCall_${fecha}.json`;
   const payload = {
     meta: {
-      app: 'Cash Call v5.4',
+      app: 'Cash Call v5.5',
       exportedBy: currentUser || '—',
       exportedAt: new Date().toISOString(),
       filename,
@@ -8854,7 +8992,7 @@ document.addEventListener('keydown', e => {
 });
 
 /* ═══════════════════════════════════════════════════════════
-   C-DZP-21-000-A — Tablero de Control v5.4
+   C-DZP-21-000-A — Tablero de Control v5.5
    ═══════════════════════════════════════════════════════════ */
 
 const DZP_PROJECT_ID = 'C-DZP-21-000-A';
@@ -8916,7 +9054,7 @@ function dzpSwitchSub(n) {
 }
 
 function dzpClearSP3Filters() {
-  const ids = ['dzp-search','dzp-year','dzp-month','dzp-month-rec','dzp-estado','dzp-rec-filter'];
+  const ids = ['dzp-search','dzp-year','dzp-month','dzp-month-rec','dzp-estado','dzp-rec-filter','dzp-check-filter'];
   ids.forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
   _dzpActiveOC = null;
   _dzpActiveProv = null;
@@ -9358,10 +9496,23 @@ function renderDZP() {
   });
   if (estadoF) {
     data = data.filter(r => {
-      if (estadoF==='pagado')   return r.m3Status==='pagado';
-      if (estadoF==='aprobado') return r.m3Status==='aprobado';
-      if (estadoF==='revisar')  return r.m3Status !== 'pagado' && (r.validREC === false || r.recStatus==='revisar' || r.m3Status==='no_encontrado' || r.m3Status==='revisar');
-      if (estadoF==='sin_rec')  return r.recStatus==='sin_recepcion';
+      // Replicar exactamente la misma lógica que estadoBadge()
+      const invVal = String(r.inv || '').trim();
+      const raw    = String(r.m3EstadoRaw || '').trim();
+      const lo     = raw.toLowerCase();
+      // ¿Qué muestra el badge?
+      const badgeEsRevisar =
+        !invVal || invVal === '—' ||
+        !raw || r.m3Status === 'no_encontrado' ||
+        r.m3Status === 'revisar' || lo.includes('revisar');
+      const badgeEsPagado   = !badgeEsRevisar && lo.includes('pagado');
+      const badgeEsAprobado = !badgeEsRevisar && lo.includes('aprobado');
+      const badgeEsSinRec   = r.recStatus === 'sin_recepcion';
+
+      if (estadoF==='pagado')   return badgeEsPagado;
+      if (estadoF==='aprobado') return badgeEsAprobado;
+      if (estadoF==='revisar')  return badgeEsRevisar;
+      if (estadoF==='sin_rec')  return badgeEsSinRec;
       return true;
     });
   }
@@ -9372,6 +9523,16 @@ function renderDZP() {
       if (recFilt==='revisar')  return r.recStatus==='revisar' || (r.validREC===false && (r.rec||r.recNums));
       if (recFilt==='con_num')  return !!(r.rec||r.recNums);
       if (recFilt==='ant')      return String(r.rec||'').toUpperCase().includes('ANT') || String(r.recNums||'').toUpperCase().includes('ANT');
+      return true;
+    });
+  }
+  // Filtro ✓/✗ — columna Validación (val2Badge: validCxP)
+  const checkFilt = (document.getElementById('dzp-check-filter')||{value:''}).value;
+  if (checkFilt) {
+    data = data.filter(r => {
+      const isCheck = r.validCxP === true;
+      if (checkFilt==='check') return isCheck;
+      if (checkFilt==='cross') return !isCheck;
       return true;
     });
   }
@@ -9619,9 +9780,13 @@ function exportDZPxls() {
   if (yearF)   data = data.filter(r => String(r.year) === String(yearF));
   if (monthF)  data = data.filter(r => normalStr(r.month) === monthF);
   if (estadoF) data = data.filter(r => {
-    if (estadoF==='pagado')   return r.m3Status==='pagado';
-    if (estadoF==='aprobado') return r.m3Status==='aprobado';
-    if (estadoF==='revisar')  return r.m3Status !== 'pagado' && (r.validREC===false || r.recStatus==='revisar' || r.m3Status==='no_encontrado' || r.m3Status==='revisar');
+    const _inv = String(r.inv || '').trim();
+    const _raw = String(r.m3EstadoRaw || '').trim();
+    const _lo  = _raw.toLowerCase();
+    const _esRevisar = !_inv || _inv==='—' || !_raw || r.m3Status==='no_encontrado' || r.m3Status==='revisar' || _lo.includes('revisar');
+    if (estadoF==='pagado')   return !_esRevisar && _lo.includes('pagado');
+    if (estadoF==='aprobado') return !_esRevisar && _lo.includes('aprobado');
+    if (estadoF==='revisar')  return _esRevisar;
     if (estadoF==='sin_rec')  return r.recStatus==='sin_recepcion';
     return true;
   });
@@ -9633,6 +9798,7 @@ function exportDZPxls() {
     if (recFilt==='ant')      return String(r.rec||'').toUpperCase().includes('ANT') || String(r.recNums||'').toUpperCase().includes('ANT');
     return true;
   });
+  { const cF = (document.getElementById('dzp-check-filter')||{value:''}).value; if (cF) data = data.filter(r => cF==='check' ? r.validCxP===true : r.validCxP!==true); }
   if (valFacF) data = data.filter(r => {
     const isAlerta = r.m3Status !== 'pagado' && (r.validREC===false || r.recStatus==='sin_recepcion' || r.recStatus==='revisar' || r.m3Status==='no_encontrado' || r.m3Status==='revisar' || !r.cxpBruto);
     if (valFacF==='con_valor') return r.cxpBruto && r.cxpBruto > 0;
@@ -9759,7 +9925,7 @@ function exportDZPpdf() {
   </style></head><body>
   <div class="hdr">
     <div><div class="hdr-title">⛏ C-DZP-21-000-A — Reporte por Proveedor</div>
-    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v5.4</div></div>
+    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v5.5</div></div>
     <div class="hdr-meta">Generado: ${now}<br>Filtro: ${filterDesc}</div>
   </div>
   <div class="kpi-row">
@@ -9783,7 +9949,7 @@ function exportDZPpdf() {
       <tbody>${tableRows||'<tr><td colspan="9" style="text-align:center;padding:20px;color:#94a3b8">Sin datos</td></tr>'}</tbody>
     </table>
   </div>
-  <div class="footer"><span>Cash Call v5.4 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
+  <div class="footer"><span>Cash Call v5.5 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
   <div class="no-print" style="text-align:center;padding:16px">
     <button onclick="window.print()" style="padding:10px 28px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
     <button onclick="window.close()" style="margin-left:10px;padding:10px 20px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
@@ -9868,7 +10034,7 @@ function exportDZPSP2pdf() {
   </style></head><body>
   <div class="hdr">
     <div><div class="hdr-title">⛏ C-DZP-21-000-A — Órdenes de Compra por Proveedor</div>
-    <div class="hdr-sub">Tablero de Control · Cash Call v5.4</div></div>
+    <div class="hdr-sub">Tablero de Control · Cash Call v5.5</div></div>
     <div class="hdr-meta">Generado: ${now}</div>
   </div>
   <div class="kpi-row">
@@ -9888,7 +10054,7 @@ function exportDZPSP2pdf() {
       <tbody>${tableRows}</tbody>
     </table>
   </div>
-  <div class="footer"><span>Cash Call v5.4 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
+  <div class="footer"><span>Cash Call v5.5 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
   <div class="no-print" style="text-align:center;padding:14px">
     <button onclick="window.print()" style="padding:9px 26px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
     <button onclick="window.close()" style="margin-left:8px;padding:9px 18px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
@@ -9915,9 +10081,13 @@ function exportDZPSP3pdf() {
   if (yearF)   data = data.filter(r => String(r.year) === String(yearF));
   if (monthF)  data = data.filter(r => normalStr(r.month) === monthF);
   if (estadoF) data = data.filter(r => {
-    if (estadoF==='pagado')   return r.m3Status==='pagado';
-    if (estadoF==='aprobado') return r.m3Status==='aprobado';
-    if (estadoF==='revisar')  return r.m3Status !== 'pagado' && (r.validREC===false || r.recStatus==='revisar' || r.m3Status==='no_encontrado' || r.m3Status==='revisar');
+    const _inv = String(r.inv || '').trim();
+    const _raw = String(r.m3EstadoRaw || '').trim();
+    const _lo  = _raw.toLowerCase();
+    const _esRevisar = !_inv || _inv==='—' || !_raw || r.m3Status==='no_encontrado' || r.m3Status==='revisar' || _lo.includes('revisar');
+    if (estadoF==='pagado')   return !_esRevisar && _lo.includes('pagado');
+    if (estadoF==='aprobado') return !_esRevisar && _lo.includes('aprobado');
+    if (estadoF==='revisar')  return _esRevisar;
     if (estadoF==='sin_rec')  return r.recStatus==='sin_recepcion';
     return true;
   });
@@ -10064,7 +10234,7 @@ function exportDZPSP3pdf() {
   <div class="hdr">
     <div class="hdr-left">
       <div class="hdr-title">⛏ C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</div>
-      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v5.4</div>
+      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v5.5</div>
     </div>
     <div class="hdr-right">Generado: ${now}<br>${data.length} registros exportados</div>
   </div>
@@ -10112,7 +10282,7 @@ function exportDZPSP3pdf() {
   </div>
 
   <div class="footer">
-    <span>Cash Call v5.4 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
+    <span>Cash Call v5.5 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
     <span>${data.length} registros &nbsp;·&nbsp; Filtro: ${filterDesc}</span>
   </div>
 
@@ -10127,7 +10297,7 @@ function exportDZPSP3pdf() {
 
 </script>
 
-<!-- ══ MODAL: INFORME GERENCIAL v5.4 ═════════════════════════ -->
+<!-- ══ MODAL: INFORME GERENCIAL v5.5 ═════════════════════════ -->
 <div id="modal-informe-gerencial" style="display:none;position:fixed;inset:0;z-index:8000;background:rgba(10,22,40,0.88);backdrop-filter:blur(6px);align-items:center;justify-content:center;overflow-y:auto">
   <canvas id="ig-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.3"></canvas>
   <div style="background:#fff;border-radius:18px;padding:0;max-width:600px;width:96%;box-shadow:0 28px 80px rgba(0,0,0,0.55);position:relative;z-index:1;animation:cashCallSlideIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;overflow:hidden;margin:24px auto">
@@ -10146,7 +10316,7 @@ function exportDZPSP3pdf() {
           <path d="M30 24 L24 19 L32 22 Z" fill="white"/>
         </svg>
         <div>
-          <div style="font-size:9.5px;font-weight:700;color:rgba(0,180,200,0.85);letter-spacing:2.2px;text-transform:uppercase;margin-bottom:3px">ARIS MINING · CASH CALL v5.4</div>
+          <div style="font-size:9.5px;font-weight:700;color:rgba(0,180,200,0.85);letter-spacing:2.2px;text-transform:uppercase;margin-bottom:3px">ARIS MINING · CASH CALL v5.5</div>
           <div style="font-size:17px;font-weight:800;color:white">Informe Gerencial Ejecutivo</div>
           <div style="font-size:10px;color:rgba(255,255,255,0.45);margin-top:3px">C-DZP-21-000-A &nbsp;·&nbsp; <kbd style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:4px;padding:1px 6px;font-size:9px;font-family:monospace;color:rgba(255,255,255,0.7)">Ctrl+G</kbd> para abrir</div>
         </div>
@@ -10724,7 +10894,7 @@ function exportInformeGerencialPDF() {
   // ══ HTML DEL INFORME ══════════════════════════════════════
   const pw=window.open('','_blank','width=1100,height=860');
   pw.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
-  <title>Informe Gerencial v5.4 — ARIS MINING · C-DZP-21-000-A</title>
+  <title>Informe Gerencial v5.5 — ARIS MINING · C-DZP-21-000-A</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
     @page { size:A4 portrait; margin:0; @bottom-right { content:"Pág. " counter(page) " de " counter(pages); font-size:8px; font-family:"IBM Plex Mono",monospace; color:#94a3b8; margin-right:16mm; margin-bottom:8mm; } }
@@ -10893,7 +11063,7 @@ function exportInformeGerencialPDF() {
         </svg>
         <div class="cover-brand-txt">
           <div class="cover-brand-name">ARIS MINING</div>
-          <div class="cover-brand-sub">Cash Call v5.4 · Control Financiero</div>
+          <div class="cover-brand-sub">Cash Call v5.5 · Control Financiero</div>
         </div>
       </div>
       <div class="cover-div"></div>
@@ -10957,7 +11127,7 @@ function exportInformeGerencialPDF() {
 
   <!-- ░░ TABLA DE CONTENIDO ░░ -->
   <div class="toc-page">
-    <div class="co-row"><div class="co-badge">ARIS MINING</div><span style="font-size:10.5px;color:#64748b">C-DZP-21-000-A · Cash Call v5.4 · ${periodo}</span></div>
+    <div class="co-row"><div class="co-badge">ARIS MINING</div><span style="font-size:10.5px;color:#64748b">C-DZP-21-000-A · Cash Call v5.5 · ${periodo}</span></div>
     <div class="toc-hdr"><div class="toc-ic">📑</div><div class="toc-ti">Tabla de Contenido</div></div>
     ${[
       ['1','Introducción','Contexto, alcance metodológico y definiciones del proyecto'],
@@ -10974,7 +11144,7 @@ function exportInformeGerencialPDF() {
   <!-- ░░ CAP 1: INTRODUCCIÓN ░░ -->
   <div class="chapter-break">
     <div class="phs"></div><h2 class="cht">1. Introducción</h2><div class="chr"></div>
-    <p class="it">Informe preparado para la Alta Dirección de <strong>ARIS MINING</strong> sobre el estado financiero y operativo del proyecto <strong>C-DZP-21-000-A</strong> · período <strong>${periodo}</strong>. Desarrollado mediante el sistema <strong>Cash Call v5.4</strong>, plataforma de control que integra actas, recepciones Oracle y cuentas por pagar (CxP).</p>
+    <p class="it">Informe preparado para la Alta Dirección de <strong>ARIS MINING</strong> sobre el estado financiero y operativo del proyecto <strong>C-DZP-21-000-A</strong> · período <strong>${periodo}</strong>. Desarrollado mediante el sistema <strong>Cash Call v5.5</strong>, plataforma de control que integra actas, recepciones Oracle y cuentas por pagar (CxP).</p>
     <p class="it">Se analizan <strong>${total} actas/facturas</strong>, cruces con Oracle REC, validación CxP, flujo de caja, tendencias mensuales y análisis de Pareto de alertas. Se incluye comparativo vs <strong>${fechaPrev}</strong>.</p>
     <div class="hb ${cumpl>=80?'hb-g':cumpl>=60?'hb-a':'hb-r'}">
       <strong>📌 Hallazgo Principal — ${periodo}:</strong> Cumplimiento <strong>${cumpl}%</strong> (${conFac}/${total} actas con CxP). <strong>${alertas} alertas activas</strong> — ${sinRec} sin REC Oracle · ${recRevisar} con REC a revisar · ${sinFac} sin factura CxP.
@@ -10984,7 +11154,7 @@ function exportInformeGerencialPDF() {
       <div><p class="it"><strong>Definiciones:</strong> <strong>REC:</strong> Recepción Oracle ERP · <strong>CxP:</strong> Cuenta por Pagar registrada · <strong>Alerta:</strong> Acta sin pago con alguna brecha · <strong>Cumplimiento:</strong> Actas c/CxP / Total</p></div>
     </div>
     <p class="it" style="color:#64748b;font-size:8.5px"><strong>Desarrollado por:</strong> GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc &nbsp;·&nbsp; <strong>Elaborado:</strong> ${autor}${cargo?' — '+cargo:''} &nbsp;·&nbsp; <strong>Fecha:</strong> ${fechaFmt}</p>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v5.4 · C-DZP-21-000-A</span><span>${periodo} · ${fechaFmt}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v5.5 · C-DZP-21-000-A</span><span>${periodo} · ${fechaFmt}</span></div>
   </div>
 
   <!-- ░░ CAP 2: RESUMEN EJECUTIVO ░░ -->
@@ -11041,7 +11211,7 @@ function exportInformeGerencialPDF() {
         ? '⚠️ <strong>Cumplimiento en riesgo ('+cumpl+'%)</strong>: por debajo de la meta del 90%. Acelerar registro de facturas CxP.'
         : '❌ <strong>Cumplimiento crítico ('+cumpl+'%)</strong>: intervención gerencial urgente requerida. Meta: ≥90%.'}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v5.4 · C-DZP-21-000-A</span><span>Cap. 2 — Resumen Ejecutivo · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v5.5 · C-DZP-21-000-A</span><span>Cap. 2 — Resumen Ejecutivo · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 3: ANÁLISIS FINANCIERO ░░ -->
@@ -11104,7 +11274,7 @@ function exportInformeGerencialPDF() {
         : 'Las facturas CxP cubren la totalidad del valor de actas — sin brecha de registro.'}
       El proveedor con mayor participación es <strong>${topProvVal[0]?.[0]||'—'}</strong> con ${igFmtCOP(topProvVal[0]?.[1]||0)}.
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v5.4 · C-DZP-21-000-A</span><span>Cap. 3 — Análisis Financiero · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v5.5 · C-DZP-21-000-A</span><span>Cap. 3 — Análisis Financiero · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 4: GESTIÓN MENSUAL ░░ -->
@@ -11152,7 +11322,7 @@ function exportInformeGerencialPDF() {
             : '📉 La tendencia del valor facturado presenta <strong style="color:#d97706">variaciones descendentes</strong> que requieren seguimiento.')
         : ''}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v5.4 · C-DZP-21-000-A</span><span>Cap. 4 — Gestión Mensual · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v5.5 · C-DZP-21-000-A</span><span>Cap. 4 — Gestión Mensual · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 5: PARETO ░░ -->
@@ -11194,7 +11364,7 @@ function exportInformeGerencialPDF() {
       liberaría el 80% de las alertas bloqueadas.
     </div>
     <div class="hb hb-r" style="font-size:9px"><strong>📌 Regla de Pareto:</strong> ${paretoRows.filter(d=>d.acum<=80).length} proveedores concentran el 80% de las ${alertas} alertas. Priorizar gestión con: <strong>${paretoRows.filter(d=>d.acum<=80).map(d=>d.p.slice(0,20)).join(', ')}</strong>.</div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v5.4 · C-DZP-21-000-A</span><span>Cap. 5 — Diagrama de Pareto · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v5.5 · C-DZP-21-000-A</span><span>Cap. 5 — Diagrama de Pareto · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 6: DETALLE ALERTAS ░░ -->
@@ -11235,7 +11405,7 @@ function exportInformeGerencialPDF() {
       <thead><tr><th>#</th><th>OC</th><th>Proveedor</th><th>Factura</th><th class="tc">REC</th><th>Estado</th><th class="num">Val.Factura CxP</th><th>Mes</th></tr></thead>
       <tbody>${rowsDetAlertas}</tbody>
     </table>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v5.4 · C-DZP-21-000-A</span><span>Cap. 6 — Detalle Alertas · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v5.5 · C-DZP-21-000-A</span><span>Cap. 6 — Detalle Alertas · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 7: COMPARATIVO ░░ -->
@@ -11286,22 +11456,22 @@ function exportInformeGerencialPDF() {
         ? '💰 Valor pagado: <strong style="color:#059669">creció '+igFmtCOP(sumPagado-prevSumPag)+'</strong> vs período anterior.'
         : '💰 Valor pagado: <strong style="color:#dc2626">disminuyó '+igFmtCOP(prevSumPag-sumPagado)+'</strong> vs período anterior — revisar causas.'}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v5.4 · C-DZP-21-000-A</span><span>Cap. 7 — Comparativo de Períodos · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v5.5 · C-DZP-21-000-A</span><span>Cap. 7 — Comparativo de Períodos · ${periodo}</span></div>
   </div>
 
   <!-- ░░ FIRMAS ░░ -->
   <div class="chapter-break">
     <div class="phs"></div><h2 class="cht">Firmas y Cierre del Informe</h2><div class="chr"></div>
-    <p class="it">Informe generado por <strong>Cash Call v5.4 — ARIS MINING</strong> · período <strong>${periodo}</strong> · ${total} registros procesados · Cumplimiento: ${cumpl}%.</p>
-    <div class="hb hb-g">✅ Generado: ${now} &nbsp;·&nbsp; ARIS MINING / Cash Call v5.4 &nbsp;·&nbsp; Desarrollado por GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc</div>
+    <p class="it">Informe generado por <strong>Cash Call v5.5 — ARIS MINING</strong> · período <strong>${periodo}</strong> · ${total} registros procesados · Cumplimiento: ${cumpl}%.</p>
+    <div class="hb hb-g">✅ Generado: ${now} &nbsp;·&nbsp; ARIS MINING / Cash Call v5.5 &nbsp;·&nbsp; Desarrollado por GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc</div>
     <div class="fs">
       <div class="fb"><div style="height:38px"></div><div class="fl"></div><div class="fn">${autor}</div><div class="fr">${cargo||'Analista / Elaborado por'}</div></div>
       <div class="fb"><div style="height:38px"></div><div class="fl"></div><div class="fn">_________________________</div><div class="fr">Gerencia ARIS MINING / Aprobado por</div></div>
     </div>
     <div style="margin-top:26px;padding:12px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;font-size:8.5px;color:#94a3b8;text-align:center">
-      ARIS MINING &nbsp;·&nbsp; Cash Call v5.4 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; ${periodo} &nbsp;·&nbsp; Desarrollado: GREEN ENGINEERING CONSULTING &nbsp;·&nbsp; Confidencial
+      ARIS MINING &nbsp;·&nbsp; Cash Call v5.5 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; ${periodo} &nbsp;·&nbsp; Desarrollado: GREEN ENGINEERING CONSULTING &nbsp;·&nbsp; Confidencial
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v5.4 · GREEN ENGINEERING CONSULTING</span><span>Ing. Johan Manuel Cárdenas Leal, MSc · ${fechaFmt}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v5.5 · GREEN ENGINEERING CONSULTING</span><span>Ing. Johan Manuel Cárdenas Leal, MSc · ${fechaFmt}</span></div>
   </div>
 
   <div class="no-print" style="margin-top:24px;text-align:center;padding:16px;background:#f8fafc;border-top:1px solid #e2e8f0">
@@ -11399,7 +11569,7 @@ function showM5FacturasPopup(encodedKey) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// CLICK-FILTER HELPERS v5.4
+// CLICK-FILTER HELPERS v5.5
 // M1: click on OC → filter M1 by that OC
 // M2: click on OC → filter M2 by that OC
 // M4: click on prov or OC → filter M4
@@ -11602,7 +11772,7 @@ function exportPersonFacturasExcel() {
   const totalRec = facts.reduce((s,r) => s + (r.totalRec||0), 0);
 
   const aoa = [
-    [`CASH CALL v5.4 — ARIS MINING · C-DZP-21-000-A`],
+    [`CASH CALL v5.5 — ARIS MINING · C-DZP-21-000-A`],
     [`Responsable: ${person}`],
     [`Período: ${mNames[+mn]||mn} ${yr}  |  Facturas: ${facts.length}  |  Generado: ${new Date().toLocaleString('es-CO')}`],
     [],
@@ -11706,7 +11876,7 @@ function exportPersonFacturasPDF() {
 </head><body>
 <div class="cover-bar">
   <div>
-    <h1>⛏ CASH CALL v5.4 — ARIS MINING · C-DZP-21-000-A</h1>
+    <h1>⛏ CASH CALL v5.5 — ARIS MINING · C-DZP-21-000-A</h1>
     <div class="sub">Reporte de Facturas por Responsable · Exportado: ${new Date().toLocaleString('es-CO')}</div>
   </div>
   <div class="badge">PDF · ${facts.length} FACTURAS</div>
@@ -11752,7 +11922,7 @@ function exportPersonFacturasPDF() {
   </tr></tfoot>
 </table>
 <div class="footer-bar">
-  <span>Cash Call v5.4 · C-DZP-21-000-A · GREEN Engineering Consulting</span>
+  <span>Cash Call v5.5 · C-DZP-21-000-A · GREEN Engineering Consulting</span>
   <span>${person} · ${mesLabel} · ${facts.length} facturas</span>
 </div>
 </body></html>`;
@@ -12043,7 +12213,7 @@ function exportDiscrepancias() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// BITÁCORA PERSISTENTE v5.4
+// BITÁCORA PERSISTENTE v5.5
 // ═══════════════════════════════════════════════════════════════
 // La bitácora se carga de un JSON externo y se enriquece con cada sesión.
 // Estructura: { meta, bitacora: [ { id, ts, user, tipo, factura, prov, detalle, estadoAnterior, estadoNuevo } ] }
@@ -12304,7 +12474,7 @@ function exportCashCallJSONBitacora() {
 
   const payload = {
     meta: {
-      app: 'Cash Call v5.4',
+      app: 'Cash Call v5.5',
       exportedBy: currentUser || '—',
       exportedAt: new Date().toISOString(),
       filename,
@@ -12377,7 +12547,7 @@ function exportSoloNovedades() {
 
 
 // ═══════════════════════════════════════════════════════════════
-// EXPORTAR EXCEL GENERAL v5.4
+// EXPORTAR EXCEL GENERAL v5.5
 // Permite seleccionar columnas de cada archivo y exportarlas
 // todas en una sola hoja de un archivo Excel.
 // ═══════════════════════════════════════════════════════════════
@@ -12634,7 +12804,7 @@ function doExportExcelGeneral() {
 
 
 // ═══════════════════════════════════════════════════════════════
-// CHART ZOOM OVERLAY v5.4
+// CHART ZOOM OVERLAY v5.5
 // ═══════════════════════════════════════════════════════════════
 (function initChartZoom() {
   // Create overlay
@@ -12718,6 +12888,119 @@ function closeChartZoom() {
 }
 
 
+// ═══════════════════════════════════════════════════════════════
+// FULLSCREEN TABLE + CONTEXT MENU v5.5
+// ═══════════════════════════════════════════════════════════════
+
+function openDZPFullscreen() {
+  if (!state.processed) { showToast('Procese los archivos primero','warning'); return; }
+  const overlay = document.getElementById('dzp-fullscreen-overlay');
+  overlay.classList.add('open');
+  // Copy year options to fullscreen year select
+  const srcYear = document.getElementById('dzp-year');
+  const fsYear  = document.getElementById('dzp-fs-year');
+  if (srcYear && fsYear) {
+    while (fsYear.options.length > 1) fsYear.remove(1);
+    [...srcYear.options].slice(1).forEach(o => {
+      const opt = document.createElement('option'); opt.value=o.value; opt.textContent=o.textContent; fsYear.appendChild(opt);
+    });
+  }
+  // Mirror current filter values
+  ['search','year','month','month-rec','estado','rec-filter','check-filter'].forEach(k => {
+    const src = document.getElementById('dzp-'+k);
+    const dst = document.getElementById('dzp-fs-'+k);
+    if (src && dst) dst.value = src.value;
+  });
+  renderDZPFullscreen();
+  document.addEventListener('keydown', _fsEscHandler);
+}
+
+function _fsEscHandler(e) {
+  if (e.key === 'Escape') closeDZPFullscreen();
+}
+
+function closeDZPFullscreen() {
+  document.getElementById('dzp-fullscreen-overlay').classList.remove('open');
+  document.removeEventListener('keydown', _fsEscHandler);
+}
+
+function syncFsFilters() {
+  // Sync FS filters → main filters then re-render FS
+  ['search','year','month','month-rec','estado','rec-filter','check-filter'].forEach(k => {
+    const src = document.getElementById('dzp-fs-'+k);
+    const dst = document.getElementById('dzp-'+k);
+    if (src && dst) dst.value = src.value;
+  });
+  renderDZPFullscreen();
+  renderDZP();
+}
+
+function clearFsFilters() {
+  ['dzp-fs-search','dzp-fs-year','dzp-fs-month','dzp-fs-month-rec','dzp-fs-estado','dzp-fs-rec-filter','dzp-fs-check-filter'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value='';
+  });
+  syncFsFilters();
+}
+
+function renderDZPFullscreen() {
+  if (!state.processed) return;
+  // Re-use the same filtered data logic as renderDZP
+  // (filters are already synced to the main inputs)
+  const body = document.getElementById('dzp-fs-body');
+  if (!body) return;
+
+  // Temporarily render into dzp-content then clone
+  renderDZP();
+  const src = document.getElementById('dzp-content');
+  if (!src) return;
+  body.innerHTML = src.innerHTML;
+
+  // Update count badge
+  const countEl = body.querySelector('.dzp-table-count');
+  const fsCount = document.getElementById('dzp-fs-count');
+  if (countEl && fsCount) fsCount.textContent = countEl.textContent;
+
+  // Make the table scroll fill the full height of the fs-body
+  const scrollDiv = body.querySelector('.dzp-table-scroll');
+  if (scrollDiv) {
+    scrollDiv.style.maxHeight = 'calc(100vh - 200px)';
+  }
+}
+
+// ── Context Menu ─────────────────────────────────────────────
+function showCtxMenu(e) {
+  // Show on DZP Sub-panel 3 OR fullscreen overlay body
+  const sp3      = document.getElementById('dzp-sp3');
+  const fsOverlay= document.getElementById('dzp-fullscreen-overlay');
+  const inSP3    = sp3       && sp3.contains(e.target);
+  const inFS     = fsOverlay && fsOverlay.classList.contains('open') && fsOverlay.contains(e.target);
+  if (!inSP3 && !inFS) return;
+  if (!state.processed) return;
+  e.preventDefault();
+  const menu = document.getElementById('dzp-context-menu');
+  if (!menu) return;
+  menu.style.display = 'block';
+  menu.style.zIndex  = inFS ? '99999' : '9800';
+  // Position — clamp to viewport
+  const vw = window.innerWidth, vh = window.innerHeight;
+  let x = e.clientX, y = e.clientY;
+  const mw = 220, mh = 160;
+  if (x + mw > vw) x = vw - mw - 8;
+  if (y + mh > vh) y = vh - mh - 8;
+  menu.style.left = x + 'px';
+  menu.style.top  = y + 'px';
+}
+function hideCtxMenu() {
+  const menu = document.getElementById('dzp-context-menu');
+  if (menu) menu.style.display = 'none';
+}
+// Attach context menu listeners
+document.addEventListener('contextmenu', showCtxMenu);
+document.addEventListener('click', e => {
+  if (!document.getElementById('dzp-context-menu')?.contains(e.target)) hideCtxMenu();
+});
+document.addEventListener('keydown', e => { if (e.key==='Escape') hideCtxMenu(); });
+
 (function patchPostProcess() {
   const origCnt = document.getElementById('cnt0');
   if (origCnt) {
@@ -12747,7 +13030,7 @@ INSTRUCTIVOS.discrepancias = {
 };
 
 INSTRUCTIVOS.auditorias = {
-  icon: '🗂️', title: 'Auditorías — Bitácora Persistente v5.4',
+  icon: '🗂️', title: 'Auditorías — Bitácora Persistente v5.5',
   html: `
     <div class="inst-section-title">¿Qué es la Bitácora Persistente?</div>
     <p>La <b>Bitácora Persistente</b> acumula el historial de cambios en el propio JSON exportado. Cada vez que exporta, el sistema detecta qué cambió factura por factura y lo registra como novedad. El JSON va creciendo con el histórico completo.</p>
