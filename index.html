@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⛏ Cash Call v5.6 — Control Financiero Minero · ARIS MINING</title>
+<title>⛏ Cash Call v6.0 — Control Financiero Minero · ARIS MINING</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -93,6 +93,26 @@
 
   /* ── MAIN CONTENT ────────────────────────── */
   .main { flex: 1; padding: 24px; overflow-y: auto; min-width: 0; }
+
+  /* ── PREDICTIVA FIXED BAR ────────────────── */
+  #pred-sticky-bar {
+    position: fixed;
+    top: 52px;
+    left: var(--sidebar-w);
+    right: 0;
+    z-index: 150;
+    background: var(--col-bg);
+    padding: 10px 24px 8px;
+    border-bottom: 2px solid var(--col-border);
+    box-shadow: 0 3px 14px rgba(0,0,0,0.10);
+    display: none;
+  }
+  #pred-sticky-bar.visible { display: block; }
+  #pred-content-spacer { display: none; }
+  /* Sub-panels get scroll padding so anchors aren't hidden under fixed bar */
+  #pred-sp1, #pred-sp2, #pred-sp3, #pred-sp4, #pred-sp5 {
+    scroll-margin-top: 220px;
+  }
 
   /* ── PANELS ──────────────────────────────── */
   .panel { display: none; }
@@ -702,7 +722,7 @@
   }
   .chart-card:hover .chart-zoom-hint { opacity: 1; }
 
-  /* ── FULLSCREEN TABLE OVERLAY v5.6 ─────────────── */
+  /* ── FULLSCREEN TABLE OVERLAY v6.0 ─────────────── */
   #dzp-fullscreen-overlay {
     position: fixed; inset: 0; z-index: 9200;
     background: var(--col-bg);
@@ -729,7 +749,7 @@
   }
   #dzp-fs-body { flex: 1; overflow: auto; padding: 14px; min-height: 0; }
 
-  /* ── CONTEXT MENU v5.6 ──────────────────────── */
+  /* ── CONTEXT MENU v6.0 ──────────────────────── */
   #dzp-context-menu {
     position: fixed; z-index: 99999; display: none;
     background: white; border: 1px solid var(--col-border);
@@ -1155,7 +1175,7 @@
     transform: none;
     white-space: nowrap;
   }
-  /* Column widths for Análisis Actas y Facturas v5.6 */
+  /* Column widths for Análisis Actas y Facturas v6.0 */
   .dzp-table th:nth-child(1)  { width: 28px; }   /* # */
   .dzp-table th:nth-child(2)  { width: 110px; }  /* Orden de Compra */
   .dzp-table th:nth-child(3)  { width: 22%; }    /* Proveedor / Factura */
@@ -1310,8 +1330,63 @@
   }
   .dzp-sv1-filter select:focus, .dzp-sv1-filter input:focus { border-color: #7c3aed; }
 
+  /* ── ANALÍTICA PREDICTIVA v6.0 ─────────────────────────── */
+  .pred-prov-card {
+    background: var(--col-surface); border: 1px solid var(--col-border);
+    border-radius: 12px; padding: 16px 18px; margin-bottom: 14px;
+    border-left: 4px solid var(--col-muted); transition: box-shadow 0.15s;
+    position: relative;
+  }
+  .pred-prov-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.09); }
+  .pred-prov-card.t-green { border-left-color: #059669; }
+  .pred-prov-card.t-yellow { border-left-color: #d97706; }
+  .pred-prov-card.t-red { border-left-color: #dc2626; }
+  .pred-prov-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .pred-prov-name { font-size: 14px; font-weight: 700; color: var(--col-primary); flex: 1; }
+  .pred-prov-meta { font-size: 11px; color: var(--col-muted); margin-top: 2px; }
+  .pred-prov-kpis { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  .pred-kpi-mini { background: #f8fafc; border: 1px solid var(--col-border); border-radius: 8px; padding: 8px 12px; text-align: center; min-width: 95px; flex: 1; }
+  .pred-kpi-mini-label { font-size: 9.5px; font-weight: 700; color: var(--col-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .pred-kpi-mini-val { font-size: 15px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; color: var(--col-primary); }
+  .pred-kpi-mini-sub { font-size: 9.5px; color: var(--col-muted); margin-top: 2px; }
+  .pred-prediction-bar { background: linear-gradient(135deg,#eff6ff,#dbeafe); border: 1px solid #93c5fd; border-radius: 9px; padding: 12px 16px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .pred-semaforo { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; }
+  .pred-semaforo.verde { background: #d1fae5; box-shadow: 0 0 0 3px #34d399; }
+  .pred-semaforo.amarillo { background: #fef3c7; box-shadow: 0 0 0 3px #fbbf24; }
+  .pred-semaforo.rojo { background: #fee2e2; box-shadow: 0 0 0 3px #f87171; }
+  .pred-algo-badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(37,99,235,0.1); border: 1px solid #93c5fd; border-radius: 12px; padding: 2px 9px; font-size: 10px; font-weight: 700; color: #1d4ed8; }
+  .pred-alert-card { background: var(--col-surface); border-radius: 10px; padding: 13px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; border-left: 4px solid var(--col-muted); flex-wrap: wrap; }
+  .pred-alert-card.a-danger { border-left-color: #dc2626; background: #fef2f2; }
+  .pred-alert-card.a-warning { border-left-color: #d97706; background: #fffbeb; }
+  .pred-alert-card.a-success { border-left-color: #059669; background: #f0fdf4; }
+  .pred-alert-card.a-info { border-left-color: #2563eb; background: #eff6ff; }
+  .pred-alert-icon { font-size: 22px; flex-shrink: 0; }
+  .pred-alert-body { flex: 1; }
+  .pred-alert-title { font-weight: 700; font-size: 13px; color: var(--col-primary); }
+  .pred-alert-sub { font-size: 11.5px; color: var(--col-muted); margin-top: 2px; }
+  .pred-forecast-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .pred-forecast-table thead th { background: #1e3a5f; padding: 9px 12px; text-align: left; font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.1); position: sticky; top: 0; z-index: 1; white-space: nowrap; }
+  .pred-forecast-table tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.1s; }
+  .pred-forecast-table tbody tr:nth-child(even) { background: #fafbfc; }
+  .pred-forecast-table tbody tr:hover { background: #eff6ff; }
+  .pred-forecast-table tbody td { padding: 9px 12px; vertical-align: middle; }
+  .pred-heatmap-cell { width: 100%; height: 30px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; font-family: 'IBM Plex Mono', monospace; }
+  .pred-chart-svg-wrap { background: var(--col-surface); border: 1px solid var(--col-border); border-radius: 12px; padding: 18px; overflow: hidden; margin-bottom: 18px; }
+  .pred-chart-title { font-size: 12px; font-weight: 700; color: var(--col-primary); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .pred-budget-kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 12px; margin-bottom: 20px; }
+  .pred-budget-kpi { background: var(--col-surface); border-radius: 10px; border: 1px solid var(--col-border); padding: 14px 16px; border-top: 4px solid var(--col-muted); }
+  .pred-budget-kpi.t-info { border-top-color: #2563eb; }
+  .pred-budget-kpi.t-success { border-top-color: #059669; }
+  .pred-budget-kpi.t-warning { border-top-color: #d97706; }
+  .pred-budget-kpi.t-danger  { border-top-color: #dc2626; }
+  .pred-budget-kpi-label { font-size: 9.5px; font-weight: 700; color: var(--col-muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
+  .pred-budget-kpi-val { font-size: 18px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; color: var(--col-primary); }
+  .pred-budget-kpi-sub { font-size: 10px; color: var(--col-muted); margin-top: 3px; }
+  .pred-tend-up   { background: #d1fae5; color: #059669; display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:12px;font-size:10.5px;font-weight:700; }
+  .pred-tend-down { background: #fee2e2; color: #dc2626; display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:12px;font-size:10.5px;font-weight:700; }
+  .pred-tend-flat { background: #f1f5f9; color: #64748b; display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:12px;font-size:10.5px;font-weight:700; }
+
 </style>
-</head>
 <body>
 
 <div class="loading-overlay" id="loadingOverlay">
@@ -1349,7 +1424,7 @@
       <div style="margin-bottom:12px">
         <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px">
           <span style="font-size:56px;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1;animation:cashCallGlow 3s ease-in-out 0.8s infinite">Cash<span style="color:var(--col-accent);animation:accentPulse 2.5s ease-in-out 1s infinite">Call</span></span>
-          <span style="font-size:13px;font-weight:700;color:var(--col-accent);border:1.5px solid rgba(0,180,200,.45);padding:3px 9px;border-radius:6px;letter-spacing:1px;font-family:'IBM Plex Mono',monospace;background:rgba(0,180,200,.08)">v5.6</span>
+          <span style="font-size:13px;font-weight:700;color:var(--col-accent);border:1.5px solid rgba(0,180,200,.45);padding:3px 9px;border-radius:6px;letter-spacing:1px;font-family:'IBM Plex Mono',monospace;background:rgba(0,180,200,.08)">v6.0</span>
         </div>
         <div style="font-size:12px;color:rgba(255,255,255,.45);letter-spacing:2px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace">Control Financiero</div>
       </div>
@@ -1438,7 +1513,7 @@
               font-family:'IBM Plex Mono',monospace;
               background:rgba(0,180,200,.08);
               animation:versionFadeIn 1s ease 0.6s both;
-            ">v5.6</span>
+            ">v6.0</span>
           </div>
 
           <!-- Subtítulo -->
@@ -1485,7 +1560,7 @@
   <div class="subwin" style="max-width:600px">
     <div class="subwin-header">
       <span style="font-size:16px">⌨️</span>
-      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v5.6</span>
+      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v6.0</span>
       <button class="subwin-close" onclick="closeSubwin('sw-ctrlm')">✕</button>
     </div>
     <div class="subwin-body" id="sw-ctrlm-body" style="padding:24px">
@@ -1644,7 +1719,7 @@
   </div>
 </div>
 
-<!-- ══ FULLSCREEN TABLE OVERLAY v5.6 ════════════════════════ -->
+<!-- ══ FULLSCREEN TABLE OVERLAY v6.0 ════════════════════════ -->
 <div id="dzp-fullscreen-overlay">
   <div id="dzp-fs-header">
     <span style="font-size:18px">🏗️</span>
@@ -1695,7 +1770,7 @@
   <div id="dzp-fs-body"></div>
 </div>
 
-<!-- ══ CONTEXT MENU TABLA v5.6 ══════════════════════════════ -->
+<!-- ══ CONTEXT MENU TABLA v6.0 ══════════════════════════════ -->
 <div id="dzp-context-menu">
   <div class="ctx-menu-header">⚙️ EXPORTAR TABLA — C-DZP-21-000-A</div>
   <div class="ctx-menu-item" onclick="exportDZPxls(); hideCtxMenu()">
@@ -1760,7 +1835,7 @@
         </span>
         <span style="font-size:10px;opacity:0.6">✕</span>
       </span>
-      <div class="header-badge" id="headerBadge">v5.6</div>
+      <div class="header-badge" id="headerBadge">v6.0</div>
       <button onclick="openExpXL()" title="Exportar columnas seleccionadas de los 3 archivos en una sola hoja Excel"
         style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:9px;border:none;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.2px;background:linear-gradient(135deg,#0891b2,#0e7490);color:white;box-shadow:0 2px 10px rgba(8,145,178,0.45);transition:opacity 0.18s;white-space:nowrap"
         onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
@@ -1795,12 +1870,16 @@
       <div class="nav-item" data-tab="busqueda" onclick="switchTab('busqueda')">
         <span class="nav-icon">🔎</span>
         <span class="nav-label">Búsqueda Rápida<span class="nav-sub">Factura · OC · Proveedor</span></span>
-        <span class="nav-badge" style="background:var(--col-accent);color:var(--col-primary)">NEW</span>
       </div>
       <div class="nav-item" data-tab="dzp" onclick="switchTab('dzp')">
         <span class="nav-icon">🏗️</span>
         <span class="nav-label">C-DZP-21-000-A<span class="nav-sub">Tablero de Control</span></span>
         <span class="nav-badge" style="background:#7c3aed;color:white" id="cntDZP">—</span>
+      </div>
+      <div class="nav-item" data-tab="predictiva" id="nav-predictiva" onclick="switchTab('predictiva')" style="display:flex">
+        <span class="nav-icon">🔮</span>
+        <span class="nav-label">Analítica Predictiva<span class="nav-sub">Pronósticos · Alertas</span></span>
+        <span class="nav-badge" id="cntPredictiva" style="background:linear-gradient(135deg,#1a4a8a,#2563eb);color:white;font-size:9px">🔮</span>
       </div>
       <div class="nav-item" data-tab="modulo0" id="nav-modulo0" onclick="switchTab('modulo0')" style="display:flex">
         <span class="nav-icon">📊</span>
@@ -1955,7 +2034,7 @@
           <div class="dzp-banner-icon">🏗️</div>
           <div>
             <div class="dzp-banner-title">C-DZP-21-000-A</div>
-            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v5.6</span></div>
+            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v6.0</span></div>
           </div>
         </div>
         <div class="dzp-banner-badges" style="display:none">
@@ -2690,7 +2769,7 @@
       </div>
     </div>
 
-<!-- ═══ PANEL: AUDITORÍAS (v5.6 — Bitácora Persistente) ══════ -->
+<!-- ═══ PANEL: AUDITORÍAS (v6.0 — Bitácora Persistente) ══════ -->
     <div class="panel" id="panel-auditorias">
       <div class="section-title" style="justify-content:space-between"><span>🗂️ Auditorías — Bitácora Persistente de Novedades</span><button class="info-btn" onclick="showInstructive('auditorias')" title="Ver instructivo">i</button></div>
       <div class="alert alert-info">
@@ -2732,6 +2811,130 @@
       <div style="font-size:13px;font-weight:700;color:var(--col-primary);margin-bottom:12px;border-bottom:2px solid var(--col-border);padding-bottom:8px">⏱ Historial de Sesión Actual</div>
       <div id="auditTimeline"></div>
     </div>
+
+
+    <!-- ═══ PANEL: ANALÍTICA PREDICTIVA v6.0 ════════════════════ -->
+    <div class="panel" id="panel-predictiva">
+
+      <!-- Alert: no data -->
+      <div id="pred-no-data" style="background:var(--col-warning-bg);border:1px solid #fcd34d;border-radius:10px;padding:14px 18px;margin-bottom:18px;font-size:13px;color:#92400e;display:flex;align-items:center;gap:10px">
+        <span style="font-size:20px">⚠️</span>
+        <span>Procese los archivos primero para activar la Analítica Predictiva.</span>
+      </div>
+
+
+      <!-- ══ FIXED BAR: banner + filters + subnav ══ -->
+      <div id="pred-sticky-bar">
+
+      <!-- Banner -->
+      <div style="background:linear-gradient(135deg,#0f2544 0%,#1a4a8a 40%,#1d4ed8 80%,#2563eb 100%);border-radius:10px;padding:14px 20px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;box-shadow:0 3px 16px rgba(37,99,235,0.3)">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="font-size:28px">🔮</div>
+          <div>
+            <div style="font-size:16px;font-weight:800;color:white;letter-spacing:-0.3px">Analítica Predictiva</div>
+            <div style="font-size:10.5px;color:rgba(255,255,255,0.65);margin-top:1px">Pronóstico · Patrones · Alertas · Cash Call v6.0</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <span id="pred-badge-provs" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.22);border-radius:20px;padding:4px 12px;font-size:10.5px;font-weight:700;color:white;font-family:'IBM Plex Mono',monospace">— Proveedores</span>
+          <span id="pred-badge-facturas" style="background:rgba(37,99,235,0.3);border:1px solid #60a5fa;border-radius:20px;padding:4px 12px;font-size:10.5px;font-weight:700;color:#bfdbfe;font-family:'IBM Plex Mono',monospace">— Facturas</span>
+          <button onclick="runPredictiva()" style="background:linear-gradient(90deg,#2563eb,#1d4ed8);color:white;border:none;border-radius:8px;padding:6px 14px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;transition:opacity 0.18s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">⚡ Recalcular</button>
+        </div>
+      </div>
+
+      <!-- Filtros — una sola fila -->
+      <div id="pred-filters" style="display:none;background:var(--col-surface);border-radius:10px;border:1px solid var(--col-border);padding:8px 14px;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:nowrap;overflow-x:auto;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+        <span class="filter-label" style="white-space:nowrap">PROVEEDOR</span>
+        <div style="position:relative;min-width:180px;max-width:260px;flex:1">
+          <input id="pred-f-prov-input" type="text" placeholder="🔍 Buscar proveedor..." autocomplete="off"
+            oninput="_predProvSearch(this.value)"
+            style="width:100%;border:1px solid var(--col-border);border-radius:7px;padding:5px 28px 5px 8px;font-size:12px;background:var(--col-bg);outline:none;font-family:'IBM Plex Sans',sans-serif;transition:border 0.15s"
+            onfocus="this.style.borderColor='var(--col-accent)'" onblur="this.style.borderColor='var(--col-border)'">
+          <span id="pred-f-prov-clear" onclick="_predProvClear()" title="Limpiar búsqueda" style="display:none;position:absolute;right:7px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:12px;color:var(--col-muted);line-height:1;z-index:1">✕</span>
+          <input id="pred-f-prov" type="hidden" value="">
+        </div>
+        <span class="filter-label" style="white-space:nowrap">CONFIANZA</span>
+        <select id="pred-f-conf" onchange="runPredictiva()" style="border:1px solid var(--col-border);border-radius:7px;padding:5px 8px;font-size:12px;background:var(--col-bg);outline:none;min-width:95px">
+          <option value="">Todas</option>
+          <option value="verde">🟢 Alta</option>
+          <option value="amarillo">🟡 Media</option>
+          <option value="rojo">🔴 Baja</option>
+        </select>
+        <span class="filter-label" style="white-space:nowrap">AÑO</span>
+        <select id="pred-f-year" onchange="runPredictiva()" style="border:1px solid var(--col-border);border-radius:7px;padding:5px 8px;font-size:12px;background:var(--col-bg);outline:none;min-width:68px">
+          <option value="">Todos</option>
+        </select>
+        <span class="filter-label" style="white-space:nowrap">MES</span>
+        <select id="pred-f-month" onchange="runPredictiva()" style="border:1px solid var(--col-border);border-radius:7px;padding:5px 8px;font-size:12px;background:var(--col-bg);outline:none;min-width:98px">
+          <option value="">Todos</option>
+          <option>Enero</option><option>Febrero</option><option>Marzo</option><option>Abril</option>
+          <option>Mayo</option><option>Junio</option><option>Julio</option><option>Agosto</option>
+          <option>Septiembre</option><option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
+        </select>
+        <button onclick="_predClearAllFilters()" class="btn btn-outline btn-sm" style="white-space:nowrap;flex-shrink:0">↺ Limpiar</button>
+      </div>
+
+      <!-- Sub-nav tabs -->
+      <div id="pred-content-nav" style="display:none">
+        <div style="display:flex;gap:6px;margin-bottom:0;flex-wrap:wrap" id="pred-subnav">
+          <button class="dzp-subnav-btn active" id="pred-sn-1" onclick="predSwitchTab(1)" style="flex:1;min-width:160px">
+            <span class="dsb-num">1</span><span>Última Facturación</span>
+          </button>
+          <button class="dzp-subnav-btn" id="pred-sn-2" onclick="predSwitchTab(2)" style="flex:1;min-width:160px">
+            <span class="dsb-num">2</span><span>Alertas Inteligentes</span>
+            <span class="dsb-badge" id="pred-alert-badge" style="display:none">0</span>
+          </button>
+          <button class="dzp-subnav-btn" id="pred-sn-3" onclick="predSwitchTab(3)" style="flex:1;min-width:160px">
+            <span class="dsb-num">3</span><span>Pronóstico Mensual</span>
+          </button>
+          <button class="dzp-subnav-btn" id="pred-sn-4" onclick="predSwitchTab(4)" style="flex:1;min-width:160px">
+            <span class="dsb-num">4</span><span>Presupuesto 2026</span>
+          </button>
+          <button class="dzp-subnav-btn" id="pred-sn-5" onclick="predSwitchTab(5)" style="flex:1;min-width:160px">
+            <span class="dsb-num">5</span><span>Visualizaciones</span>
+          </button>
+        </div>
+      </div>
+
+      </div><!-- end pred-sticky-bar -->
+
+      <!-- Spacer: compensates for fixed sticky bar height -->
+      <div id="pred-content-spacer"></div>
+
+      <!-- ══ SCROLLABLE CONTENT ══ -->
+      <div id="pred-content" style="display:none;margin-top:0">
+
+        <!-- ── SUB 1: Última facturación + patrones + predicción ── -->
+        <div id="pred-sp1" class="dzp-sub-panel active">
+          <div style="font-size:12px;color:var(--col-muted);margin-bottom:12px;display:flex;align-items:center;gap:6px">
+            <span>🤖</span> El algoritmo selecciona automáticamente el mejor método predictivo (promedio móvil / tendencia lineal / suavización exponencial) según el histórico disponible por proveedor.
+          </div>
+          <div id="pred-table1-wrap"></div>
+        </div>
+
+        <!-- ── SUB 2: Alertas inteligentes ── -->
+        <div id="pred-sp2" class="dzp-sub-panel">
+          <div id="pred-alerts-content"></div>
+        </div>
+
+        <!-- ── SUB 3: Pronóstico mensual ── -->
+        <div id="pred-sp3" class="dzp-sub-panel">
+          <div id="pred-forecast-content"></div>
+        </div>
+
+        <!-- ── SUB 4: Consolidado presupuestal ── -->
+        <div id="pred-sp4" class="dzp-sub-panel">
+          <div id="pred-budget-content"></div>
+        </div>
+
+        <!-- ── SUB 5: Visualizaciones ── -->
+        <div id="pred-sp5" class="dzp-sub-panel">
+          <div id="pred-charts-content"></div>
+        </div>
+
+      </div><!-- end pred-content -->
+
+    </div><!-- end panel-predictiva -->
 
   </main>
 </div><!-- end app-body -->
@@ -6227,7 +6430,7 @@ function renderM0RecTable() {
 
 // ── MODULE 1 ──────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════
-// CHART FILTROS — renderM1ChartFiltered v5.6
+// CHART FILTROS — renderM1ChartFiltered v6.0
 // Renderiza la gráfica de Facturas por Mes/Año/Responsable
 // respetando filtros independientes: año, mes, estado, recepcionado por
 // ═══════════════════════════════════════════════════════════════
@@ -6350,7 +6553,7 @@ function renderM1ChartFiltered() {
 }
 
 function renderM1() {
-  // Búsqueda unificada v5.6: un solo campo busca en OC, Factura, Recepción y Proveedor
+  // Búsqueda unificada v6.0: un solo campo busca en OC, Factura, Recepción y Proveedor
   const searchAll    = normalStr((document.getElementById('f1oc')?.value || document.getElementById('f1search')?.value || ''));
   const filterProyM1 = (document.getElementById('f1proyecto')?.value || '');
   const estado = document.getElementById('f1estado').value;
@@ -8702,7 +8905,7 @@ function exportCashCallJSON() {
   const filename = `CashCall_${fecha}.json`;
   const payload = {
     meta: {
-      app: 'Cash Call v5.6',
+      app: 'Cash Call v6.0',
       exportedBy: currentUser || '—',
       exportedAt: new Date().toISOString(),
       filename,
@@ -9014,7 +9217,7 @@ document.addEventListener('keydown', e => {
 });
 
 /* ═══════════════════════════════════════════════════════════
-   C-DZP-21-000-A — Tablero de Control v5.6
+   C-DZP-21-000-A — Tablero de Control v6.0
    ═══════════════════════════════════════════════════════════ */
 
 const DZP_PROJECT_ID = 'C-DZP-21-000-A';
@@ -9600,7 +9803,7 @@ function renderDZP() {
   setEl('dzp-badge-rec',    conRec+' REC');
   setEl('dzp-badge-fac',    conFac+' Facturas');
   setEl('dzp-badge-comply', comply+'% Cumpl.');
-  setEl('cntDZP', tot);
+  setEl('cntDZP', comply+'%');
 
   // ── Build HTML ───────────────────────────────────────────────
   const totalFiltered = data.length;
@@ -9947,7 +10150,7 @@ function exportDZPpdf() {
   </style></head><body>
   <div class="hdr">
     <div><div class="hdr-title">⛏ C-DZP-21-000-A — Reporte por Proveedor</div>
-    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v5.6</div></div>
+    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v6.0</div></div>
     <div class="hdr-meta">Generado: ${now}<br>Filtro: ${filterDesc}</div>
   </div>
   <div class="kpi-row">
@@ -9971,7 +10174,7 @@ function exportDZPpdf() {
       <tbody>${tableRows||'<tr><td colspan="9" style="text-align:center;padding:20px;color:#94a3b8">Sin datos</td></tr>'}</tbody>
     </table>
   </div>
-  <div class="footer"><span>Cash Call v5.6 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
+  <div class="footer"><span>Cash Call v6.0 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
   <div class="no-print" style="text-align:center;padding:16px">
     <button onclick="window.print()" style="padding:10px 28px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
     <button onclick="window.close()" style="margin-left:10px;padding:10px 20px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
@@ -10056,7 +10259,7 @@ function exportDZPSP2pdf() {
   </style></head><body>
   <div class="hdr">
     <div><div class="hdr-title">⛏ C-DZP-21-000-A — Órdenes de Compra por Proveedor</div>
-    <div class="hdr-sub">Tablero de Control · Cash Call v5.6</div></div>
+    <div class="hdr-sub">Tablero de Control · Cash Call v6.0</div></div>
     <div class="hdr-meta">Generado: ${now}</div>
   </div>
   <div class="kpi-row">
@@ -10076,7 +10279,7 @@ function exportDZPSP2pdf() {
       <tbody>${tableRows}</tbody>
     </table>
   </div>
-  <div class="footer"><span>Cash Call v5.6 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
+  <div class="footer"><span>Cash Call v6.0 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
   <div class="no-print" style="text-align:center;padding:14px">
     <button onclick="window.print()" style="padding:9px 26px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
     <button onclick="window.close()" style="margin-left:8px;padding:9px 18px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
@@ -10256,7 +10459,7 @@ function exportDZPSP3pdf() {
   <div class="hdr">
     <div class="hdr-left">
       <div class="hdr-title">⛏ C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</div>
-      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v5.6</div>
+      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v6.0</div>
     </div>
     <div class="hdr-right">Generado: ${now}<br>${data.length} registros exportados</div>
   </div>
@@ -10304,7 +10507,7 @@ function exportDZPSP3pdf() {
   </div>
 
   <div class="footer">
-    <span>Cash Call v5.6 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
+    <span>Cash Call v6.0 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
     <span>${data.length} registros &nbsp;·&nbsp; Filtro: ${filterDesc}</span>
   </div>
 
@@ -10319,7 +10522,7 @@ function exportDZPSP3pdf() {
 
 </script>
 
-<!-- ══ MODAL: INFORME GERENCIAL v5.6 ═════════════════════════ -->
+<!-- ══ MODAL: INFORME GERENCIAL v6.0 ═════════════════════════ -->
 <div id="modal-informe-gerencial" style="display:none;position:fixed;inset:0;z-index:8000;background:rgba(10,22,40,0.88);backdrop-filter:blur(6px);align-items:center;justify-content:center;overflow-y:auto">
   <canvas id="ig-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.3"></canvas>
   <div style="background:#fff;border-radius:18px;padding:0;max-width:600px;width:96%;box-shadow:0 28px 80px rgba(0,0,0,0.55);position:relative;z-index:1;animation:cashCallSlideIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;overflow:hidden;margin:24px auto">
@@ -10338,7 +10541,7 @@ function exportDZPSP3pdf() {
           <path d="M30 24 L24 19 L32 22 Z" fill="white"/>
         </svg>
         <div>
-          <div style="font-size:9.5px;font-weight:700;color:rgba(0,180,200,0.85);letter-spacing:2.2px;text-transform:uppercase;margin-bottom:3px">ARIS MINING · CASH CALL v5.6</div>
+          <div style="font-size:9.5px;font-weight:700;color:rgba(0,180,200,0.85);letter-spacing:2.2px;text-transform:uppercase;margin-bottom:3px">ARIS MINING · CASH CALL v6.0</div>
           <div style="font-size:17px;font-weight:800;color:white">Informe Gerencial Ejecutivo</div>
           <div style="font-size:10px;color:rgba(255,255,255,0.45);margin-top:3px">C-DZP-21-000-A &nbsp;·&nbsp; <kbd style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:4px;padding:1px 6px;font-size:9px;font-family:monospace;color:rgba(255,255,255,0.7)">Ctrl+G</kbd> para abrir</div>
         </div>
@@ -10916,7 +11119,7 @@ function exportInformeGerencialPDF() {
   // ══ HTML DEL INFORME ══════════════════════════════════════
   const pw=window.open('','_blank','width=1100,height=860');
   pw.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
-  <title>Informe Gerencial v5.6 — ARIS MINING · C-DZP-21-000-A</title>
+  <title>Informe Gerencial v6.0 — ARIS MINING · C-DZP-21-000-A</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
     @page { size:A4 portrait; margin:0; @bottom-right { content:"Pág. " counter(page) " de " counter(pages); font-size:8px; font-family:"IBM Plex Mono",monospace; color:#94a3b8; margin-right:16mm; margin-bottom:8mm; } }
@@ -11085,7 +11288,7 @@ function exportInformeGerencialPDF() {
         </svg>
         <div class="cover-brand-txt">
           <div class="cover-brand-name">ARIS MINING</div>
-          <div class="cover-brand-sub">Cash Call v5.6 · Control Financiero</div>
+          <div class="cover-brand-sub">Cash Call v6.0 · Control Financiero</div>
         </div>
       </div>
       <div class="cover-div"></div>
@@ -11149,7 +11352,7 @@ function exportInformeGerencialPDF() {
 
   <!-- ░░ TABLA DE CONTENIDO ░░ -->
   <div class="toc-page">
-    <div class="co-row"><div class="co-badge">ARIS MINING</div><span style="font-size:10.5px;color:#64748b">C-DZP-21-000-A · Cash Call v5.6 · ${periodo}</span></div>
+    <div class="co-row"><div class="co-badge">ARIS MINING</div><span style="font-size:10.5px;color:#64748b">C-DZP-21-000-A · Cash Call v6.0 · ${periodo}</span></div>
     <div class="toc-hdr"><div class="toc-ic">📑</div><div class="toc-ti">Tabla de Contenido</div></div>
     ${[
       ['1','Introducción','Contexto, alcance metodológico y definiciones del proyecto'],
@@ -11166,7 +11369,7 @@ function exportInformeGerencialPDF() {
   <!-- ░░ CAP 1: INTRODUCCIÓN ░░ -->
   <div class="chapter-break">
     <div class="phs"></div><h2 class="cht">1. Introducción</h2><div class="chr"></div>
-    <p class="it">Informe preparado para la Alta Dirección de <strong>ARIS MINING</strong> sobre el estado financiero y operativo del proyecto <strong>C-DZP-21-000-A</strong> · período <strong>${periodo}</strong>. Desarrollado mediante el sistema <strong>Cash Call v5.6</strong>, plataforma de control que integra actas, recepciones Oracle y cuentas por pagar (CxP).</p>
+    <p class="it">Informe preparado para la Alta Dirección de <strong>ARIS MINING</strong> sobre el estado financiero y operativo del proyecto <strong>C-DZP-21-000-A</strong> · período <strong>${periodo}</strong>. Desarrollado mediante el sistema <strong>Cash Call v6.0</strong>, plataforma de control que integra actas, recepciones Oracle y cuentas por pagar (CxP).</p>
     <p class="it">Se analizan <strong>${total} actas/facturas</strong>, cruces con Oracle REC, validación CxP, flujo de caja, tendencias mensuales y análisis de Pareto de alertas. Se incluye comparativo vs <strong>${fechaPrev}</strong>.</p>
     <div class="hb ${cumpl>=80?'hb-g':cumpl>=60?'hb-a':'hb-r'}">
       <strong>📌 Hallazgo Principal — ${periodo}:</strong> Cumplimiento <strong>${cumpl}%</strong> (${conFac}/${total} actas con CxP). <strong>${alertas} alertas activas</strong> — ${sinRec} sin REC Oracle · ${recRevisar} con REC a revisar · ${sinFac} sin factura CxP.
@@ -11176,7 +11379,7 @@ function exportInformeGerencialPDF() {
       <div><p class="it"><strong>Definiciones:</strong> <strong>REC:</strong> Recepción Oracle ERP · <strong>CxP:</strong> Cuenta por Pagar registrada · <strong>Alerta:</strong> Acta sin pago con alguna brecha · <strong>Cumplimiento:</strong> Actas c/CxP / Total</p></div>
     </div>
     <p class="it" style="color:#64748b;font-size:8.5px"><strong>Desarrollado por:</strong> GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc &nbsp;·&nbsp; <strong>Elaborado:</strong> ${autor}${cargo?' — '+cargo:''} &nbsp;·&nbsp; <strong>Fecha:</strong> ${fechaFmt}</p>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v5.6 · C-DZP-21-000-A</span><span>${periodo} · ${fechaFmt}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v6.0 · C-DZP-21-000-A</span><span>${periodo} · ${fechaFmt}</span></div>
   </div>
 
   <!-- ░░ CAP 2: RESUMEN EJECUTIVO ░░ -->
@@ -11233,7 +11436,7 @@ function exportInformeGerencialPDF() {
         ? '⚠️ <strong>Cumplimiento en riesgo ('+cumpl+'%)</strong>: por debajo de la meta del 90%. Acelerar registro de facturas CxP.'
         : '❌ <strong>Cumplimiento crítico ('+cumpl+'%)</strong>: intervención gerencial urgente requerida. Meta: ≥90%.'}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v5.6 · C-DZP-21-000-A</span><span>Cap. 2 — Resumen Ejecutivo · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v6.0 · C-DZP-21-000-A</span><span>Cap. 2 — Resumen Ejecutivo · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 3: ANÁLISIS FINANCIERO ░░ -->
@@ -11296,7 +11499,7 @@ function exportInformeGerencialPDF() {
         : 'Las facturas CxP cubren la totalidad del valor de actas — sin brecha de registro.'}
       El proveedor con mayor participación es <strong>${topProvVal[0]?.[0]||'—'}</strong> con ${igFmtCOP(topProvVal[0]?.[1]||0)}.
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v5.6 · C-DZP-21-000-A</span><span>Cap. 3 — Análisis Financiero · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v6.0 · C-DZP-21-000-A</span><span>Cap. 3 — Análisis Financiero · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 4: GESTIÓN MENSUAL ░░ -->
@@ -11344,7 +11547,7 @@ function exportInformeGerencialPDF() {
             : '📉 La tendencia del valor facturado presenta <strong style="color:#d97706">variaciones descendentes</strong> que requieren seguimiento.')
         : ''}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v5.6 · C-DZP-21-000-A</span><span>Cap. 4 — Gestión Mensual · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v6.0 · C-DZP-21-000-A</span><span>Cap. 4 — Gestión Mensual · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 5: PARETO ░░ -->
@@ -11386,7 +11589,7 @@ function exportInformeGerencialPDF() {
       liberaría el 80% de las alertas bloqueadas.
     </div>
     <div class="hb hb-r" style="font-size:9px"><strong>📌 Regla de Pareto:</strong> ${paretoRows.filter(d=>d.acum<=80).length} proveedores concentran el 80% de las ${alertas} alertas. Priorizar gestión con: <strong>${paretoRows.filter(d=>d.acum<=80).map(d=>d.p.slice(0,20)).join(', ')}</strong>.</div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v5.6 · C-DZP-21-000-A</span><span>Cap. 5 — Diagrama de Pareto · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v6.0 · C-DZP-21-000-A</span><span>Cap. 5 — Diagrama de Pareto · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 6: DETALLE ALERTAS ░░ -->
@@ -11427,7 +11630,7 @@ function exportInformeGerencialPDF() {
       <thead><tr><th>#</th><th>OC</th><th>Proveedor</th><th>Factura</th><th class="tc">REC</th><th>Estado</th><th class="num">Val.Factura CxP</th><th>Mes</th></tr></thead>
       <tbody>${rowsDetAlertas}</tbody>
     </table>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v5.6 · C-DZP-21-000-A</span><span>Cap. 6 — Detalle Alertas · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v6.0 · C-DZP-21-000-A</span><span>Cap. 6 — Detalle Alertas · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 7: COMPARATIVO ░░ -->
@@ -11478,22 +11681,22 @@ function exportInformeGerencialPDF() {
         ? '💰 Valor pagado: <strong style="color:#059669">creció '+igFmtCOP(sumPagado-prevSumPag)+'</strong> vs período anterior.'
         : '💰 Valor pagado: <strong style="color:#dc2626">disminuyó '+igFmtCOP(prevSumPag-sumPagado)+'</strong> vs período anterior — revisar causas.'}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v5.6 · C-DZP-21-000-A</span><span>Cap. 7 — Comparativo de Períodos · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v6.0 · C-DZP-21-000-A</span><span>Cap. 7 — Comparativo de Períodos · ${periodo}</span></div>
   </div>
 
   <!-- ░░ FIRMAS ░░ -->
   <div class="chapter-break">
     <div class="phs"></div><h2 class="cht">Firmas y Cierre del Informe</h2><div class="chr"></div>
-    <p class="it">Informe generado por <strong>Cash Call v5.6 — ARIS MINING</strong> · período <strong>${periodo}</strong> · ${total} registros procesados · Cumplimiento: ${cumpl}%.</p>
-    <div class="hb hb-g">✅ Generado: ${now} &nbsp;·&nbsp; ARIS MINING / Cash Call v5.6 &nbsp;·&nbsp; Desarrollado por GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc</div>
+    <p class="it">Informe generado por <strong>Cash Call v6.0 — ARIS MINING</strong> · período <strong>${periodo}</strong> · ${total} registros procesados · Cumplimiento: ${cumpl}%.</p>
+    <div class="hb hb-g">✅ Generado: ${now} &nbsp;·&nbsp; ARIS MINING / Cash Call v6.0 &nbsp;·&nbsp; Desarrollado por GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc</div>
     <div class="fs">
       <div class="fb"><div style="height:38px"></div><div class="fl"></div><div class="fn">${autor}</div><div class="fr">${cargo||'Analista / Elaborado por'}</div></div>
       <div class="fb"><div style="height:38px"></div><div class="fl"></div><div class="fn">_________________________</div><div class="fr">Gerencia ARIS MINING / Aprobado por</div></div>
     </div>
     <div style="margin-top:26px;padding:12px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;font-size:8.5px;color:#94a3b8;text-align:center">
-      ARIS MINING &nbsp;·&nbsp; Cash Call v5.6 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; ${periodo} &nbsp;·&nbsp; Desarrollado: GREEN ENGINEERING CONSULTING &nbsp;·&nbsp; Confidencial
+      ARIS MINING &nbsp;·&nbsp; Cash Call v6.0 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; ${periodo} &nbsp;·&nbsp; Desarrollado: GREEN ENGINEERING CONSULTING &nbsp;·&nbsp; Confidencial
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v5.6 · GREEN ENGINEERING CONSULTING</span><span>Ing. Johan Manuel Cárdenas Leal, MSc · ${fechaFmt}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v6.0 · GREEN ENGINEERING CONSULTING</span><span>Ing. Johan Manuel Cárdenas Leal, MSc · ${fechaFmt}</span></div>
   </div>
 
   <div class="no-print" style="margin-top:24px;text-align:center;padding:16px;background:#f8fafc;border-top:1px solid #e2e8f0">
@@ -11591,7 +11794,7 @@ function showM5FacturasPopup(encodedKey) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// CLICK-FILTER HELPERS v5.6
+// CLICK-FILTER HELPERS v6.0
 // M1: click on OC → filter M1 by that OC
 // M2: click on OC → filter M2 by that OC
 // M4: click on prov or OC → filter M4
@@ -11794,7 +11997,7 @@ function exportPersonFacturasExcel() {
   const totalRec = facts.reduce((s,r) => s + (r.totalRec||0), 0);
 
   const aoa = [
-    [`CASH CALL v5.6 — ARIS MINING · C-DZP-21-000-A`],
+    [`CASH CALL v6.0 — ARIS MINING · C-DZP-21-000-A`],
     [`Responsable: ${person}`],
     [`Período: ${mNames[+mn]||mn} ${yr}  |  Facturas: ${facts.length}  |  Generado: ${new Date().toLocaleString('es-CO')}`],
     [],
@@ -11898,7 +12101,7 @@ function exportPersonFacturasPDF() {
 </head><body>
 <div class="cover-bar">
   <div>
-    <h1>⛏ CASH CALL v5.6 — ARIS MINING · C-DZP-21-000-A</h1>
+    <h1>⛏ CASH CALL v6.0 — ARIS MINING · C-DZP-21-000-A</h1>
     <div class="sub">Reporte de Facturas por Responsable · Exportado: ${new Date().toLocaleString('es-CO')}</div>
   </div>
   <div class="badge">PDF · ${facts.length} FACTURAS</div>
@@ -11944,7 +12147,7 @@ function exportPersonFacturasPDF() {
   </tr></tfoot>
 </table>
 <div class="footer-bar">
-  <span>Cash Call v5.6 · C-DZP-21-000-A · GREEN Engineering Consulting</span>
+  <span>Cash Call v6.0 · C-DZP-21-000-A · GREEN Engineering Consulting</span>
   <span>${person} · ${mesLabel} · ${facts.length} facturas</span>
 </div>
 </body></html>`;
@@ -12235,7 +12438,7 @@ function exportDiscrepancias() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// BITÁCORA PERSISTENTE v5.6
+// BITÁCORA PERSISTENTE v6.0
 // ═══════════════════════════════════════════════════════════════
 // La bitácora se carga de un JSON externo y se enriquece con cada sesión.
 // Estructura: { meta, bitacora: [ { id, ts, user, tipo, factura, prov, detalle, estadoAnterior, estadoNuevo } ] }
@@ -12496,7 +12699,7 @@ function exportCashCallJSONBitacora() {
 
   const payload = {
     meta: {
-      app: 'Cash Call v5.6',
+      app: 'Cash Call v6.0',
       exportedBy: currentUser || '—',
       exportedAt: new Date().toISOString(),
       filename,
@@ -12569,7 +12772,7 @@ function exportSoloNovedades() {
 
 
 // ═══════════════════════════════════════════════════════════════
-// EXPORTAR EXCEL GENERAL v5.6
+// EXPORTAR EXCEL GENERAL v6.0
 // Permite seleccionar columnas de cada archivo y exportarlas
 // todas en una sola hoja de un archivo Excel.
 // ═══════════════════════════════════════════════════════════════
@@ -12826,7 +13029,7 @@ function doExportExcelGeneral() {
 
 
 // ═══════════════════════════════════════════════════════════════
-// CHART ZOOM OVERLAY v5.6
+// CHART ZOOM OVERLAY v6.0
 // ═══════════════════════════════════════════════════════════════
 (function initChartZoom() {
   // Create overlay
@@ -12911,7 +13114,7 @@ function closeChartZoom() {
 
 
 // ═══════════════════════════════════════════════════════════════
-// FULLSCREEN TABLE + CONTEXT MENU v5.6
+// FULLSCREEN TABLE + CONTEXT MENU v6.0
 // ═══════════════════════════════════════════════════════════════
 
 function openDZPFullscreen() {
@@ -13030,12 +13233,964 @@ document.addEventListener('keydown', e => { if (e.key==='Escape') hideCtxMenu();
       if (state.processed) {
         computeDiscrepancias();
         if (bitacoraData) renderBitacoraPanel();
+        // Update DZP nav badge with comply% immediately after processing
+        setTimeout(()=>{
+          try {
+            if(typeof renderDZP==='function') renderDZP();
+          } catch(e){}
+        }, 200);
       }
     });
     mo.observe(origCnt, { childList: true, characterData: true, subtree: true });
   }
 })();
 
+
+// ═══════════════════════════════════════════════════════════════
+// ANALÍTICA PREDICTIVA v6.1 — full rewrite
+// ═══════════════════════════════════════════════════════════════
+let _predData = null;
+let _predActiveTab = 1;
+
+function predSwitchTab(n) {
+  _predActiveTab = n;
+  for (let i=1;i<=5;i++) {
+    const btn = document.getElementById('pred-sn-'+i);
+    const panel = document.getElementById('pred-sp'+i);
+    if (btn) btn.classList.toggle('active', i===n);
+    if (panel) panel.classList.toggle('active', i===n);
+  }
+}
+
+// ── date/format helpers ─────────────────────────────────────────
+function _predParseDate(v) {
+  if (!v) return null;
+  const s = String(v).trim();
+  let m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return new Date(+m[1],+m[2]-1,+m[3]);
+  m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
+  if (m) { const y=+m[3]<100?2000+ +m[3]: +m[3]; return new Date(y,+m[2]-1,+m[1]); }
+  const d=new Date(s); return isNaN(d)?null:d;
+}
+function _predFmtDate(d) {
+  if (!d) return '—';
+  return d.getDate().toString().padStart(2,'0')+'/'+( d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getFullYear();
+}
+function _predFmtCur(v) {
+  if (v===null||v===undefined) return '—';
+  return '$ '+Math.round(v).toLocaleString('es-CO');
+}
+function _daysBetween(a,b) { return Math.round((b-a)/86400000); }
+
+const MESES_ES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+// ── prediction algorithms ───────────────────────────────────────
+function _movingAverage(vals,w){
+  if(!vals.length)return 0;
+  const win=vals.slice(-Math.min(w,vals.length));
+  return win.reduce((a,b)=>a+b,0)/win.length;
+}
+function _linearTrend(vals){
+  const n=vals.length;
+  if(n<2) return {slope:0,intercept:vals[0]||0};
+  const xm=vals.map((_,i)=>i).reduce((a,b)=>a+b,0)/n;
+  const ym=vals.reduce((a,b)=>a+b,0)/n;
+  const num=vals.reduce((s,v,i)=>s+(i-xm)*(v-ym),0);
+  const den=vals.reduce((s,_,i)=>s+(i-xm)**2,0);
+  const slope=den===0?0:num/den;
+  return {slope,intercept:ym-slope*xm};
+}
+function _expSmoothing(vals,alpha=0.3){
+  if(!vals.length)return 0;
+  let s=vals[0];
+  for(let i=1;i<vals.length;i++) s=alpha*vals[i]+(1-alpha)*s;
+  return s;
+}
+function _bestAlgo(vals){
+  if(vals.length<3) return {name:'Promedio Móvil',predict:()=>_movingAverage(vals,3)};
+  const train=vals.slice(0,-1),actual=vals[vals.length-1];
+  const pMA=_movingAverage(train,3);
+  const lt=_linearTrend(train); const pLT=lt.slope*train.length+lt.intercept;
+  const pES=_expSmoothing(train,0.3);
+  const errs=[Math.abs(pMA-actual),Math.abs(pLT-actual),Math.abs(pES-actual)];
+  const best=errs.indexOf(Math.min(...errs));
+  if(best===0) return {name:'Promedio Móvil',predict:(n)=>_movingAverage(vals,3)};
+  if(best===1){const t2=_linearTrend(vals);return {name:'Tendencia Lineal',predict:(n)=>Math.max(0,t2.slope*n+t2.intercept)};}
+  return {name:'Suavización Exponencial',predict:(n)=>_expSmoothing(vals.slice(0,n),0.3)};
+}
+
+// ── main compute ────────────────────────────────────────────────
+function _computePredictiva() {
+  if (!state.processed||!state.m1data.length) return null;
+  const today=new Date(); today.setHours(0,0,0,0);
+  const provMap={};
+  state.m1data.forEach(r=>{
+    const prov=r.prov||'Sin nombre';
+    const d=_predParseDate(r.invDate);
+    if(!provMap[prov]) provMap[prov]=[];
+    provMap[prov].push({date:d,val:r.valSinIva||0,inv:r.inv||'—',po:r.po||'—',month:r.monthNum||0,year:r.year||0});
+  });
+  const results=[];
+  for(const [prov,invoices] of Object.entries(provMap)){
+    const valid=invoices.filter(i=>i.date).sort((a,b)=>a.date-b.date);
+    const lastInv=valid.length?valid[valid.length-1]:null;
+    const diasDesde=lastInv?_daysBetween(lastInv.date,today):null;
+    const intervals=[];
+    for(let i=1;i<valid.length;i++) intervals.push(_daysBetween(valid[i-1].date,valid[i].date));
+    const avgInterval=intervals.length?intervals.reduce((a,b)=>a+b,0)/intervals.length:null;
+    let pattern='Irregular';
+    if(avgInterval!==null){
+      if(avgInterval>=25&&avgInterval<=35) pattern='Mensual';
+      else if(avgInterval>=55&&avgInterval<=65) pattern='Bimensual';
+      else if(avgInterval>=85&&avgInterval<=95) pattern='Trimestral';
+      else if(avgInterval>=175&&avgInterval<=185) pattern='Semestral';
+    }
+    const vals=valid.map(i=>i.val);
+    let tendencia='Plana',tendPct=0;
+    if(vals.length>=3){
+      const half=Math.ceil(vals.length/2);
+      const f=vals.slice(0,half).reduce((a,b)=>a+b,0)/half;
+      const l=vals.slice(-Math.floor(vals.length/2)).reduce((a,b)=>a+b,0)/Math.floor(vals.length/2);
+      tendPct=f>0?(l-f)/f*100:0;
+      if(tendPct>5) tendencia='Crecimiento';
+      else if(tendPct<-5) tendencia='Disminución';
+    }
+    let nextDate=null,nextVal=0,confidence=0,algo='N/A';
+    if(lastInv&&avgInterval){
+      nextDate=new Date(lastInv.date.getTime()+avgInterval*86400000);
+      const algoObj=_bestAlgo(vals);
+      algo=algoObj.name; nextVal=algoObj.predict(vals.length);
+      const stdDev=intervals.length>1?Math.sqrt(intervals.reduce((s,v)=>s+(v-avgInterval)**2,0)/intervals.length):avgInterval;
+      const cv=avgInterval>0?stdDev/avgInterval:1;
+      if(valid.length>=6&&cv<0.2) confidence=85;
+      else if(valid.length>=4&&cv<0.4) confidence=65;
+      else if(valid.length>=2&&cv<0.6) confidence=45;
+      else confidence=25;
+    } else if(vals.length===1){nextVal=vals[0];confidence=20;algo='Promedio Móvil';}
+    const semaforo=confidence>=70?'verde':confidence>=45?'amarillo':'rojo';
+    results.push({prov,invoices,valid,lastInv,diasDesde,avgInterval,pattern,tendencia,tendPct,nextDate,nextVal,confidence,semaforo,algo,totalFacturas:invoices.length,vals,intervals});
+  }
+  results.sort((a,b)=>b.vals.reduce((s,v)=>s+v,0)-a.vals.reduce((s,v)=>s+v,0));
+
+  // Forecast rows: one entry per provider × year × month (deduplicated)
+  const _fRowMap={};
+  const curY=today.getFullYear(),curM=today.getMonth();
+  for(const r of results){
+    if(!r.nextDate||r.nextVal<=0) continue;
+    let date=r.nextDate; let step=0;
+    const algoObj2=_bestAlgo(r.vals);
+    while(date.getFullYear()<2027){
+      const fy=date.getFullYear(),fm=date.getMonth();
+      if(fy>curY||(fy===curY&&fm>=curM)){
+        const predVal=r.vals.length>=2?algoObj2.predict(r.vals.length+step):r.nextVal;
+        const key=r.prov+'|'+fy+'|'+fm;
+        if(!_fRowMap[key]){
+          _fRowMap[key]={prov:r.prov,year:fy,month:fm,val:Math.max(0,predVal),semaforo:r.semaforo,confidence:r.confidence};
+        } else {
+          // Keep the highest predicted value for this prov+month
+          _fRowMap[key].val=Math.max(_fRowMap[key].val,Math.max(0,predVal));
+        }
+      }
+      if(!r.avgInterval) break;
+      date=new Date(date.getTime()+r.avgInterval*86400000);
+      step++;
+      if(step>24) break;
+    }
+  }
+  const forecastRows=Object.values(_fRowMap);
+  // Alerts
+  const alerts=[];
+  for(const r of results){
+    if(!r.lastInv){alerts.push({type:'inactivo',cls:'a-warning',icon:'💤',title:r.prov,sub:'Sin fecha de factura registrada.'});continue;}
+    if(r.diasDesde!==null&&r.diasDesde>180) alerts.push({type:'inactivo',cls:'a-warning',icon:'💤',title:r.prov,sub:`Sin factura hace ${r.diasDesde} días — posiblemente inactivo.`});
+    if(r.nextDate&&r.nextDate<=new Date(today.getTime()+15*86400000)&&r.nextDate>=today) alerts.push({type:'proximo',cls:'a-success',icon:'📅',title:r.prov,sub:`Próxima estimada: ${_predFmtDate(r.nextDate)} · Valor: ${_predFmtCur(r.nextVal)}`});
+    if(r.avgInterval&&r.diasDesde!==null&&r.diasDesde>r.avgInterval*1.5) alerts.push({type:'retraso',cls:'a-danger',icon:'⚠️',title:r.prov,sub:`Retraso respecto a patrón histórico. Intervalo promedio: ${Math.round(r.avgInterval)}d. Días desde última: ${r.diasDesde}d.`});
+    if(r.tendPct>20) alerts.push({type:'crecimiento',cls:'a-info',icon:'📈',title:r.prov,sub:`Crecimiento superior al 20% (${r.tendPct.toFixed(1)}%). Monitorear presupuesto.`});
+  }
+  return {results,forecastRows,alerts,today};
+}
+
+// ── active filters helper ───────────────────────────────────────
+function _getPredFilters(){
+  // prov: use the text input directly for live search-as-you-type
+  // (hidden input only has the exact selected value from dropdown)
+  const provInput=(document.getElementById('pred-f-prov-input')||{}).value||'';
+  const provHidden=(document.getElementById('pred-f-prov')||{}).value||'';
+  // If hidden has an exact match use it; otherwise use the typed text for partial match
+  return {
+    prov: provHidden||'',          // exact match from dropdown selection
+    provPartial: provInput||'',    // typed text for live partial filtering
+    conf:(document.getElementById('pred-f-conf')||{}).value||'',
+    year:(document.getElementById('pred-f-year')||{}).value||'',
+    month:(document.getElementById('pred-f-month')||{}).value||''
+  };
+}
+
+function _filterForecastRows(rows){
+  const f=_getPredFilters();
+  const provQ=(f.prov||f.provPartial).toLowerCase();
+  return rows.filter(r=>{
+    if(provQ&&!r.prov.toLowerCase().includes(provQ)) return false;
+    if(f.conf&&r.semaforo!==f.conf) return false;
+    if(f.year&&String(r.year)!==String(f.year)) return false;
+    if(f.month&&MESES_ES[r.month]!==f.month) return false;
+    return true;
+  });
+}
+
+function _filterResults(results){
+  const f=_getPredFilters();
+  const provQ=(f.prov||f.provPartial).toLowerCase();
+  return results.filter(r=>{
+    if(provQ&&!r.prov.toLowerCase().includes(provQ)) return false;
+    if(f.conf&&r.semaforo!==f.conf) return false;
+    if(f.year||f.month){
+      const matched=r.valid.some(inv=>{
+        if(!inv.date) return false;
+        if(f.year&&String(inv.date.getFullYear())!==String(f.year)) return false;
+        if(f.month&&MESES_ES[inv.date.getMonth()]!==f.month) return false;
+        return true;
+      });
+      if(!matched) return false;
+    }
+    return true;
+  }).map(r=>{
+    // If year/month filter active, override lastInv to show the most recent invoice IN that period
+    if(f.year||f.month){
+      const periodInvs=r.valid.filter(inv=>{
+        if(!inv.date) return false;
+        if(f.year&&String(inv.date.getFullYear())!==String(f.year)) return false;
+        if(f.month&&MESES_ES[inv.date.getMonth()]!==f.month) return false;
+        return true;
+      });
+      if(periodInvs.length){
+        const periodLast=periodInvs[periodInvs.length-1];
+        return Object.assign({},r,{lastInv:periodLast,_periodFiltered:true});
+      }
+    }
+    return r;
+  });
+}
+
+// ── Sub 1: Última facturación ───────────────────────────────────
+function _renderPredSub1(data){
+  const rows=_filterResults(data.results);
+  const f=_getPredFilters();
+  const wrap=document.getElementById('pred-table1-wrap');
+  if(!wrap) return;
+  if(!rows.length){wrap.innerHTML='<div class="empty-state"><div class="empty-icon">🔮</div><div>Sin datos con los filtros aplicados</div></div>';return;}
+  const periodLabel=(f.year||f.month)?` <span style="background:#dbeafe;color:#1d4ed8;border-radius:8px;padding:2px 8px;font-size:10px;font-weight:700">${[f.month,f.year].filter(Boolean).join(' ')}</span>`:'';
+  wrap.innerHTML=rows.map(r=>{
+    const tendBadge=r.tendencia==='Crecimiento'
+      ?`<span class="pred-tend-up">↑ ${r.tendPct.toFixed(1)}%</span>`
+      :r.tendencia==='Disminución'
+      ?`<span class="pred-tend-down">↓ ${Math.abs(r.tendPct).toFixed(1)}%</span>`
+      :`<span class="pred-tend-flat">→ Estable</span>`;
+    const semIcon=r.semaforo==='verde'?'🟢':r.semaforo==='amarillo'?'🟡':'🔴';
+    const accentColor=r.semaforo==='verde'?'#059669':r.semaforo==='amarillo'?'#d97706':'#dc2626';
+    return `<div class="pred-prov-card t-${r.semaforo==='verde'?'green':r.semaforo==='amarillo'?'yellow':'red'}">
+      <div class="pred-prov-header">
+        <div>
+          <div class="pred-prov-name">${r.prov}${r._periodFiltered?periodLabel:''}</div>
+          <div class="pred-prov-meta">${r.totalFacturas} factura(s) · Patrón: <strong>${r.pattern}</strong> · ${tendBadge} · <span class="pred-algo-badge">🤖 ${r.algo}</span></div>
+        </div>
+        <div style="text-align:right;font-size:11px;color:var(--col-muted)">
+          ${r.diasDesde!==null?`<span style="font-size:13px;font-weight:700;color:${r.diasDesde>60?'#dc2626':'#059669'}">${r.diasDesde}d</span> desde última`:'—'}
+        </div>
+      </div>
+      <div class="pred-prov-kpis">
+        <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Última Factura</div><div class="pred-kpi-mini-val" style="font-size:12px">${r.lastInv?_predFmtDate(r.lastInv.date):'—'}</div><div class="pred-kpi-mini-sub">${r.lastInv?r.lastInv.inv+' · '+r.lastInv.po:''}</div></div>
+        <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Valor Última</div><div class="pred-kpi-mini-val" style="font-size:12px">${r.lastInv?_predFmtCur(r.lastInv.val):'—'}</div></div>
+        <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Intervalo Prom.</div><div class="pred-kpi-mini-val">${r.avgInterval?Math.round(r.avgInterval)+'d':'—'}</div></div>
+        <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Total Facturas</div><div class="pred-kpi-mini-val">${r.totalFacturas}</div></div>
+      </div>
+      ${r.nextDate?`<div class="pred-prediction-bar" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#93c5fd">
+        <div class="pred-semaforo ${r.semaforo}">${semIcon}</div>
+        <div style="flex:1">
+          <div style="font-size:12px;font-weight:700;color:#1e3a5f;margin-bottom:3px">Próxima estimada: <span style="color:#1d4ed8">${_predFmtDate(r.nextDate)}</span></div>
+          <div style="font-size:11.5px;color:#1e40af">Valor estimado: <strong>${_predFmtCur(r.nextVal)}</strong> &nbsp;·&nbsp; Confianza: <strong>${r.confidence}%</strong></div>
+        </div>
+        <div><div style="background:${accentColor};color:white;border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;white-space:nowrap">${r.confidence}% confianza</div></div>
+      </div>`:`<div style="background:#f1f5f9;border-radius:8px;padding:10px 14px;font-size:12px;color:var(--col-muted)">Datos insuficientes (se necesitan ≥2 facturas con fecha).</div>`}
+    </div>`;
+  }).join('');
+}
+
+// ── Sub 2: Alertas ──────────────────────────────────────────────
+function _renderPredSub2(data){
+  const el=document.getElementById('pred-alerts-content');
+  if(!el) return;
+  const badge=document.getElementById('pred-alert-badge');
+  const fConf=_getPredFilters().conf;
+  const fProv=_getPredFilters().prov;
+  let alerts=data.alerts.filter(a=>{
+    if(fProv&&a.title!==fProv) return false;
+    return true;
+  });
+  if(badge){badge.textContent=alerts.length;badge.style.display=alerts.length?'':'none';}
+  if(!alerts.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">✅</div><div style="color:var(--col-success);font-weight:700">No se detectaron alertas críticas.</div></div>';return;}
+  const typeLabels={proximo:'🗓 Próximo a facturar',retraso:'⚠️ Con retraso',crecimiento:'📈 Crecimiento >20%',inactivo:'💤 Inactivo'};
+  const grouped={};
+  alerts.forEach(a=>{if(!grouped[a.type])grouped[a.type]=[];grouped[a.type].push(a);});
+  el.innerHTML=Object.entries(grouped).map(([type,alts])=>`
+    <div style="margin-bottom:20px">
+      <div style="font-size:12px;font-weight:700;color:var(--col-primary);margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid var(--col-border)">${typeLabels[type]||type} <span style="font-family:'IBM Plex Mono',monospace;background:#e2e8f0;border-radius:12px;padding:1px 7px;font-size:10px">${alts.length}</span></div>
+      ${alts.map(a=>`<div class="pred-alert-card ${a.cls}"><div class="pred-alert-icon">${a.icon}</div><div class="pred-alert-body"><div class="pred-alert-title">${a.title}</div><div class="pred-alert-sub">${a.sub}</div></div></div>`).join('')}
+    </div>`).join('');
+}
+
+// ── Sub 3: Pronóstico mensual ───────────────────────────────────
+function _renderPredSub3(data){
+  const el=document.getElementById('pred-forecast-content');
+  if(!el) return;
+  const rows=_filterForecastRows(data.forecastRows);
+  if(!rows.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">📅</div><div>Sin pronósticos con los filtros aplicados.</div></div>';return;}
+  // One row per prov+month+year — group by ym for rowspan
+  const byYM={};
+  rows.forEach(r=>{const k=r.year*100+r.month;if(!byYM[k])byYM[k]={year:r.year,month:r.month,items:[]};byYM[k].items.push(r);});
+  const sorted=Object.values(byYM).sort((a,b)=>a.year*100+a.month-(b.year*100+b.month));
+  el.innerHTML=`
+    <div class="table-wrap">
+      <div class="table-header"><div class="table-title">📅 Pronóstico Mensual — ${new Date().getFullYear()} a Dic 2026</div></div>
+      <div class="table-scroll" style="max-height:540px">
+        <table class="pred-forecast-table">
+          <thead><tr><th>Año</th><th>Mes</th><th>Proveedor</th><th class="currency">Facturación Esperada</th><th>Confianza</th></tr></thead>
+          <tbody>${sorted.map(ym=>ym.items.map((item,i)=>`<tr>
+            ${i===0?`<td rowspan="${ym.items.length}" style="background:#f5f8fc;font-weight:700;font-family:'IBM Plex Mono',monospace;border-right:1px solid var(--col-border);vertical-align:middle;text-align:center">${ym.year}</td>`:''}
+            ${i===0?`<td rowspan="${ym.items.length}" style="background:#f5f8fc;font-weight:700;font-size:12px;border-right:2px solid var(--col-border);vertical-align:middle">${MESES_ES[ym.month]}</td>`:''}
+            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${item.prov}">${item.prov}</td>
+            <td class="currency">${_predFmtCur(item.val)}</td>
+            <td style="text-align:center">${item.semaforo==='verde'?'🟢 Alta':item.semaforo==='amarillo'?'🟡 Media':'🔴 Baja'}</td>
+          </tr>`).join('')).join('')}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+// ── Sub 4: Presupuesto consolidado ─────────────────────────────
+function _renderPredSub4(data){
+  const el=document.getElementById('pred-budget-content');
+  if(!el) return;
+  const rows=_filterForecastRows(data.forecastRows);
+  const monthly={};
+  rows.forEach(r=>{const k=r.year*100+r.month;if(!monthly[k])monthly[k]={year:r.year,month:r.month,total:0,items:[]};monthly[k].total+=r.val;monthly[k].items.push(r);});
+  const mArr=Object.values(monthly).sort((a,b)=>a.year*100+a.month-(b.year*100+b.month));
+  if(!mArr.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">💰</div><div>Sin datos de pronóstico.</div></div>';return;}
+  const totals=mArr.map(m=>m.total);
+  const totalAnual=totals.reduce((a,b)=>a+b,0);
+  const avg=totalAnual/totals.length;
+  const maxM=Math.max(...totals),minM=Math.min(...totals);
+  const maxBar=maxM||1;
+  const maxMes=mArr.find(m=>m.total===maxM);
+  const minMes=mArr.find(m=>m.total===minM);
+  el.innerHTML=`
+    <div class="pred-budget-kpi-row">
+      <div class="pred-budget-kpi t-info"><div class="pred-budget-kpi-label">Total Proyectado</div><div class="pred-budget-kpi-val" style="font-size:14px">${_predFmtCur(totalAnual)}</div><div class="pred-budget-kpi-sub">${mArr.length} meses proyectados</div></div>
+      <div class="pred-budget-kpi t-success"><div class="pred-budget-kpi-label">Promedio Mensual</div><div class="pred-budget-kpi-val" style="font-size:14px">${_predFmtCur(avg)}</div><div class="pred-budget-kpi-sub">Basado en pronósticos activos</div></div>
+      <div class="pred-budget-kpi t-warning"><div class="pred-budget-kpi-label">Máximo Esperado</div><div class="pred-budget-kpi-val" style="font-size:14px">${_predFmtCur(maxM)}</div><div class="pred-budget-kpi-sub">${maxMes?MESES_ES[maxMes.month]+' '+maxMes.year:''}</div></div>
+      <div class="pred-budget-kpi t-danger"><div class="pred-budget-kpi-label">Mínimo Esperado</div><div class="pred-budget-kpi-val" style="font-size:14px">${_predFmtCur(minM)}</div><div class="pred-budget-kpi-sub">${minMes?MESES_ES[minMes.month]+' '+minMes.year:''}</div></div>
+    </div>
+    <div class="pred-chart-svg-wrap">
+      <div class="pred-chart-title">📊 Facturación Proyectada por Mes <span style="font-weight:400;font-size:10px;color:var(--col-muted)">— clic en barra para ver detalle de proveedores</span></div>
+      ${mArr.map(m=>{
+        const w=Math.round(m.total/maxBar*100);
+        const color=m.year===2025?'#1a4a8a':'#1d4ed8';
+        const pct2=avg>0?((m.total-avg)/avg*100):0;
+        const label=`${MESES_ES[m.month].substring(0,3)} ${m.year}`;
+        return `<div class="bar-chart-row" style="margin-bottom:8px;cursor:pointer" onclick="openBudgetDrill(${m.year},${m.month})" title="Clic para ver proveedores de ${MESES_ES[m.month]} ${m.year}">
+          <div class="bar-chart-label" style="width:75px;font-size:11px">${label}</div>
+          <div class="bar-chart-track" style="height:22px;position:relative">
+            <div class="bar-chart-fill" style="width:${w}%;background:${color};transition:width 0.4s ease;border-radius:4px"></div>
+          </div>
+          <div class="bar-chart-val" style="width:145px;font-size:11px">${_predFmtCur(m.total)}</div>
+          <div style="width:80px;font-size:10px;color:${pct2>5?'#059669':pct2<-5?'#dc2626':'#64748b'};text-align:right">${pct2>0?'+':''}${pct2.toFixed(0)}%</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="table-wrap">
+      <div class="table-header"><div class="table-title">📋 Consolidado Mensual Detallado <span style="font-weight:400;font-size:11px;color:var(--col-muted)">— clic en fila para detalle</span></div></div>
+      <div class="table-scroll" style="max-height:380px">
+        <table class="pred-forecast-table">
+          <thead><tr><th>Mes</th><th>Año</th><th class="currency">Total Proyectado</th><th># Proveedores</th><th>Variación vs Promedio</th></tr></thead>
+          <tbody>${mArr.map(m=>{
+            const pct=avg>0?((m.total-avg)/avg*100):0;
+            const pctBadge=pct>5?`<span class="pred-tend-up">↑ ${pct.toFixed(1)}%</span>`:pct<-5?`<span class="pred-tend-down">↓ ${Math.abs(pct).toFixed(1)}%</span>`:`<span class="pred-tend-flat">≈ Normal</span>`;
+            return `<tr style="cursor:pointer" onclick="openBudgetDrill(${m.year},${m.month})" title="Ver proveedores de ${MESES_ES[m.month]} ${m.year}">
+              <td style="font-weight:700">${MESES_ES[m.month]}</td>
+              <td class="td-mono">${m.year}</td>
+              <td class="currency" style="font-weight:700">${_predFmtCur(m.total)}</td>
+              <td style="text-align:center">${m.items.length}</td>
+              <td>${pctBadge}</td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+// ── Heatmap click → sync month filter ──────────────────────────
+function _heatmapClickMonth(mes){
+  const sel=document.getElementById('pred-f-month');
+  if(!sel) return;
+  // Toggle: if already selected, clear it
+  if(sel.value===mes){
+    sel.value='';
+  } else {
+    sel.value=mes;
+  }
+  runPredictiva();
+  // Stay on visualizations tab
+  predSwitchTab(5);
+}
+
+// ── Budget drill-down modal ─────────────────────────────────────
+let _drillYear=null, _drillMonth=null;
+
+function openBudgetDrill(year, month) {
+  if(!_predData) return;
+  _drillYear=year; _drillMonth=month;
+  _renderDrillModal();
+}
+
+function _renderDrillModal(){
+  const year=_drillYear, month=_drillMonth;
+  if(year===null||month===null||!_predData) return;
+  const fProv  =(document.getElementById('drill-f-prov') ||{value:''}).value||'';
+  const fConf  =(document.getElementById('drill-f-conf') ||{value:''}).value||'';
+  const fYear  =(document.getElementById('drill-f-year') ||{value:''}).value||'';
+  const fMonth =(document.getElementById('drill-f-month')||{value:''}).value||'';
+  let items=_predData.forecastRows.filter(r=>{
+    if(r.year!==year||r.month!==month) return false;
+    if(fProv&&!r.prov.toLowerCase().includes(fProv.toLowerCase())) return false;
+    if(fConf&&r.semaforo!==fConf) return false;
+    if(fYear&&String(r.year)!==String(fYear)) return false;
+    if(fMonth&&MESES_ES[r.month]!==fMonth) return false;
+    return true;
+  }).sort((a,b)=>b.val-a.val);
+  const total=items.reduce((s,r)=>s+r.val,0);
+  const mesNombre=MESES_ES[month]+' '+year;
+  const allYears=[...new Set(_predData.forecastRows.filter(r=>r.month===month).map(r=>r.year))].sort();
+  let modal=document.getElementById('pred-drill-modal');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='pred-drill-modal';
+    modal.style.cssText='position:fixed;inset:0;background:rgba(10,20,40,0.65);z-index:9300;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)';
+    modal.onclick=function(e){if(e.target===modal)modal.style.display='none';};
+    document.body.appendChild(modal);
+  }
+  modal.style.display='flex';
+  // Build rows safely without string escaping — inject via DOM after render
+  const rowsHtml=items.length
+    ?`<div style="font-size:10.5px;color:var(--col-muted);margin-bottom:8px">&#128161; Clic en un proveedor para ver su historial</div>
+    <table class="pred-forecast-table" id="drill-rows-table">
+      <thead><tr><th>#</th><th>Proveedor</th><th>Año</th><th>Mes</th><th class="currency">Facturación Esperada</th><th>% del Total</th><th>Confianza</th></tr></thead>
+      <tbody id="drill-rows-body"></tbody>
+    </table>`
+    :'<div style="text-align:center;padding:40px;color:var(--col-muted)">Sin proveedores con los filtros aplicados.</div>';
+  const yearOpts=allYears.map(y=>`<option${String(y)===String(year)?" selected":""}>${y}</option>`).join("");
+  const monthOpts=MESES_ES.map(m=>`<option${m===MESES_ES[month]?" selected":""}>${m}</option>`).join("");
+  modal.innerHTML=`<div style="background:white;border-radius:16px;box-shadow:0 24px 80px rgba(0,0,0,0.35);width:min(920px,96vw);max-height:90vh;display:flex;flex-direction:column;overflow:hidden">
+      <div style="background:linear-gradient(135deg,#0f2544,#1a4a8a);color:white;padding:16px 22px;display:flex;align-items:center;gap:12px;flex-shrink:0;border-radius:16px 16px 0 0">
+        <span style="font-size:20px">📅</span>
+        <div style="flex:1"><div style="font-size:15px;font-weight:700">Proveedores Proyectados — ${mesNombre}</div><div style="font-size:11px;opacity:0.65;margin-top:2px">${items.length} proveedores · Total: ${_predFmtCur(total)}</div></div>
+        <button onclick="document.getElementById('pred-drill-modal').style.display='none'" style="background:rgba(255,255,255,0.15);border:none;color:white;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:12px;font-weight:700;font-family:'IBM Plex Sans',sans-serif">✕ Cerrar</button>
+      </div>
+      <div style="background:#f8fafc;border-bottom:1px solid var(--col-border);padding:10px 18px;display:flex;align-items:center;gap:8px;flex-wrap:nowrap;overflow-x:auto;flex-shrink:0">
+        <span style="font-size:10px;font-weight:700;color:var(--col-muted);white-space:nowrap">BUSCAR</span>
+        <input id="drill-f-prov" type="text" placeholder="🔍 Proveedor..." oninput="_renderDrillModal()" style="border:1px solid var(--col-border);border-radius:7px;padding:5px 8px;font-size:12px;background:white;outline:none;min-width:150px;font-family:'IBM Plex Sans',sans-serif">
+        <span style="font-size:10px;font-weight:700;color:var(--col-muted);white-space:nowrap">CONFIANZA</span>
+        <select id="drill-f-conf" onchange="_renderDrillModal()" style="border:1px solid var(--col-border);border-radius:7px;padding:5px 8px;font-size:12px;background:white;outline:none;min-width:88px"><option value="">Todas</option><option value="verde">🟢 Alta</option><option value="amarillo">🟡 Media</option><option value="rojo">🔴 Baja</option></select>
+        <span style="font-size:10px;font-weight:700;color:var(--col-muted);white-space:nowrap">AÑO</span>
+        <select id="drill-f-year" onchange="_renderDrillModal()" style="border:1px solid var(--col-border);border-radius:7px;padding:5px 8px;font-size:12px;background:white;outline:none;min-width:66px"><option value="">Todos</option>${yearOpts}</select>
+        <span style="font-size:10px;font-weight:700;color:var(--col-muted);white-space:nowrap">MES</span>
+        <select id="drill-f-month" onchange="_renderDrillModal()" style="border:1px solid var(--col-border);border-radius:7px;padding:5px 8px;font-size:12px;background:white;outline:none;min-width:98px"><option value="">Todos</option>${monthOpts}</select>
+        <button onclick="['drill-f-prov','drill-f-conf','drill-f-year','drill-f-month'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});_renderDrillModal()" style="border:1px solid var(--col-border);border-radius:7px;padding:5px 10px;font-size:11px;background:white;cursor:pointer;white-space:nowrap;font-family:'IBM Plex Sans',sans-serif">↺ Limpiar</button>
+        <span style="margin-left:auto;font-size:11px;font-weight:700;color:var(--col-muted);white-space:nowrap;font-family:'IBM Plex Mono',monospace">${items.length} resultado(s)</span>
+      </div>
+      <div style="padding:14px 18px 0;flex-shrink:0"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px">
+        <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Total Proyectado</div><div class="pred-kpi-mini-val" style="font-size:13px">${_predFmtCur(total)}</div></div>
+        <div class="pred-kpi-mini"><div class="pred-kpi-mini-label"># Proveedores</div><div class="pred-kpi-mini-val">${items.length}</div></div>
+        <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Mayor Valor</div><div class="pred-kpi-mini-val" style="font-size:11px">${_predFmtCur(items[0]?.val)}</div><div class="pred-kpi-mini-sub" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(items[0]?.prov||'').substring(0,24)}</div></div>
+        <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Alta Confianza</div><div class="pred-kpi-mini-val" style="color:#059669">${items.filter(i=>i.semaforo==="verde").length}</div></div>
+      </div></div>
+      <div style="overflow:auto;flex:1;padding:0 18px 18px">${rowsHtml}</div>
+    </div>`;
+  // Inject rows via DOM to avoid any quote escaping issues
+  const tbody=modal.querySelector('#drill-rows-body');
+  if(tbody&&items.length){
+    const total2=items.reduce((s,r)=>s+r.val,0);
+    items.forEach((r,i)=>{
+      const pctTot=total2>0?(r.val/total2*100):0;
+      const tr=document.createElement('tr');
+      tr.style.cursor='pointer';
+      tr.innerHTML=
+        `<td class="td-mono" style="color:var(--col-muted)">${i+1}</td>`+
+        `<td style="font-weight:600;color:#1d4ed8;text-decoration:underline;text-underline-offset:2px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></td>`+
+        `<td class="td-mono">${r.year}</td>`+
+        `<td>${MESES_ES[r.month]}</td>`+
+        `<td class="currency" style="font-weight:700">${_predFmtCur(r.val)}</td>`+
+        `<td><div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:10px;background:#e2e8f0;border-radius:4px;overflow:hidden"><div style="width:${Math.min(100,pctTot).toFixed(1)}%;height:100%;background:#1d4ed8;border-radius:4px"></div></div><span style="font-size:10px;font-weight:700;min-width:36px;text-align:right">${pctTot.toFixed(1)}%</span></div></td>`+
+        `<td style="text-align:center">${r.semaforo==='verde'?'🟢 Alta':r.semaforo==='amarillo'?'🟡 Media':'🔴 Baja'}</td>`;
+      // Set provider name safely via textContent
+      tr.querySelectorAll('td')[1].textContent=r.prov;
+      tr.title=r.prov+' — clic para ver historial';
+      tr.addEventListener('click',()=>openProvHistory(r.prov));
+      tbody.appendChild(tr);
+    });
+  }
+}
+
+// ── Provider history floating panel ────────────────────────────
+function openProvHistory(provName){
+  if(!_predData) return;
+  const r=_predData.results.find(x=>x.prov===provName);
+  if(!r) return;
+  const existDrill=document.getElementById('pred-drill-modal');
+  let modal=document.getElementById('pred-hist-modal');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='pred-hist-modal';
+    modal.style.cssText='position:fixed;inset:0;background:rgba(5,10,25,0.5);z-index:9500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px)';
+    modal.onclick=function(e){if(e.target===modal)modal.style.display='none';};
+    document.body.appendChild(modal);
+  }
+  modal.style.display='flex';
+  const n=r.valid.length;
+  const avgVal=n?r.vals.reduce((a,b)=>a+b,0)/n:0;
+  const totalVal=r.vals.reduce((a,b)=>a+b,0);
+  const maxVals=n?Math.max(...r.vals):0;
+  const W=320,H=80,maxV=Math.max(1,...r.vals);
+  const sparkPts=r.vals.map((v,i)=>{
+    const x=r.vals.length<=1?W/2:Math.round(i/(r.vals.length-1)*(W-20))+10;
+    const y=Math.round(H-(v/maxV)*(H-16)-8);
+    return x+','+y;
+  }).join(' ');
+  const histRows=[...r.valid].reverse().map((inv,i,arr)=>{
+    const next=arr[i+1];
+    const delta=next?inv.val-next.val:null;
+    const deltaBadge=delta===null?'—':delta>0?'<span class="pred-tend-up">+'+_predFmtCur(delta)+'</span>':'<span class="pred-tend-down">'+_predFmtCur(delta)+'</span>';
+    const isFirst=i===0;
+    return '<tr style="'+(isFirst?'background:#f0fdf4;':'')+'">'+
+      '<td class="td-mono" style="color:var(--col-muted)">'+(r.valid.length-i)+'</td>'+
+      '<td>'+_predFmtDate(inv.date)+(isFirst?' <span style="font-size:9px;background:#059669;color:white;border-radius:4px;padding:1px 5px">ÚLTIMA</span>':'')+'</td>'+
+      '<td class="td-mono">'+inv.inv+'</td>'+
+      '<td class="td-mono">'+inv.po+'</td>'+
+      '<td class="currency" style="'+(isFirst?'font-weight:700':'')+'">'+ _predFmtCur(inv.val)+'</td>'+
+      '<td>'+deltaBadge+'</td></tr>';
+  }).join('');
+  modal.innerHTML=`<div style="background:white;border-radius:16px;box-shadow:0 30px 90px rgba(0,0,0,0.4);width:min(860px,96vw);max-height:88vh;display:flex;flex-direction:column;overflow:hidden">
+    <div style="background:linear-gradient(135deg,#0f2544,#1a4a8a);color:white;padding:16px 22px;display:flex;align-items:center;gap:12px;flex-shrink:0;border-radius:16px 16px 0 0">
+      <span style="font-size:20px">🏢</span>
+      <div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.prov}</div><div style="font-size:11px;opacity:0.65;margin-top:2px">${n} facturas · Patrón: ${r.pattern} · Algoritmo: ${r.algo}</div></div>
+      <button onclick="document.getElementById('pred-hist-modal').style.display='none'" style="background:rgba(255,255,255,0.15);border:none;color:white;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:12px;font-weight:700;font-family:'IBM Plex Sans',sans-serif;flex-shrink:0">✕ Cerrar</button>
+    </div>
+    <div style="overflow:auto;flex:1;padding:18px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:16px">
+        <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Total Facturas</div><div class="pred-kpi-mini-val">${n}</div></div>
+        <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Total Facturado</div><div class="pred-kpi-mini-val" style="font-size:11px">${_predFmtCur(totalVal)}</div></div>
+        <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Promedio</div><div class="pred-kpi-mini-val" style="font-size:11px">${_predFmtCur(avgVal)}</div></div>
+        <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Máximo</div><div class="pred-kpi-mini-val" style="font-size:11px">${_predFmtCur(maxVals)}</div></div>
+        <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Intervalo Prom.</div><div class="pred-kpi-mini-val">${r.avgInterval?Math.round(r.avgInterval)+'d':'—'}</div></div>
+        <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Próx. Estimada</div><div class="pred-kpi-mini-val" style="font-size:10px">${r.nextDate?_predFmtDate(r.nextDate):'—'}</div></div>
+      </div>
+      ${n>=2?`<div style="background:#f0f6ff;border-radius:10px;padding:14px;margin-bottom:16px"><div style="font-size:10px;font-weight:700;color:var(--col-primary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Tendencia histórica</div><svg viewBox="0 0 ${W} ${H}" style="width:100%;height:80px"><polyline points="${sparkPts}" fill="none" stroke="#1d4ed8" stroke-width="2" stroke-linejoin="round"/>${r.vals.map((v,i)=>{const x=r.vals.length<=1?W/2:Math.round(i/(r.vals.length-1)*(W-20))+10;const y=Math.round(H-(v/maxV)*(H-16)-8);const isLast=i===r.vals.length-1;return '<circle cx="'+x+'" cy="'+y+'" r="'+(isLast?5:2.5)+'" fill="'+(isLast?'#059669':'#2563eb')+'" stroke="white" stroke-width="1.5"/>';}).join('')}</svg><div style="display:flex;justify-content:space-between;font-size:9px;color:var(--col-muted);margin-top:4px"><span>${r.valid[0]?_predFmtDate(r.valid[0].date):''} · ${_predFmtCur(r.vals[0])}</span><span style="color:#059669;font-weight:700">${r.valid[n-1]?_predFmtDate(r.valid[n-1].date):''} · ${_predFmtCur(r.vals[n-1])}</span></div></div>`:''}
+      ${r.nextDate?`<div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #93c5fd;border-radius:9px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:14px"><div class="pred-semaforo ${r.semaforo}">${r.semaforo==='verde'?'🟢':r.semaforo==='amarillo'?'🟡':'🔴'}</div><div style="flex:1"><div style="font-size:12px;font-weight:700;color:#1e3a5f">Próxima estimada: <span style="color:#1d4ed8">${_predFmtDate(r.nextDate)}</span></div><div style="font-size:11.5px;color:#1e40af">Valor: <strong>${_predFmtCur(r.nextVal)}</strong> · Confianza: <strong>${r.confidence}%</strong></div></div></div>`:''}
+      ${r.valid.length?`<div style="font-size:11px;font-weight:700;color:var(--col-primary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Historial de Facturas <span style="font-weight:400;color:var(--col-muted);text-transform:none">(${n} — más reciente primero)</span></div><div style="max-height:260px;overflow-y:auto;border-radius:8px;border:1px solid var(--col-border)"><table class="pred-forecast-table"><thead><tr><th>#</th><th>Fecha</th><th>N° Factura</th><th>OC</th><th class="currency">Valor</th><th>Δ vs siguiente</th></tr></thead><tbody>${histRows}</tbody></table></div>`:''}
+    </div>
+  </div>`;
+}
+
+
+// ── Sub 5: Visualizaciones ──────────────────────────────────────
+function _renderPredSub5(data){
+  const el=document.getElementById('pred-charts-content');
+  if(!el) return;
+  const f=_getPredFilters();
+
+  // Results filtered by prov+conf only (year/month don't make sense for "next projection")
+  const resultsForTop10=data.results.filter(r=>{
+    if(f.prov&&r.prov!==f.prov) return false;
+    if(f.conf&&r.semaforo!==f.conf) return false;
+    return true;
+  });
+
+
+  // Heatmap base — filter only by prov+conf (NOT month/year) so heatmap always shows all 12 months
+  const forecastForHeat=data.forecastRows.filter(r=>{
+    if(f.prov&&r.prov!==f.prov) return false;
+    if(f.conf&&r.semaforo!==f.conf) return false;
+    return true;
+  });
+  const heatMap={};
+  forecastForHeat.forEach(r=>{
+    const k=r.month;
+    if(!heatMap[k])heatMap[k]=0;
+    heatMap[k]+=r.val;
+  });
+  const heatMax=Math.max(1,...Object.values(heatMap).filter(v=>v>0),1);
+  const selMonthIdx=f.month?MESES_ES.indexOf(f.month):-1;
+
+  // Top 10: context-aware behavior
+  let top10, chartTitle, chartSubtitle, chartAnalysis;
+  if(f.month){
+    const monthIdx=MESES_ES.indexOf(f.month);
+    const monthRows=forecastForHeat.filter(r=>r.month===monthIdx);
+    const provMonthMap={};
+    monthRows.forEach(r=>{
+      if(!provMonthMap[r.prov]||r.val>provMonthMap[r.prov].val) provMonthMap[r.prov]=r;
+    });
+    top10=Object.values(provMonthMap).sort((a,b)=>b.val-a.val).slice(0,10).map(r=>({...r,nextVal:r.val}));
+    const totalMes=top10.reduce((s,r)=>s+r.val,0);
+    chartTitle=`📅 Top 10 — Proyección para <span style="color:#1d4ed8">${f.month}${f.year?' '+f.year:''}</span>`;
+    chartSubtitle=`Proveedores con mayor facturación esperada en ${f.month}. Total proyectado: <strong>${_predFmtCur(totalMes)}</strong>`;
+    chartAnalysis=`Este ranking muestra los 10 proveedores con <b>mayor valor proyectado para ${f.month}${f.year?' '+f.year:''}</b>. ${top10.length<10?`Solo se encontraron <b>${top10.length} proveedores</b> con proyección para este mes.`:''}`;
+  } else {
+    const provAvgMap={};
+    forecastForHeat.forEach(r=>{
+      if(!provAvgMap[r.prov])provAvgMap[r.prov]={prov:r.prov,totalVal:0,months:new Set(),semaforo:r.semaforo,confidence:r.confidence};
+      provAvgMap[r.prov].totalVal+=r.val;
+      provAvgMap[r.prov].months.add(r.year*100+r.month);
+    });
+    top10=Object.values(provAvgMap)
+      .map(r=>({...r,nextVal:r.months.size>0?r.totalVal/r.months.size:0}))
+      .sort((a,b)=>b.nextVal-a.nextVal).slice(0,10);
+    chartTitle='📊 Top 10 — Promedio Mensual Proyectado';
+    chartSubtitle='Facturación promedio mensual esperada por proveedor (Jun–Dic 2026)';
+    chartAnalysis=`Muestra el <b>promedio mensual proyectado</b> por proveedor. Para ver un mes específico, use el filtro MES o haga clic en el Heatmap.`;
+  }
+  const maxTop=top10.length?Math.max(...top10.map(r=>r.nextVal)):1;
+
+  // Trend sparklines
+  const top5trend=resultsForTop10.filter(r=>r.vals.length>=3)
+    .sort((a,b)=>b.vals.length-a.vals.length).slice(0,5);
+
+
+  el.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px">
+      <div class="pred-chart-svg-wrap">
+        <div class="pred-chart-title" style="text-transform:none;font-size:13px">${chartTitle}</div>
+        <div style="font-size:11px;color:var(--col-muted);margin-bottom:12px;margin-top:-8px">${chartSubtitle}</div>
+        ${top10.length?top10.map((r,i)=>{
+          const w=Math.round(r.nextVal/maxTop*100);
+          const colors=['#0f2544','#1a4a8a','#1d4ed8','#2563eb','#3b82f6','#60a5fa','#059669','#34d399','#d97706','#f59e0b'];
+          const sn=r.prov.length>28?r.prov.substring(0,26)+'…':r.prov;
+          return `<div class="bar-chart-row" style="margin-bottom:7px">
+            <div class="bar-chart-label" style="width:145px;font-size:10.5px" title="${r.prov}">${sn}</div>
+            <div class="bar-chart-track" style="height:18px"><div class="bar-chart-fill" style="width:${w}%;background:${colors[i]||'#94a3b8'}"></div></div>
+            <div class="bar-chart-val" style="width:130px;font-size:10.5px">${_predFmtCur(r.nextVal)}</div>
+          </div>`;
+        }).join(''):'<div style="color:var(--col-muted);font-size:12px">Sin datos de proyección con los filtros aplicados.</div>'}
+        <div style="background:#f0f6ff;border-left:3px solid #2563eb;border-radius:0 6px 6px 0;padding:8px 12px;margin-top:12px;font-size:11px;color:#1e40af;line-height:1.6">
+          💡 ${chartAnalysis}
+        </div>
+      </div>
+      <div class="pred-chart-svg-wrap">
+        <div class="pred-chart-title">🌡️ Heatmap — Facturación Proyectada por Mes</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+          ${MESES_ES.map((mes,i)=>{
+            const val=heatMap[i]||0; // i is 0-based, matches getMonth()
+            const pct=heatMax>0?val/heatMax:0;
+            const bg=val?`rgb(${Math.round(15+pct*100)},${Math.round(37+pct*130)},${Math.round(68+pct*150)})`:'#f1f5f9';
+            const textColor=pct>0.4?'white':'#64748b';
+            const isHighlighted=selMonthIdx===i;
+            const cursor=val?'pointer':'default';
+            return `<div style="background:${bg};border-radius:6px;padding:8px 4px;text-align:center;border:${isHighlighted?'2px solid #2563eb':'2px solid transparent'};box-shadow:${isHighlighted?'0 0 0 1px #2563eb':'none'};cursor:${cursor};transition:opacity 0.15s" ${val?`onclick="_heatmapClickMonth('${mes}')" title="Filtrar por ${mes}"`:''}  onmouseover="${val?"this.style.opacity='.8'":''}" onmouseout="this.style.opacity='1'">
+              <div style="font-size:9.5px;font-weight:700;color:${textColor};margin-bottom:2px">${mes.substring(0,3)}</div>
+              <div style="font-size:9px;color:${textColor};font-family:'IBM Plex Mono',monospace">${val?('$'+Math.round(val/1000000).toLocaleString('es-CO')+'M'):'—'}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="pred-chart-svg-wrap">
+      <div class="pred-chart-title">📈 Tendencia de Facturación por Proveedor (Top ${top5trend.length}) <span style="font-weight:400;font-size:10px;color:var(--col-muted)">— clic en gráfica para análisis detallado</span></div>
+      ${top5trend.length?`<div style="display:flex;gap:14px;flex-wrap:wrap">
+        ${top5trend.map(r=>{
+          const maxV=Math.max(1,...r.vals);
+          const W=200,H=70,n=r.vals.length;
+          const pts=r.vals.map((v,idx)=>{
+            const x=n===1?W/2:Math.round(idx/(n-1)*(W-20))+10;
+            const y=Math.round(H-(v/maxV)*(H-14)-7);
+            return `${x},${y}`;
+          }).join(' ');
+          return `<div style="min-width:180px;flex:1;cursor:pointer;border-radius:10px;padding:10px;border:1.5px solid var(--col-border);transition:border-color 0.15s,box-shadow 0.15s" onclick="openTrendModal('${r.prov.replace(/'/g,"\\'")}')" onmouseover="this.style.borderColor='#2563eb';this.style.boxShadow='0 4px 16px rgba(37,99,235,0.2)'" onmouseout="this.style.borderColor='var(--col-border)';this.style.boxShadow='none'">
+            <div style="font-size:10px;font-weight:700;color:var(--col-primary);margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov}">${r.prov}</div>
+            <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:70px;border-radius:6px;background:#f0f6ff">
+              <polyline points="${pts}" fill="none" stroke="#1d4ed8" stroke-width="2" stroke-linejoin="round"/>
+              ${r.vals.map((v,idx)=>{
+                const x=n===1?W/2:Math.round(idx/(n-1)*(W-20))+10;
+                const y=Math.round(H-(v/maxV)*(H-14)-7);
+                const isLast=idx===r.vals.length-1;
+                return `<circle cx="${x}" cy="${y}" r="${isLast?4:2}" fill="${isLast?'#059669':'#2563eb'}" stroke="white" stroke-width="1"/>`;
+              }).join('')}
+            </svg>
+            <div style="font-size:9px;color:var(--col-muted);margin-top:4px;display:flex;justify-content:space-between">
+              <span>${_predFmtCur(r.vals[0])}</span><span style="color:#059669;font-weight:700">${_predFmtCur(r.vals[r.vals.length-1])}</span>
+            </div>
+            <div style="font-size:9px;text-align:center;color:#2563eb;margin-top:3px;font-weight:600">🔍 Ver análisis</div>
+          </div>`;
+        }).join('')}
+      </div>`:'<div style="color:var(--col-muted);font-size:12px">Se necesitan al menos 3 facturas por proveedor para graficar tendencia.</div>'}
+    </div>`;
+}
+
+// ── Trend modal ─────────────────────────────────────────────────
+function openTrendModal(provName){
+  if(!_predData) return;
+  const r=_predData.results.find(x=>x.prov===provName);
+  if(!r) return;
+  const maxV=Math.max(1,...r.vals);
+  const n=r.vals.length;
+  const W=600,H=200;
+  const pts=r.vals.map((v,i)=>{
+    const x=n<=1?W/2:Math.round(i/(n-1)*(W-40))+20;
+    const y=Math.round(H-(v/maxV)*(H-30)-15);
+    return `${x},${y}`;
+  }).join(' ');
+  // Trend line
+  const lt=_linearTrend(r.vals);
+  const tx0=20,ty0=Math.round(H-(lt.intercept/maxV)*(H-30)-15);
+  const txn=Math.round((n-1)/(n<=1?1:n-1)*(W-40))+20;
+  const tyn=Math.round(H-((lt.slope*(n-1)+lt.intercept)/maxV)*(H-30)-15);
+  const trendColor=lt.slope>0?'#059669':'#dc2626';
+  // Summary stats
+  const avgVal=r.vals.reduce((a,b)=>a+b,0)/n;
+  const minVal=Math.min(...r.vals);
+  const maxValStat=Math.max(...r.vals);
+  const cvCoef=r.intervals.length>1?Math.sqrt(r.intervals.reduce((s,v)=>s+(v-r.avgInterval)**2,0)/r.intervals.length)/r.avgInterval*100:null;
+
+  let modal=document.getElementById('pred-trend-modal');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='pred-trend-modal';
+    modal.style.cssText='position:fixed;inset:0;background:rgba(10,20,40,0.72);z-index:9400;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)';
+    modal.onclick=function(e){if(e.target===modal)modal.style.display='none';};
+    document.body.appendChild(modal);
+  }
+  modal.style.display='flex';
+  modal.innerHTML=`
+    <div style="background:white;border-radius:18px;box-shadow:0 30px 90px rgba(0,0,0,0.4);width:min(900px,96vw);max-height:90vh;display:flex;flex-direction:column;overflow:hidden">
+      <div style="background:linear-gradient(135deg,#0f2544,#1a4a8a);color:white;padding:18px 24px;display:flex;align-items:center;gap:12px;flex-shrink:0;border-radius:18px 18px 0 0">
+        <span style="font-size:22px">📈</span>
+        <div style="flex:1">
+          <div style="font-size:16px;font-weight:700">${r.prov}</div>
+          <div style="font-size:11px;opacity:0.65;margin-top:2px">Tendencia histórica de facturación · ${n} facturas registradas · Patrón: ${r.pattern}</div>
+        </div>
+        <button onclick="document.getElementById('pred-trend-modal').style.display='none'" style="background:rgba(255,255,255,0.15);border:none;color:white;border-radius:8px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:700;font-family:'IBM Plex Sans',sans-serif">✕ Cerrar</button>
+      </div>
+      <div style="overflow:auto;flex:1;padding:22px">
+        <!-- KPIs -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:18px">
+          <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Total Facturas</div><div class="pred-kpi-mini-val">${n}</div></div>
+          <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Valor Promedio</div><div class="pred-kpi-mini-val" style="font-size:12px">${_predFmtCur(avgVal)}</div></div>
+          <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Valor Máximo</div><div class="pred-kpi-mini-val" style="font-size:12px">${_predFmtCur(maxValStat)}</div></div>
+          <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Valor Mínimo</div><div class="pred-kpi-mini-val" style="font-size:12px">${_predFmtCur(minVal)}</div></div>
+          <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Intervalo Prom.</div><div class="pred-kpi-mini-val">${r.avgInterval?Math.round(r.avgInterval)+'d':'—'}</div></div>
+          <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Coef. Variación</div><div class="pred-kpi-mini-val">${cvCoef!==null?cvCoef.toFixed(1)+'%':'—'}</div></div>
+          <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Tendencia</div><div class="pred-kpi-mini-val" style="font-size:12px">${r.tendencia==='Crecimiento'?'↑':r.tendencia==='Disminución'?'↓':'→'} ${r.tendencia}</div></div>
+          <div class="pred-kpi-mini"><div class="pred-kpi-mini-label">Algoritmo</div><div class="pred-kpi-mini-val" style="font-size:10px;line-height:1.3">${r.algo}</div></div>
+        </div>
+        <!-- Chart -->
+        <div style="background:#f0f6ff;border-radius:12px;padding:16px;margin-bottom:18px">
+          <div style="font-size:11px;font-weight:700;color:var(--col-primary);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">Gráfica de tendencia histórica</div>
+          <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:200px">
+            <!-- Grid lines -->
+            ${[0.25,0.5,0.75,1].map(p=>{
+              const y=Math.round(H-(p)*(H-30)-15);
+              return `<line x1="20" y1="${y}" x2="${W-20}" y2="${y}" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+                <text x="14" y="${y+4}" text-anchor="end" font-size="8" fill="#94a3b8">$${Math.round(maxV*p/1000000)}M</text>`;
+            }).join('')}
+            <!-- Trend line -->
+            ${n>=2?`<line x1="${tx0}" y1="${Math.min(H-5,Math.max(5,ty0))}" x2="${txn}" y2="${Math.min(H-5,Math.max(5,tyn))}" stroke="${trendColor}" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.7"/>`:''}
+            <!-- Data line -->
+            <polyline points="${pts}" fill="none" stroke="#1d4ed8" stroke-width="2.5" stroke-linejoin="round"/>
+            <!-- Points -->
+            ${r.vals.map((v,i)=>{
+              const x=n<=1?W/2:Math.round(i/(n-1)*(W-40))+20;
+              const y=Math.round(H-(v/maxV)*(H-30)-15);
+              const isLast=i===r.vals.length-1;
+              const inv=r.valid[i];
+              return `<circle cx="${x}" cy="${y}" r="${isLast?5:3}" fill="${isLast?'#059669':'#2563eb'}" stroke="white" stroke-width="1.5">
+                <title>${inv?_predFmtDate(inv.date)+' · ':''} ${_predFmtCur(v)}</title>
+              </circle>`;
+            }).join('')}
+          </svg>
+          <div style="display:flex;gap:16px;margin-top:8px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--col-muted)"><div style="width:20px;height:3px;background:#1d4ed8;border-radius:2px"></div>Facturación histórica</div>
+            ${n>=2?`<div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--col-muted)"><div style="width:20px;height:2px;background:${trendColor};border-radius:2px;opacity:0.7"></div>Línea de tendencia (${lt.slope>0?'+':''} ${_predFmtCur(lt.slope)}/factura)</div>`:''}
+            <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--col-muted)"><div style="width:8px;height:8px;background:#059669;border-radius:50%"></div>Última factura</div>
+          </div>
+        </div>
+        <!-- Analysis -->
+        <div style="background:#eff6ff;border:1px solid #93c5fd;border-radius:10px;padding:16px">
+          <div style="font-size:12px;font-weight:700;color:#1e3a5f;margin-bottom:10px">🤖 Análisis Predictivo Automático</div>
+          <div style="font-size:12.5px;color:#1e40af;line-height:1.7">
+            ${n<2?'<b>Datos insuficientes.</b> Se necesitan al menos 2 facturas con fecha para calcular intervalos y predicciones.':`
+            <b>Patrón de facturación:</b> ${r.pattern} (intervalo promedio: ${Math.round(r.avgInterval||0)} días).<br>
+            <b>Tendencia:</b> ${r.tendencia==='Crecimiento'?`📈 Crecimiento del <b>${r.tendPct.toFixed(1)}%</b> comparando primera y segunda mitad del histórico. El valor de la próxima factura tiende a ser mayor que el promedio histórico.`:r.tendencia==='Disminución'?`📉 Disminución del <b>${Math.abs(r.tendPct).toFixed(1)}%</b>. Los valores recientes son menores que los iniciales. Considere revisar si hay cambios en el contrato.`:`→ Comportamiento estable. Los valores no presentan tendencia clara de crecimiento ni decrecimiento.`}<br>
+            <b>Algoritmo seleccionado:</b> <span style="background:#dbeafe;border-radius:6px;padding:1px 6px;font-weight:700">${r.algo}</span> — seleccionado automáticamente por menor error absoluto en datos históricos.<br>
+            ${r.nextDate?`<b>Próxima facturación estimada:</b> <span style="font-weight:700">${_predFmtDate(r.nextDate)}</span> con valor estimado <span style="font-weight:700">${_predFmtCur(r.nextVal)}</span>. Confianza: <span style="font-weight:700">${r.confidence}%</span> ${r.semaforo==='verde'?'🟢':r.semaforo==='amarillo'?'🟡':'🔴'}.`:''}
+            ${cvCoef!==null&&cvCoef>50?`<br>⚠️ <b>Alta variabilidad</b> en los intervalos (CV: ${cvCoef.toFixed(1)}%). El patrón es irregular, lo que reduce la precisión de la predicción.`:''}`}
+          </div>
+        </div>
+        <!-- Historical table -->
+        ${r.valid.length?`
+        <div style="margin-top:16px">
+          <div style="font-size:11px;font-weight:700;color:var(--col-primary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Historial de facturas <span style="font-weight:400;color:var(--col-muted);text-transform:none;letter-spacing:0">(más reciente primero)</span></div>
+          <div style="max-height:220px;overflow-y:auto">
+            <table class="pred-forecast-table">
+              <thead><tr><th>#</th><th>Fecha</th><th>N° Factura</th><th>OC</th><th class="currency">Valor</th><th>Δ vs siguiente</th></tr></thead>
+              <tbody>${[...r.valid].reverse().map((inv,i,arr)=>{
+                const next=arr[i+1]; // next in reversed array = previous chronologically
+                const delta=next?inv.val-next.val:null;
+                const deltaBadge=delta===null?'—':delta>0?`<span class="pred-tend-up">+${_predFmtCur(delta)}</span>`:`<span class="pred-tend-down">${_predFmtCur(delta)}</span>`;
+                const isFirst=i===0;
+                return `<tr style="${isFirst?'background:#f0fdf4;font-weight:600':''}"><td class="td-mono" style="color:var(--col-muted)">${r.valid.length-i}</td><td>${_predFmtDate(inv.date)}${isFirst?' <span style="font-size:9px;background:#059669;color:white;border-radius:4px;padding:1px 5px;margin-left:4px">ÚLTIMA</span>':''}</td><td class="td-mono">${inv.inv}</td><td class="td-mono">${inv.po}</td><td class="currency">${_predFmtCur(inv.val)}</td><td>${deltaBadge}</td></tr>`;
+              }).join('')}</tbody>
+            </table>
+          </div>
+        </div>`:''}
+      </div>
+    </div>`;
+}
+
+// ── Provider search autocomplete ────────────────────────────────
+// ── Provider search — simple inline filter, no dropdown ──────────
+function _predProvSearch(q){
+  const clr=document.getElementById('pred-f-prov-clear');
+  const hid=document.getElementById('pred-f-prov');
+  if(clr) clr.style.display=q?'block':'none';
+  if(hid) hid.value=''; // use provPartial (typed text) for filtering
+  runPredictiva();
+}
+
+function _predProvClear(){
+  const inp=document.getElementById('pred-f-prov-input');
+  const hid=document.getElementById('pred-f-prov');
+  const clr=document.getElementById('pred-f-prov-clear');
+  if(inp){ inp.value=''; inp.focus(); }
+  if(hid) hid.value='';
+  if(clr) clr.style.display='none';
+  runPredictiva();
+}
+
+function _predProvSelect(display, val){
+  // kept for compatibility but no longer used by dropdown
+  const inp=document.getElementById('pred-f-prov-input');
+  const hid=document.getElementById('pred-f-prov');
+  const clr=document.getElementById('pred-f-prov-clear');
+  if(inp) inp.value=display;
+  if(hid) hid.value=val;
+  if(clr) clr.style.display='block';
+  runPredictiva();
+}
+
+function _predClearAllFilters(){
+  _predProvClear();
+  ['pred-f-year','pred-f-month','pred-f-conf'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  runPredictiva();
+}
+
+
+// ── main entry ──────────────────────────────────────────────────
+let _predProvList = []; // all provider names for autocomplete
+
+function runPredictiva(){
+  if(!state.processed) return;
+  _predData=_computePredictiva();
+  if(!_predData) return;
+
+  const el_nodata=document.getElementById('pred-no-data');
+  const el_content=document.getElementById('pred-content');
+  const el_filters=document.getElementById('pred-filters');
+  const el_nav=document.getElementById('pred-content-nav');
+  const el_stickybar=document.getElementById('pred-sticky-bar');
+  if(el_nodata) el_nodata.style.display='none';
+  if(el_content) el_content.style.display='block';
+  if(el_filters) el_filters.style.display='flex';
+  if(el_nav) el_nav.style.display='block';
+  if(el_stickybar){
+    el_stickybar.classList.add('visible');
+    const _setSpacer=()=>{
+      const bar=document.getElementById('pred-sticky-bar');
+      const content=document.getElementById('pred-content');
+      const sp=document.getElementById('pred-content-spacer');
+      if(!bar) return;
+      const h=bar.offsetHeight+16; // bar height + extra breathing room
+      if(content) content.style.paddingTop=h+'px';
+      if(sp){ sp.style.display='none'; } // spacer no longer needed
+    };
+    // Triple rAF to ensure fixed element is fully laid out
+    requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(_setSpacer)));
+    // Also update on window resize
+    window._predResizeHandler=()=>{
+      const bar=document.getElementById('pred-sticky-bar');
+      const content=document.getElementById('pred-content');
+      if(bar&&content) content.style.paddingTop=(bar.offsetHeight+16)+'px';
+    };
+    window.addEventListener('resize',window._predResizeHandler);
+  }
+
+  document.getElementById('pred-badge-provs').textContent=_predData.results.length+' Proveedores';
+  document.getElementById('pred-badge-facturas').textContent=state.m1data.length+' Facturas';
+
+  // Store provider list for autocomplete
+  _predProvList=_predData.results.map(r=>r.prov);
+
+  const yearSel=document.getElementById('pred-f-year');
+  if(yearSel){
+    const years=[...new Set(state.m1data.map(r=>r.year).filter(Boolean))].sort();
+
+    const curY=yearSel.value;
+    yearSel.innerHTML='<option value="">Todos</option>'+years.map(y=>`<option>${y}</option>`).join('');
+    if(curY) yearSel.value=curY;
+  }
+
+  _renderPredSub1(_predData);
+  _renderPredSub2(_predData);
+  _renderPredSub3(_predData);
+  _renderPredSub4(_predData);
+  _renderPredSub5(_predData);
+  predSwitchTab(_predActiveTab);
+  // Recalculate padding after render (bar may have changed height)
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const bar=document.getElementById('pred-sticky-bar');
+    const content=document.getElementById('pred-content');
+    if(bar&&content&&bar.classList.contains('visible')) content.style.paddingTop=(bar.offsetHeight+16)+'px';
+  }));
+}
+
+// ── auto-trigger ────────────────────────────────────────────────
+(function patchSwitchTabPred(){
+  const origFn=window.switchTab;
+  if(!origFn){setTimeout(patchSwitchTabPred,500);return;}
+  window.switchTab=function(tab){
+    origFn(tab);
+    const bar=document.getElementById('pred-sticky-bar');
+    const sp=document.getElementById('pred-content-spacer');
+    if(tab==='predictiva'){
+      if(bar) bar.classList.add('visible');
+      if(state.processed&&!_predData) setTimeout(runPredictiva,80);
+    } else {
+      if(bar) bar.classList.remove('visible');
+      if(sp) sp.style.display='none';
+      const content=document.getElementById('pred-content');
+      if(content) content.style.paddingTop='0';
+      if(window._predResizeHandler){ window.removeEventListener('resize',window._predResizeHandler); delete window._predResizeHandler; }
+    }
+  };
+})();
+
+const _predMO=new MutationObserver(()=>{
+  if(state.processed&&!_predData) runPredictiva();
+});
+(function waitCnt0(){
+  const el=document.getElementById('cnt0');
+  if(el) _predMO.observe(el,{childList:true,characterData:true,subtree:true});
+  else setTimeout(waitCnt0,500);
+})();
 // Also add discrepancias instructivo
 INSTRUCTIVOS.discrepancias = {
   icon: '🔀', title: 'Discrepancias — Duplicados y Conflictos',
@@ -13052,7 +14207,7 @@ INSTRUCTIVOS.discrepancias = {
 };
 
 INSTRUCTIVOS.auditorias = {
-  icon: '🗂️', title: 'Auditorías — Bitácora Persistente v5.6',
+  icon: '🗂️', title: 'Auditorías — Bitácora Persistente v6.0',
   html: `
     <div class="inst-section-title">¿Qué es la Bitácora Persistente?</div>
     <p>La <b>Bitácora Persistente</b> acumula el historial de cambios en el propio JSON exportado. Cada vez que exporta, el sistema detecta qué cambió factura por factura y lo registra como novedad. El JSON va creciendo con el histórico completo.</p>
