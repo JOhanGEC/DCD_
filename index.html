@@ -1047,9 +1047,86 @@
   .audit-diff-table th { padding: 6px 10px; background: #f5f8fc; font-size: 10px; font-weight: 700; color: var(--col-muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--col-border); text-align: left; }
   .audit-diff-table td { padding: 7px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
   .audit-diff-table tr:last-child td { border-bottom: none; }
+  .audit-diff-table tr.ddm-row-clickable:hover td { background: #eff6ff; cursor: pointer; }
+  .audit-diff-table tr.ddm-row-clickable:hover td:last-child { color: var(--col-info); }
   .diff-inc { color: var(--col-success); font-weight: 700; }
   .diff-dec { color: var(--col-danger); font-weight: 700; }
   .diff-neu { color: var(--col-muted); }
+
+  /* ── DIFF DRILLDOWN MODAL ───────────────── */
+  #diff-drilldown-overlay {
+    display: none; position: fixed; inset: 0; z-index: 9000;
+    background: rgba(15,37,68,0.65); backdrop-filter: blur(3px);
+    align-items: center; justify-content: center;
+  }
+  #diff-drilldown-overlay.open { display: flex; }
+  #diff-drilldown-modal {
+    background: var(--col-surface); border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    width: min(92vw, 900px); max-height: 82vh;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .ddm-header {
+    background: linear-gradient(135deg, var(--col-primary), var(--col-secondary));
+    color: white; padding: 16px 20px;
+    display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+  }
+  .ddm-title { font-size: 14px; font-weight: 700; flex: 1; }
+  .ddm-subtitle { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+  .ddm-close {
+    background: rgba(255,255,255,0.15); border: none; color: white;
+    width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+    font-size: 15px; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .ddm-close:hover { background: rgba(255,255,255,0.25); }
+  .ddm-stats {
+    display: flex; gap: 12px; padding: 12px 20px; background: #f8fafc;
+    border-bottom: 1px solid var(--col-border); flex-shrink: 0; flex-wrap: wrap;
+  }
+  .ddm-stat {
+    background: white; border-radius: 8px; padding: 8px 14px;
+    border: 1px solid var(--col-border); font-size: 12px; text-align: center;
+    min-width: 100px;
+  }
+  .ddm-stat-val { font-size: 18px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+  .ddm-stat-label { font-size: 10px; color: var(--col-muted); text-transform: uppercase; letter-spacing: 0.4px; margin-top: 2px; }
+  .ddm-body { flex: 1; overflow-y: auto; padding: 16px 20px; }
+  .ddm-section-title {
+    font-size: 11px; font-weight: 700; color: var(--col-muted);
+    text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .ddm-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px; }
+  .ddm-table th {
+    background: #f1f5f9; padding: 7px 10px; font-size: 10px; font-weight: 700;
+    color: var(--col-muted); text-transform: uppercase; letter-spacing: 0.4px;
+    border-bottom: 1px solid var(--col-border); text-align: left; position: sticky; top: 0;
+  }
+  .ddm-table td { padding: 7px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+  .ddm-table tr:last-child td { border-bottom: none; }
+  .ddm-table tr:hover td { background: #f8fafc; }
+  .ddm-tag-new { background: #d1fae5; color: #065f46; border-radius: 10px; padding: 2px 8px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+  .ddm-tag-removed { background: #fee2e2; color: #7f1d1d; border-radius: 10px; padding: 2px 8px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+  .ddm-tag-changed { background: #fef3c7; color: #78350f; border-radius: 10px; padding: 2px 8px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+  .ddm-empty { text-align: center; padding: 40px 20px; color: var(--col-muted); font-size: 13px; }
+  .ddm-row-clickable { cursor: pointer; }
+  .ddm-tabs { display: flex; gap: 4px; padding: 12px 20px 0; border-bottom: 1px solid var(--col-border); flex-shrink: 0; }
+  .ddm-tab {
+    padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer;
+    border-radius: 8px 8px 0 0; border: 1px solid transparent;
+    border-bottom: none; color: var(--col-muted); background: none;
+    transition: all 0.15s; margin-bottom: -1px;
+  }
+  .ddm-tab.active {
+    background: white; color: var(--col-primary);
+    border-color: var(--col-border); border-bottom-color: white;
+  }
+  .ddm-tab-count {
+    display: inline-block; background: var(--col-accent); color: white;
+    border-radius: 10px; padding: 0 6px; font-size: 10px; margin-left: 4px;
+  }
+  .ddm-tab.active .ddm-tab-count { background: var(--col-primary); }
   .audit-empty { text-align:center; padding:60px 20px; color:var(--col-muted); }
   .audit-empty .ae-icon { font-size:48px; margin-bottom:12px; }
   .audit-timeline-line {
@@ -8717,6 +8794,8 @@ function renderAuditPanel() {
   const entries = [...auditLog].reverse();
   container.innerHTML = entries.map((e, idx) => {
     const isLast = idx === entries.length - 1;
+    // Register imported module data for drilldown
+    if (e.type === 'import') registerDrilldownData(e.id, e);
     const tsFormatted = new Date(e.ts).toLocaleString('es-CO', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit' });
     const typeLabel = e.type === 'carga' ? '📂 Carga de archivos'
       : e.type === 'proceso' ? '⚙️ Procesamiento'
@@ -8762,16 +8841,18 @@ function renderAuditPanel() {
       diffHtml = `<div style="font-size:10.5px;font-weight:700;color:var(--col-muted);text-transform:uppercase;letter-spacing:0.5px;margin:12px 0 8px">⚡ Cambios vs sesión anterior</div>
         <div style="background:#f8fafc;border-radius:8px;overflow:hidden;border:1px solid var(--col-border)">
         <table class="audit-diff-table">
-          <thead><tr><th>Indicador</th><th>Anterior</th><th>Actual</th><th>Δ Cambio</th></tr></thead>
+          <thead><tr><th>Indicador</th><th>Anterior</th><th>Actual</th><th>Δ Cambio</th><th style="width:36px"></th></tr></thead>
           <tbody>${e.diff.map(d=>{
             const cls = d.delta > 0 ? (d.warnInc?'diff-dec':'diff-inc') : 'diff-dec';
             const sign = d.delta > 0 ? '▲ +' : '▼ ';
             const fmt = v => d.currency ? fmtCurrency(v) : v.toLocaleString('es-CO');
-            return `<tr>
+            return `<tr class="ddm-row-clickable" title="Clic para ver registros que generaron este cambio"
+              onclick="openDiffDrilldown(${e.id},'${d.key}',${JSON.stringify(d.label)},${d.prev},${d.curr},${d.delta},${!!d.currency})">
               <td style="font-weight:600">${d.label}</td>
               <td class="td-mono">${fmt(d.prev)}</td>
               <td class="td-mono" style="font-weight:700">${fmt(d.curr)}</td>
               <td class="${cls}" style="font-family:'IBM Plex Mono',monospace">${sign}${fmt(Math.abs(d.delta))}</td>
+              <td style="text-align:center;font-size:14px;color:var(--col-muted)">🔍</td>
             </tr>`;
           }).join('')}</tbody>
         </table></div>`;
@@ -8843,6 +8924,7 @@ function renderAuditPanel() {
       // Diff table: JSON vs current
       if (diff && diff.length) {
         importHtml += `<div style="font-size:10.5px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">⚡ Diferencias: JSON importado → Datos actuales</div>
+          <div style="font-size:11px;color:var(--col-muted);margin-bottom:6px">💡 Haz clic en cualquier fila para ver los registros específicos que provocaron el cambio</div>
           <div style="background:#f8fafc;border-radius:8px;overflow:hidden;border:1px solid var(--col-border)">
           <table class="audit-diff-table">
             <thead><tr>
@@ -8850,16 +8932,19 @@ function renderAuditPanel() {
               <th>JSON (anterior)</th>
               <th>Actual (cargado)</th>
               <th>Δ Cambio</th>
+              <th style="width:36px"></th>
             </tr></thead>
             <tbody>${diff.map(d=>{
               const cls = d.delta > 0 ? (d.warnInc?'diff-dec':'diff-inc') : 'diff-dec';
               const sign = d.delta > 0 ? '▲ +' : '▼ ';
               const fmt = v => d.currency ? fmtCurrency(v) : v.toLocaleString('es-CO');
-              return `<tr>
+              return `<tr class="ddm-row-clickable" title="Clic para ver registros que generaron este cambio"
+                onclick="openDiffDrilldown(${e.id},'${d.key}',${JSON.stringify(d.label)},${d.prev},${d.curr},${d.delta},${!!d.currency})">
                 <td style="font-weight:600">${d.label}</td>
                 <td class="td-mono" style="color:var(--col-muted)">${fmt(d.prev)}</td>
                 <td class="td-mono" style="font-weight:700">${fmt(d.curr)}</td>
                 <td class="${cls}" style="font-family:'IBM Plex Mono',monospace">${sign}${fmt(Math.abs(d.delta))}</td>
+                <td style="text-align:center;font-size:14px;color:var(--col-muted)">🔍</td>
               </tr>`;
             }).join('')}</tbody>
           </table></div>`;
@@ -9002,7 +9087,11 @@ function importCashCallJSON(input) {
         currentFiles,
         jsonDiff: diff,
         filename: file.name,
-        files: currentFiles
+        files: currentFiles,
+        importedModulo1: data.modulo1 || [],
+        importedModulo2: data.modulo2 || [],
+        importedModulo3: data.modulo3 || [],
+        importedModulo4: data.modulo4 || []
       });
 
       // Auto-navigate to audit tab
@@ -12680,7 +12769,11 @@ function importCashCallJSON_silent(data, filename) {
   addAuditEntry('import', `JSON importado: ${filename}`, {
     importedMeta, importedSnap: importedSnap||{},
     importedFiles: importedMeta?.archivos||[], currentFiles,
-    jsonDiff: diff, filename, files: currentFiles
+    jsonDiff: diff, filename, files: currentFiles,
+    importedModulo1: data.modulo1 || [],
+    importedModulo2: data.modulo2 || [],
+    importedModulo3: data.modulo3 || [],
+    importedModulo4: data.modulo4 || []
   });
   switchTab('auditorias');
 }
@@ -14218,6 +14311,645 @@ INSTRUCTIVOS.auditorias = {
     <div class="inst-warn">⚠️ <b>Caso de uso real:</b> Si una factura fue asignada a su proyecto sin notificación, la bitácora registrará exactamente cuándo apareció — demostrando que usted no lo sabía antes de ese momento.</div>`
 };
 
+// ═══════════════════════════════════════════════════════════════
+// DIFF DRILLDOWN — Detalle de registros que provocaron un cambio
+// ═══════════════════════════════════════════════════════════════
+
+// Global registry: entryId → {importedM1, importedM2, importedM3, importedM4}
+const _diffDrilldownData = {};
+
+function registerDrilldownData(entryId, e) {
+  if (e.importedModulo1 || e.importedModulo2 || e.importedModulo3 || e.importedModulo4) {
+    _diffDrilldownData[entryId] = {
+      m1: e.importedModulo1 || [],
+      m2: e.importedModulo2 || [],
+      m3: e.importedModulo3 || [],
+      m4: e.importedModulo4 || []
+    };
+  }
+}
+
+function openDiffDrilldown(entryId, fieldKey, fieldLabel, prev, curr, delta, isCurrency) {
+  const imp = _diffDrilldownData[entryId];
+  const overlay = document.getElementById('diff-drilldown-overlay');
+  const modal   = document.getElementById('diff-drilldown-modal');
+  if (!overlay || !modal) return;
+
+  // Helper: format value
+  const fmt = v => isCurrency ? fmtCurrency(v||0) : (v||0).toLocaleString('es-CO');
+  const sign = delta > 0 ? '▲ +' : '▼ ';
+  const signCls = delta > 0 ? 'color:#059669' : 'color:#dc2626';
+
+  // Build diff header
+  modal.innerHTML = `
+    <div class="ddm-header">
+      <div style="flex:1">
+        <div class="ddm-title">🔍 Detalle del cambio — ${fieldLabel}</div>
+        <div class="ddm-subtitle">Comparación JSON importado → Datos actuales en sesión</div>
+      </div>
+      <button class="ddm-close" onclick="closeDiffDrilldown()">✕</button>
+    </div>
+    <div class="ddm-stats">
+      <div class="ddm-stat">
+        <div class="ddm-stat-val" style="color:var(--col-muted)">${fmt(prev)}</div>
+        <div class="ddm-stat-label">JSON anterior</div>
+      </div>
+      <div class="ddm-stat">
+        <div class="ddm-stat-val" style="color:var(--col-primary)">${fmt(curr)}</div>
+        <div class="ddm-stat-label">Actual cargado</div>
+      </div>
+      <div class="ddm-stat">
+        <div class="ddm-stat-val" style="${signCls}">${sign}${fmt(Math.abs(delta))}</div>
+        <div class="ddm-stat-label">Δ Cambio</div>
+      </div>
+    </div>
+    <div id="ddm-tabs-bar" class="ddm-tabs"></div>
+    <div class="ddm-body" id="ddm-body-content">
+      <div class="ddm-empty">⏳ Calculando diferencias...</div>
+    </div>`;
+
+  overlay.classList.add('open');
+  setTimeout(() => _buildDrilldownContent(fieldKey, imp, modal), 30);
+}
+
+function closeDiffDrilldown() {
+  document.getElementById('diff-drilldown-overlay')?.classList.remove('open');
+}
+
+function _buildDrilldownContent(fieldKey, imp, modal) {
+  const body = modal.querySelector('#ddm-body-content');
+  const tabsBar = modal.querySelector('#ddm-tabs-bar');
+  if (!body) return;
+
+  // ── Recalculate lateDaysCalc for imported m3 records (since it's time-dependent)
+  const today = new Date(); today.setHours(0,0,0,0);
+  function calcMora(r) {
+    if (!r) return 0;
+    if (r.m3Status === 'pagado') return 0;
+    if (!r.dueDate && !r.fechaVencimiento) return r.lateDaysCalc || 0;
+    const raw = r.dueDate || r.fechaVencimiento;
+    let due;
+    try { due = new Date(raw); } catch(e) { return r.lateDaysCalc || 0; }
+    if (!due || isNaN(due)) return r.lateDaysCalc || 0;
+    const diff = Math.floor((today - due) / 86400000);
+    return diff > 0 ? diff : 0;
+  }
+
+  // ── If no imported module data: show only current state filtered by fieldKey
+  if (!imp || (!imp.m1.length && !imp.m2.length && !imp.m3.length && !imp.m4.length)) {
+    tabsBar.innerHTML = '';
+    body.innerHTML = _buildCurrentOnlyView(fieldKey);
+    return;
+  }
+
+  const tabs = [];
+
+  // ─────────────────────────────────────────────
+  // M1 FACTURAS
+  // ─────────────────────────────────────────────
+  if (['m1_total','m1_recepcionado','m1_sinRec','m1_parcial','m1_valTotal'].includes(fieldKey)) {
+    const impByKey = {};
+    (imp.m1||[]).forEach(r => { const k=_m1Key(r); if(k!==_emptyKey) impByKey[k]=r; });
+    const curByKey = {};
+    (state.m1data||[]).forEach(r => { const k=_m1Key(r); if(k!==_emptyKey) curByKey[k]=r; });
+
+    const impKeySet = new Set(Object.keys(impByKey));
+    const curKeySet = new Set(Object.keys(curByKey));
+
+    // Only in current (NEW)
+    const soloEnActual = (state.m1data||[]).filter(r => { const k=_m1Key(r); return k!==_emptyKey && !impKeySet.has(k); });
+    // Only in JSON (REMOVED)
+    const soloEnJSON   = (imp.m1||[]).filter(r => { const k=_m1Key(r); return k!==_emptyKey && !curKeySet.has(k); });
+    // In both but status changed
+    const enAmbos      = (state.m1data||[]).filter(r => { const k=_m1Key(r); return k!==_emptyKey && impKeySet.has(k); });
+    const cambiaron    = enAmbos.filter(r => {
+      const old = impByKey[_m1Key(r)];
+      return old && old.recStatus !== r.recStatus;
+    }).map(r => {
+      const old = impByKey[_m1Key(r)];
+      return { ...r, _prevStatus: old?.recStatus || '—' };
+    });
+
+    if (fieldKey === 'm1_total') {
+      tabs.push({ id:'nuevas', label:'Facturas nuevas (solo en actual)', icon:'🆕', rows: soloEnActual, renderFn: _renderM1Table });
+      tabs.push({ id:'removidas', label:'Salieron del JSON', icon:'❌', rows: soloEnJSON, renderFn: _renderM1TableImp });
+    } else if (fieldKey === 'm1_recepcionado') {
+      const pasaronA   = cambiaron.filter(r => r.recStatus === 'recepcionado');
+      const salieronDe = cambiaron.filter(r => r._prevStatus === 'recepcionado' && r.recStatus !== 'recepcionado');
+      const nuevasRec  = soloEnActual.filter(r => r.recStatus === 'recepcionado');
+      tabs.push({ id:'pasaron', label:'Pasaron a recepcionado', icon:'✅', rows: pasaronA, renderFn: _renderM1TableConCambio });
+      tabs.push({ id:'salieron', label:'Dejaron de estar recepcionadas', icon:'⬇️', rows: salieronDe, renderFn: _renderM1TableConCambio });
+      tabs.push({ id:'nuevas', label:'Nuevas facturas recepcionadas', icon:'🆕', rows: nuevasRec, renderFn: _renderM1Table });
+      tabs.push({ id:'removidas', label:'Salieron del JSON', icon:'❌', rows: soloEnJSON.filter(r=>r.recStatus==='recepcionado'), renderFn: _renderM1TableImp });
+    } else if (fieldKey === 'm1_sinRec') {
+      const pasaronA   = cambiaron.filter(r => r.recStatus === 'sin_recepcion');
+      const salieronDe = cambiaron.filter(r => r._prevStatus === 'sin_recepcion' && r.recStatus !== 'sin_recepcion');
+      const nuevasSR   = soloEnActual.filter(r => r.recStatus === 'sin_recepcion');
+      tabs.push({ id:'pasaron', label:'Pasaron a sin recepción', icon:'🔴', rows: pasaronA, renderFn: _renderM1TableConCambio });
+      tabs.push({ id:'salieron', label:'Ya tienen recepción', icon:'✅', rows: salieronDe, renderFn: _renderM1TableConCambio });
+      tabs.push({ id:'nuevas', label:'Facturas nuevas sin recepción', icon:'🆕', rows: nuevasSR, renderFn: _renderM1Table });
+    } else if (fieldKey === 'm1_valTotal') {
+      // Sort by value desc — show top changers
+      const conValorCambio = enAmbos.map(r => {
+        const old = impByKey[_m1Key(r)];
+        const delta = (r.valSinIva||0) - (old?.valSinIva||0);
+        return { ...r, _deltaVal: delta, _prevVal: old?.valSinIva||0 };
+      }).filter(r => Math.abs(r._deltaVal) > 0).sort((a,b) => Math.abs(b._deltaVal)-Math.abs(a._deltaVal));
+      tabs.push({ id:'valcambio', label:'Facturas con valor cambiado', icon:'💵', rows: conValorCambio, renderFn: _renderM1TableValDelta });
+      tabs.push({ id:'nuevas', label:'Facturas nuevas', icon:'🆕', rows: soloEnActual, renderFn: _renderM1Table });
+      tabs.push({ id:'removidas', label:'Salieron del JSON', icon:'❌', rows: soloEnJSON, renderFn: _renderM1TableImp });
+    } else {
+      tabs.push({ id:'cambios', label:'Cambios de estado', icon:'🔄', rows: cambiaron, renderFn: _renderM1TableConCambio });
+      tabs.push({ id:'nuevas', label:'Facturas nuevas', icon:'🆕', rows: soloEnActual, renderFn: _renderM1Table });
+      tabs.push({ id:'removidas', label:'Salieron del JSON', icon:'❌', rows: soloEnJSON, renderFn: _renderM1TableImp });
+    }
+  }
+  // ─────────────────────────────────────────────
+  // M2 RECEPCIONES
+  // ─────────────────────────────────────────────
+  else if (['m2_total','m2_pagado','m2_aprobado'].includes(fieldKey)) {
+    const impByKey = {};
+    (imp.m2||[]).forEach(r => { const k=_m2Key(r); if(k!==_emptyKey) impByKey[k]=r; });
+    const curByKey = {};
+    (state.m2data||[]).forEach(r => { const k=_m2Key(r); if(k!==_emptyKey) curByKey[k]=r; });
+
+    const soloEnActual = (state.m2data||[]).filter(r => { const k=_m2Key(r); return k!==_emptyKey && !impByKey[k]; });
+    const soloEnJSON   = (imp.m2||[]).filter(r => { const k=_m2Key(r); return k!==_emptyKey && !curByKey[k]; });
+    const enAmbos      = (state.m2data||[]).filter(r => { const k=_m2Key(r); return k!==_emptyKey && !!impByKey[k]; });
+
+    if (fieldKey === 'm2_pagado') {
+      const ahoraPagadas = enAmbos.filter(r => {
+        const old = impByKey[_m2Key(r)];
+        return old?.m2Status !== 'pagado' && r.m2Status === 'pagado';
+      }).map(r => ({ ...r, _prevStatus: impByKey[_m2Key(r)]?.m2Status||'—' }));
+      tabs.push({ id:'pagadas', label:'Pasaron a pagado', icon:'💰', rows: ahoraPagadas, renderFn: _renderM2TableConCambio });
+      tabs.push({ id:'nuevas', label:'Recepciones nuevas pagadas', icon:'🆕', rows: soloEnActual.filter(r=>r.m2Status==='pagado'), renderFn: _renderM2Table });
+    } else if (fieldKey === 'm2_total') {
+      tabs.push({ id:'nuevas', label:'Recepciones nuevas', icon:'🆕', rows: soloEnActual, renderFn: _renderM2Table });
+      tabs.push({ id:'removidas', label:'Salieron del JSON', icon:'❌', rows: soloEnJSON, renderFn: _renderM2TableImp });
+    } else {
+      const cambiaron = enAmbos.filter(r => {
+        const old = impByKey[_m2Key(r)]; return old && old.m2Status !== r.m2Status;
+      }).map(r => ({ ...r, _prevStatus: impByKey[_m2Key(r)]?.m2Status||'—' }));
+      tabs.push({ id:'cambios', label:'Cambios de estado', icon:'🔄', rows: cambiaron, renderFn: _renderM2TableConCambio });
+      tabs.push({ id:'nuevas', label:'Recepciones nuevas', icon:'🆕', rows: soloEnActual, renderFn: _renderM2Table });
+    }
+  }
+  // ─────────────────────────────────────────────
+  // M3 CxP
+  // ─────────────────────────────────────────────
+  else if (['m3_total','m3_pagado','m3_mora','m3_valPagado'].includes(fieldKey)) {
+    const impByKey = {};
+    (imp.m3||[]).forEach(r => { const k=_m3Key(r); if(k!==_emptyKey) impByKey[k]=r; });
+    const curByKey = {};
+    (state.m3data||[]).forEach(r => { const k=_m3Key(r); if(k!==_emptyKey) curByKey[k]=r; });
+
+    const soloEnActual = (state.m3data||[]).filter(r => { const k=_m3Key(r); return k!==_emptyKey && !impByKey[k]; });
+    const soloEnJSON   = (imp.m3||[]).filter(r => { const k=_m3Key(r); return k!==_emptyKey && !curByKey[k]; });
+    const enAmbos      = (state.m3data||[]).filter(r => { const k=_m3Key(r); return k!==_emptyKey && !!impByKey[k]; });
+
+    if (fieldKey === 'm3_total') {
+      tabs.push({ id:'nuevas', label:'Nuevos registros CxP', icon:'🆕', rows: soloEnActual, renderFn: _renderM3Table });
+      tabs.push({ id:'removidos', label:'Salieron del JSON', icon:'❌', rows: soloEnJSON, renderFn: _renderM3TableImp });
+    } else if (fieldKey === 'm3_pagado') {
+      const ahoraPagadas = enAmbos.filter(r => {
+        const old = impByKey[_m3Key(r)];
+        return old?.m3Status !== 'pagado' && r.m3Status === 'pagado';
+      }).map(r => ({ ...r, _prevStatus: impByKey[_m3Key(r)]?.m3Status||'—' }));
+      const nuevasPag = soloEnActual.filter(r => r.m3Status === 'pagado');
+      tabs.push({ id:'pasaron', label:'Pasaron a pagado', icon:'💰', rows: ahoraPagadas, renderFn: _renderM3TableConCambio });
+      tabs.push({ id:'nuevas', label:'Nuevos registros pagados', icon:'🆕', rows: nuevasPag, renderFn: _renderM3Table });
+      tabs.push({ id:'removidos', label:'Salieron del JSON (pagadas)', icon:'❌', rows: soloEnJSON.filter(r=>r.m3Status==='pagado'), renderFn: _renderM3TableImp });
+    } else if (fieldKey === 'm3_mora') {
+      // Use stored lateDaysCalc from JSON as "previous" state — don't recalculate
+      // JSON lateDaysCalc = value at time of export; current lateDaysCalc = value now
+      const entraron = enAmbos.filter(r => {
+        const old = impByKey[_m3Key(r)];
+        const wasMora = old && (old.lateDaysCalc||0) > 0 && old.m3Status !== 'pagado';
+        const isMora  = (r.lateDaysCalc||0) > 0 && r.m3Status !== 'pagado';
+        return !wasMora && isMora;
+      }).map(r => {
+        const old = impByKey[_m3Key(r)];
+        return { ...r, _prevMora: old?.lateDaysCalc||0, _prevStatus: old?.m3Status||'—' };
+      }).sort((a,b)=>(b.lateDaysCalc||0)-(a.lateDaysCalc||0));
+
+      const salieron = enAmbos.filter(r => {
+        const old = impByKey[_m3Key(r)];
+        const wasMora = old && (old.lateDaysCalc||0) > 0 && old.m3Status !== 'pagado';
+        const isMora  = (r.lateDaysCalc||0) > 0 && r.m3Status !== 'pagado';
+        return wasMora && !isMora;
+      }).map(r => {
+        const old = impByKey[_m3Key(r)];
+        return { ...r, _prevMora: old?.lateDaysCalc||0, _prevStatus: old?.m3Status||'—' };
+      }).sort((a,b)=>(b._prevMora||0)-(a._prevMora||0));
+
+      const ahoraMora = (state.m3data||[]).filter(r => (r.lateDaysCalc||0) > 0 && r.m3Status !== 'pagado')
+        .sort((a,b)=>(b.lateDaysCalc||0)-(a.lateDaysCalc||0));
+
+      const nuevasMora = soloEnActual.filter(r => (r.lateDaysCalc||0) > 0 && r.m3Status !== 'pagado')
+        .sort((a,b)=>(b.lateDaysCalc||0)-(a.lateDaysCalc||0));
+
+      tabs.push({ id:'entraron', label:'Entraron en mora', icon:'🔴', rows: entraron, renderFn: _renderM3TableMora });
+      tabs.push({ id:'salieron', label:'Salieron de mora / pagaron', icon:'✅', rows: salieron, renderFn: _renderM3TableMora });
+      tabs.push({ id:'todas', label:'Todas en mora ahora', icon:'⚠️', rows: ahoraMora, renderFn: _renderM3Table });
+      tabs.push({ id:'nuevas', label:'Facturas nuevas en mora', icon:'🆕', rows: nuevasMora, renderFn: _renderM3Table });
+    } else if (fieldKey === 'm3_valPagado') {
+      const ahoraPagadas = (state.m3data||[]).filter(r => r.m3Status === 'pagado')
+        .sort((a,b)=>(b.cxpBruto||b.valSinIva||0)-(a.cxpBruto||a.valSinIva||0));
+      tabs.push({ id:'pagadas', label:'Todos los registros pagados actuales', icon:'💰', rows: ahoraPagadas, renderFn: _renderM3Table });
+      tabs.push({ id:'nuevas', label:'Nuevos pagados (no estaban en JSON)', icon:'🆕', rows: soloEnActual.filter(r=>r.m3Status==='pagado'), renderFn: _renderM3Table });
+    }
+  }
+  // ─────────────────────────────────────────────
+  // M4 BRECHAS
+  // ─────────────────────────────────────────────
+  else if (fieldKey === 'm4_brechas') {
+    const impConBrechas = (imp.m4||[]).filter(r=>(r.brechas||[]).length>0);
+    const curConBrechas = (state.m4data||[]).filter(r=>(r.brechas||[]).length>0);
+    const impKeys = new Set(impConBrechas.map(r=>_m4Key(r)));
+    const curKeys = new Set(curConBrechas.map(r=>_m4Key(r)));
+
+    const nuevasBrechas    = curConBrechas.filter(r => !impKeys.has(_m4Key(r)));
+    const resueltasBrechas = impConBrechas.filter(r => !curKeys.has(_m4Key(r)));
+    const cambiaron        = curConBrechas.filter(r => impKeys.has(_m4Key(r))).map(r => {
+      const old = impConBrechas.find(x=>_m4Key(x)===_m4Key(r));
+      return { ...r, _prevBrechas: old?.brechas||[] };
+    }).filter(r => JSON.stringify(r.brechas) !== JSON.stringify(r._prevBrechas));
+
+    tabs.push({ id:'nuevas',    label:'Brechas nuevas',   icon:'🔴', rows: nuevasBrechas,    renderFn: _renderM4Table });
+    tabs.push({ id:'resueltas', label:'Brechas resueltas',icon:'✅', rows: resueltasBrechas, renderFn: _renderM4TableImp });
+    tabs.push({ id:'cambiaron', label:'Cambio de tipo de brecha', icon:'🔄', rows: cambiaron, renderFn: _renderM4TableConCambio });
+    tabs.push({ id:'todas',     label:'Todas las brechas actuales', icon:'⚠️',
+      rows: curConBrechas.sort((a,b)=>(b.brechas||[]).length-(a.brechas||[]).length), renderFn: _renderM4Table });
+  }
+  // ─────────────────────────────────────────────
+  // PROVEEDORES
+  // ─────────────────────────────────────────────
+  else if (fieldKey === 'proveedores') {
+    const impProvs = new Set((imp.m1||[]).map(r=>(r.prov||r.proveedor||'').trim().toUpperCase()).filter(Boolean));
+    const curProvs = new Set((state.m1data||[]).map(r=>(r.prov||'').trim().toUpperCase()).filter(Boolean));
+    const nuevosProvs  = [...curProvs].filter(p=>!impProvs.has(p)).sort();
+    const removedProvs = [...impProvs].filter(p=>!curProvs.has(p)).sort();
+    tabs.push({ id:'nuevos',   label:'Proveedores nuevos',         icon:'🆕', rows: nuevosProvs.map(p=>({prov:p})),  renderFn: _renderProvTableRich.bind(null,'nuevo') });
+    tabs.push({ id:'removidos',label:'Proveedores que salieron',   icon:'❌', rows: removedProvs.map(p=>({prov:p})), renderFn: _renderProvTableRich.bind(null,'removido') });
+  }
+
+  // ── Filter empty tabs ──
+  const visibleTabs = tabs.filter(t => t.rows && t.rows.length > 0);
+
+  if (!visibleTabs.length) {
+    tabsBar.innerHTML = '';
+    body.innerHTML = `<div class="ddm-empty">
+      <div style="font-size:32px;margin-bottom:12px">🔎</div>
+      <div style="font-weight:600;margin-bottom:8px">No se encontraron registros específicos que expliquen el cambio</div>
+      <div style="font-size:12px;color:var(--col-muted);line-height:1.6">
+        Posibles causas:<br>
+        • Los datos del JSON usan claves distintas a los datos actuales<br>
+        • El cambio es en campos calculados que no se comparan directamente<br>
+        • El JSON importado no incluye datos detallados de módulos<br><br>
+        <strong>Conteos del JSON importado:</strong> M1: ${(imp.m1||[]).length} · M2: ${(imp.m2||[]).length} · M3: ${(imp.m3||[]).length} · M4: ${(imp.m4||[]).length}<br>
+        <strong>Conteos actuales:</strong> M1: ${(state.m1data||[]).length} · M2: ${(state.m2data||[]).length} · M3: ${(state.m3data||[]).length} · M4: ${(state.m4data||[]).length}
+      </div>
+    </div>`;
+    return;
+  }
+
+  // Render tab bar
+  tabsBar.innerHTML = visibleTabs.map((t,i) => `
+    <button class="ddm-tab ${i===0?'active':''}" onclick="_selectDDMTab(this,'${t.id}')">
+      ${t.icon} ${t.label} <span class="ddm-tab-count">${t.rows.length}</span>
+    </button>`).join('');
+
+  modal._ddmTabs = visibleTabs;
+  _renderDDMTab(body, visibleTabs[0]);
+}
+
+// ── Fallback: show current state data filtered by fieldKey (when no JSON data)
+function _buildCurrentOnlyView(fieldKey) {
+  let rows = [], renderFn = _renderM1Table, title = '';
+  if (fieldKey === 'm1_total')       { rows = state.m1data||[];  title='Todas las facturas actuales'; }
+  else if (fieldKey === 'm1_recepcionado') { rows = (state.m1data||[]).filter(r=>r.recStatus==='recepcionado'); title='Facturas recepcionadas'; }
+  else if (fieldKey === 'm1_sinRec') { rows = (state.m1data||[]).filter(r=>r.recStatus==='sin_recepcion'); title='Facturas sin recepción'; }
+  else if (fieldKey === 'm3_mora')   { rows = (state.m3data||[]).filter(r=>(r.lateDaysCalc||0)>0&&r.m3Status!=='pagado').sort((a,b)=>(b.lateDaysCalc||0)-(a.lateDaysCalc||0)); renderFn=_renderM3Table; title='Registros en mora'; }
+  else if (fieldKey === 'm3_pagado') { rows = (state.m3data||[]).filter(r=>r.m3Status==='pagado'); renderFn=_renderM3Table; title='Registros pagados'; }
+  else if (fieldKey === 'm4_brechas'){ rows = (state.m4data||[]).filter(r=>(r.brechas||[]).length>0); renderFn=_renderM4Table; title='Registros con brechas'; }
+  if (!rows.length) return '<div class="ddm-empty">Sin datos disponibles en el estado actual</div>';
+  return `<div class="ddm-section-title">📋 ${title} — ${rows.length} registro(s) <span style="font-size:10px;font-weight:400;color:var(--col-muted)">(sin JSON importado para comparar)</span></div>` + renderFn(rows);
+}
+
+function _selectDDMTab(btn, tabId) {
+  const modal = document.getElementById('diff-drilldown-modal');
+  const body  = modal.querySelector('#ddm-body-content');
+  modal.querySelectorAll('.ddm-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const tab = (modal._ddmTabs||[]).find(t => t.id === tabId);
+  if (tab) _renderDDMTab(body, tab);
+}
+
+function _renderDDMTab(body, tab) {
+  body.innerHTML = `<div class="ddm-section-title">${tab.icon} ${tab.label} — ${tab.rows.length} registro(s)</div>` + tab.renderFn(tab.rows);
+}
+
+// Key generators — verified against actual data structures:
+// m1data: inv, prov, po, recStatus, valSinIva, m3Status
+// m2data: rec (N°recepción), po/oc, proveedor, m2Status, valRec
+// m3data: inv, prov, po, m3Status, lateDaysCalc, cxpBruto, dueDate
+// m4data: inv, prov, po, brechas[]
+// ALL modules use inv+prov as the composite key (nit/factura do NOT exist in m3/m4)
+
+function _m1Key(r) {
+  const inv  = String(r.inv  || r.factura || r.nroFactura || '').trim().toUpperCase();
+  const prov = String(r.prov || r.proveedor || '').trim().toUpperCase();
+  return prov + '||' + inv;
+}
+function _m2Key(r) {
+  // m2data (df2rec) has different structure: rec, oc/po, proveedor
+  const rec = String(r.rec  || r.nroRecepcion || '').trim().toUpperCase();
+  const oc  = String(r.oc   || r.po           || '').trim().toUpperCase();
+  return rec + '||' + oc;
+}
+function _m3Key(r) {
+  // m3data uses inv+prov (same as m1) — NOT factura or nit
+  const inv  = String(r.inv  || r.factura || r.nroFactura || '').trim().toUpperCase();
+  const prov = String(r.prov || r.proveedor || '').trim().toUpperCase();
+  return prov + '||' + inv;
+}
+function _m4Key(r) {
+  // m4data uses inv+prov (same as m1)
+  const inv  = String(r.inv  || r.factura || r.nroFactura || '').trim().toUpperCase();
+  const prov = String(r.prov || r.proveedor || '').trim().toUpperCase();
+  return prov + '||' + inv;
+}
+// Empty-key guard (separator is '||' so empty = '||')
+const _emptyKey = '||';
+
+// ── TABLE RENDERERS ────────────────────────────────────────────
+const _ddmMax = 300;
+function _ddmTrunc(rows) { return rows.length > _ddmMax ? `<div style="padding:8px 10px;font-size:11px;color:var(--col-warning);background:#fef3c7;border-top:1px solid var(--col-border)">⚠️ Mostrando ${_ddmMax} de ${rows.length} registros</div>` : ''; }
+
+function _renderM1Table(rows) {
+  if (!rows.length) return '<div class="ddm-empty">Sin registros</div>';
+  return `<div style="overflow-x:auto"><table class="ddm-table">
+    <thead><tr>
+      <th>Estado actual</th><th>N° Factura</th><th>Proveedor</th><th>OC / PO</th>
+      <th style="text-align:right">Valor sin IVA</th><th>Fecha</th>
+    </tr></thead>
+    <tbody>${rows.slice(0,_ddmMax).map(r=>`<tr>
+      <td><span class="ddm-tag-new">${r.recStatus||'—'}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600">${r.inv||r.factura||'—'}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${r.prov||'—'}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">${r.po||r.oc||'—'}</td>
+      <td style="text-align:right;font-family:'IBM Plex Mono',monospace">${fmtCurrency(r.valSinIva||0)}</td>
+      <td style="font-size:11px">${r.fecha||r.fechaDoc||'—'}</td>
+    </tr>`).join('')}</tbody></table></div>${_ddmTrunc(rows)}`;
+}
+
+function _renderM1TableConCambio(rows) {
+  if (!rows.length) return '<div class="ddm-empty">Sin registros</div>';
+  return `<div style="overflow-x:auto"><table class="ddm-table">
+    <thead><tr>
+      <th>Estado anterior</th><th>Estado actual</th><th>N° Factura</th><th>Proveedor</th><th>OC / PO</th>
+      <th style="text-align:right">Valor sin IVA</th>
+    </tr></thead>
+    <tbody>${rows.slice(0,_ddmMax).map(r=>`<tr>
+      <td><span class="ddm-tag-removed">${r._prevStatus||'—'}</span></td>
+      <td><span class="ddm-tag-new">${r.recStatus||'—'}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600">${r.inv||r.factura||'—'}</td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${r.prov||'—'}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">${r.po||r.oc||'—'}</td>
+      <td style="text-align:right;font-family:'IBM Plex Mono',monospace">${fmtCurrency(r.valSinIva||0)}</td>
+    </tr>`).join('')}</tbody></table></div>${_ddmTrunc(rows)}`;
+}
+
+function _renderM1TableValDelta(rows) {
+  if (!rows.length) return '<div class="ddm-empty">Sin registros</div>';
+  return `<div style="overflow-x:auto"><table class="ddm-table">
+    <thead><tr>
+      <th>N° Factura</th><th>Proveedor</th>
+      <th style="text-align:right">Valor anterior</th><th style="text-align:right">Valor actual</th><th style="text-align:right">Δ Cambio</th>
+    </tr></thead>
+    <tbody>${rows.slice(0,_ddmMax).map(r=>`<tr>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600">${r.inv||r.factura||'—'}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.prov||'—'}</td>
+      <td style="text-align:right;font-family:'IBM Plex Mono',monospace;color:var(--col-muted)">${fmtCurrency(r._prevVal||0)}</td>
+      <td style="text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700">${fmtCurrency(r.valSinIva||0)}</td>
+      <td style="text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;color:${(r._deltaVal||0)>=0?'var(--col-success)':'var(--col-danger)'}">${(r._deltaVal||0)>=0?'▲ +':'▼ '}${fmtCurrency(Math.abs(r._deltaVal||0))}</td>
+    </tr>`).join('')}</tbody></table></div>${_ddmTrunc(rows)}`;
+}
+
+function _renderM1TableImp(rows) {
+  if (!rows.length) return '<div class="ddm-empty">Sin registros</div>';
+  return `<div style="overflow-x:auto"><table class="ddm-table">
+    <thead><tr>
+      <th>Estado (JSON)</th><th>N° Factura</th><th>Proveedor</th><th>OC / PO</th>
+      <th style="text-align:right">Valor sin IVA</th>
+    </tr></thead>
+    <tbody>${rows.slice(0,_ddmMax).map(r=>`<tr>
+      <td><span class="ddm-tag-removed">${r.recStatus||'—'}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600">${r.inv||r.factura||r.nroFactura||'—'}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||r.proveedor||''}">${r.prov||r.proveedor||'—'}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">${r.po||r.oc||'—'}</td>
+      <td style="text-align:right;font-family:'IBM Plex Mono',monospace">${fmtCurrency(r.valSinIva||0)}</td>
+    </tr>`).join('')}</tbody></table></div>${_ddmTrunc(rows)}`;
+}
+
+function _renderM2Table(rows) {
+  if (!rows.length) return '<div class="ddm-empty">Sin registros</div>';
+  return `<div style="overflow-x:auto"><table class="ddm-table">
+    <thead><tr>
+      <th>Estado</th><th>N° Recepción</th><th>Proveedor</th><th>OC</th>
+      <th style="text-align:right">Valor</th><th>Fecha</th>
+    </tr></thead>
+    <tbody>${rows.slice(0,_ddmMax).map(r=>`<tr>
+      <td><span class="ddm-tag-new">${r.m2Status||r.estadoLinea||'—'}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600">${r.rec||r.nroRecepcion||'—'}</td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.proveedor||r.prov||'—'}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">${r.oc||r.po||'—'}</td>
+      <td style="text-align:right;font-family:'IBM Plex Mono',monospace">${fmtCurrency(r.valRec||0)}</td>
+      <td style="font-size:11px">${r.fecha||'—'}</td>
+    </tr>`).join('')}</tbody></table></div>${_ddmTrunc(rows)}`;
+}
+
+function _renderM2TableConCambio(rows) {
+  if (!rows.length) return '<div class="ddm-empty">Sin registros</div>';
+  return `<div style="overflow-x:auto"><table class="ddm-table">
+    <thead><tr>
+      <th>Estado anterior</th><th>Estado actual</th><th>N° Recepción</th><th>Proveedor</th><th>OC</th>
+      <th style="text-align:right">Valor</th>
+    </tr></thead>
+    <tbody>${rows.slice(0,_ddmMax).map(r=>`<tr>
+      <td><span class="ddm-tag-removed">${r._prevStatus||'—'}</span></td>
+      <td><span class="ddm-tag-new">${r.m2Status||'—'}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600">${r.rec||'—'}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.proveedor||r.prov||'—'}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">${r.oc||r.po||'—'}</td>
+      <td style="text-align:right;font-family:'IBM Plex Mono',monospace">${fmtCurrency(r.valRec||0)}</td>
+    </tr>`).join('')}</tbody></table></div>${_ddmTrunc(rows)}`;
+}
+
+function _renderM2TableImp(rows) {
+  if (!rows.length) return '<div class="ddm-empty">Sin registros</div>';
+  return `<div style="overflow-x:auto"><table class="ddm-table">
+    <thead><tr>
+      <th>Estado (JSON)</th><th>N° Recepción</th><th>Proveedor</th><th>OC</th>
+      <th style="text-align:right">Valor</th>
+    </tr></thead>
+    <tbody>${rows.slice(0,_ddmMax).map(r=>`<tr>
+      <td><span class="ddm-tag-removed">${r.m2Status||r.estadoLinea||'—'}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600">${r.rec||r.nroRecepcion||'—'}</td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.proveedor||r.prov||'—'}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">${r.oc||r.po||'—'}</td>
+      <td style="text-align:right;font-family:'IBM Plex Mono',monospace">${fmtCurrency(r.valRec||0)}</td>
+    </tr>`).join('')}</tbody></table></div>${_ddmTrunc(rows)}`;
+}
+
+function _renderM3Table(rows) {
+  if (!rows.length) return '<div class="ddm-empty">Sin registros</div>';
+  return `<div style="overflow-x:auto"><table class="ddm-table">
+    <thead><tr>
+      <th>Estado CxP</th><th>N° Factura</th><th>Proveedor</th><th>NIT</th>
+      <th style="text-align:right">Valor bruto</th><th style="text-align:center">Días mora</th><th>Fecha contable</th>
+    </tr></thead>
+    <tbody>${rows.slice(0,_ddmMax).map(r=>`<tr>
+      <td><span class="ddm-tag-${r.m3Status==='pagado'?'new':'changed'}">${r.m3Status||'—'}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600">${r.factura||r.inv||'—'}</td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${r.prov||'—'}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">${r.nit||'—'}</td>
+      <td style="text-align:right;font-family:'IBM Plex Mono',monospace">${fmtCurrency(r.cxpBruto||r.valSinIva||0)}</td>
+      <td style="text-align:center;font-weight:${(r.lateDaysCalc||0)>0?'700':'400'};color:${(r.lateDaysCalc||0)>30?'#dc2626':(r.lateDaysCalc||0)>0?'#d97706':'inherit'}">${r.lateDaysCalc||0}</td>
+      <td style="font-size:11px">${r.fechaContable||'—'}</td>
+    </tr>`).join('')}</tbody></table></div>${_ddmTrunc(rows)}`;
+}
+
+function _renderM3TableMora(rows) {
+  if (!rows.length) return '<div class="ddm-empty">Sin registros</div>';
+  return `<div style="overflow-x:auto"><table class="ddm-table">
+    <thead><tr>
+      <th>N° Factura</th><th>Proveedor</th><th>NIT</th>
+      <th style="text-align:center">Días mora anterior</th><th style="text-align:center">Días mora actual</th>
+      <th>Estado anterior</th><th>Estado actual</th><th style="text-align:right">Valor</th>
+    </tr></thead>
+    <tbody>${rows.slice(0,_ddmMax).map(r=>`<tr>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600">${r.factura||r.inv||'—'}</td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${r.prov||'—'}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">${r.nit||'—'}</td>
+      <td style="text-align:center;color:var(--col-muted)">${r._prevMora||0}</td>
+      <td style="text-align:center;font-weight:700;color:${(r.lateDaysCalc||0)>30?'#dc2626':(r.lateDaysCalc||0)>0?'#d97706':'var(--col-success)'}">${r.lateDaysCalc||0}</td>
+      <td><span class="ddm-tag-removed">${r._prevStatus||'—'}</span></td>
+      <td><span class="ddm-tag-${r.m3Status==='pagado'?'new':'changed'}">${r.m3Status||'—'}</span></td>
+      <td style="text-align:right;font-family:'IBM Plex Mono',monospace">${fmtCurrency(r.cxpBruto||r.valSinIva||0)}</td>
+    </tr>`).join('')}</tbody></table></div>${_ddmTrunc(rows)}`;
+}
+
+function _renderM3TableConCambio(rows) {
+  if (!rows.length) return '<div class="ddm-empty">Sin registros</div>';
+  return `<div style="overflow-x:auto"><table class="ddm-table">
+    <thead><tr>
+      <th>Estado anterior</th><th>Estado actual</th><th>N° Factura</th><th>Proveedor</th><th>NIT</th>
+      <th style="text-align:right">Valor bruto</th><th>Fecha contable</th>
+    </tr></thead>
+    <tbody>${rows.slice(0,_ddmMax).map(r=>`<tr>
+      <td><span class="ddm-tag-removed">${r._prevStatus||'—'}</span></td>
+      <td><span class="ddm-tag-new">${r.m3Status||'—'}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600">${r.factura||r.inv||'—'}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||''}">${r.prov||'—'}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">${r.nit||'—'}</td>
+      <td style="text-align:right;font-family:'IBM Plex Mono',monospace">${fmtCurrency(r.cxpBruto||r.valSinIva||0)}</td>
+      <td style="font-size:11px">${r.fechaContable||'—'}</td>
+    </tr>`).join('')}</tbody></table></div>${_ddmTrunc(rows)}`;
+}
+
+function _renderM3TableImp(rows) {
+  if (!rows.length) return '<div class="ddm-empty">Sin registros</div>';
+  return `<div style="overflow-x:auto"><table class="ddm-table">
+    <thead><tr>
+      <th>Estado (JSON)</th><th>N° Factura</th><th>Proveedor</th><th>NIT</th>
+      <th style="text-align:right">Valor</th><th style="text-align:center">Días mora</th>
+    </tr></thead>
+    <tbody>${rows.slice(0,_ddmMax).map(r=>`<tr>
+      <td><span class="ddm-tag-removed">${r.m3Status||'—'}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600">${r.factura||r.inv||'—'}</td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.prov||'—'}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">${r.nit||'—'}</td>
+      <td style="text-align:right;font-family:'IBM Plex Mono',monospace">${fmtCurrency(r.cxpBruto||r.valSinIva||0)}</td>
+      <td style="text-align:center">${r.lateDaysCalc||0}</td>
+    </tr>`).join('')}</tbody></table></div>${_ddmTrunc(rows)}`;
+}
+
+function _renderM4Table(rows) {
+  if (!rows.length) return '<div class="ddm-empty">Sin registros</div>';
+  return `<div style="overflow-x:auto"><table class="ddm-table">
+    <thead><tr>
+      <th>N° Factura</th><th>Proveedor</th><th>OC</th>
+      <th>Brechas detectadas</th><th style="text-align:right">Valor</th>
+    </tr></thead>
+    <tbody>${rows.slice(0,_ddmMax).map(r=>`<tr>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600">${r.inv||r.factura||r.nroFactura||'—'}</td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.prov||r.proveedor||''}">${r.prov||r.proveedor||'—'}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">${r.po||r.oc||'—'}</td>
+      <td style="font-size:11px">${(r.brechas||[]).map(b=>`<span class="ddm-tag-removed" style="margin-right:3px">${b}</span>`).join('')||'—'}</td>
+      <td style="text-align:right;font-family:'IBM Plex Mono',monospace">${fmtCurrency(r.valSinIva||0)}</td>
+    </tr>`).join('')}</tbody></table></div>${_ddmTrunc(rows)}`;
+}
+
+function _renderM4TableImp(rows) {
+  if (!rows.length) return '<div class="ddm-empty">Sin registros</div>';
+  return `<div style="overflow-x:auto"><table class="ddm-table">
+    <thead><tr>
+      <th>N° Factura</th><th>Proveedor</th><th>Brechas (JSON anterior)</th>
+      <th style="text-align:right">Valor</th>
+    </tr></thead>
+    <tbody>${rows.slice(0,_ddmMax).map(r=>`<tr>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600">${r.inv||r.factura||r.nroFactura||'—'}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.prov||r.proveedor||'—'}</td>
+      <td style="font-size:11px;color:var(--col-muted)">${(r.brechas||[]).join(' · ')||'—'}</td>
+      <td style="text-align:right;font-family:'IBM Plex Mono',monospace">${fmtCurrency(r.valSinIva||0)}</td>
+    </tr>`).join('')}</tbody></table></div>${_ddmTrunc(rows)}`;
+}
+
+function _renderM4TableConCambio(rows) {
+  if (!rows.length) return '<div class="ddm-empty">Sin registros</div>';
+  return `<div style="overflow-x:auto"><table class="ddm-table">
+    <thead><tr>
+      <th>N° Factura</th><th>Proveedor</th>
+      <th>Brechas anteriores</th><th>Brechas actuales</th>
+    </tr></thead>
+    <tbody>${rows.slice(0,_ddmMax).map(r=>`<tr>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600">${r.inv||r.factura||'—'}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.prov||r.proveedor||'—'}</td>
+      <td style="font-size:11px;color:var(--col-muted)">${(r._prevBrechas||[]).join(' · ')||'—'}</td>
+      <td style="font-size:11px">${(r.brechas||[]).map(b=>`<span class="ddm-tag-removed" style="margin-right:3px">${b}</span>`).join('')||'—'}</td>
+    </tr>`).join('')}</tbody></table></div>${_ddmTrunc(rows)}`;
+}
+
+function _renderProvTableRich(tipo, rows) {
+  if (!rows.length) return '<div class="ddm-empty">Sin registros</div>';
+  const cls = tipo === 'nuevo' ? 'ddm-tag-new' : 'ddm-tag-removed';
+  return `<table class="ddm-table">
+    <thead><tr><th>#</th><th>Proveedor</th><th>Facturas en actual</th></tr></thead>
+    <tbody>${rows.map((r,i)=>{
+      const cnt = tipo==='nuevo'
+        ? (state.m1data||[]).filter(x=>(x.prov||'').toUpperCase()===(r.prov||'').toUpperCase()).length
+        : 0;
+      return `<tr>
+        <td style="color:var(--col-muted);width:36px">${i+1}</td>
+        <td style="font-weight:600"><span class="${cls}">${r.prov||'—'}</span></td>
+        <td>${cnt>0?cnt:'—'}</td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
+}
+
+const _renderProvTable = (rows) => _renderProvTableRich('nuevo', rows);
+
+window.openDiffDrilldown  = openDiffDrilldown;
+window.closeDiffDrilldown = closeDiffDrilldown;
+window._selectDDMTab      = _selectDDMTab;
+window.registerDrilldownData = registerDrilldownData;
 </script>
+
+<!-- DIFF DRILLDOWN MODAL -->
+<div id="diff-drilldown-overlay" onclick="if(event.target===this)closeDiffDrilldown()">
+  <div id="diff-drilldown-modal"></div>
+</div>
 
 </body></html>
