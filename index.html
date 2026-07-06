@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⛏ Cash Call v7.0 — Control Financiero Minero · ARIS MINING</title>
+<title>⛏ Cash Call v7.1 — Control Financiero Minero · ARIS MINING</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -722,7 +722,7 @@
   }
   .chart-card:hover .chart-zoom-hint { opacity: 1; }
 
-  /* ── FULLSCREEN TABLE OVERLAY v7.0 ─────────────── */
+  /* ── FULLSCREEN TABLE OVERLAY v7.1 ─────────────── */
   #dzp-fullscreen-overlay {
     position: fixed; inset: 0; z-index: 9200;
     background: var(--col-bg);
@@ -749,7 +749,7 @@
   }
   #dzp-fs-body { flex: 1; overflow: auto; padding: 14px; min-height: 0; }
 
-  /* ── CONTEXT MENU v7.0 ──────────────────────── */
+  /* ── CONTEXT MENU v7.1 ──────────────────────── */
   #dzp-context-menu {
     position: fixed; z-index: 99999; display: none;
     background: white; border: 1px solid var(--col-border);
@@ -1252,7 +1252,7 @@
     transform: none;
     white-space: nowrap;
   }
-  /* Column widths for Análisis Actas y Facturas v7.0 */
+  /* Column widths for Análisis Actas y Facturas v7.1 */
   .dzp-table th:nth-child(1)  { width: 28px; }   /* # */
   .dzp-table th:nth-child(2)  { width: 110px; }  /* Orden de Compra */
   .dzp-table th:nth-child(3)  { width: 22%; }    /* Proveedor / Factura */
@@ -1407,7 +1407,7 @@
   }
   .dzp-sv1-filter select:focus, .dzp-sv1-filter input:focus { border-color: #7c3aed; }
 
-  /* ── ANALÍTICA PREDICTIVA v7.0 ─────────────────────────── */
+  /* ── ANALÍTICA PREDICTIVA v7.1 ─────────────────────────── */
   .pred-prov-card {
     background: var(--col-surface); border: 1px solid var(--col-border);
     border-radius: 12px; padding: 16px 18px; margin-bottom: 14px;
@@ -1501,7 +1501,7 @@
       <div style="margin-bottom:12px">
         <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px">
           <span style="font-size:56px;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1;animation:cashCallGlow 3s ease-in-out 0.8s infinite">Cash<span style="color:var(--col-accent);animation:accentPulse 2.5s ease-in-out 1s infinite">Call</span></span>
-          <span style="font-size:13px;font-weight:700;color:var(--col-accent);border:1.5px solid rgba(0,180,200,.45);padding:3px 9px;border-radius:6px;letter-spacing:1px;font-family:'IBM Plex Mono',monospace;background:rgba(0,180,200,.08)">v7.0</span>
+          <span style="font-size:13px;font-weight:700;color:var(--col-accent);border:1.5px solid rgba(0,180,200,.45);padding:3px 9px;border-radius:6px;letter-spacing:1px;font-family:'IBM Plex Mono',monospace;background:rgba(0,180,200,.08)">v7.1</span>
         </div>
         <div style="font-size:12px;color:rgba(255,255,255,.45);letter-spacing:2px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace">Control Financiero</div>
       </div>
@@ -1590,7 +1590,7 @@
               font-family:'IBM Plex Mono',monospace;
               background:rgba(0,180,200,.08);
               animation:versionFadeIn 1s ease 0.6s both;
-            ">v7.0</span>
+            ">v7.1</span>
           </div>
 
           <!-- Subtítulo -->
@@ -1637,7 +1637,7 @@
   <div class="subwin" style="max-width:600px">
     <div class="subwin-header">
       <span style="font-size:16px">⌨️</span>
-      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v7.0</span>
+      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v7.1</span>
       <button class="subwin-close" onclick="closeSubwin('sw-ctrlm')">✕</button>
     </div>
     <div class="subwin-body" id="sw-ctrlm-body" style="padding:24px">
@@ -1796,7 +1796,7 @@
   </div>
 </div>
 
-<!-- ══ FULLSCREEN TABLE OVERLAY v7.0 ════════════════════════ -->
+<!-- ══ FULLSCREEN TABLE OVERLAY v7.1 ════════════════════════ -->
 <div id="dzp-fullscreen-overlay">
   <div id="dzp-fs-header">
     <span style="font-size:18px">🏗️</span>
@@ -1847,7 +1847,7 @@
   <div id="dzp-fs-body"></div>
 </div>
 
-<!-- ══ CONTEXT MENU TABLA v7.0 ══════════════════════════════ -->
+<!-- ══ CONTEXT MENU TABLA v7.1 ══════════════════════════════ -->
 <div id="dzp-context-menu">
   <div class="ctx-menu-header">⚙️ EXPORTAR TABLA — C-DZP-21-000-A</div>
   <div class="ctx-menu-item" onclick="exportDZPxls(); hideCtxMenu()">
@@ -1912,7 +1912,7 @@
         </span>
         <span style="font-size:10px;opacity:0.6">✕</span>
       </span>
-      <div class="header-badge" id="headerBadge">v7.0</div>
+      <div class="header-badge" id="headerBadge">v7.1</div>
       <button onclick="openExpXL()" title="Exportar columnas seleccionadas de los 3 archivos en una sola hoja Excel"
         style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:9px;border:none;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.2px;background:linear-gradient(135deg,#0891b2,#0e7490);color:white;box-shadow:0 2px 10px rgba(8,145,178,0.45);transition:opacity 0.18s;white-space:nowrap"
         onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
@@ -1990,7 +1990,7 @@
       </div>
       <div class="nav-item" data-tab="cashcall" id="nav-cashcall" onclick="openCashCallModule()" style="display:flex">
         <span class="nav-icon">💵</span>
-        <span class="nav-label">Programación Pagos<span class="nav-sub">Cash Call Semanal · Archivo 4</span></span>
+        <span class="nav-label">Programación Pagos<span class="nav-sub">Cash Call Semanal · Archivos 4·5·6</span></span>
         <span class="nav-badge" id="cnt6" style="background:linear-gradient(135deg,#065f46,#059669);color:white">0</span>
       </div>
       <div class="nav-item" data-tab="discrepancias" id="nav-discrepancias" onclick="switchTab('discrepancias')" style="display:flex">
@@ -2116,7 +2116,7 @@
           <div class="dzp-banner-icon">🏗️</div>
           <div>
             <div class="dzp-banner-title">C-DZP-21-000-A</div>
-            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v7.0</span></div>
+            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v7.1</span></div>
           </div>
         </div>
         <div class="dzp-banner-badges" style="display:none">
@@ -2191,7 +2191,7 @@
             <span style="font-size:13px">🔍</span>
             <input type="text" id="dzp-sv1-search"
               placeholder="Buscar: OC · Factura · NIT · Proveedor · Recepción…"
-              oninput="renderDZPSV1()"
+              oninput="dbn(renderDZPSV1)"
               autocomplete="off"
               style="flex:1;min-width:220px;font-size:12.5px">
             <span id="dzp-sv1-search-badge" style="display:none;background:#7c3aed;color:white;border-radius:12px;padding:2px 10px;font-size:10.5px;font-weight:700;white-space:nowrap"></span>
@@ -2264,7 +2264,7 @@
         <div class="dzp-filter-row">
           <div class="flt-group flt-search">
             <span class="filter-label">🔍</span>
-            <input type="text" id="dzp-search" placeholder="OC, factura, proveedor, REC…" oninput="renderDZP()" autocomplete="off">
+            <input type="text" id="dzp-search" placeholder="OC, factura, proveedor, REC…" oninput="dbn(renderDZP)" autocomplete="off">
           </div>
           <div class="flt-group">
             <span class="filter-label">AÑO</span>
@@ -2383,7 +2383,7 @@
         <div class="chart-card-title">📥 Recepciones Oracle por Proveedor · Mes · Factura</div>
         <div class="filter-bar" style="margin-bottom:10px;padding:8px 0 0 0;background:none;border:none">
           <span class="filter-label">🔍</span>
-          <input type="text" id="f0recSearch" placeholder="Proveedor, OC..." oninput="renderM0RecTable()" style="min-width:160px">
+          <input type="text" id="f0recSearch" placeholder="Proveedor, OC..." oninput="dbn(renderM0RecTable)" style="min-width:160px">
           <select id="f0recYear" onchange="renderM0RecTable()" style="border:1px solid var(--col-border);border-radius:7px;padding:6px 10px;font-size:12px"></select>
           <select id="f0recMonth" onchange="renderM0RecTable()" style="border:1px solid var(--col-border);border-radius:7px;padding:6px 10px;font-size:12px"></select>
         </div>
@@ -2511,7 +2511,7 @@
       <!-- ── M1 Filtros: Fila 1 — Búsqueda unificada ── -->
       <div class="filter-bar" style="flex-wrap:nowrap;gap:8px;margin-bottom:6px">
         <span class="filter-label" style="flex-shrink:0">🔍</span>
-        <input type="text" id="f1oc" placeholder="Buscar OC · N° Factura · Recepción · Proveedor..." oninput="renderM1()" style="flex:1;min-width:260px">
+        <input type="text" id="f1oc" placeholder="Buscar OC · N° Factura · Recepción · Proveedor..." oninput="dbn(renderM1)" style="flex:1;min-width:260px">
         <!-- Campo legacy para compatibilidad con syncGlobalFilter -->
         <input type="hidden" id="f1factura">
         <select id="f1proyecto" style="display:none"></select>
@@ -2576,8 +2576,8 @@
 
       <div class="filter-bar">
         <span class="filter-label">🔍</span>
-        <input type="text" id="f2search" placeholder="OC, Factura, Proveedor, Recepción, Organización..." oninput="renderM2()">
-        <input type="text" id="f2proyecto" placeholder="🗂 Buscar Proyecto..." oninput="renderM2()" style="min-width:170px">
+        <input type="text" id="f2search" placeholder="OC, Factura, Proveedor, Recepción, Organización..." oninput="dbn(renderM2)">
+        <input type="text" id="f2proyecto" placeholder="🗂 Buscar Proyecto..." oninput="dbn(renderM2)" style="min-width:170px">
         <select id="f2year" onchange="renderM2()"><option value="">Todos los años</option></select>
         <select id="f2month" onchange="renderM2()"><option value="">Todos los meses</option></select>
         <div class="status-pills" id="pills2">
@@ -2621,7 +2621,7 @@
 
       <div class="filter-bar">
         <span class="filter-label">🔍</span>
-        <input type="text" id="f3search" placeholder="Factura, Proveedor, NIT, Recepción..." oninput="renderM3()">
+        <input type="text" id="f3search" placeholder="Factura, Proveedor, NIT, Recepción..." oninput="dbn(renderM3)">
         <select id="f3year" onchange="renderM3()"><option value="">Todos los años</option></select>
         <select id="f3month" onchange="renderM3()"><option value="">Todos los meses</option></select>
         <div class="status-pills" id="pills3">
@@ -2643,7 +2643,7 @@
           <table>
             <thead><tr>
               <th>Estado</th><th>Fecha Contable</th>
-              <th title="Condición de pago según Archivo 4 — Órdenes de Compra">Cond. Pago</th>
+              <th title="Condición de pago según Archivos 4·5·6 — Órdenes de Compra">Cond. Pago</th>
               <th title="Fecha Contable + días de la condición de pago (Contado/Inmediato = +0)">Fecha Prog. Pago</th>
               <th>OC</th><th>NIT</th><th>Proveedor</th><th>N° Factura</th>
               <th class="currency">Valor Bruto + IVA</th>
@@ -2657,22 +2657,22 @@
       </div>
     </div>
 
-        <!-- ═══ PANEL: PROGRAMACIÓN DE PAGOS — CASH CALL SEMANAL [v7.0] ═══ -->
+        <!-- ═══ PANEL: PROGRAMACIÓN DE PAGOS — CASH CALL SEMANAL [v7.1] ═══ -->
     <div class="panel" id="panel-cashcall">
       <div class="section-title" style="justify-content:space-between">
         <span>💵 Programación de Pagos — Cash Call Semanal</span>
         <div style="display:flex;gap:8px">
-          <button class="btn btn-sm btn-outline" onclick="openModalArchivo4()">📦 Cargar / Actualizar Archivo 4</button>
+          <button class="btn btn-sm btn-outline" onclick="openModalArchivo4()">📦 Cargar / Actualizar Archivos 4·5·6</button>
           <button class="btn btn-sm btn-outline" onclick="exportProgramacionSemanal()">⬇ Exportar Programación</button>
         </div>
       </div>
-      <div class="alert alert-info">ℹ️ <div>Programación semanal de pagos con <strong>corte los viernes</strong>. La fecha programada = <strong>Fecha Contable + días de la Condición de Pago</strong> de la orden de compra (Archivo 4). Contado/Inmediato = mismo día. Las condiciones marcadas con <strong>*</strong> se infirieron por NIT del proveedor (la factura no tiene OC cruzada con el Archivo 1). Valores unificados a USD con la TRM indicada.</div></div>
+      <div class="alert alert-info">ℹ️ <div>Programación semanal de pagos con <strong>corte los viernes</strong>. La fecha programada = <strong>Fecha Contable + días de la Condición de Pago</strong> de la orden de compra (Archivos 4·5·6 — Salida1 2024/2025/2026). Contado/Inmediato = mismo día. Las condiciones marcadas con <strong>*</strong> se infirieron por NIT del proveedor (la factura no tiene OC cruzada con el Archivo 1). Valores unificados a USD con la TRM indicada.</div></div>
 
       <div id="cc-empty-state" style="display:none;background:var(--col-surface);border:2px dashed var(--col-border);border-radius:12px;padding:48px;text-align:center">
         <div style="font-size:40px;margin-bottom:10px">📦</div>
-        <div style="font-size:15px;font-weight:700;margin-bottom:6px">Falta el Archivo 4 — Reporte de Órdenes de Compra</div>
-        <div style="font-size:12.5px;color:var(--col-muted);margin-bottom:18px">Cargue el reporte de órdenes de compra (Salida1_XXXX.xls) para calcular las condiciones de pago<br>y construir la programación semanal de pagos.</div>
-        <button class="btn btn-primary" onclick="openModalArchivo4()">📂 Cargar Archivo 4</button>
+        <div style="font-size:15px;font-weight:700;margin-bottom:6px">Faltan los Archivos 4 · 5 · 6 — Reportes de Órdenes de Compra</div>
+        <div style="font-size:12.5px;color:var(--col-muted);margin-bottom:18px">Cargue los reportes de órdenes de compra por vigencia (<strong>Salida1_2024 · Salida1_2025 · Salida1_2026</strong>) para calcular las condiciones de pago<br>y construir la programación semanal de pagos. Puede seleccionar los 3 archivos a la vez — se procesan en una sola pasada.</div>
+        <button class="btn btn-primary" onclick="openModalArchivo4()">📂 Cargar Archivos 4·5·6</button>
       </div>
 
       <div id="cc-content" style="display:none">
@@ -2680,9 +2680,9 @@
 
         <div class="filter-bar">
           <span class="filter-label" title="Tasa Representativa del Mercado para unificar a USD">💱 TRM</span>
-          <input type="number" id="ccTRM" value="3800" min="1" step="10" style="width:90px;text-align:right;font-family:'IBM Plex Mono',monospace" oninput="renderCashCall()" title="TRM promedio COP/USD">
+          <input type="number" id="ccTRM" value="3800" min="1" step="10" style="width:90px;text-align:right;font-family:'IBM Plex Mono',monospace" oninput="dbn(renderCashCall)" title="TRM promedio COP/USD">
           <span class="filter-label" style="margin-left:6px">🔍</span>
-          <input type="text" id="ccSearch" placeholder="Proveedor, NIT, Factura, OC..." oninput="renderCashCall()">
+          <input type="text" id="ccSearch" placeholder="Proveedor, NIT, Factura, OC..." oninput="dbn(renderCashCall)">
           <div class="status-pills" id="pillsCC">
             <span class="status-pill active-all" data-status="" onclick="setPill('pillsCC',this,'ccEstado',renderCashCall)">Todos</span>
             <span class="status-pill" data-status="Aprobado" onclick="setPill('pillsCC',this,'ccEstado',renderCashCall)">⏳ Pendientes</span>
@@ -2731,7 +2731,7 @@
 
         <div class="table-wrap">
           <div class="table-header">
-            <span class="table-title">📦 Órdenes de Compra del Proyecto — Archivo 4</span>
+            <span class="table-title">📦 Órdenes de Compra del Proyecto — Archivos 4·5·6</span>
             <span class="table-count" id="cntCCoc">—</span>
           </div>
           <div class="table-scroll">
@@ -2759,7 +2759,7 @@
 
       <div class="filter-bar">
         <span class="filter-label">🔍</span>
-        <input type="text" id="f4search" placeholder="Factura, OC, Proveedor..." oninput="renderM4()">
+        <input type="text" id="f4search" placeholder="Factura, OC, Proveedor..." oninput="dbn(renderM4)">
         <select id="f4year" onchange="renderM4()"><option value="">Todos los años</option></select>
         <select id="f4month" onchange="renderM4()"><option value="">Todos los meses</option></select>
         <div class="status-pills" id="pills4">
@@ -2915,7 +2915,7 @@
       <div id="disc-panel-1" class="disc-panel">
         <div class="filter-bar" style="margin-bottom:10px">
           <span class="filter-label">🔍</span>
-          <input type="text" id="disc-s1" placeholder="Buscar factura, proveedor..." oninput="renderDisc1()" style="min-width:200px">
+          <input type="text" id="disc-s1" placeholder="Buscar factura, proveedor..." oninput="dbn(renderDisc1)" style="min-width:200px">
           <button class="btn btn-sm btn-outline" onclick="document.getElementById('disc-s1').value='';renderDisc1()">↺</button>
         </div>
         <div id="disc-content-1"><div class="empty-state"><div class="empty-icon">🔀</div><div>Procese archivos para detectar discrepancias</div></div></div>
@@ -2923,7 +2923,7 @@
       <div id="disc-panel-2" class="disc-panel" style="display:none">
         <div class="filter-bar" style="margin-bottom:10px">
           <span class="filter-label">🔍</span>
-          <input type="text" id="disc-s2" placeholder="Buscar OC, proveedor..." oninput="renderDisc2()" style="min-width:200px">
+          <input type="text" id="disc-s2" placeholder="Buscar OC, proveedor..." oninput="dbn(renderDisc2)" style="min-width:200px">
           <button class="btn btn-sm btn-outline" onclick="document.getElementById('disc-s2').value='';renderDisc2()">↺</button>
         </div>
         <div id="disc-content-2"><div class="empty-state"><div class="empty-icon">📦</div><div>Procese archivos para detectar OC multi-proveedor</div></div></div>
@@ -2931,7 +2931,7 @@
       <div id="disc-panel-3" class="disc-panel" style="display:none">
         <div class="filter-bar" style="margin-bottom:10px">
           <span class="filter-label">🔍</span>
-          <input type="text" id="disc-s3" placeholder="Buscar REC, OC, proveedor..." oninput="renderDisc3()" style="min-width:200px">
+          <input type="text" id="disc-s3" placeholder="Buscar REC, OC, proveedor..." oninput="dbn(renderDisc3)" style="min-width:200px">
           <button class="btn btn-sm btn-outline" onclick="document.getElementById('disc-s3').value='';renderDisc3()">↺</button>
         </div>
         <div id="disc-content-3"><div class="empty-state"><div class="empty-icon">📥</div><div>Procese archivos para detectar REC multi-factura</div></div></div>
@@ -2939,14 +2939,14 @@
       <div id="disc-panel-4" class="disc-panel" style="display:none">
         <div class="filter-bar" style="margin-bottom:10px">
           <span class="filter-label">🔍</span>
-          <input type="text" id="disc-s4" placeholder="Buscar factura, proveedor..." oninput="renderDisc4()" style="min-width:200px">
+          <input type="text" id="disc-s4" placeholder="Buscar factura, proveedor..." oninput="dbn(renderDisc4)" style="min-width:200px">
           <button class="btn btn-sm btn-outline" onclick="document.getElementById('disc-s4').value='';renderDisc4()">↺</button>
         </div>
         <div id="disc-content-4"><div class="empty-state"><div class="empty-icon">⚡</div><div>Procese archivos para detectar inconsistencias de proveedor entre M1 y CxP</div></div></div>
       </div>
     </div>
 
-<!-- ═══ PANEL: AUDITORÍAS (v7.0 — Bitácora Persistente) ══════ -->
+<!-- ═══ PANEL: AUDITORÍAS (v7.1 — Bitácora Persistente) ══════ -->
     <div class="panel" id="panel-auditorias">
       <div class="section-title" style="justify-content:space-between"><span>🗂️ Auditorías — Bitácora Persistente de Novedades</span><button class="info-btn" onclick="showInstructive('auditorias')" title="Ver instructivo">i</button></div>
       <div class="alert alert-info">
@@ -2970,7 +2970,7 @@
           📋 Bitácora de Novedades por Factura
           <span id="bitacora-count-badge" style="background:var(--col-danger);color:white;border-radius:12px;padding:2px 10px;font-size:10.5px;font-weight:700">0 novedades</span>
           <div style="flex:1"></div>
-          <input type="text" id="bitacora-search" placeholder="🔍 Buscar factura, proveedor..." oninput="renderBitacoraPanel()" style="padding:5px 10px;border:1px solid var(--col-border);border-radius:7px;font-size:12px;min-width:220px">
+          <input type="text" id="bitacora-search" placeholder="🔍 Buscar factura, proveedor..." oninput="dbn(renderBitacoraPanel)" style="padding:5px 10px;border:1px solid var(--col-border);border-radius:7px;font-size:12px;min-width:220px">
           <select id="bitacora-filter-tipo" onchange="renderBitacoraPanel()" style="padding:5px 8px;border:1px solid var(--col-border);border-radius:7px;font-size:12px">
             <option value="">Todas las novedades</option>
             <option value="estado_cambio">🔄 Cambio de estado</option>
@@ -2990,7 +2990,7 @@
     </div>
 
 
-    <!-- ═══ PANEL: ANALÍTICA PREDICTIVA v7.0 ════════════════════ -->
+    <!-- ═══ PANEL: ANALÍTICA PREDICTIVA v7.1 ════════════════════ -->
     <div class="panel" id="panel-predictiva">
 
       <!-- Alert: no data -->
@@ -3009,7 +3009,7 @@
           <div style="font-size:28px">🔮</div>
           <div>
             <div style="font-size:16px;font-weight:800;color:white;letter-spacing:-0.3px">Analítica Predictiva</div>
-            <div style="font-size:10.5px;color:rgba(255,255,255,0.65);margin-top:1px">Pronóstico · Patrones · Alertas · Cash Call v7.0</div>
+            <div style="font-size:10.5px;color:rgba(255,255,255,0.65);margin-top:1px">Pronóstico · Patrones · Alertas · Cash Call v7.1</div>
           </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
@@ -3733,7 +3733,7 @@ function exportPDFReport() {
   </div>`:''}
 
   <div class="footer">
-    Cash Call v7.0 · Desarrollado por Ing. Johan Manuel Cárdenas Leal, MSc · Todos los derechos reservados © 2026<br>
+    Cash Call v7.1 · Desarrollado por Ing. Johan Manuel Cárdenas Leal, MSc · Todos los derechos reservados © 2026<br>
     Informe generado automáticamente — ${today.toISOString()}
   </div>
   <script>window.onload=function(){window.print();}<\/script>
@@ -4245,7 +4245,7 @@ function buildM1Html() {
     <div class="summary-grid" id="sum1sw"></div>
     <div class="filter-bar">
       <span class="filter-label">🔍</span>
-      <input type="text" id="f1sw_search" placeholder="Factura, OC, Proveedor..." oninput="renderM1inSubwin()">
+      <input type="text" id="f1sw_search" placeholder="Factura, OC, Proveedor..." oninput="dbn(renderM1inSubwin)">
       <select id="f1sw_year" onchange="renderM1inSubwin()"><option value="">Todos los años</option></select>
         <select id="f1sw_month" onchange="renderM1inSubwin()"><option value="">Todos los meses</option></select>
       <div class="status-pills" id="pills1sw">
@@ -4277,7 +4277,7 @@ function buildM2Html() {
     <div class="summary-grid" id="sum2sw"></div>
     <div class="filter-bar">
       <span class="filter-label">🔍</span>
-      <input type="text" id="f2sw_search" placeholder="Factura, Proveedor, OC..." oninput="renderM2inSubwin()">
+      <input type="text" id="f2sw_search" placeholder="Factura, Proveedor, OC..." oninput="dbn(renderM2inSubwin)">
         <select id="f2sw_year" onchange="renderM2inSubwin()"><option value="">Todos los años</option></select>
         <select id="f2sw_month" onchange="renderM2inSubwin()"><option value="">Todos los meses</option></select>
       <div class="status-pills" id="pills2sw">
@@ -4308,7 +4308,7 @@ function buildM3Html() {
     <div class="summary-grid" id="sum3sw"></div>
     <div class="filter-bar">
       <span class="filter-label">🔍</span>
-      <input type="text" id="f3sw_search" placeholder="Factura, Proveedor..." oninput="renderM3inSubwin()">
+      <input type="text" id="f3sw_search" placeholder="Factura, Proveedor..." oninput="dbn(renderM3inSubwin)">
       <div class="status-pills" id="pills3sw">
         <span class="status-pill active-all" data-status="" onclick="setPill('pills3sw',this,'f3sw_estado',renderM3inSubwin)">Todos</span>
         <span class="status-pill" data-status="pagado" onclick="setPill('pills3sw',this,'f3sw_estado',renderM3inSubwin)">✅ Pagado</span>
@@ -4337,7 +4337,7 @@ function buildM4Html() {
     <div class="summary-grid" id="sum4sw"></div>
     <div class="filter-bar">
       <span class="filter-label">🔍</span>
-      <input type="text" id="f4sw_search" placeholder="Factura, OC, Proveedor..." oninput="renderM4inSubwin()">
+      <input type="text" id="f4sw_search" placeholder="Factura, OC, Proveedor..." oninput="dbn(renderM4inSubwin)">
       <div class="status-pills" id="pills4sw">
         <span class="status-pill active-all" data-status="" onclick="setPill('pills4sw',this,'f4sw_brecha',renderM4inSubwin)">Todos</span>
         <span class="status-pill" data-status="completo" onclick="setPill('pills4sw',this,'f4sw_brecha',renderM4inSubwin)">✅ Completo</span>
@@ -4806,6 +4806,8 @@ function _crearWorkerExcel() {
           var sheets = {};
           var totalSheets = wb.SheetNames.length;
           wb.SheetNames.forEach(function(sn, si) {
+            // v7.1 — PERF: saltar hojas de metadata (XDO_METADATA de los reportes Salida1)
+            if (/metadata/i.test(sn)) { sheets[sn] = []; return; }
             self.postMessage({
               progress: Math.round(((i)/files.length)*40 + (si/totalSheets)*40 + 5),
               step: 'Extrayendo hoja "' + sn + '" de ' + f.name + '...'
@@ -4847,22 +4849,24 @@ function _setProgress(pct, sub) {
   if (txt && sub !== undefined) txt.textContent = sub;
 }
 
-// ── v7.0: registro de archivos por slot ──
-// El slot 4 (Órdenes de Compra) acepta MÚLTIPLES archivos (uno por vigencia
-// 2024/2025/2026); sólo se reemplaza si llega otro con el mismo nombre.
+// ── v7.1: registro de archivos por slot ──
+// Los slots 4·5·6 son los reportes de Órdenes de Compra por vigencia
+// (Salida1_2024 → 4 · Salida1_2025 → 5 · Salida1_2026 → 6).
 // Los slots 1-3 siguen siendo únicos (el nuevo reemplaza al anterior).
 function _registrarArchivoEnSlot(fileObj) {
-  if (fileObj.slot === 4) {
-    state.files = state.files.filter(s => !(s.slot === 4 && s.name === fileObj.name));
+  if (fileObj.slot >= 4 && fileObj.slot <= 6) {
+    // v7.1 — Archivos 4·5·6 (OC por vigencia): reemplaza el de la misma vigencia
+    // o el que tenga el mismo nombre; las demás vigencias se conservan.
+    state.files = state.files.filter(s => !(s.slot >= 4 && s.slot <= 6 && (s.slot === fileObj.slot || s.name === fileObj.name)));
   } else {
     state.files = state.files.filter(s => s.slot !== fileObj.slot);
   }
   state.files.push(fileObj);
 }
 
-// ── v7.0: hook de finalización de carga (usado por la ventana flotante del Archivo 4) ──
+// ── v7.1: hook de finalización de carga (usado por la ventana flotante del Archivo 4) ──
 let _onFilesLoadedHook = null;
-let _forceNextSlot = null; // v7.0 — fuerza el slot de los próximos archivos cargados (ventana flotante A4)
+let _forceNextSlot = null; // v7.1 — fuerza el slot de los próximos archivos cargados (ventana flotante A4)
 function _fireFilesLoadedHook() {
   _forceNextSlot = null;
   if (typeof _onFilesLoadedHook === 'function') {
@@ -5041,6 +5045,8 @@ function _cargarFallbackMainThread(fileBuffers) {
         // Usar extracción inteligente para hojas grandes
         const sheets = {};
         wb.SheetNames.forEach(sn => {
+          // v7.1 — PERF: saltar hojas de metadata (XDO_METADATA de los reportes Salida1)
+          if (/metadata/i.test(sn)) { sheets[sn] = []; return; }
           try {
             const ws = wb.Sheets[sn];
             const ref = ws['!ref'] ? XLSX.utils.decode_range(ws['!ref']) : null;
@@ -5115,9 +5121,27 @@ function _extractSmartMainThread(ws, range) {
   return rows;
 }
 
+// v7.1 — Archivos 4 · 5 · 6: un slot por vigencia del reporte de OC (Salida1_XXXX)
+// Salida1_2024 → Archivo 4 · Salida1_2025 → Archivo 5 · Salida1_2026 → Archivo 6
+function _slotForOC(filename) {
+  const m = String(filename || '').match(/20(2[0-9]|3[0-9])/);
+  if (m) {
+    const y = parseInt(m[0], 10);
+    if (y <= 2024) return 4;
+    if (y === 2025) return 5;
+    return 6; // 2026 en adelante
+  }
+  // Sin año en el nombre: primer slot de OC libre (4 → 5 → 6)
+  const used = new Set(state.files.filter(f => f.slot >= 4 && f.slot <= 6).map(f => f.slot));
+  for (const s of [4, 5, 6]) if (!used.has(s)) return s;
+  return 4;
+}
+
 function detectSlot(wb, filename) {
-  // v7.0 — Slot forzado por la ventana flotante del Archivo 4
-  if (typeof _forceNextSlot !== 'undefined' && _forceNextSlot) return _forceNextSlot;
+  // v7.1 — Slot forzado por la ventana flotante de OC ('OC' = calcular 4/5/6 por vigencia)
+  if (typeof _forceNextSlot !== 'undefined' && _forceNextSlot) {
+    return _forceNextSlot === 'OC' ? _slotForOC(filename) : _forceNextSlot;
+  }
 
   // ── Detection priority: sheet names + column fingerprints, then filename ──
   // This ensures ANY file with the right structure is recognized regardless of name.
@@ -5133,7 +5157,7 @@ function detectSlot(wb, filename) {
   // ── ARCHIVO 4 (Reporte Órdenes de Compra — Salida1_XXXX): hoja EXACTA 'Ordenes Compra' ──
   // Coincidencia exacta (no 'includes') para no capturar 'Ordenes Compra LM' del Archivo 1.
   const _normSheet = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
-  if (sheetNames.some(s => _normSheet(s) === 'ordenes compra')) return 4;
+  if (sheetNames.some(s => _normSheet(s) === 'ordenes compra')) return _slotForOC(filename);
 
   // ── ARCHIVO 2 (Recepciones Oracle): has sheet 'Recepciones' ──
   // Columns: Organización, Fecha de Recepción, Recepción, Número de Documento, Estado de Línea
@@ -5167,7 +5191,7 @@ function detectSlot(wb, filename) {
       const scoreA2 = A2_COLS.filter(k => cells.some(c => c === k || c.includes(k.substring(0,8)))).length;
       const scoreA1 = A1_COLS.filter(k => cells.some(c => c === k || c.includes(k.substring(0,6)))).length;
 
-      if (scoreA4 >= 4) return 4;
+      if (scoreA4 >= 4) return _slotForOC(filename);
       if (scoreA3 >= 4) return 3;
       if (scoreA2 >= 3) return 2;
       if (scoreA1 >= 3) return 1;
@@ -5175,7 +5199,7 @@ function detectSlot(wb, filename) {
   }
 
   // ── Filename fallback ──
-  if (fnLow.includes('salida')) return 4;
+  if (fnLow.includes('salida')) return _slotForOC(filename);
   if (fnLow.includes('seguimiento') || fnLow.includes('compromiso') || fnLow.includes('factura')) return 1;
   if (fnLow.includes('recep')) return 2;
   if (fnLow.includes('cxp') || fnLow.includes('cuenta') || fnLow.includes('pago')) return 3;
@@ -5192,8 +5216,8 @@ function renderFileList() {
   if (!state.files.length) { container.innerHTML = ''; zone.classList.remove('has-files'); return; }
   zone.classList.add('has-files');
 
-  const slotNames = { 1: 'Archivo 1 — Facturas', 2: 'Archivo 2 — Recepciones Oracle', 3: 'Archivo 3 — CxP Oracle', 4: 'Archivo 4 — Órdenes de Compra' };
-  const slotIcons = { 1: '📋', 2: '🔄', 3: '💰', 4: '📦' };
+  const slotNames = { 1: 'Archivo 1 — Facturas', 2: 'Archivo 2 — Recepciones Oracle', 3: 'Archivo 3 — CxP Oracle', 4: 'Archivo 4 — Órdenes de Compra 2024', 5: 'Archivo 5 — Órdenes de Compra 2025', 6: 'Archivo 6 — Órdenes de Compra 2026' };
+  const slotIcons = { 1: '📋', 2: '🔄', 3: '💰', 4: '📦', 5: '📦', 6: '📦' };
 
   container.innerHTML = state.files.map((f, idx) => {
     if (f.error) {
@@ -5242,6 +5266,7 @@ function clearAll() {
   state.df1=[]; state.df2=[]; state.df3=[]; state.df4=[];
   state.m1data=[]; state.m2data=[]; state.m3data=[]; state.m4data=[];
   state.df2rec=[]; state.df3cxp=[]; state.df4oc=[];
+  if (typeof _invalidateProjIndex === 'function') _invalidateProjIndex();  // v7.1 PERF
   state._ocCond={}; state._nitCond={}; state._ocProj={}; state._nitProjs={};
   ['1','2','3','4','6'].forEach(n => {
     const el = document.getElementById('cnt'+n); if(el) el.textContent='0';
@@ -5338,19 +5363,103 @@ function setProjectFilter(proj) {
   }
 }
 
+// ── v7.1 PERF — Debounce de búsquedas: renderiza 200 ms después de la última
+// tecla en lugar de re-renderizar el módulo completo en CADA pulsación.
+function dbn(fn) {
+  clearTimeout(dbn._t);
+  dbn._t = setTimeout(fn, 200);
+}
+
+// ── v7.1 PERF — Índice proyecto → Set(OCs) del Archivo 2 ─────────────────
+// Antes cada fila hacía un escaneo lineal de TODO df2rec (O(filas × recepciones));
+// con archivos de 12-17 MB eso congelaba la búsqueda. Ahora es un lookup O(1).
+const _projKey = p => String(p || '').trim().toUpperCase();
+
+function _buildA2Indexes() {
+  state._projOCIndex   = new Map();  // proyecto → Set(OC normalizada)
+  state._projProvIndex = new Map();  // proyecto → Set(proveedor normalizado)  [v7.1 fix GISAICO]
+  state._ocA2ProjIndex = new Map();  // OC normalizada → Set(proyectos)        [v7.1 fix GISAICO]
+  (state.df2rec || []).forEach(r2 => {
+    const p = _projKey(r2.proyecto);
+    if (!p || p === '—') return;
+    const ocn  = normalStr(r2.oc);
+    const prov = normalStr(r2.proveedor);
+    let s = state._projOCIndex.get(p);
+    if (!s) { s = new Set(); state._projOCIndex.set(p, s); }
+    if (ocn) s.add(ocn);
+    let sp = state._projProvIndex.get(p);
+    if (!sp) { sp = new Set(); state._projProvIndex.set(p, sp); }
+    if (prov && prov !== '—') sp.add(prov);
+    if (ocn) {
+      let so = state._ocA2ProjIndex.get(ocn);
+      if (!so) { so = new Set(); state._ocA2ProjIndex.set(ocn, so); }
+      so.add(p);
+    }
+  });
+}
+function _getProjOCSet(proj) {
+  if (!state._projOCIndex) _buildA2Indexes();
+  return state._projOCIndex.get(_projKey(proj)) || null;
+}
+function _getProjProvSet(proj) {
+  if (!state._projProvIndex) _buildA2Indexes();
+  return state._projProvIndex.get(_projKey(proj)) || null;
+}
+// ¿La OC tiene recepciones registradas SOLO en otros proyectos?
+function _ocEnOtroProyecto(ocNorm, proj) {
+  if (!state._ocA2ProjIndex) _buildA2Indexes();
+  const s = state._ocA2ProjIndex.get(ocNorm);
+  return !!(s && !s.has(_projKey(proj)));
+}
+// Partes de una celda de OC (soporta múltiples OCs separadas por "/"), normalizadas
+function _ocParts(po) {
+  const raw = String(po || '').trim();
+  if (!raw) return [];
+  return raw.split('/').map(s => normalStr(s)).filter(Boolean);
+}
+
+// v7.1 PERF — Memo del set de facturas del proyecto (Archivo 1 que pasa el filtro).
+// Antes se reconstruía en CADA render/tecla (renderM3, renderCashCall, export).
+let _validInvsMemo = { proj: null, set: null };
+function getValidInvsForProject() {
+  if (state.activeProject === '__ALL__') return null;
+  if (_validInvsMemo.set && _validInvsMemo.proj === state.activeProject) return _validInvsMemo.set;
+  const s = new Set(state.m1data.filter(r => passesProjectFilter(r)).map(r => normalStr(r.inv)));
+  _validInvsMemo = { proj: state.activeProject, set: s };
+  return s;
+}
+function _invalidateProjIndex() {
+  state._projOCIndex = null;
+  state._projProvIndex = null;
+  state._ocA2ProjIndex = null;
+  state._dzpOCSetMemo = null;
+  _validInvsMemo = { proj: null, set: null };
+}
+
 // Filter helper — returns true if a m1data row passes the active project filter
+// v7.1 — cruce tolerante: OCs normalizadas (ignora -/_/espacios), soporte multi-OC
+// ("A/B") y respaldo por NOMBRE DE PROVEEDOR con recepciones del proyecto
+// (fix CONSORCIO HL-GISAICO: las recepciones tienen el proyecto pero la OC del
+// acta no cruzaba por diferencia de formato).
 function passesProjectFilter(r) {
   if (state.activeProject === '__ALL__') return true;
-  // Check if any recepcion for this OC belongs to the active project
   const proj = state.activeProject;
-  const poNorm = normalStr(r.po || '');
-  if ((state.df2rec || []).some(r2 =>
-    r2.proyecto === proj && (normalStr(r2.oc) === poNorm)
-  )) return true;
-  // v7.0 — RESPALDO ARCHIVO 4: si la OC está registrada en el reporte de
-  // Órdenes de Compra con el proyecto activo, la factura pertenece al proyecto
-  // aunque no tenga recepciones en el Archivo 2 (fix caso Consorcio HL).
-  if (poNorm && state._ocProj && state._ocProj[poNorm] === proj) return true;
+  const parts = _ocParts(r.po);
+  // 1) Recepción del Archivo 2 con el proyecto activo (comparación normalizada)
+  const ocSet = _getProjOCSet(proj);
+  if (ocSet && parts.some(p => ocSet.has(p))) return true;
+  // 2) RESPALDO ARCHIVOS 4·5·6: OC registrada con el proyecto en el reporte de OC
+  if (state._ocProj && parts.some(p => _projKey(state._ocProj[p]) === _projKey(proj))) return true;
+  // 3) Respaldo por NIT (Archivos 4·5·6): OC desconocida en el reporte, pero el
+  //    NIT del proveedor sólo registra OCs del proyecto activo
+  if (state._nitProjs && (!parts.length || parts.every(p => (state._ocProj || {})[p] == null))) {
+    const projs = state._nitProjs[nitKey(r.nit)];
+    if (projs && projs.size && [...projs].every(p => _projKey(p) === _projKey(proj))) return true;
+  }
+  // 4) Respaldo por PROVEEDOR (Archivo 2): el proveedor tiene recepciones del
+  //    proyecto activo y la(s) OC(s) del registro no pertenecen a OTRO proyecto
+  const provSet = _getProjProvSet(proj);
+  if (provSet && provSet.has(normalStr(r.prov)) && !parts.some(p => _ocEnOtroProyecto(p, proj))) return true;
   return false;
 }
 
@@ -5360,18 +5469,11 @@ function passesProjectFilterRec(r2) {
 }
 
 function passesProjectFilterGeneric(r) {
-  if (state.activeProject === '__ALL__') return true;
-  // For m3/m4 data (no direct project link) — filter by OC match in df2rec
-  const poNorm = normalStr(r.po || '');
-  if ((state.df2rec || []).some(r2 =>
-    r2.proyecto === state.activeProject && (normalStr(r2.oc) === poNorm)
-  )) return true;
-  // v7.0 — Respaldo Archivo 4 por OC (fix caso Consorcio HL)
-  if (poNorm && state._ocProj && state._ocProj[poNorm] === state.activeProject) return true;
-  return false;
+  // v7.1 — mismo criterio tolerante que passesProjectFilter
+  return passesProjectFilter(r);
 }
 
-let _afterProcessTab = null; // v7.0 — tab destino tras reprocesar (usado por la ventana flotante del Archivo 4)
+let _afterProcessTab = null; // v7.1 — tab destino tras reprocesar (usado por la ventana flotante del Archivo 4)
 
 function processData() {
   const overlay = document.getElementById('loadingOverlay');
@@ -5398,7 +5500,7 @@ function processData() {
       // Fijar proyecto C-DZP-21-000-A automáticamente
       setProjectFilter('C-DZP-21-000-A');
       showToast('✅ Datos procesados correctamente — Proyecto: C-DZP-21-000-A', 'success');
-      addAuditEntry('proceso', `${state.m1data.length} facturas · ${state.m3data.length} registros CxP` + (state.df4oc.length ? ` · ${state.df4oc.length} OCs (Archivo 4)` : ''), {
+      addAuditEntry('proceso', `${state.m1data.length} facturas · ${state.m3data.length} registros CxP` + (state.df4oc.length ? ` · ${state.df4oc.length} OCs (Archivos 4·5·6)` : ''), {
         files: state.files.filter(f=>f.wb).map(f=>({ nombre:f.name, slot:f.slot, hojas:f.sheets }))
       });
       switchTab(_afterProcessTab || 'dzp');
@@ -5614,10 +5716,11 @@ function parseFiles() {
     // debug removed
   }
 
-  // ── Archivo 4 (Reporte Órdenes de Compra — Salida1_XXXX) ── [v7.0]
-  // Puede haber VARIOS archivos en el slot 4 (uno por vigencia 2024/2025/2026):
+  // ── Archivos 4·5·6 (Reportes Órdenes de Compra — Salida1_2024/25/26) ── [v7.1]
+  // Archivos 4·5·6 — un slot por vigencia (2024/2025/2026):
   // se parsean todos y se concatenan en state.df4.
-  const slot4wbs = state.files.filter(f => f.wb && f.slot === 4).map(f => f.wb);
+  const slot4wbs = state.files.filter(f => f.wb && f.slot >= 4 && f.slot <= 6)
+                              .sort((a, b) => a.slot - b.slot).map(f => f.wb);
   state.df4 = [];
   for (const wb of slot4wbs) {
     const _nrm = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
@@ -5661,7 +5764,7 @@ function parseFiles() {
   }
 }
 
-// ── Helper v7.0: lectura de campos del Archivo 4 insensible a acentos/espacios ──
+// ── Helper v7.1: lectura de campos del Archivo 4 insensible a acentos/espacios ──
 let _a4ColMap = null;
 function _buildA4ColMap(sampleRow) {
   _a4ColMap = {};
@@ -5681,7 +5784,7 @@ function getA4Field(row, candidates) {
   return null;
 }
 
-// ── Helper v7.0: parsea "45 DIAS" → 45 · "CONTADO"/"Inmediato" → 0 ──
+// ── Helper v7.1: parsea "45 DIAS" → 45 · "CONTADO"/"Inmediato" → 0 ──
 function parseCondDias(s) {
   if (s == null || s === '') return null;
   const t = String(s).toLowerCase();
@@ -5690,7 +5793,7 @@ function parseCondDias(s) {
   return m ? parseInt(m[1], 10) : null;
 }
 
-// ── Helper v7.0: viernes de corte de la semana de una fecha ──
+// ── Helper v7.1: viernes de corte de la semana de una fecha ──
 function fridayOf(d) {
   if (!d) return null;
   const x = new Date(d); x.setHours(0,0,0,0);
@@ -5699,7 +5802,7 @@ function fridayOf(d) {
   return x;
 }
 
-// ── Helper v7.0: llave normalizada de NIT (ignora dígito de verificación y separadores) ──
+// ── Helper v7.1: llave normalizada de NIT (ignora dígito de verificación y separadores) ──
 // '811015529-1' → '811015529' · '811.015.529' → '811015529'
 function nitKey(v) {
   if (v == null) return '';
@@ -5975,6 +6078,7 @@ function buildModules() {
 
   state.m1data = []; state.m2data = []; state.m3data = []; state.m4data = [];
   state.df2rec = []; state.df3cxp = [];
+  _invalidateProjIndex();  // v7.1 PERF — el índice se reconstruye tras el nuevo df2rec
   _a1ColMap = null; // reset column map for fresh file
 
   state.df1.forEach((row, _rowIdx) => {
@@ -6227,12 +6331,13 @@ function buildModules() {
     });
   }
 
-  // ═══ v7.0 — ARCHIVO 4: Órdenes de Compra ═══════════════════════
+  // ═══ v7.1 — ARCHIVO 4: Órdenes de Compra ═══════════════════════
   // Agrega por OC, construye mapas de Condiciones de Pago (por OC y por NIT)
   // y de Proyecto por OC (respaldo para el filtro de proyecto en M3/Cash Call).
   state.df4oc = [];
   state._ocCond = {}; state._nitCond = {}; state._ocProj = {}; state._nitProjs = {};
   _a4ColMap = null;
+  _invalidateProjIndex();  // v7.1 PERF — df2rec acaba de reconstruirse
   if (state.df4 && state.df4.length) {
     const g = {};
     const nitCondTally = {};
@@ -6289,7 +6394,7 @@ function buildModules() {
     });
   }
 
-  // ── v7.0 — Enriquecer df3cxp: condición de pago + fecha programada + semana de corte (viernes) ──
+  // ── v7.1 — Enriquecer df3cxp: condición de pago + fecha programada + semana de corte (viernes) ──
   state.df3cxp.forEach(r => {
     let cond = null;
     const keyOC = normalStr(r.po || '');
@@ -6845,7 +6950,7 @@ function renderM0RecTable() {
 
 // ── MODULE 1 ──────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════
-// CHART FILTROS — renderM1ChartFiltered v7.0
+// CHART FILTROS — renderM1ChartFiltered v7.1
 // Renderiza la gráfica de Facturas por Mes/Año/Responsable
 // respetando filtros independientes: año, mes, estado, recepcionado por
 // ═══════════════════════════════════════════════════════════════
@@ -6968,7 +7073,7 @@ function renderM1ChartFiltered() {
 }
 
 function renderM1() {
-  // Búsqueda unificada v7.0: un solo campo busca en OC, Factura, Recepción y Proveedor
+  // Búsqueda unificada v7.1: un solo campo busca en OC, Factura, Recepción y Proveedor
   const searchAll    = normalStr((document.getElementById('f1oc')?.value || document.getElementById('f1search')?.value || ''));
   const filterProyM1 = (document.getElementById('f1proyecto')?.value || '');
   const estado = document.getElementById('f1estado').value;
@@ -7343,20 +7448,28 @@ function renderM3() {
   // Project filter for M3: match by factura against m1data (which has po) 
   const _m3ProjFilter = state.activeProject !== '__ALL__';
   const _m3ValidInvs = _m3ProjFilter
-    ? new Set(state.m1data.filter(r => passesProjectFilter(r)).map(r => normalStr(r.inv)))
+    ? getValidInvsForProject()   // v7.1 PERF — memoizado (antes se reconstruía en cada tecla)
     : null;
-  // v7.0 — Respaldo Archivo 4 (fix Consorcio HL): la factura también pasa el
+  // v7.1 — Respaldo Archivo 4 (fix Consorcio HL): la factura también pasa el
   // filtro si su OC pertenece al proyecto según el reporte de Órdenes de Compra,
   // o si no tiene OC cruzada pero su NIT sólo tiene OCs en el proyecto activo.
   const _m3PassProj = r => {
     if (!_m3ProjFilter) return true;
     if (_m3ValidInvs && _m3ValidInvs.has(normalStr(r.factura||''))) return true;
-    const poNorm = normalStr(r.po || '');
-    if (poNorm && state._ocProj && state._ocProj[poNorm] === state.activeProject) return true;
-    if (!poNorm && state._nitProjs) {
+    const parts = _ocParts(r.po);
+    // v7.1 — Recepción del Archivo 2 con el proyecto (cruce normalizado)
+    const ocSet = _getProjOCSet(state.activeProject);
+    if (ocSet && parts.some(p => ocSet.has(p))) return true;
+    // Archivos 4·5·6 por OC
+    if (state._ocProj && parts.some(p => _projKey(state._ocProj[p]) === _projKey(state.activeProject))) return true;
+    // Archivos 4·5·6 por NIT (sin OC cruzada)
+    if (!parts.length && state._nitProjs) {
       const projs = state._nitProjs[nitKey(r.nit)];
       if (projs && projs.has(state.activeProject)) return true;
     }
+    // v7.1 — Respaldo por PROVEEDOR con recepciones del proyecto (fix GISAICO)
+    const provSet = _getProjProvSet(state.activeProject);
+    if (provSet && provSet.has(normalStr(r.prov)) && !parts.some(p => _ocEnOtroProyecto(p, state.activeProject))) return true;
     return false;
   };
   let data = state.df3cxp.filter(r => {
@@ -7402,7 +7515,7 @@ function renderM3() {
       ? '<span class="badge badge-danger">🚫 Cancelado</span>'
       : `<span class="badge badge-gray">${r.estado||'—'}</span>`;
     const condTd = r.condDias != null
-      ? `<span title="Fuente: ${r.condFuente === 'OC' ? 'Orden de Compra (Archivo 4)' : 'NIT del proveedor (Archivo 4)'} — ${r.condPago||''}" style="font-weight:600;${r.condFuente==='NIT'?'color:#b45309':''}">${r.condDias === 0 ? 'Inmediato' : r.condDias + ' días'}${r.condFuente==='NIT'?' *':''}</span>`
+      ? `<span title="Fuente: ${r.condFuente === 'OC' ? 'Orden de Compra (Archivos 4·5·6)' : 'NIT del proveedor (Archivos 4·5·6)'} — ${r.condPago||''}" style="font-weight:600;${r.condFuente==='NIT'?'color:#b45309':''}">${r.condDias === 0 ? 'Inmediato' : r.condDias + ' días'}${r.condFuente==='NIT'?' *':''}</span>`
       : '<span style="color:var(--col-muted)">—</span>';
     const progTd = r.fechaProg
       ? `<span style="font-weight:600" title="Corte semanal: viernes ${fmtDate(r.semViernes)}">${fmtDate(r.fechaProg)}</span>`
@@ -7426,7 +7539,7 @@ function renderM3() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// v7.0 — MÓDULO PROGRAMACIÓN DE PAGOS (CASH CALL SEMANAL)
+// v7.1 — MÓDULO PROGRAMACIÓN DE PAGOS (CASH CALL SEMANAL)
 // Corte los viernes · Fecha Contable + Condiciones de Pago (Archivo 4)
 // ═══════════════════════════════════════════════════════════════
 
@@ -7434,7 +7547,7 @@ function openCashCallModule() {
   switchTab('cashcall');
   if (!currentUser) return; // switchTab ya mostró el login
   // Ventana flotante automática si aún no hay Archivo 4 cargado
-  const tieneA4 = state.files.some(f => f.wb && f.slot === 4) || (state.df4oc && state.df4oc.length);
+  const tieneA4 = state.files.some(f => f.wb && f.slot >= 4 && f.slot <= 6) || (state.df4oc && state.df4oc.length);
   if (!tieneA4) openModalArchivo4();
 }
 
@@ -7444,9 +7557,9 @@ function openModalArchivo4() {
   m.style.display = 'flex';
   const info = document.getElementById('modalA4FileInfo');
   if (info) {
-    const a4 = state.files.filter(f => f.wb && f.slot === 4);
+    const a4 = state.files.filter(f => f.wb && f.slot >= 4 && f.slot <= 6).sort((a,b)=>a.slot-b.slot);
     info.innerHTML = a4.length
-      ? '📦 Archivos de OC cargados: ' + a4.map(f => `<strong>${f.name}</strong> (${f.sheets} hoja(s))`).join(' · ') + '<br><span style="font-size:10.5px">Puede agregar otra vigencia — los archivos se acumulan por nombre.</span>'
+      ? '📦 Archivos de OC cargados: ' + a4.map(f => `<strong>Archivo ${f.slot}</strong> · ${f.name} (${f.sheets} hoja(s))`).join(' &nbsp;·&nbsp; ') + '<br><span style="font-size:10.5px">Puede agregar o reemplazar vigencias — cada Salida1_XXXX ocupa su propio slot (4·5·6).</span>'
       : 'Aún no se ha cargado ningún archivo de órdenes de compra.';
   }
 }
@@ -7460,16 +7573,16 @@ function handleArchivo4Files(files) {
   const arr = Array.from(files || []).filter(f => /\.(xlsx|xls)$/i.test(f.name));
   if (!arr.length) { showToast('⚠️ Seleccione un archivo .xls o .xlsx', 'warning'); return; }
   closeModalArchivo4();
-  _forceNextSlot = 4; // todo lo cargado desde esta ventana es Archivo 4 (OC)
+  _forceNextSlot = 'OC'; // todo lo cargado desde esta ventana es reporte de OC → slot 4/5/6 según vigencia
   _onFilesLoadedHook = () => {
-    const tiene4 = state.files.some(f => f.wb && f.slot === 4);
-    if (!tiene4) { showToast('⚠️ El archivo no se pudo cargar como Reporte de Órdenes de Compra.', 'warning'); return; }
+    const ocs = state.files.filter(f => f.wb && f.slot >= 4 && f.slot <= 6);
+    if (!ocs.length) { showToast('⚠️ El archivo no se pudo cargar como Reporte de Órdenes de Compra.', 'warning'); return; }
     const tieneBase = state.files.some(f => f.wb && f.slot >= 1 && f.slot <= 3);
     if (state.processed || tieneBase) {
       _afterProcessTab = 'cashcall';
-      processData(); // reprocesa el cruce completo incluyendo el Archivo 4
+      processData(); // UN solo reproceso para todos los archivos cargados en el lote
     } else {
-      showToast('📦 Archivo 4 cargado. Cargue los Archivos 1–3 y presione "Procesar y Cruzar Datos".', 'info');
+      showToast(`📦 ${ocs.length} archivo(s) de OC cargado(s) (Archivos ${ocs.map(f=>f.slot).sort().join('·')}). Cargue los Archivos 1–3 y presione "Procesar y Cruzar Datos".`, 'info');
       switchTab('carga');
     }
   };
@@ -7486,12 +7599,20 @@ function fmtUSD(v) {
 function _ccPassProj(r) {
   if (state.activeProject === '__ALL__') return true;
   if (_ccValidInvsCache && _ccValidInvsCache.has(normalStr(r.factura || ''))) return true;
-  const poNorm = normalStr(r.po || '');
-  if (poNorm && state._ocProj && state._ocProj[poNorm] === state.activeProject) return true;
-  if (!poNorm && state._nitProjs) {
+  const parts = _ocParts(r.po);
+  // v7.1 — Recepción del Archivo 2 con el proyecto (cruce normalizado)
+  const ocSet = _getProjOCSet(state.activeProject);
+  if (ocSet && parts.some(p => ocSet.has(p))) return true;
+  // Archivos 4·5·6 por OC
+  if (state._ocProj && parts.some(p => _projKey(state._ocProj[p]) === _projKey(state.activeProject))) return true;
+  // Archivos 4·5·6 por NIT (sin OC cruzada)
+  if (!parts.length && state._nitProjs) {
     const projs = state._nitProjs[nitKey(r.nit)];
     if (projs && projs.has(state.activeProject)) return true;
   }
+  // v7.1 — Respaldo por PROVEEDOR con recepciones del proyecto (fix GISAICO)
+  const provSet = _getProjProvSet(state.activeProject);
+  if (provSet && provSet.has(normalStr(r.prov)) && !parts.some(p => _ocEnOtroProyecto(p, state.activeProject))) return true;
   return false;
 }
 let _ccValidInvsCache = null;
@@ -7518,9 +7639,7 @@ function renderCashCall() {
   const estadoF = document.getElementById('ccEstado')?.value || '';
 
   // Cache del set de facturas válidas por proyecto (vía Archivo 1 + recepciones)
-  _ccValidInvsCache = state.activeProject !== '__ALL__'
-    ? new Set(state.m1data.filter(r => passesProjectFilter(r)).map(r => normalStr(r.inv)))
-    : null;
+  _ccValidInvsCache = getValidInvsForProject();   // v7.1 PERF — memoizado
 
   // Base: registros CxP no cancelados que pasan proyecto + filtros
   const base = state.df3cxp.filter(r => {
@@ -7569,7 +7688,7 @@ function renderCashCall() {
     <div class="summary-card s-warning"><div class="summary-label">Facturas programadas esta semana</div><div class="summary-value">${actN}</div><div class="summary-sub">${actProvs} proveedor(es)</div></div>
     <div class="summary-card s-warning"><div class="summary-label">💵 Valor semana (USD)</div><div class="summary-value" style="font-size:14px">${fmtUSD(actCOP / TRM)}</div><div class="summary-sub">${fmtCurrency(actCOP)} · TRM ${TRM.toLocaleString('es-CO')}</div></div>
     <div class="summary-card s-danger"><div class="summary-label">⏳ Total pendiente programado</div><div class="summary-value" style="font-size:14px">${fmtUSD(pendTotal / TRM)}</div><div class="summary-sub">${pendN} facturas aprobadas · ${fmtCurrency(pendTotal)}</div></div>
-    <div class="summary-card ${sinCond.length ? 's-danger' : 's-success'}"><div class="summary-label">⚠️ Sin condición de pago</div><div class="summary-value">${sinCond.length}</div><div class="summary-sub">Sin OC/NIT en Archivo 4</div></div>
+    <div class="summary-card ${sinCond.length ? 's-danger' : 's-success'}"><div class="summary-label">⚠️ Sin condición de pago</div><div class="summary-value">${sinCond.length}</div><div class="summary-sub">Sin OC/NIT en Archivos 4·5·6</div></div>
   `;
 
   // ── Tabla semanal ──
@@ -7671,12 +7790,10 @@ function ccToggleWeek(i) {
 }
 
 function exportProgramacionSemanal() {
-  if (!state.processed || !state.df4oc || !state.df4oc.length) { alert('Cargue el Archivo 4 y procese los datos antes de exportar.'); return; }
+  if (!state.processed || !state.df4oc || !state.df4oc.length) { alert('Cargue los Archivos 4·5·6 (reportes de OC) y procese los datos antes de exportar.'); return; }
   const TRM = Math.max(1, parseFloat(document.getElementById('ccTRM')?.value) || 3800);
 
-  _ccValidInvsCache = state.activeProject !== '__ALL__'
-    ? new Set(state.m1data.filter(r => passesProjectFilter(r)).map(r => normalStr(r.inv)))
-    : null;
+  _ccValidInvsCache = getValidInvsForProject();   // v7.1 PERF — memoizado
   const base = state.df3cxp.filter(r => r.estado !== 'Cancelado' && _ccPassProj(r) && r.fechaProg && r.semViernes);
 
   // Hoja 1: Resumen semanal
@@ -9029,7 +9146,7 @@ function renderM5Pdf() {
     <div style="text-align:right">
       <div style="font-size:10px;opacity:.6">${currentUser||'Usuario'}</div>
       <div style="font-size:10px;opacity:.6;margin-top:2px">${fechaHoy}</div>
-      <div style="font-size:9px;opacity:.4;margin-top:2px">Cash Call v7.0</div>
+      <div style="font-size:9px;opacity:.4;margin-top:2px">Cash Call v7.1</div>
     </div>
   </div>
 
@@ -9066,7 +9183,7 @@ function renderM5Pdf() {
   </div>
 
   <div style="padding:10px 18px;background:#f8fafc;font-size:8.5px;color:#94a3b8;display:flex;justify-content:space-between">
-    <span>Cash Call v7.0 · Ficha Proveedor · ${provName}</span>
+    <span>Cash Call v7.1 · Ficha Proveedor · ${provName}</span>
     <span>Generado: ${new Date().toLocaleString('es-CO')}</span>
   </div>
   <button class="btn-p noprint" onclick="window.print()">🖨 Imprimir / Guardar como PDF</button>
@@ -9196,7 +9313,7 @@ function exportBreachasPDF() {
     <div style="text-align:right">
       <div style="font-size:11px;opacity:0.7">Generado por: ${currentUser||'Usuario'}</div>
       <div style="font-size:11px;opacity:0.7;margin-top:2px">${fechaHoy}</div>
-      <div style="font-size:10px;opacity:0.5;margin-top:2px;font-family:monospace">v7.0 · Cash Call Platform</div>
+      <div style="font-size:10px;opacity:0.5;margin-top:2px;font-family:monospace">v7.1 · Cash Call Platform</div>
     </div>
   </div>
 
@@ -9281,7 +9398,7 @@ function exportBreachasPDF() {
   </div>
 
   <div style="padding:16px 32px;background:#f8fafc;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center">
-    <div style="font-size:9px;color:#94a3b8">Cash Call v7.0 · Secretaría Distrital de Seguridad, Convivencia y Justicia · Dirección de Bienes</div>
+    <div style="font-size:9px;color:#94a3b8">Cash Call v7.1 · Secretaría Distrital de Seguridad, Convivencia y Justicia · Dirección de Bienes</div>
     <div style="font-size:9px;color:#94a3b8">Generado: ${new Date().toLocaleString('es-CO')}</div>
   </div>
 </div>
@@ -9670,7 +9787,7 @@ function exportCashCallJSON() {
   const filename = `CashCall_${fecha}.json`;
   const payload = {
     meta: {
-      app: 'Cash Call v7.0',
+      app: 'Cash Call v7.1',
       exportedBy: currentUser || '—',
       exportedAt: new Date().toISOString(),
       filename,
@@ -9693,7 +9810,7 @@ function exportCashCallJSON() {
         else out[k]=r[k] instanceof Date?r[k].toISOString().slice(0,10):r[k];
       }); return out;
     }),
-    // v7.0 — Programación de pagos (para comparación de los viernes: qué se pagó y qué no)
+    // v7.1 — Programación de pagos (para comparación de los viernes: qué se pagó y qué no)
     programacionPagos: (state.df3cxp||[]).filter(r=>r.fechaProg&&r.estado!=='Cancelado').map(r=>({
       semanaViernes: r.semViernes ? r.semViernes.toISOString().slice(0,10) : null,
       fechaProgramada: r.fechaProg ? r.fechaProg.toISOString().slice(0,10) : null,
@@ -9999,7 +10116,7 @@ document.addEventListener('keydown', e => {
 });
 
 /* ═══════════════════════════════════════════════════════════
-   C-DZP-21-000-A — Tablero de Control v7.0
+   C-DZP-21-000-A — Tablero de Control v7.1
    ═══════════════════════════════════════════════════════════ */
 
 const DZP_PROJECT_ID = 'C-DZP-21-000-A';
@@ -10011,28 +10128,34 @@ function getDZPData() {
   if (!state.processed) return { m1: [], m2: [], m3: [], m4: [] };
   const DZP_PROJ = 'C-DZP-21-000-A';
 
-  // Construir el set de OCs que pertenecen al proyecto C-DZP-21-000-A
-  // usando el campo "Proyecto" del Archivo 2 (df2rec)
-  const df2rec = state.df2rec || [];
-  const ocsDZP = new Set(
-    df2rec
-      .filter(r => (r.proyecto || '').trim().toUpperCase() === DZP_PROJ.toUpperCase())
-      .map(r => (r.oc || '').trim().toUpperCase())
-      .filter(Boolean)
-  );
+  // v7.1 — cruce con índices normalizados del Archivo 2 (memoizados):
+  //   ocSet   = OCs con recepción en el proyecto (normalStr → tolera AMM_OC / AMM-OC / espacios)
+  //   provSet = proveedores con recepciones del proyecto (fix CONSORCIO HL-GISAICO)
+  const ocSet   = _getProjOCSet(DZP_PROJ);
+  const provSet = _getProjProvSet(DZP_PROJ);
+  const hasA2   = !!(ocSet && ocSet.size);
+  const hasA4   = state._ocProj && Object.keys(state._ocProj).length > 0;
 
   let m1dzp;
-  if (ocsDZP.size > 0) {
-    // Hay datos de Archivo 2: filtrar solo OCs del proyecto
-    // Soporte para celdas con múltiples OCs separadas por "/" (ej: AMM_OC_19806/AMM_OC_20786)
+  if (hasA2 || hasA4) {
     m1dzp = (state.m1data || []).filter(r => {
-      const po = (r.po || '').trim().toUpperCase();
-      if (!po) return false;
-      // Si la celda contiene varias OCs separadas por "/", verificar cada una
-      return po.split('/').map(s => s.trim()).some(oc => ocsDZP.has(oc));
+      const parts = _ocParts(r.po);
+      // 1) Recepción del Archivo 2 con proyecto activo (comparación normalizada)
+      if (ocSet && parts.some(p => ocSet.has(p))) return true;
+      // 2) OC asignada al proyecto en los Archivos 4·5·6
+      if (hasA4 && parts.some(p => _projKey(state._ocProj[p]) === _projKey(DZP_PROJ))) return true;
+      // 3) Respaldo por NIT (Archivos 4·5·6) — OC desconocida en el reporte
+      if (hasA4 && state._nitProjs && (!parts.length || parts.every(p => state._ocProj[p] == null))) {
+        const projs = state._nitProjs[nitKey(r.nit)];
+        if (projs && projs.size && [...projs].every(p => _projKey(p) === _projKey(DZP_PROJ))) return true;
+      }
+      // 4) Respaldo por PROVEEDOR (Archivo 2): tiene recepciones del proyecto y
+      //    su(s) OC(s) no pertenecen a OTRO proyecto (fix CONSORCIO HL-GISAICO)
+      if (provSet && provSet.has(normalStr(r.prov)) && !parts.some(p => _ocEnOtroProyecto(p, DZP_PROJ))) return true;
+      return false;
     });
   } else {
-    // Sin Archivo 2 cargado: mostrar todos (compatibilidad)
+    // Sin Archivo 2 ni reportes de OC cargados: mostrar todos (compatibilidad)
     m1dzp = state.m1data || [];
   }
 
@@ -10128,6 +10251,13 @@ function renderDZPSV1() {
   // ── Sin resultados dentro del proyecto → diagnosticar en los 3 archivos ──────
   if (sv1Q && sv1SearchHit === 0) {
     const PROYECTO_ACTIVO = state.activeProject || 'C-DZP-21-000-A';
+    const _pk = _projKey(PROYECTO_ACTIVO);
+    // v7.1 — Recepciones que SÍ pertenecen al proyecto activo (caso GISAICO:
+    // existen, pero el cruce con las actas fallaba y el diagnóstico decía "Sin recepción")
+    const enA2EnProyecto = (state.df2rec||[]).filter(r2 => {
+      const hay2 = normalStr([r2.rec, r2.oc, r2.proveedor, r2.org, r2.proyecto, r2.desc].filter(Boolean).join(' '));
+      return hay2.includes(sv1Q) && _projKey(r2.proyecto) === _pk;
+    });
     const enA2SinProyecto = (state.df2rec||[]).filter(r2 => {
       const hay2 = normalStr([r2.rec, r2.oc, r2.proveedor, r2.org, r2.proyecto, r2.desc].filter(Boolean).join(' '));
       return hay2.includes(sv1Q) && (!r2.proyecto || r2.proyecto.toString().trim() === '');
@@ -10144,10 +10274,18 @@ function renderDZPSV1() {
       const hay3 = normalStr([r3.factura, r3.prov, r3.nit, r3.estado].filter(Boolean).join(' '));
       return hay3.includes(sv1Q);
     });
-    const existeEnAlgunLado = enA2SinProyecto.length > 0 || enA2OtroProyecto.length > 0 || enA1.length > 0 || enA3.length > 0;
+    // v7.1 — Archivos 4·5·6: buscar el término en el reporte de Órdenes de Compra
+    const a4Cargado = (state.df4oc||[]).length > 0;
+    const enA4 = (state.df4oc||[]).filter(o => {
+      const hay4 = normalStr([o.oc, o.prov, o.nit, o.proyecto].filter(Boolean).join(' '));
+      return hay4.includes(sv1Q);
+    });
+    const enA4Proj  = enA4.filter(o => (o.proyecto||'').trim().toUpperCase() === PROYECTO_ACTIVO.toUpperCase());
+    const a4OtrosPr = [...new Set(enA4.filter(o => o.proyecto && (o.proyecto||'').trim().toUpperCase() !== PROYECTO_ACTIVO.toUpperCase()).map(o => o.proyecto))];
+    const existeEnAlgunLado = enA2EnProyecto.length > 0 || enA2SinProyecto.length > 0 || enA2OtroProyecto.length > 0 || enA1.length > 0 || enA3.length > 0 || enA4.length > 0;
 
     document.getElementById('dzp-sv1-content').innerHTML = `
-      <div style="max-width:720px">
+      <div style="max-width:960px">
         <div style="display:flex;align-items:center;gap:14px;padding:16px 20px;background:linear-gradient(135deg,#1e3a5f,#0f2544);border-radius:14px 14px 0 0">
           <div style="font-size:30px">🔬</div>
           <div>
@@ -10155,7 +10293,7 @@ function renderDZPSV1() {
             <div style="font-size:11px;color:rgba(255,255,255,0.6)">No encontrado en el proyecto activo <strong style="color:#34d399">${PROYECTO_ACTIVO}</strong></div>
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border:1px solid var(--col-border);border-top:none;border-radius:0 0 14px 14px;overflow:hidden">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border:1px solid var(--col-border);border-top:none;border-radius:0 0 14px 14px;overflow:hidden">
           <div style="padding:14px 16px;border-right:1px solid var(--col-border);background:${enA1.length>0?'#fffbeb':'#fef2f2'}">
             <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--col-muted);margin-bottom:7px">📋 Archivo 1 — Actas</div>
             <div style="display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:2px 9px;font-size:10.5px;font-weight:700;margin-bottom:6px;${enA1.length>0?'background:#fef3c7;color:#92400e':'background:#fee2e2;color:#991b1b'}">
@@ -10163,25 +10301,42 @@ function renderDZPSV1() {
             </div>
             <div style="font-size:11px;color:var(--col-muted);line-height:1.5">${enA1.length>0?'Existe en actas pero la OC no está vinculada al proyecto activo en Archivo 2.':'Sin actas ni facturas registradas para este término.'}</div>
           </div>
-          <div style="padding:14px 16px;border-right:1px solid var(--col-border);background:${enA2SinProyecto.length>0?'#fffbeb':enA2OtroProyecto.length>0?'#fff7ed':'#fef2f2'}">
+          <div style="padding:14px 16px;border-right:1px solid var(--col-border);background:${enA2EnProyecto.length>0?'#f0fdf4':enA2SinProyecto.length>0?'#fffbeb':enA2OtroProyecto.length>0?'#fff7ed':'#fef2f2'}">
             <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--col-muted);margin-bottom:7px">📥 Archivo 2 — Recepciones</div>
-            <div style="display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:2px 9px;font-size:10.5px;font-weight:700;margin-bottom:6px;${enA2SinProyecto.length>0?'background:#fef3c7;color:#92400e':enA2OtroProyecto.length>0?'background:#ffedd5;color:#9a3412':'background:#fee2e2;color:#991b1b'}">
-              ${enA2SinProyecto.length>0?'⚠️ Sin proyecto asignado':enA2OtroProyecto.length>0?'🚫 Otro proyecto':'❌ Sin recepción'}
+            <div style="display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:2px 9px;font-size:10.5px;font-weight:700;margin-bottom:6px;${enA2EnProyecto.length>0?'background:#dcfce7;color:#166534':enA2SinProyecto.length>0?'background:#fef3c7;color:#92400e':enA2OtroProyecto.length>0?'background:#ffedd5;color:#9a3412':'background:#fee2e2;color:#991b1b'}">
+              ${enA2EnProyecto.length>0?'✅ '+enA2EnProyecto.length+' recepción(es) del proyecto':enA2SinProyecto.length>0?'⚠️ Sin proyecto asignado':enA2OtroProyecto.length>0?'🚫 Otro proyecto':'❌ Sin recepción'}
             </div>
             <div style="font-size:11px;color:var(--col-muted);line-height:1.5">${
-              enA2SinProyecto.length>0
+              enA2EnProyecto.length>0
+                ? `Las recepciones <strong>SÍ pertenecen a ${PROYECTO_ACTIVO}</strong> (OC: <code style="background:#dcfce7;padding:1px 4px;border-radius:3px">${[...new Set(enA2EnProyecto.map(r=>r.oc))].slice(0,2).join(', ')}</code>). Presione <strong>Procesar y Cruzar Datos</strong> para vincular el proveedor con el nuevo cruce v7.1.`
+                : enA2SinProyecto.length>0
                 ? `Recepción existe <strong>pero sin proyecto</strong> en Oracle. Asigne <strong>${PROYECTO_ACTIVO}</strong> en el Excel.`
                 : enA2OtroProyecto.length>0
                 ? `Pertenece a otro proyecto: <strong>${[...new Set(enA2OtroProyecto.map(r=>r.proyecto||'?'))].join(', ')}</strong>`
                 : 'No existe recepción Oracle. Aún no se ha recepcionado.'
             }</div>
           </div>
-          <div style="padding:14px 16px;background:${enA3.length>0?'#f0fdf4':'#fef2f2'}">
+          <div style="padding:14px 16px;border-right:1px solid var(--col-border);background:${enA3.length>0?'#f0fdf4':'#fef2f2'}">
             <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--col-muted);margin-bottom:7px">🧾 Archivo 3 — CxP</div>
             <div style="display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:2px 9px;font-size:10.5px;font-weight:700;margin-bottom:6px;${enA3.length>0?'background:#dcfce7;color:#166534':'background:#fee2e2;color:#991b1b'}">
               ${enA3.length>0?'✅ '+enA3.length+' factura(s)':'❌ Sin factura'}
             </div>
             <div style="font-size:11px;color:var(--col-muted);line-height:1.5">${enA3.length>0?'Existe factura en CxP pero no vinculada al proyecto activo.':'No existe factura ni registro CxP. La OC no ha sido facturada.'}</div>
+          </div>
+          <div style="padding:14px 16px;background:${!a4Cargado?'#f8fafc':enA4Proj.length>0?'#f0fdf4':enA4.length>0?'#fff7ed':'#fef2f2'}">
+            <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--col-muted);margin-bottom:7px">📦 Archivos 4·5·6 — OC</div>
+            <div style="display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:2px 9px;font-size:10.5px;font-weight:700;margin-bottom:6px;${!a4Cargado?'background:#e2e8f0;color:#475569':enA4Proj.length>0?'background:#dcfce7;color:#166534':enA4.length>0?'background:#ffedd5;color:#9a3412':'background:#fee2e2;color:#991b1b'}">
+              ${!a4Cargado?'📂 Sin cargar':enA4Proj.length>0?'✅ '+enA4Proj.length+' OC(s) del proyecto':enA4.length>0?'🚫 Otro proyecto':'❌ Sin OC'}
+            </div>
+            <div style="font-size:11px;color:var(--col-muted);line-height:1.5">${
+              !a4Cargado
+                ? 'Cargue los reportes Salida1_2024/25/26 en Programación Pagos para habilitar este respaldo.'
+                : enA4Proj.length>0
+                ? 'La OC está asignada a <strong>'+PROYECTO_ACTIVO+'</strong> en el reporte de OC — se incluirá en el tablero aunque no tenga recepción.'
+                : enA4.length>0
+                ? 'Registrada en el reporte de OC bajo otro(s) proyecto(s): <strong>'+(a4OtrosPr.join(', ')||'sin proyecto')+'</strong>'
+                : 'El término no aparece en los reportes de Órdenes de Compra cargados.'
+            }</div>
           </div>
         </div>
         ${existeEnAlgunLado ? `
@@ -10189,11 +10344,15 @@ function renderDZPSV1() {
           <div style="font-size:22px">📂</div>
           <div style="font-size:12px;color:#1e40af;line-height:1.7">
             <strong>👉 Acción requerida — Asigne el proyecto en el Excel:</strong><br>
-            ${enA2SinProyecto.length>0
+            ${enA2EnProyecto.length>0
+              ? `Las recepciones de este proveedor <strong>ya tienen el proyecto ${PROYECTO_ACTIVO}</strong> en el Archivo 2. Presione <strong>Procesar y Cruzar Datos</strong> en Carga de Archivos — el cruce v7.1 vincula por OC normalizada y por nombre de proveedor, y el término aparecerá en el tablero, M1–M4 y Programación de Pagos.`
+              : enA2SinProyecto.length>0
               ? `Abra el archivo Excel de <strong>Recepciones Oracle (Archivo 2)</strong>, ubique la fila con OC <code style="background:#dbeafe;padding:1px 5px;border-radius:3px">${enA2SinProyecto[0].oc||document.getElementById('dzp-sv1-search').value.trim()}</code> y complete la columna <strong>Proyecto</strong> con el valor <strong>${PROYECTO_ACTIVO}</strong>. Guarde y recargue el archivo en la plataforma.`
               : enA2OtroProyecto.length>0
               ? `Verifique si la recepción fue registrada en el proyecto correcto. Si corresponde, corrija la columna <strong>Proyecto</strong> en el Excel de <strong>Archivo 2</strong> a <strong>${PROYECTO_ACTIVO}</strong>.`
-              : `Registre la recepción en Oracle para esta OC, asegurándose de asignar el proyecto <strong>${PROYECTO_ACTIVO}</strong> en la columna correspondiente del Archivo 2.`
+              : enA4Proj.length>0
+              ? `La OC ya está asignada al proyecto <strong>${PROYECTO_ACTIVO}</strong> en los <strong>Archivos 4·5·6</strong>. Presione <strong>Procesar y Cruzar Datos</strong> (o recargue los archivos) para que el respaldo v7.1 incluya estas actas/facturas en el tablero.`
+              : `Registre la recepción en Oracle para esta OC, asegurándose de asignar el proyecto <strong>${PROYECTO_ACTIVO}</strong> en la columna correspondiente del Archivo 2 — o cargue los <strong>Archivos 4·5·6</strong> (Salida1) donde la OC tenga el proyecto asignado.`
             }
           </div>
         </div>` : `
@@ -10932,7 +11091,7 @@ function exportDZPpdf() {
   </style></head><body>
   <div class="hdr">
     <div><div class="hdr-title">⛏ C-DZP-21-000-A — Reporte por Proveedor</div>
-    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v7.0</div></div>
+    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v7.1</div></div>
     <div class="hdr-meta">Generado: ${now}<br>Filtro: ${filterDesc}</div>
   </div>
   <div class="kpi-row">
@@ -10956,7 +11115,7 @@ function exportDZPpdf() {
       <tbody>${tableRows||'<tr><td colspan="9" style="text-align:center;padding:20px;color:#94a3b8">Sin datos</td></tr>'}</tbody>
     </table>
   </div>
-  <div class="footer"><span>Cash Call v7.0 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
+  <div class="footer"><span>Cash Call v7.1 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
   <div class="no-print" style="text-align:center;padding:16px">
     <button onclick="window.print()" style="padding:10px 28px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
     <button onclick="window.close()" style="margin-left:10px;padding:10px 20px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
@@ -11041,7 +11200,7 @@ function exportDZPSP2pdf() {
   </style></head><body>
   <div class="hdr">
     <div><div class="hdr-title">⛏ C-DZP-21-000-A — Órdenes de Compra por Proveedor</div>
-    <div class="hdr-sub">Tablero de Control · Cash Call v7.0</div></div>
+    <div class="hdr-sub">Tablero de Control · Cash Call v7.1</div></div>
     <div class="hdr-meta">Generado: ${now}</div>
   </div>
   <div class="kpi-row">
@@ -11061,7 +11220,7 @@ function exportDZPSP2pdf() {
       <tbody>${tableRows}</tbody>
     </table>
   </div>
-  <div class="footer"><span>Cash Call v7.0 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
+  <div class="footer"><span>Cash Call v7.1 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
   <div class="no-print" style="text-align:center;padding:14px">
     <button onclick="window.print()" style="padding:9px 26px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
     <button onclick="window.close()" style="margin-left:8px;padding:9px 18px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
@@ -11241,7 +11400,7 @@ function exportDZPSP3pdf() {
   <div class="hdr">
     <div class="hdr-left">
       <div class="hdr-title">⛏ C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</div>
-      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v7.0</div>
+      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v7.1</div>
     </div>
     <div class="hdr-right">Generado: ${now}<br>${data.length} registros exportados</div>
   </div>
@@ -11289,7 +11448,7 @@ function exportDZPSP3pdf() {
   </div>
 
   <div class="footer">
-    <span>Cash Call v7.0 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
+    <span>Cash Call v7.1 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
     <span>${data.length} registros &nbsp;·&nbsp; Filtro: ${filterDesc}</span>
   </div>
 
@@ -11304,31 +11463,31 @@ function exportDZPSP3pdf() {
 
 </script>
 
-<!-- ══ MODAL: INFORME GERENCIAL v7.0 ═════════════════════════ -->
-<!-- ═══ VENTANA FLOTANTE: CARGA ARCHIVO 4 — ÓRDENES DE COMPRA [v7.0] ═══ -->
+<!-- ══ MODAL: INFORME GERENCIAL v7.1 ═════════════════════════ -->
+<!-- ═══ VENTANA FLOTANTE: CARGA ARCHIVOS 4·5·6 — ÓRDENES DE COMPRA [v7.1] ═══ -->
 <div id="modalArchivo4" style="display:none;position:fixed;inset:0;z-index:9500;background:rgba(5,14,46,0.82);backdrop-filter:blur(6px);align-items:center;justify-content:center" onclick="if(event.target===this)closeModalArchivo4()">
   <div style="background:white;border-radius:16px;box-shadow:0 24px 64px rgba(0,0,0,0.35);width:min(560px,92vw);overflow:hidden;animation:ctxFadeIn 0.18s ease">
     <div style="background:linear-gradient(135deg,#0f2544,#1a4a8a);color:white;padding:16px 22px;display:flex;align-items:center;gap:12px">
       <span style="font-size:22px">📦</span>
       <div style="flex:1">
-        <div style="font-size:15px;font-weight:800">Archivo 4 — Reporte de Órdenes de Compra</div>
-        <div style="font-size:11px;opacity:0.7;font-family:'IBM Plex Mono',monospace">Cash Call v7.0 · Programación de Pagos</div>
+        <div style="font-size:15px;font-weight:800">Archivos 4 · 5 · 6 — Reportes de Órdenes de Compra</div>
+        <div style="font-size:11px;opacity:0.7;font-family:'IBM Plex Mono',monospace">Cash Call v7.1 · Programación de Pagos</div>
       </div>
       <button onclick="closeModalArchivo4()" style="background:rgba(255,255,255,0.15);border:none;color:white;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px;font-weight:700">✕</button>
     </div>
     <div style="padding:22px">
       <div style="font-size:12.5px;color:var(--col-muted);margin-bottom:14px;line-height:1.55">
-        Cargue el reporte de <strong>órdenes de compra Oracle</strong> (ej: <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px">Salida1_2024.xls</span>). El sistema tomará por cada OC: <strong>Proveedor · NIT · Moneda · Condiciones de Pago · Valor OC (Cantidad × Valor Unitario) · Importe Recibido · Importe Facturado · Saldo</strong>, y cruzará las condiciones de pago con el Módulo 3 para programar los pagos por semana.
+        Cargue los reportes de <strong>órdenes de compra Oracle</strong> por vigencia: <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px">Salida1_2024.xls · Salida1_2025.xls · Salida1_2026.xls</span> (Archivos 4, 5 y 6). <strong>Seleccione los 3 a la vez</strong> para cargarlos y cruzarlos en una sola pasada. El sistema tomará por cada OC: <strong>Proveedor · NIT · Moneda · Condiciones de Pago · Valor OC (Cantidad × Valor Unitario) · Importe Recibido · Importe Facturado · Saldo</strong>, y cruzará las condiciones de pago con el Módulo 3 para programar los pagos por semana.
       </div>
       <div class="upload-zone" id="uploadZoneA4" style="margin-bottom:14px"
            onclick="document.getElementById('fileInputA4').click()"
            ondragover="event.preventDefault();this.classList.add('drag-over')"
            ondragleave="this.classList.remove('drag-over')"
            ondrop="event.preventDefault();this.classList.remove('drag-over');handleArchivo4Files(event.dataTransfer.files)">
-        <input class="file-input-hidden" type="file" id="fileInputA4" accept=".xlsx,.xls" onchange="handleArchivo4Files(this.files);this.value=''">
+        <input class="file-input-hidden" type="file" id="fileInputA4" accept=".xlsx,.xls" multiple onchange="handleArchivo4Files(this.files);this.value=''">
         <div class="upload-zone-icon">📂</div>
-        <div class="upload-zone-title">Haz clic o arrastra el Excel de Órdenes de Compra aquí</div>
-        <div class="upload-zone-desc">Formatos: <strong>.xls</strong> · <strong>.xlsx</strong> — Se puede cargar un archivo por vigencia (2024, 2025, 2026)</div>
+        <div class="upload-zone-title">Haz clic o arrastra los 3 Excel de Órdenes de Compra aquí</div>
+        <div class="upload-zone-desc">Formatos: <strong>.xls</strong> · <strong>.xlsx</strong> — Un archivo por vigencia: 2024 → Archivo 4 · 2025 → Archivo 5 · 2026 → Archivo 6</div>
       </div>
       <div id="modalA4FileInfo" style="font-size:11.5px;color:var(--col-muted)"></div>
     </div>
@@ -11353,7 +11512,7 @@ function exportDZPSP3pdf() {
           <path d="M30 24 L24 19 L32 22 Z" fill="white"/>
         </svg>
         <div>
-          <div style="font-size:9.5px;font-weight:700;color:rgba(0,180,200,0.85);letter-spacing:2.2px;text-transform:uppercase;margin-bottom:3px">ARIS MINING · CASH CALL v7.0</div>
+          <div style="font-size:9.5px;font-weight:700;color:rgba(0,180,200,0.85);letter-spacing:2.2px;text-transform:uppercase;margin-bottom:3px">ARIS MINING · CASH CALL v7.1</div>
           <div style="font-size:17px;font-weight:800;color:white">Informe Gerencial Ejecutivo</div>
           <div style="font-size:10px;color:rgba(255,255,255,0.45);margin-top:3px">C-DZP-21-000-A &nbsp;·&nbsp; <kbd style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:4px;padding:1px 6px;font-size:9px;font-family:monospace;color:rgba(255,255,255,0.7)">Ctrl+G</kbd> para abrir</div>
         </div>
@@ -11931,7 +12090,7 @@ function exportInformeGerencialPDF() {
   // ══ HTML DEL INFORME ══════════════════════════════════════
   const pw=window.open('','_blank','width=1100,height=860');
   pw.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
-  <title>Informe Gerencial v7.0 — ARIS MINING · C-DZP-21-000-A</title>
+  <title>Informe Gerencial v7.1 — ARIS MINING · C-DZP-21-000-A</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
     @page { size:A4 portrait; margin:0; @bottom-right { content:"Pág. " counter(page) " de " counter(pages); font-size:8px; font-family:"IBM Plex Mono",monospace; color:#94a3b8; margin-right:16mm; margin-bottom:8mm; } }
@@ -12100,7 +12259,7 @@ function exportInformeGerencialPDF() {
         </svg>
         <div class="cover-brand-txt">
           <div class="cover-brand-name">ARIS MINING</div>
-          <div class="cover-brand-sub">Cash Call v7.0 · Control Financiero</div>
+          <div class="cover-brand-sub">Cash Call v7.1 · Control Financiero</div>
         </div>
       </div>
       <div class="cover-div"></div>
@@ -12164,7 +12323,7 @@ function exportInformeGerencialPDF() {
 
   <!-- ░░ TABLA DE CONTENIDO ░░ -->
   <div class="toc-page">
-    <div class="co-row"><div class="co-badge">ARIS MINING</div><span style="font-size:10.5px;color:#64748b">C-DZP-21-000-A · Cash Call v7.0 · ${periodo}</span></div>
+    <div class="co-row"><div class="co-badge">ARIS MINING</div><span style="font-size:10.5px;color:#64748b">C-DZP-21-000-A · Cash Call v7.1 · ${periodo}</span></div>
     <div class="toc-hdr"><div class="toc-ic">📑</div><div class="toc-ti">Tabla de Contenido</div></div>
     ${[
       ['1','Introducción','Contexto, alcance metodológico y definiciones del proyecto'],
@@ -12181,7 +12340,7 @@ function exportInformeGerencialPDF() {
   <!-- ░░ CAP 1: INTRODUCCIÓN ░░ -->
   <div class="chapter-break">
     <div class="phs"></div><h2 class="cht">1. Introducción</h2><div class="chr"></div>
-    <p class="it">Informe preparado para la Alta Dirección de <strong>ARIS MINING</strong> sobre el estado financiero y operativo del proyecto <strong>C-DZP-21-000-A</strong> · período <strong>${periodo}</strong>. Desarrollado mediante el sistema <strong>Cash Call v7.0</strong>, plataforma de control que integra actas, recepciones Oracle y cuentas por pagar (CxP).</p>
+    <p class="it">Informe preparado para la Alta Dirección de <strong>ARIS MINING</strong> sobre el estado financiero y operativo del proyecto <strong>C-DZP-21-000-A</strong> · período <strong>${periodo}</strong>. Desarrollado mediante el sistema <strong>Cash Call v7.1</strong>, plataforma de control que integra actas, recepciones Oracle y cuentas por pagar (CxP).</p>
     <p class="it">Se analizan <strong>${total} actas/facturas</strong>, cruces con Oracle REC, validación CxP, flujo de caja, tendencias mensuales y análisis de Pareto de alertas. Se incluye comparativo vs <strong>${fechaPrev}</strong>.</p>
     <div class="hb ${cumpl>=80?'hb-g':cumpl>=60?'hb-a':'hb-r'}">
       <strong>📌 Hallazgo Principal — ${periodo}:</strong> Cumplimiento <strong>${cumpl}%</strong> (${conFac}/${total} actas con CxP). <strong>${alertas} alertas activas</strong> — ${sinRec} sin REC Oracle · ${recRevisar} con REC a revisar · ${sinFac} sin factura CxP.
@@ -12191,7 +12350,7 @@ function exportInformeGerencialPDF() {
       <div><p class="it"><strong>Definiciones:</strong> <strong>REC:</strong> Recepción Oracle ERP · <strong>CxP:</strong> Cuenta por Pagar registrada · <strong>Alerta:</strong> Acta sin pago con alguna brecha · <strong>Cumplimiento:</strong> Actas c/CxP / Total</p></div>
     </div>
     <p class="it" style="color:#64748b;font-size:8.5px"><strong>Desarrollado por:</strong> GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc &nbsp;·&nbsp; <strong>Elaborado:</strong> ${autor}${cargo?' — '+cargo:''} &nbsp;·&nbsp; <strong>Fecha:</strong> ${fechaFmt}</p>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v7.0 · C-DZP-21-000-A</span><span>${periodo} · ${fechaFmt}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v7.1 · C-DZP-21-000-A</span><span>${periodo} · ${fechaFmt}</span></div>
   </div>
 
   <!-- ░░ CAP 2: RESUMEN EJECUTIVO ░░ -->
@@ -12248,7 +12407,7 @@ function exportInformeGerencialPDF() {
         ? '⚠️ <strong>Cumplimiento en riesgo ('+cumpl+'%)</strong>: por debajo de la meta del 90%. Acelerar registro de facturas CxP.'
         : '❌ <strong>Cumplimiento crítico ('+cumpl+'%)</strong>: intervención gerencial urgente requerida. Meta: ≥90%.'}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v7.0 · C-DZP-21-000-A</span><span>Cap. 2 — Resumen Ejecutivo · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v7.1 · C-DZP-21-000-A</span><span>Cap. 2 — Resumen Ejecutivo · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 3: ANÁLISIS FINANCIERO ░░ -->
@@ -12311,7 +12470,7 @@ function exportInformeGerencialPDF() {
         : 'Las facturas CxP cubren la totalidad del valor de actas — sin brecha de registro.'}
       El proveedor con mayor participación es <strong>${topProvVal[0]?.[0]||'—'}</strong> con ${igFmtCOP(topProvVal[0]?.[1]||0)}.
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v7.0 · C-DZP-21-000-A</span><span>Cap. 3 — Análisis Financiero · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v7.1 · C-DZP-21-000-A</span><span>Cap. 3 — Análisis Financiero · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 4: GESTIÓN MENSUAL ░░ -->
@@ -12359,7 +12518,7 @@ function exportInformeGerencialPDF() {
             : '📉 La tendencia del valor facturado presenta <strong style="color:#d97706">variaciones descendentes</strong> que requieren seguimiento.')
         : ''}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v7.0 · C-DZP-21-000-A</span><span>Cap. 4 — Gestión Mensual · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v7.1 · C-DZP-21-000-A</span><span>Cap. 4 — Gestión Mensual · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 5: PARETO ░░ -->
@@ -12401,7 +12560,7 @@ function exportInformeGerencialPDF() {
       liberaría el 80% de las alertas bloqueadas.
     </div>
     <div class="hb hb-r" style="font-size:9px"><strong>📌 Regla de Pareto:</strong> ${paretoRows.filter(d=>d.acum<=80).length} proveedores concentran el 80% de las ${alertas} alertas. Priorizar gestión con: <strong>${paretoRows.filter(d=>d.acum<=80).map(d=>d.p.slice(0,20)).join(', ')}</strong>.</div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v7.0 · C-DZP-21-000-A</span><span>Cap. 5 — Diagrama de Pareto · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v7.1 · C-DZP-21-000-A</span><span>Cap. 5 — Diagrama de Pareto · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 6: DETALLE ALERTAS ░░ -->
@@ -12442,7 +12601,7 @@ function exportInformeGerencialPDF() {
       <thead><tr><th>#</th><th>OC</th><th>Proveedor</th><th>Factura</th><th class="tc">REC</th><th>Estado</th><th class="num">Val.Factura CxP</th><th>Mes</th></tr></thead>
       <tbody>${rowsDetAlertas}</tbody>
     </table>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v7.0 · C-DZP-21-000-A</span><span>Cap. 6 — Detalle Alertas · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v7.1 · C-DZP-21-000-A</span><span>Cap. 6 — Detalle Alertas · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 7: COMPARATIVO ░░ -->
@@ -12493,22 +12652,22 @@ function exportInformeGerencialPDF() {
         ? '💰 Valor pagado: <strong style="color:#059669">creció '+igFmtCOP(sumPagado-prevSumPag)+'</strong> vs período anterior.'
         : '💰 Valor pagado: <strong style="color:#dc2626">disminuyó '+igFmtCOP(prevSumPag-sumPagado)+'</strong> vs período anterior — revisar causas.'}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v7.0 · C-DZP-21-000-A</span><span>Cap. 7 — Comparativo de Períodos · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v7.1 · C-DZP-21-000-A</span><span>Cap. 7 — Comparativo de Períodos · ${periodo}</span></div>
   </div>
 
   <!-- ░░ FIRMAS ░░ -->
   <div class="chapter-break">
     <div class="phs"></div><h2 class="cht">Firmas y Cierre del Informe</h2><div class="chr"></div>
-    <p class="it">Informe generado por <strong>Cash Call v7.0 — ARIS MINING</strong> · período <strong>${periodo}</strong> · ${total} registros procesados · Cumplimiento: ${cumpl}%.</p>
-    <div class="hb hb-g">✅ Generado: ${now} &nbsp;·&nbsp; ARIS MINING / Cash Call v7.0 &nbsp;·&nbsp; Desarrollado por GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc</div>
+    <p class="it">Informe generado por <strong>Cash Call v7.1 — ARIS MINING</strong> · período <strong>${periodo}</strong> · ${total} registros procesados · Cumplimiento: ${cumpl}%.</p>
+    <div class="hb hb-g">✅ Generado: ${now} &nbsp;·&nbsp; ARIS MINING / Cash Call v7.1 &nbsp;·&nbsp; Desarrollado por GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc</div>
     <div class="fs">
       <div class="fb"><div style="height:38px"></div><div class="fl"></div><div class="fn">${autor}</div><div class="fr">${cargo||'Analista / Elaborado por'}</div></div>
       <div class="fb"><div style="height:38px"></div><div class="fl"></div><div class="fn">_________________________</div><div class="fr">Gerencia ARIS MINING / Aprobado por</div></div>
     </div>
     <div style="margin-top:26px;padding:12px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;font-size:8.5px;color:#94a3b8;text-align:center">
-      ARIS MINING &nbsp;·&nbsp; Cash Call v7.0 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; ${periodo} &nbsp;·&nbsp; Desarrollado: GREEN ENGINEERING CONSULTING &nbsp;·&nbsp; Confidencial
+      ARIS MINING &nbsp;·&nbsp; Cash Call v7.1 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; ${periodo} &nbsp;·&nbsp; Desarrollado: GREEN ENGINEERING CONSULTING &nbsp;·&nbsp; Confidencial
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v7.0 · GREEN ENGINEERING CONSULTING</span><span>Ing. Johan Manuel Cárdenas Leal, MSc · ${fechaFmt}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v7.1 · GREEN ENGINEERING CONSULTING</span><span>Ing. Johan Manuel Cárdenas Leal, MSc · ${fechaFmt}</span></div>
   </div>
 
   <div class="no-print" style="margin-top:24px;text-align:center;padding:16px;background:#f8fafc;border-top:1px solid #e2e8f0">
@@ -12606,7 +12765,7 @@ function showM5FacturasPopup(encodedKey) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// CLICK-FILTER HELPERS v7.0
+// CLICK-FILTER HELPERS v7.1
 // M1: click on OC → filter M1 by that OC
 // M2: click on OC → filter M2 by that OC
 // M4: click on prov or OC → filter M4
@@ -12809,7 +12968,7 @@ function exportPersonFacturasExcel() {
   const totalRec = facts.reduce((s,r) => s + (r.totalRec||0), 0);
 
   const aoa = [
-    [`CASH CALL v7.0 — ARIS MINING · C-DZP-21-000-A`],
+    [`CASH CALL v7.1 — ARIS MINING · C-DZP-21-000-A`],
     [`Responsable: ${person}`],
     [`Período: ${mNames[+mn]||mn} ${yr}  |  Facturas: ${facts.length}  |  Generado: ${new Date().toLocaleString('es-CO')}`],
     [],
@@ -12913,7 +13072,7 @@ function exportPersonFacturasPDF() {
 </head><body>
 <div class="cover-bar">
   <div>
-    <h1>⛏ CASH CALL v7.0 — ARIS MINING · C-DZP-21-000-A</h1>
+    <h1>⛏ CASH CALL v7.1 — ARIS MINING · C-DZP-21-000-A</h1>
     <div class="sub">Reporte de Facturas por Responsable · Exportado: ${new Date().toLocaleString('es-CO')}</div>
   </div>
   <div class="badge">PDF · ${facts.length} FACTURAS</div>
@@ -12959,7 +13118,7 @@ function exportPersonFacturasPDF() {
   </tr></tfoot>
 </table>
 <div class="footer-bar">
-  <span>Cash Call v7.0 · C-DZP-21-000-A · GREEN Engineering Consulting</span>
+  <span>Cash Call v7.1 · C-DZP-21-000-A · GREEN Engineering Consulting</span>
   <span>${person} · ${mesLabel} · ${facts.length} facturas</span>
 </div>
 </body></html>`;
@@ -13250,7 +13409,7 @@ function exportDiscrepancias() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// BITÁCORA PERSISTENTE v7.0
+// BITÁCORA PERSISTENTE v7.1
 // ═══════════════════════════════════════════════════════════════
 // La bitácora se carga de un JSON externo y se enriquece con cada sesión.
 // Estructura: { meta, bitacora: [ { id, ts, user, tipo, factura, prov, detalle, estadoAnterior, estadoNuevo } ] }
@@ -13515,7 +13674,7 @@ function exportCashCallJSONBitacora() {
 
   const payload = {
     meta: {
-      app: 'Cash Call v7.0',
+      app: 'Cash Call v7.1',
       exportedBy: currentUser || '—',
       exportedAt: new Date().toISOString(),
       filename,
@@ -13588,7 +13747,7 @@ function exportSoloNovedades() {
 
 
 // ═══════════════════════════════════════════════════════════════
-// EXPORTAR EXCEL GENERAL v7.0
+// EXPORTAR EXCEL GENERAL v7.1
 // Permite seleccionar columnas de cada archivo y exportarlas
 // todas en una sola hoja de un archivo Excel.
 // ═══════════════════════════════════════════════════════════════
@@ -13845,7 +14004,7 @@ function doExportExcelGeneral() {
 
 
 // ═══════════════════════════════════════════════════════════════
-// CHART ZOOM OVERLAY v7.0
+// CHART ZOOM OVERLAY v7.1
 // ═══════════════════════════════════════════════════════════════
 (function initChartZoom() {
   // Create overlay
@@ -13930,7 +14089,7 @@ function closeChartZoom() {
 
 
 // ═══════════════════════════════════════════════════════════════
-// FULLSCREEN TABLE + CONTEXT MENU v7.0
+// FULLSCREEN TABLE + CONTEXT MENU v7.1
 // ═══════════════════════════════════════════════════════════════
 
 function openDZPFullscreen() {
@@ -15023,7 +15182,7 @@ INSTRUCTIVOS.discrepancias = {
 };
 
 INSTRUCTIVOS.auditorias = {
-  icon: '🗂️', title: 'Auditorías — Bitácora Persistente v7.0',
+  icon: '🗂️', title: 'Auditorías — Bitácora Persistente v7.1',
   html: `
     <div class="inst-section-title">¿Qué es la Bitácora Persistente?</div>
     <p>La <b>Bitácora Persistente</b> acumula el historial de cambios en el propio JSON exportado. Cada vez que exporta, el sistema detecta qué cambió factura por factura y lo registra como novedad. El JSON va creciendo con el histórico completo.</p>
