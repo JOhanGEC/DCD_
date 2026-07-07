@@ -2689,6 +2689,20 @@
             <span class="status-pill" data-status="Pagado" onclick="setPill('pillsCC',this,'ccEstado',renderCashCall)">✅ Pagados</span>
           </div>
           <input type="hidden" id="ccEstado">
+          <!-- v7.1 — Filtro de calendario por Fecha Programada de pago -->
+          <span class="filter-label" style="margin-left:10px" title="Filtrar por Fecha Programada de pago (corte viernes)">📅 Fecha</span>
+          <input type="date" id="ccDesde" onchange="renderCashCall()" title="Desde — fecha programada de pago" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:5px 7px">
+          <span style="color:var(--col-muted);font-size:11px">→</span>
+          <input type="date" id="ccHasta" onchange="renderCashCall()" title="Hasta — fecha programada de pago" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:5px 7px">
+          <select id="ccRango" onchange="ccAplicarRango(this.value)" title="Rangos rápidos" style="font-size:11px;padding:5px 7px">
+            <option value="">Rango rápido…</option>
+            <option value="semana">Esta semana (corte viernes)</option>
+            <option value="prox4">Próximas 4 semanas</option>
+            <option value="mes">Este mes</option>
+            <option value="mespas">Mes anterior</option>
+            <option value="vencidas">Semanas pasadas</option>
+          </select>
+          <button class="btn btn-sm btn-outline" id="ccLimpiarBtn" onclick="ccLimpiarFechas()" title="Quitar el filtro de fechas" style="display:none">✕ Fechas</button>
         </div>
 
         <div class="table-wrap" style="margin-bottom:18px">
@@ -7617,6 +7631,54 @@ function _ccPassProj(r) {
 }
 let _ccValidInvsCache = null;
 
+// ── v7.1 — Filtro de calendario (Programación de Pagos) ──────────────────
+// Filtra por FECHA PROGRAMADA de pago; en "Sin condición" aplica sobre la
+// fecha contable (única fecha disponible en esas facturas).
+function _ccParseFecha(v) {
+  if (!v) return null;
+  if (v instanceof Date) return isNaN(v) ? null : v;
+  const s = String(v).trim();
+  let m = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);           // yyyy-mm-dd
+  if (m) return new Date(+m[1], +m[2] - 1, +m[3]);
+  m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);             // dd/mm/yyyy
+  if (m) { let y = +m[3]; if (y < 100) y += 2000; return new Date(y, +m[2] - 1, +m[1]); }
+  return null;
+}
+function _ccRangoFechas() {
+  const dv = document.getElementById('ccDesde')?.value || '';
+  const hv = document.getElementById('ccHasta')?.value || '';
+  const desde = dv ? _ccParseFecha(dv) : null;
+  let hasta = hv ? _ccParseFecha(hv) : null;
+  if (hasta) hasta = new Date(hasta.getFullYear(), hasta.getMonth(), hasta.getDate(), 23, 59, 59, 999);
+  return { desde, hasta, activo: !!(desde || hasta) };
+}
+function _ccEnRango(fecha, rango) {
+  if (!rango.activo) return true;
+  const d = _ccParseFecha(fecha);
+  if (!d) return true;   // sin fecha parseable → no se excluye (son alertas)
+  if (rango.desde && d < rango.desde) return false;
+  if (rango.hasta && d > rango.hasta) return false;
+  return true;
+}
+function _ccSetFechas(d1, d2) {
+  const iso = d => d ? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` : '';
+  const eD = document.getElementById('ccDesde'), eH = document.getElementById('ccHasta');
+  if (eD) eD.value = iso(d1);
+  if (eH) eH.value = iso(d2);
+  renderCashCall();
+}
+function ccAplicarRango(v) {
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  const vie = fridayOf(hoy);
+  if (v === 'semana')        _ccSetFechas(new Date(vie.getTime() - 6*86400000), vie);
+  else if (v === 'prox4')    _ccSetFechas(hoy, new Date(vie.getTime() + 21*86400000));
+  else if (v === 'mes')      _ccSetFechas(new Date(hoy.getFullYear(), hoy.getMonth(), 1), new Date(hoy.getFullYear(), hoy.getMonth()+1, 0));
+  else if (v === 'mespas')   _ccSetFechas(new Date(hoy.getFullYear(), hoy.getMonth()-1, 1), new Date(hoy.getFullYear(), hoy.getMonth(), 0));
+  else if (v === 'vencidas') _ccSetFechas(null, new Date(vie.getTime() - 7*86400000));
+  const sel = document.getElementById('ccRango'); if (sel) sel.value = '';
+}
+function ccLimpiarFechas() { _ccSetFechas(null, null); }
+
 function renderCashCall() {
   const empty = document.getElementById('cc-empty-state');
   const content = document.getElementById('cc-content');
@@ -7653,8 +7715,14 @@ function renderCashCall() {
     return true;
   });
 
-  const conProg = base.filter(r => r.fechaProg && r.semViernes);
-  const sinCond = base.filter(r => !r.fechaProg);
+  // v7.1 — Filtro de calendario: programadas por FECHA PROGRAMADA,
+  // "sin condición" por fecha contable (no tienen fecha programada)
+  const rango = _ccRangoFechas();
+  const btnLimpiar = document.getElementById('ccLimpiarBtn');
+  if (btnLimpiar) btnLimpiar.style.display = rango.activo ? '' : 'none';
+
+  const conProg = base.filter(r => r.fechaProg && r.semViernes && _ccEnRango(r.fechaProg, rango));
+  const sinCond = base.filter(r => !r.fechaProg && _ccEnRango(r.fechaContable, rango));
 
   // ── Agrupar por semana de corte (viernes) ──
   const weeks = {};
@@ -7693,7 +7761,8 @@ function renderCashCall() {
 
   // ── Tabla semanal ──
   const tbody = document.getElementById('tbodyCC');
-  document.getElementById('cntCCtable').textContent = weekList.length + ' semana(s) · ' + conProg.length + ' facturas';
+  document.getElementById('cntCCtable').textContent = weekList.length + ' semana(s) · ' + conProg.length + ' facturas'
+    + (rango.activo ? ` · 📅 ${rango.desde ? fmtDate(rango.desde) : '…'} → ${rango.hasta ? fmtDate(rango.hasta) : '…'}` : '');
   if (!weekList.length) {
     tbody.innerHTML = emptyRow(9);
   } else {
@@ -7794,7 +7863,8 @@ function exportProgramacionSemanal() {
   const TRM = Math.max(1, parseFloat(document.getElementById('ccTRM')?.value) || 3800);
 
   _ccValidInvsCache = getValidInvsForProject();   // v7.1 PERF — memoizado
-  const base = state.df3cxp.filter(r => r.estado !== 'Cancelado' && _ccPassProj(r) && r.fechaProg && r.semViernes);
+  const _rango = _ccRangoFechas();   // v7.1 — el export respeta el filtro de calendario activo
+  const base = state.df3cxp.filter(r => r.estado !== 'Cancelado' && _ccPassProj(r) && r.fechaProg && r.semViernes && _ccEnRango(r.fechaProg, _rango));
 
   // Hoja 1: Resumen semanal
   const weeks = {};
