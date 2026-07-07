@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⛏ Cash Call v7.1 — Control Financiero Minero · ARIS MINING</title>
+<title>⛏ Cash Call v7.2 — Control Financiero Minero · ARIS MINING</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -1501,7 +1501,7 @@
       <div style="margin-bottom:12px">
         <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px">
           <span style="font-size:56px;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1;animation:cashCallGlow 3s ease-in-out 0.8s infinite">Cash<span style="color:var(--col-accent);animation:accentPulse 2.5s ease-in-out 1s infinite">Call</span></span>
-          <span style="font-size:13px;font-weight:700;color:var(--col-accent);border:1.5px solid rgba(0,180,200,.45);padding:3px 9px;border-radius:6px;letter-spacing:1px;font-family:'IBM Plex Mono',monospace;background:rgba(0,180,200,.08)">v7.1</span>
+          <span style="font-size:13px;font-weight:700;color:var(--col-accent);border:1.5px solid rgba(0,180,200,.45);padding:3px 9px;border-radius:6px;letter-spacing:1px;font-family:'IBM Plex Mono',monospace;background:rgba(0,180,200,.08)">v7.2</span>
         </div>
         <div style="font-size:12px;color:rgba(255,255,255,.45);letter-spacing:2px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace">Control Financiero</div>
       </div>
@@ -1590,7 +1590,7 @@
               font-family:'IBM Plex Mono',monospace;
               background:rgba(0,180,200,.08);
               animation:versionFadeIn 1s ease 0.6s both;
-            ">v7.1</span>
+            ">v7.2</span>
           </div>
 
           <!-- Subtítulo -->
@@ -1637,7 +1637,7 @@
   <div class="subwin" style="max-width:600px">
     <div class="subwin-header">
       <span style="font-size:16px">⌨️</span>
-      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v7.1</span>
+      <span class="subwin-title">Gestión de Módulos — Mostrar / Ocultar · Cash Call v7.2</span>
       <button class="subwin-close" onclick="closeSubwin('sw-ctrlm')">✕</button>
     </div>
     <div class="subwin-body" id="sw-ctrlm-body" style="padding:24px">
@@ -1912,7 +1912,9 @@
         </span>
         <span style="font-size:10px;opacity:0.6">✕</span>
       </span>
-      <div class="header-badge" id="headerBadge">v7.1</div>
+      <button id="btnSyncGlobal" onclick="toggleSyncGlobal()" title="Sincronizar la búsqueda entre todos los módulos: lo que busques en uno se aplica en todos"
+        style="display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:8px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.4px;background:rgba(74,222,128,.14);color:#4ade80;border:1.5px solid rgba(74,222,128,.45);white-space:nowrap">🔗 Sync ON</button>
+      <div class="header-badge" id="headerBadge">v7.2</div>
       <button onclick="openExpXL()" title="Exportar columnas seleccionadas de los 3 archivos en una sola hoja Excel"
         style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:9px;border:none;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.2px;background:linear-gradient(135deg,#0891b2,#0e7490);color:white;box-shadow:0 2px 10px rgba(8,145,178,0.45);transition:opacity 0.18s;white-space:nowrap"
         onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
@@ -2088,7 +2090,7 @@
         <div class="qs-hero-title">Búsqueda inteligente de documentos</div>
         <div class="qs-hero-sub">Busca por número de factura, orden de compra o nombre de proveedor para ver su ciclo completo e historial.</div>
         <div class="qs-input-wrap">
-          <input class="qs-input" id="qsInput" placeholder="Ej: FESR786 · AMM_OC_15188 · SRK CONSULTING..." onkeydown="if(event.key==='Enter')doQuickSearch()" oninput="liveQuickSearch(this.value)" autocomplete="off">
+          <input class="qs-input" id="qsInput" placeholder="Ej: FESR786 · AMM_OC_15188 · SRK CONSULTING..." onkeydown="if(event.key==='Enter')doQuickSearch()" oninput="liveQuickSearch(this.value);syncFrom('qsInput')" autocomplete="off">
           <button class="qs-btn" onclick="doQuickSearch()">🔍 Buscar</button>
         </div>
         <div class="qs-pills">
@@ -2116,7 +2118,7 @@
           <div class="dzp-banner-icon">🏗️</div>
           <div>
             <div class="dzp-banner-title">C-DZP-21-000-A</div>
-            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v7.1</span></div>
+            <div class="dzp-banner-sub">Tablero de Control de Actas, Recepciones y Facturas · Proyecto Exclusivo · <span style="color:#a78bfa;font-weight:700">v7.2</span></div>
           </div>
         </div>
         <div class="dzp-banner-badges" style="display:none">
@@ -2191,7 +2193,7 @@
             <span style="font-size:13px">🔍</span>
             <input type="text" id="dzp-sv1-search"
               placeholder="Buscar: OC · Factura · NIT · Proveedor · Recepción…"
-              oninput="dbn(renderDZPSV1)"
+              oninput="dbn(renderDZPSV1);syncFrom('dzp-sv1-search')"
               autocomplete="off"
               style="flex:1;min-width:220px;font-size:12.5px">
             <span id="dzp-sv1-search-badge" style="display:none;background:#7c3aed;color:white;border-radius:12px;padding:2px 10px;font-size:10.5px;font-weight:700;white-space:nowrap"></span>
@@ -2264,7 +2266,7 @@
         <div class="dzp-filter-row">
           <div class="flt-group flt-search">
             <span class="filter-label">🔍</span>
-            <input type="text" id="dzp-search" placeholder="OC, factura, proveedor, REC…" oninput="dbn(renderDZP)" autocomplete="off">
+            <input type="text" id="dzp-search" placeholder="OC, factura, proveedor, REC…" oninput="dbn(renderDZP);syncFrom('dzp-search')" autocomplete="off">
           </div>
           <div class="flt-group">
             <span class="filter-label">AÑO</span>
@@ -2383,7 +2385,7 @@
         <div class="chart-card-title">📥 Recepciones Oracle por Proveedor · Mes · Factura</div>
         <div class="filter-bar" style="margin-bottom:10px;padding:8px 0 0 0;background:none;border:none">
           <span class="filter-label">🔍</span>
-          <input type="text" id="f0recSearch" placeholder="Proveedor, OC..." oninput="dbn(renderM0RecTable)" style="min-width:160px">
+          <input type="text" id="f0recSearch" placeholder="Proveedor, OC..." oninput="dbn(renderM0RecTable);syncFrom('f0recSearch')" style="min-width:160px">
           <select id="f0recYear" onchange="renderM0RecTable()" style="border:1px solid var(--col-border);border-radius:7px;padding:6px 10px;font-size:12px"></select>
           <select id="f0recMonth" onchange="renderM0RecTable()" style="border:1px solid var(--col-border);border-radius:7px;padding:6px 10px;font-size:12px"></select>
         </div>
@@ -2511,7 +2513,7 @@
       <!-- ── M1 Filtros: Fila 1 — Búsqueda unificada ── -->
       <div class="filter-bar" style="flex-wrap:nowrap;gap:8px;margin-bottom:6px">
         <span class="filter-label" style="flex-shrink:0">🔍</span>
-        <input type="text" id="f1oc" placeholder="Buscar OC · N° Factura · Recepción · Proveedor..." oninput="dbn(renderM1)" style="flex:1;min-width:260px">
+        <input type="text" id="f1oc" placeholder="Buscar OC · N° Factura · Recepción · Proveedor..." oninput="dbn(renderM1);syncFrom('f1oc')" style="flex:1;min-width:260px">
         <!-- Campo legacy para compatibilidad con syncGlobalFilter -->
         <input type="hidden" id="f1factura">
         <select id="f1proyecto" style="display:none"></select>
@@ -2576,7 +2578,7 @@
 
       <div class="filter-bar">
         <span class="filter-label">🔍</span>
-        <input type="text" id="f2search" placeholder="OC, Factura, Proveedor, Recepción, Organización..." oninput="dbn(renderM2)">
+        <input type="text" id="f2search" placeholder="OC, Factura, Proveedor, Recepción, Organización..." oninput="dbn(renderM2);syncFrom('f2search')">
         <input type="text" id="f2proyecto" placeholder="🗂 Buscar Proyecto..." oninput="dbn(renderM2)" style="min-width:170px">
         <select id="f2year" onchange="renderM2()"><option value="">Todos los años</option></select>
         <select id="f2month" onchange="renderM2()"><option value="">Todos los meses</option></select>
@@ -2621,7 +2623,7 @@
 
       <div class="filter-bar">
         <span class="filter-label">🔍</span>
-        <input type="text" id="f3search" placeholder="Factura, Proveedor, NIT, Recepción..." oninput="dbn(renderM3)">
+        <input type="text" id="f3search" placeholder="Factura, Proveedor, NIT, Recepción..." oninput="dbn(renderM3);syncFrom('f3search')">
         <select id="f3year" onchange="renderM3()"><option value="">Todos los años</option></select>
         <select id="f3month" onchange="renderM3()"><option value="">Todos los meses</option></select>
         <div class="status-pills" id="pills3">
@@ -2678,31 +2680,31 @@
       <div id="cc-content" style="display:none">
         <div class="summary-grid" id="sumCC"></div>
 
-        <div class="filter-bar">
-          <span class="filter-label" title="Tasa Representativa del Mercado para unificar a USD">💱 TRM</span>
-          <input type="number" id="ccTRM" value="3800" min="1" step="10" style="width:90px;text-align:right;font-family:'IBM Plex Mono',monospace" oninput="dbn(renderCashCall)" title="TRM promedio COP/USD">
-          <span class="filter-label" style="margin-left:6px">🔍</span>
-          <input type="text" id="ccSearch" placeholder="Proveedor, NIT, Factura, OC..." oninput="dbn(renderCashCall)">
-          <div class="status-pills" id="pillsCC">
+        <!-- v7.2 — Barra de filtros compacta en UNA sola fila -->
+        <div class="filter-bar" style="flex-wrap:nowrap;gap:7px;overflow-x:auto">
+          <span class="filter-label" title="Tasa Representativa del Mercado para unificar a USD" style="white-space:nowrap">💱 TRM</span>
+          <input type="number" id="ccTRM" value="3800" min="1" step="10" style="width:68px;flex:0 0 auto;text-align:right;font-family:'IBM Plex Mono',monospace;padding:5px 7px" oninput="dbn(renderCashCall)" title="TRM promedio COP/USD">
+          <span class="filter-label">🔍</span>
+          <input type="text" id="ccSearch" placeholder="Proveedor, NIT, Factura, OC..." oninput="dbn(renderCashCall);syncFrom('ccSearch')" style="flex:1 1 150px;min-width:120px;padding:5px 8px">
+          <div class="status-pills" id="pillsCC" style="flex:0 0 auto;white-space:nowrap">
             <span class="status-pill active-all" data-status="" onclick="setPill('pillsCC',this,'ccEstado',renderCashCall)">Todos</span>
-            <span class="status-pill" data-status="Aprobado" onclick="setPill('pillsCC',this,'ccEstado',renderCashCall)">⏳ Pendientes</span>
-            <span class="status-pill" data-status="Pagado" onclick="setPill('pillsCC',this,'ccEstado',renderCashCall)">✅ Pagados</span>
+            <span class="status-pill" data-status="Aprobado" onclick="setPill('pillsCC',this,'ccEstado',renderCashCall)" title="Facturas aprobadas pendientes de pago">⏳ Pend.</span>
+            <span class="status-pill" data-status="Pagado" onclick="setPill('pillsCC',this,'ccEstado',renderCashCall)" title="Facturas pagadas">✅ Pag.</span>
           </div>
           <input type="hidden" id="ccEstado">
-          <!-- v7.1 — Filtro de calendario por Fecha Programada de pago -->
-          <span class="filter-label" style="margin-left:10px" title="Filtrar por Fecha Programada de pago (corte viernes)">📅 Fecha</span>
-          <input type="date" id="ccDesde" onchange="renderCashCall()" title="Desde — fecha programada de pago" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:5px 7px">
-          <span style="color:var(--col-muted);font-size:11px">→</span>
-          <input type="date" id="ccHasta" onchange="renderCashCall()" title="Hasta — fecha programada de pago" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:5px 7px">
-          <select id="ccRango" onchange="ccAplicarRango(this.value)" title="Rangos rápidos" style="font-size:11px;padding:5px 7px">
-            <option value="">Rango rápido…</option>
+          <span class="filter-label" title="Filtrar por Fecha Programada de pago (corte viernes)" style="white-space:nowrap">📅</span>
+          <input type="date" id="ccDesde" onchange="renderCashCall()" title="Desde — fecha programada de pago" style="flex:0 0 auto;width:128px;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:4px 5px">
+          <span style="color:var(--col-muted);font-size:11px;flex:0 0 auto">→</span>
+          <input type="date" id="ccHasta" onchange="renderCashCall()" title="Hasta — fecha programada de pago" style="flex:0 0 auto;width:128px;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:4px 5px">
+          <select id="ccRango" onchange="ccAplicarRango(this.value)" title="Rangos rápidos de fecha" style="flex:0 0 auto;width:92px;font-size:11px;padding:4px 5px">
+            <option value="">Rango…</option>
             <option value="semana">Esta semana (corte viernes)</option>
             <option value="prox4">Próximas 4 semanas</option>
             <option value="mes">Este mes</option>
             <option value="mespas">Mes anterior</option>
             <option value="vencidas">Semanas pasadas</option>
           </select>
-          <button class="btn btn-sm btn-outline" id="ccLimpiarBtn" onclick="ccLimpiarFechas()" title="Quitar el filtro de fechas" style="display:none">✕ Fechas</button>
+          <button class="btn btn-sm btn-outline" id="ccLimpiarBtn" onclick="ccLimpiarFechas()" title="Quitar el filtro de fechas" style="display:none;flex:0 0 auto;padding:3px 8px;font-size:11px;white-space:nowrap">✕</button>
         </div>
 
         <div class="table-wrap" style="margin-bottom:18px">
@@ -2773,7 +2775,7 @@
 
       <div class="filter-bar">
         <span class="filter-label">🔍</span>
-        <input type="text" id="f4search" placeholder="Factura, OC, Proveedor..." oninput="dbn(renderM4)">
+        <input type="text" id="f4search" placeholder="Factura, OC, Proveedor..." oninput="dbn(renderM4);syncFrom('f4search')">
         <select id="f4year" onchange="renderM4()"><option value="">Todos los años</option></select>
         <select id="f4month" onchange="renderM4()"><option value="">Todos los meses</option></select>
         <div class="status-pills" id="pills4">
@@ -2818,14 +2820,21 @@
 <!-- ═══ PANEL: MÓDULO 5 — FICHA PROVEEDOR ══════════════════ -->
     <div class="panel" id="panel-modulo5">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><h2 class="panel-title" style="margin:0">🏢 Módulo 5 — Ficha Análisis por Proveedor</h2><button class="info-btn" onclick="showInstructive('modulo5')" title="Ver instructivo">i</button></div>
-      <div class="alert alert-info" style="margin-bottom:14px">🔍 Selecciona un proveedor para ver su análisis integral: facturas, recepciones, pagos, mora y tendencias.</div>
+      <div class="alert alert-info" style="margin-bottom:14px">🔍 Busca por <strong>nombre de proveedor, NIT, orden de compra o número de factura</strong> para ver su análisis integral: facturas, recepciones, pagos, mora y tendencias.</div>
 
       <!-- Selector -->
       <div class="filter-bar" style="flex-wrap:wrap;gap:10px;margin-bottom:16px">
         <span class="filter-label">🏢</span>
-        <select id="m5prov-select" onchange="renderM5()" style="min-width:320px;max-width:480px;font-size:13px;padding:7px 10px;border:1.5px solid var(--col-border);border-radius:8px;background:white">
-          <option value="">— Selecciona un proveedor —</option>
-        </select>
+        <!-- v7.2 — Buscador de proveedor por nombre, NIT, OC o N° de factura -->
+        <div style="position:relative;flex:1 1 320px;min-width:260px;max-width:520px">
+          <input type="text" id="m5prov-search" placeholder="🔍 Buscar proveedor, OC o factura…" autocomplete="off"
+            oninput="m5SearchInput()" onfocus="m5SearchInput()" onkeydown="m5SearchKey(event)"
+            style="width:100%;box-sizing:border-box;font-size:13px;padding:7px 30px 7px 10px;border:1.5px solid var(--col-border);border-radius:8px;background:white">
+          <button id="m5prov-clear" onclick="m5ClearProv()" title="Quitar proveedor seleccionado"
+            style="display:none;position:absolute;right:6px;top:50%;transform:translateY(-50%);border:none;background:none;cursor:pointer;color:var(--col-muted);font-size:13px;padding:2px 4px">✕</button>
+          <div id="m5prov-dd" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:white;border:1px solid var(--col-border);border-radius:10px;box-shadow:0 10px 26px rgba(15,37,68,.16);max-height:330px;overflow-y:auto;z-index:400"></div>
+          <input type="hidden" id="m5prov-value">
+        </div>
         <select id="m5year-select" onchange="renderM5()" style="font-size:13px;padding:7px 10px;border:1.5px solid var(--col-border);border-radius:8px;background:white">
           <option value="">Todos los años</option>
         </select>
@@ -2894,8 +2903,8 @@
       <!-- Placeholder when no provider selected -->
       <div id="m5-placeholder" style="text-align:center;padding:60px 20px;color:var(--col-muted)">
         <div style="font-size:48px;margin-bottom:12px">🏢</div>
-        <div style="font-size:15px;font-weight:600;margin-bottom:6px">Selecciona un proveedor</div>
-        <div style="font-size:12px">Usa el filtro de arriba para ver el análisis completo</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:6px">Busca un proveedor</div>
+        <div style="font-size:12px">Escribe el nombre, NIT, una OC o un N° de factura en el buscador de arriba</div>
       </div>
     </div>
 
@@ -3023,7 +3032,7 @@
           <div style="font-size:28px">🔮</div>
           <div>
             <div style="font-size:16px;font-weight:800;color:white;letter-spacing:-0.3px">Analítica Predictiva</div>
-            <div style="font-size:10.5px;color:rgba(255,255,255,0.65);margin-top:1px">Pronóstico · Patrones · Alertas · Cash Call v7.1</div>
+            <div style="font-size:10.5px;color:rgba(255,255,255,0.65);margin-top:1px">Pronóstico · Patrones · Alertas · Cash Call v7.2</div>
           </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
@@ -3747,7 +3756,7 @@ function exportPDFReport() {
   </div>`:''}
 
   <div class="footer">
-    Cash Call v7.1 · Desarrollado por Ing. Johan Manuel Cárdenas Leal, MSc · Todos los derechos reservados © 2026<br>
+    Cash Call v7.2 · Desarrollado por Ing. Johan Manuel Cárdenas Leal, MSc · Todos los derechos reservados © 2026<br>
     Informe generado automáticamente — ${today.toISOString()}
   </div>
   <script>window.onload=function(){window.print();}<\/script>
@@ -4173,46 +4182,107 @@ function applyGlobalFilter(kpiType) {
   showGlobalSyncBanner(`Módulos sincronizados: facturas ${label}`);
 }
 
+// ═══ v7.2 — SINCRONIZACIÓN GLOBAL DE BÚSQUEDA ═══════════════════════════
+// Al buscar un proveedor, factura u OC en CUALQUIER módulo, el término se
+// propaga a todos los demás. El módulo activo se re-renderiza de inmediato;
+// los demás quedan marcados "dirty" y se renderizan al abrirlos (lazy).
+window._syncGlobalOn = true;
+
+// Inputs de búsqueda sincronizables: [id, panel al que pertenece]
+const _SYNC_INPUTS = [
+  ['dzp-sv1-search', 'panel-dzp'],
+  ['dzp-search',     'panel-dzp'],
+  ['f0recSearch',    'panel-modulo0'],
+  ['f1oc',           'panel-modulo1'],
+  ['f2search',       'panel-modulo2'],
+  ['f3search',       'panel-modulo3'],
+  ['f4search',       'panel-modulo4'],
+  ['ccSearch',       'panel-cashcall'],
+  ['qsInput',        'panel-busqueda'],
+];
+
+function toggleSyncGlobal() {
+  window._syncGlobalOn = !window._syncGlobalOn;
+  const b = document.getElementById('btnSyncGlobal');
+  if (b) {
+    b.textContent = window._syncGlobalOn ? '🔗 Sync ON' : '⛓️ Sync OFF';
+    b.style.background = window._syncGlobalOn ? 'rgba(74,222,128,.14)' : 'rgba(148,163,184,.14)';
+    b.style.color = window._syncGlobalOn ? '#4ade80' : '#94a3b8';
+    b.style.borderColor = window._syncGlobalOn ? 'rgba(74,222,128,.45)' : 'rgba(148,163,184,.35)';
+  }
+  showToast(window._syncGlobalOn
+    ? '🔗 Sincronización de búsqueda ACTIVADA — lo que busques en un módulo se aplica en todos'
+    : '⛓️ Sincronización de búsqueda desactivada — cada módulo filtra por separado', 'info');
+}
+
+// Debounce por input de origen (400 ms tras la última tecla)
+function syncFrom(id) {
+  if (!window._syncGlobalOn) return;
+  clearTimeout(syncFrom._t);
+  syncFrom._t = setTimeout(() => {
+    const v = document.getElementById(id)?.value ?? '';
+    syncBusquedaGlobal(v, id);
+  }, 400);
+}
+
+function syncBusquedaGlobal(term, sourceId) {
+  term = String(term || '').trim();
+  _globalFilterActive = !!term;
+  _globalFilterTerm   = term;
+
+  // 1) Propagar el término a todos los inputs (excepto el de origen)
+  _SYNC_INPUTS.forEach(([id]) => {
+    if (id === sourceId) return;
+    const el = document.getElementById(id);
+    if (el && el.value !== term) el.value = term;
+  });
+
+  // 2) Módulo 5 — intentar resolver la ficha del proveedor con el índice
+  if (sourceId !== 'm5') {
+    if (!window._m5ProvIndex) { try { _m5BuildIndex(); } catch(e) {} }
+    const hv = document.getElementById('m5prov-value');
+    const si = document.getElementById('m5prov-search');
+    const cb = document.getElementById('m5prov-clear');
+    const hit = term ? (window._m5ProvIndex || []).find(e => e.hay.includes(normalStr(term))) : null;
+    if (hv) hv.value = hit ? hit.name : '';
+    if (si) si.value = hit ? hit.name : term;
+    if (cb) cb.style.display = hit ? 'block' : 'none';
+  }
+
+  // 3) Marcar todos los módulos para re-render lazy y renderizar solo el activo
+  _markAllDirty();
+  _dzpDirty = true;
+  const activeId = document.querySelector('.panel.active')?.id || '';
+  const srcPanel = (_SYNC_INPUTS.find(([id]) => id === sourceId) || [])[1] || (sourceId === 'm5' ? 'panel-modulo5' : '');
+  if (activeId && activeId !== srcPanel) {
+    try {
+      if (activeId === 'panel-dzp') {
+        if (typeof _dzpActiveSub === 'undefined' || _dzpActiveSub === 1) renderDZPSV1();
+        else if (_dzpActiveSub === 2) renderDZPSV2();
+        else renderDZP();
+        _dzpDirty = false;
+      }
+      else if (activeId === 'panel-modulo0')   { renderM0(); try { renderM0RecTable(); } catch(e) {} }
+      else if (activeId === 'panel-modulo1')   { renderM1();        _dirtyModules.delete('modulo1'); }
+      else if (activeId === 'panel-modulo2')   { renderM2();        _dirtyModules.delete('modulo2'); }
+      else if (activeId === 'panel-modulo3')   { renderM3();        _dirtyModules.delete('modulo3'); }
+      else if (activeId === 'panel-modulo4')   { renderM4();        _dirtyModules.delete('modulo4'); }
+      else if (activeId === 'panel-cashcall')  { renderCashCall();  _dirtyModules.delete('cashcall'); }
+      else if (activeId === 'panel-modulo5')   { renderM5();        _dirtyModules.delete('modulo5'); }
+      else if (activeId === 'panel-busqueda')  { liveQuickSearch(term); }
+    } catch(e) { console.warn('syncBusquedaGlobal render:', e); }
+  }
+
+  // 4) Aviso flotante
+  if (term) showGlobalSyncBanner(`Búsqueda sincronizada en todos los módulos: "${term}"`);
+}
+
+// Compatibilidad — botón "Sincronizar en módulos" de Búsqueda Rápida
 function applyGlobalSearchSync(term, filterType) {
-  // Called from Quick Search "Buscar" button — sync all modules
-  if (!term.trim()) return;
-  _globalFilterActive = true;
-  _globalFilterTerm   = term.trim();
-  _globalFilterType   = filterType;
-
-  const t = normalStr(term.trim());
-
-  // M1: set search fields (v1.8 — separate OC and Factura inputs)
-  const f1oc   = document.getElementById('f1oc');
-  const f1fact = document.getElementById('f1factura');
-  const f1main = document.querySelector('#panel-modulo1 input[id="f1search"]'); // legacy hidden
-  // Heuristic: if it looks like an OC (starts with letters + underscore or "OC") put it in OC,
-  // otherwise try both. Safe: put in OC if filterType is 'oc', factura if 'factura', else OC.
-  if (f1oc) {
-    f1oc.value = (filterType === 'factura') ? '' : term.trim();
-  }
-  if (f1fact) {
-    f1fact.value = (filterType === 'factura') ? term.trim() : '';
-  }
-  if (f1main) f1main.value = term.trim(); // keep legacy
-  try { renderM1(); } catch(e) {}
-
-  // M2: set OC / proveedor / factura search
-  const f2 = document.getElementById('f2search');
-  if (f2) { f2.value = term.trim(); renderM2(); }
-
-  // M3: set factura / NIT / proveedor search
-  const f3 = document.getElementById('f3search');
-  if (f3) { f3.value = term.trim(); renderM3(); }
-
-  // M4: set search
-  const f4 = document.getElementById('f4search');
-  if (f4) { f4.value = term.trim(); renderM4(); }
-
-  // M5: set proveedor search
-  if (f5) { f5.value = term.trim(); }
-
-  showGlobalSyncBanner(`Todos los módulos filtrados por: "${term.trim()}"`);
+  if (!term || !term.trim()) return;
+  syncBusquedaGlobal(term.trim(), 'qsInput');
+  const qi = document.getElementById('qsInput');
+  if (qi) qi.value = term.trim();
 }
 
 function showGlobalSyncBanner(msg) {
@@ -4229,11 +4299,18 @@ function clearGlobalFilter() {
   _globalFilterActive = false;
   _globalFilterTerm   = '';
 
-  // Reset all module filters
-  ['f2search','f3search','f4search'].forEach(id => {
+  // v7.2 — limpiar TODOS los inputs de búsqueda sincronizados
+  _SYNC_INPUTS.forEach(([id]) => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
+  try { m5PickProv(''); } catch(e) {}
+  _markAllDirty();
+  _dzpDirty = true;
+  // Re-render inmediato del panel activo con los filtros limpios
+  try { syncBusquedaGlobal('', '__clear__'); } catch(e) {}
+  const b = document.getElementById('global-sync-banner');
+  if (b) b.style.display = 'none';
 
   // Reset M3 pills
   const pillsEl3 = document.getElementById('pills3');
@@ -4246,10 +4323,7 @@ function clearGlobalFilter() {
     if (hiddenEl3) hiddenEl3.value = '';
   }
 
-  renderM2(); renderM3(); renderM4(); 
-  const b = document.getElementById('global-sync-banner');
-  if (b) b.style.display = 'none';
-  showToast('Filtros sincronizados limpiados', 'info');
+  showToast('Filtros sincronizados limpiados en todos los módulos', 'info');
 }
 
 
@@ -5291,12 +5365,19 @@ function clearAll() {
 }
 
 function updateProcessBtn() {
-  const validFiles = state.files.filter(f => f.wb && f.slot >= 1 && f.slot <= 4);
+  const validFiles = state.files.filter(f => f.wb && f.slot >= 1 && f.slot <= 6);
   const ready = validFiles.length > 0;
   document.getElementById('btnProcess').disabled = !ready;
-  const cnt = new Set(validFiles.map(f => f.slot)).size; // slot 4 puede tener varios archivos (vigencias)
+  const slots = new Set(validFiles.map(f => f.slot));
+  const cnt = slots.size;
+  // v7.2 — Modo degradado: se puede procesar sin el Archivo 1 (cruce parcial)
+  const sinA1 = ready && !slots.has(1) && (slots.has(2) || slots.has(3));
   document.getElementById('processInfo').textContent =
-    cnt + '/4 archivos cargados' + (cnt === 4 ? ' — ✅ Listo para procesar' : ' — Puede procesar con los archivos disponibles');
+    cnt + '/6 archivos cargados' + (
+      cnt === 6 ? ' — ✅ Listo para procesar'
+      : sinA1  ? ' — ⚠️ Sin Archivo 1: se procesará en MODO DEGRADADO (cruce parcial, sin actas)'
+      : ' — Puede procesar con los archivos disponibles'
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -5513,8 +5594,12 @@ function processData() {
       if (btnJ) btnJ.disabled = false;
       // Fijar proyecto C-DZP-21-000-A automáticamente
       setProjectFilter('C-DZP-21-000-A');
-      showToast('✅ Datos procesados correctamente — Proyecto: C-DZP-21-000-A', 'success');
-      addAuditEntry('proceso', `${state.m1data.length} facturas · ${state.m3data.length} registros CxP` + (state.df4oc.length ? ` · ${state.df4oc.length} OCs (Archivos 4·5·6)` : ''), {
+      if (state.modoSinA1) {
+        showToast('⚠️ Procesado en MODO SIN ARCHIVO 1 — cruce parcial. Programación de Pagos, Recepciones y CxP operativos; actas no disponibles.', 'warning');
+      } else {
+        showToast('✅ Datos procesados correctamente — Proyecto: C-DZP-21-000-A', 'success');
+      }
+      addAuditEntry('proceso', (state.modoSinA1 ? '⚠️ MODO SIN A1 · ' : '') + `${state.m1data.length} facturas · ${state.m3data.length} registros CxP` + (state.df4oc.length ? ` · ${state.df4oc.length} OCs (Archivos 4·5·6)` : ''), {
         files: state.files.filter(f=>f.wb).map(f=>({ nombre:f.name, slot:f.slot, hojas:f.sheets }))
       });
       switchTab(_afterProcessTab || 'dzp');
@@ -6095,6 +6180,12 @@ function buildModules() {
   _invalidateProjIndex();  // v7.1 PERF — el índice se reconstruye tras el nuevo df2rec
   _a1ColMap = null; // reset column map for fresh file
 
+  // v7.2 — MODO DEGRADADO SIN ARCHIVO 1: si no hay actas (A1) pero sí hay
+  // A2/A3, el cruce continúa con lo disponible (df2rec, df3cxp, df4oc e índices).
+  // Los módulos que dependen de actas mostrarán una alerta explicativa.
+  state.modoSinA1 = (state.df1 || []).length === 0 &&
+                    ((state.df2 || []).length > 0 || (state.df3 || []).length > 0);
+
   state.df1.forEach((row, _rowIdx) => {
     try {
     // ── Campos directos del Archivo 1 ──────────────────────────────
@@ -6511,7 +6602,35 @@ function _markAllDirty() {
   ['modulo1','modulo2','modulo3','modulo4','modulo5','cashcall'].forEach(m => _dirtyModules.add(m));
 }
 
+// ── v7.2 — MODO SIN ARCHIVO 1: alertas por módulo ─────────────────────────
+// El tablero y los módulos que cruzan actas muestran una alerta explicando
+// qué NO se pudo cruzar por falta del Archivo 1 (sin bloquear lo que sí funciona).
+const _SIN_A1_PANELES = {
+  'panel-dzp':          'Los KPIs de <strong>Actas</strong>, la pestaña <strong>Proveedores &amp; Alertas</strong> y el <strong>Análisis Acta/Factura</strong> requieren el Archivo 1. La pestaña <strong>Órdenes de Compra</strong> y el <strong>Diagnóstico cruzado</strong> (Recepciones A2 · CxP A3 · OC A4·5·6) siguen operativos.',
+  'panel-modulo0':      'La <strong>Vista Gerencial</strong> se calcula sobre las actas del Archivo 1 — no hay datos para mostrar en este modo.',
+  'panel-modulo1':      'El <strong>Módulo 1 — Facturas</strong> se alimenta del Archivo 1 — no hay actas para mostrar.',
+  'panel-modulo4':      'El <strong>Análisis de Brechas</strong> cruza actas (A1) contra recepciones y pagos — no disponible sin el Archivo 1.',
+  'panel-modulo5':      'La <strong>Ficha Proveedor</strong> consolida las actas del Archivo 1 — información parcial (solo CxP y OC).',
+  'panel-predictiva':   'La <strong>Analítica Predictiva</strong> se calcula sobre las actas del Archivo 1 — no disponible en este modo.',
+  'panel-discrepancias':'Las validaciones que comparan <strong>Archivo 1 vs Archivo 3</strong> no se ejecutaron; solo aplican las de Recepciones/CxP.',
+};
+function renderModoSinA1Banners() {
+  document.querySelectorAll('.banner-sin-a1').forEach(el => el.remove());
+  if (!state.processed || !state.modoSinA1) return;
+  Object.entries(_SIN_A1_PANELES).forEach(([pid, msg]) => {
+    const panel = document.getElementById(pid);
+    if (!panel) return;
+    const div = document.createElement('div');
+    div.className = 'banner-sin-a1';
+    div.style.cssText = 'margin:0 0 16px;padding:12px 16px;background:#fffbeb;border:1px solid #fcd34d;border-left:4px solid #f59e0b;border-radius:10px;font-size:12.5px;color:#78350f;line-height:1.55;display:flex;gap:10px;align-items:flex-start';
+    div.innerHTML = `<span style="font-size:16px">⚠️</span><div><strong>Modo sin Archivo 1 — cruce parcial.</strong> ${msg}
+      <button class="btn btn-sm btn-outline" onclick="switchTab('carga')" style="margin-left:8px;font-size:10.5px;padding:2px 10px;vertical-align:middle">📂 Cargar Archivo 1</button></div>`;
+    panel.insertBefore(div, panel.firstChild);
+  });
+}
+
 function renderAll() {
+  try { renderModoSinA1Banners(); } catch(e) { console.warn('bannerSinA1 error:', e); }
   try { buildProjectFilterUI(); } catch(e) { console.warn('projFilterUI error:', e); }
   ['1','2','3','4'].forEach(n => {
     const el = document.getElementById('cnt'+n);
@@ -8656,39 +8775,12 @@ document.addEventListener('click', e => {
 // ═══════════════════════════════════════════════════════════════
 function openProviderDetail(provName) {
   if (!provName) return;
-  // Switch to M5
   switchTab('modulo5');
-  // Wait for panel to be active, then select the provider
   setTimeout(() => {
-    const sel = document.getElementById('m5prov-select');
-    if (!sel) return;
-    // Find option by data-prov attribute
-    let found = false;
-    for (const opt of sel.options) {
-      if (opt.getAttribute('data-prov') && 
-          opt.getAttribute('data-prov').trim().toLowerCase() === provName.trim().toLowerCase()) {
-        sel.value = opt.value;
-        found = true;
-        break;
-      }
-    }
-    // Fallback: if selectors not yet populated, init then retry
-    if (!found && state.m1data.length > 0) {
-      initM5Selectors();
-      setTimeout(() => {
-        for (const opt of sel.options) {
-          if (opt.getAttribute('data-prov') && 
-              opt.getAttribute('data-prov').trim().toLowerCase() === provName.trim().toLowerCase()) {
-            sel.value = opt.value;
-            break;
-          }
-        }
-        renderM5();
-      }, 100);
-      return;
-    }
-    renderM5();
-    // Scroll to top of M5 panel
+    if (!window._m5ProvIndex || !window._m5ProvIndex.length) _m5BuildIndex();
+    const pn = provName.trim().toLowerCase();
+    const e = (window._m5ProvIndex || []).find(x => x.name.trim().toLowerCase() === pn);
+    m5PickProv(e ? e.name : provName.trim());
     const panel = document.getElementById('panel-modulo5');
     if (panel) panel.scrollTop = 0;
   }, 80);
@@ -8703,23 +8795,41 @@ function openProviderDetail(provName) {
 // MÓDULO 5 — FICHA ANÁLISIS POR PROVEEDOR
 // ═══════════════════════════════════════════════════════════════
 
+// ── v7.2 — Índice de búsqueda M5: proveedor → NITs, OCs y facturas ────────
+// Permite encontrar la ficha escribiendo el nombre, el NIT, una OC o un N° de
+// factura. Se alimenta de A1 (actas), A3 (CxP), A2 (recepciones) y A4·5·6 (OC).
+function _m5BuildIndex() {
+  const map = new Map();
+  const add = (prov, nit, oc, fac) => {
+    const name = String(prov || '').trim();
+    if (!name || name === '—') return;
+    let e = map.get(name);
+    if (!e) { e = { name, nits: new Set(), ocs: new Set(), facs: new Set() }; map.set(name, e); }
+    if (nit && String(nit).trim() && String(nit).trim() !== '—') e.nits.add(String(nit).trim());
+    if (oc)  String(oc).split('/').forEach(o => { o = String(o).trim(); if (o && o !== '—') e.ocs.add(o); });
+    if (fac && String(fac).trim() && String(fac).trim() !== '—') e.facs.add(String(fac).trim());
+  };
+  (state.m1data  || []).forEach(r => add(r.prov,      r.nit, r.po, r.inv));
+  (state.df3cxp  || []).forEach(r => add(r.prov,      r.nit, r.po, r.factura));
+  (state.df2rec  || []).forEach(r => add(r.proveedor, null,  r.oc, null));
+  (state.df4oc   || []).forEach(o => add(o.prov,      o.nit, o.oc, null));
+  window._m5ProvIndex = [...map.values()]
+    .map(e => ({ ...e, hay: normalStr(e.name + ' ' + [...e.nits].join(' ') + ' ' + [...e.ocs].join(' ') + ' ' + [...e.facs].join(' ')) }))
+    .sort((a, b) => a.name.localeCompare(b.name, 'es'));
+  return window._m5ProvIndex;
+}
+function _m5GetProv() { return document.getElementById('m5prov-value')?.value || ''; }
+
 function initM5Selectors() {
-  // Build provider list from m1data — use exact string from data
-  const provSet = new Set();
-  state.m1data.forEach(r => { if (r.prov && String(r.prov).trim()) provSet.add(String(r.prov).trim()); });
-  state.m3data.forEach(r => { if (r.prov && String(r.prov).trim()) provSet.add(String(r.prov).trim()); });
-  const sorted = [...provSet].sort((a,b) => a.localeCompare(b,'es'));
-  const sel = document.getElementById('m5prov-select');
-  if (!sel) return;
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">— Selecciona un proveedor —</option>' +
-    sorted.map((p, i) => `<option value="${i}" data-prov="${p.replace(/"/g,'&quot;')}">${p}</option>`).join('');
-  if (cur) {
-    const prevName = sel.getAttribute('data-last-prov') || '';
-    for (const opt of sel.options) {
-      if (opt.dataset.prov === prevName) { opt.selected = true; break; }
-    }
+  const idx = _m5BuildIndex();
+  // Si el proveedor seleccionado ya no existe tras el reproceso, limpiar
+  const cur = _m5GetProv();
+  if (cur && !idx.some(e => e.name === cur)) {
+    const hv = document.getElementById('m5prov-value'); if (hv) hv.value = '';
+    const si = document.getElementById('m5prov-search'); if (si) si.value = '';
+    const cb = document.getElementById('m5prov-clear');  if (cb) cb.style.display = 'none';
   }
+  const sorted = idx.map(e => e.name);
   // Year selector
   const years = [...new Set(state.m1data.map(r => r.year ? parseInt(String(r.year).replace('.0','')) : null).filter(Boolean))].sort();
   const ySel = document.getElementById('m5year-select');
@@ -8742,6 +8852,92 @@ function initM5Selectors() {
   if (el5) el5.textContent = sorted.length;
 }
 
+// ── v7.2 — Buscador con autocompletado del Módulo 5 ──────────────────────
+window._m5DDHits = [];
+window._m5DDSel = -1;
+function m5SearchInput() {
+  const inp = document.getElementById('m5prov-search');
+  const dd  = document.getElementById('m5prov-dd');
+  if (!inp || !dd) return;
+  if (!window._m5ProvIndex) _m5BuildIndex();
+  const q = normalStr(inp.value);
+  const hits = [];
+  for (const e of window._m5ProvIndex) {
+    if (!q) { hits.push({ e, motivo: '' }); }
+    else if (e.hay.includes(q)) {
+      // Motivo del match cuando NO fue por el nombre (mostrar qué OC/factura/NIT coincidió)
+      let motivo = '';
+      if (!normalStr(e.name).includes(q)) {
+        const nit = [...e.nits].find(v => normalStr(v).includes(q));
+        const oc  = nit ? null : [...e.ocs].find(v => normalStr(v).includes(q));
+        const fac = (nit || oc) ? null : [...e.facs].find(v => normalStr(v).includes(q));
+        motivo = nit ? '🆔 NIT: ' + nit : oc ? '📦 OC: ' + oc : fac ? '🧾 Factura: ' + fac : '';
+      }
+      hits.push({ e, motivo });
+    }
+    if (hits.length >= 12) break;
+  }
+  window._m5DDHits = hits;
+  window._m5DDSel = -1;
+  if (!hits.length) {
+    dd.innerHTML = '<div style="padding:12px 14px;font-size:12px;color:var(--col-muted)">Sin coincidencias de proveedor, NIT, OC o factura</div>';
+    dd.style.display = 'block';
+    return;
+  }
+  dd.innerHTML = hits.map((h, i) => `
+    <div class="m5dd-item" data-i="${i}" onmousedown="event.preventDefault();m5PickIdx(${i})"
+      style="padding:8px 13px;cursor:pointer;border-bottom:1px solid #f1f5f9;display:flex;flex-direction:column;gap:2px"
+      onmouseenter="this.style.background='#f0f9ff'" onmouseleave="this.style.background=''">
+      <span style="font-size:12.5px;font-weight:600;color:var(--col-text)">${h.e.name}</span>
+      ${h.motivo ? `<span style="font-size:10.5px;color:var(--col-accent);font-family:'IBM Plex Mono',monospace">${h.motivo}</span>` : ''}
+    </div>`).join('');
+  dd.style.display = 'block';
+}
+function m5SearchKey(ev) {
+  const dd = document.getElementById('m5prov-dd');
+  if (!dd || dd.style.display === 'none') { if (ev.key === 'ArrowDown') m5SearchInput(); return; }
+  const items = dd.querySelectorAll('.m5dd-item');
+  if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') {
+    ev.preventDefault();
+    const n = items.length; if (!n) return;
+    window._m5DDSel = ev.key === 'ArrowDown'
+      ? (window._m5DDSel + 1) % n
+      : (window._m5DDSel - 1 + n) % n;
+    items.forEach((el, i) => el.style.background = i === window._m5DDSel ? '#e0f2fe' : '');
+    items[window._m5DDSel]?.scrollIntoView({ block: 'nearest' });
+  } else if (ev.key === 'Enter') {
+    ev.preventDefault();
+    if (window._m5DDHits.length) m5PickIdx(window._m5DDSel >= 0 ? window._m5DDSel : 0);
+  } else if (ev.key === 'Escape') {
+    dd.style.display = 'none';
+  }
+}
+function m5PickIdx(i) {
+  const h = window._m5DDHits[i];
+  if (h) m5PickProv(h.e.name);
+}
+function m5PickProv(name) {
+  const hv = document.getElementById('m5prov-value');
+  const si = document.getElementById('m5prov-search');
+  const dd = document.getElementById('m5prov-dd');
+  const cb = document.getElementById('m5prov-clear');
+  if (hv) hv.value = name || '';
+  if (si) si.value = name || '';
+  if (dd) dd.style.display = 'none';
+  if (cb) cb.style.display = name ? 'block' : 'none';
+  renderM5();
+  // v7.2 — sincronizar el proveedor elegido con la búsqueda de todos los módulos
+  if (window._syncGlobalOn && name) { try { syncBusquedaGlobal(name, 'm5'); } catch(e) {} }
+}
+function m5ClearProv() { m5PickProv(''); const si = document.getElementById('m5prov-search'); if (si) si.focus(); }
+// Cerrar el dropdown al hacer clic fuera
+document.addEventListener('click', ev => {
+  const dd = document.getElementById('m5prov-dd');
+  if (dd && dd.style.display !== 'none' && !ev.target.closest('#m5prov-search') && !ev.target.closest('#m5prov-dd')) {
+    dd.style.display = 'none';
+  }
+});
+
 window._m5Vista = 'acumulado';
 function setM5Vista(v) {
   window._m5Vista = v;
@@ -8761,10 +8957,7 @@ function setM5Vista(v) {
 
 function renderM5() {
   if (!state.processed) return;
-  const sel5 = document.getElementById('m5prov-select');
-  const selOpt = sel5 && sel5.selectedIndex > 0 ? sel5.options[sel5.selectedIndex] : null;
-  const provName = selOpt ? (selOpt.getAttribute('data-prov') || '') : '';
-  if (sel5) sel5.setAttribute('data-last-prov', provName);
+  const provName = _m5GetProv();   // v7.2 — proveedor del buscador
   const yearSel  = document.getElementById('m5year-select')?.value  || '';
   const monthSel = normalStr(document.getElementById('m5month-select')?.value || '');
   const vista    = window._m5Vista || 'acumulado';
@@ -9099,10 +9292,8 @@ function fmtMillones(v) {
 }
 
 function renderM5Pdf() {
-  const sel5 = document.getElementById('m5prov-select');
-  const selOpt = sel5 && sel5.selectedIndex > 0 ? sel5.options[sel5.selectedIndex] : null;
-  const provName = selOpt ? (selOpt.getAttribute('data-prov') || '') : '';
-  if (!provName) { showToast('Selecciona un proveedor primero', 'warn'); return; }
+  const provName = _m5GetProv();   // v7.2 — proveedor del buscador
+  if (!provName) { showToast('Busca y selecciona un proveedor primero', 'warn'); return; }
   const yearSel = document.getElementById('m5year-select')?.value || '';
   const provNorm = provName.trim().toLowerCase();
   const m1rows = state.m1data.filter(r => r.prov && r.prov.trim().toLowerCase() === provNorm && (!yearSel || parseInt(String(r.year).replace('.0','')) === parseInt(yearSel)));
@@ -9216,7 +9407,7 @@ function renderM5Pdf() {
     <div style="text-align:right">
       <div style="font-size:10px;opacity:.6">${currentUser||'Usuario'}</div>
       <div style="font-size:10px;opacity:.6;margin-top:2px">${fechaHoy}</div>
-      <div style="font-size:9px;opacity:.4;margin-top:2px">Cash Call v7.1</div>
+      <div style="font-size:9px;opacity:.4;margin-top:2px">Cash Call v7.2</div>
     </div>
   </div>
 
@@ -9253,7 +9444,7 @@ function renderM5Pdf() {
   </div>
 
   <div style="padding:10px 18px;background:#f8fafc;font-size:8.5px;color:#94a3b8;display:flex;justify-content:space-between">
-    <span>Cash Call v7.1 · Ficha Proveedor · ${provName}</span>
+    <span>Cash Call v7.2 · Ficha Proveedor · ${provName}</span>
     <span>Generado: ${new Date().toLocaleString('es-CO')}</span>
   </div>
   <button class="btn-p noprint" onclick="window.print()">🖨 Imprimir / Guardar como PDF</button>
@@ -9383,7 +9574,7 @@ function exportBreachasPDF() {
     <div style="text-align:right">
       <div style="font-size:11px;opacity:0.7">Generado por: ${currentUser||'Usuario'}</div>
       <div style="font-size:11px;opacity:0.7;margin-top:2px">${fechaHoy}</div>
-      <div style="font-size:10px;opacity:0.5;margin-top:2px;font-family:monospace">v7.1 · Cash Call Platform</div>
+      <div style="font-size:10px;opacity:0.5;margin-top:2px;font-family:monospace">v7.2 · Cash Call Platform</div>
     </div>
   </div>
 
@@ -9468,7 +9659,7 @@ function exportBreachasPDF() {
   </div>
 
   <div style="padding:16px 32px;background:#f8fafc;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center">
-    <div style="font-size:9px;color:#94a3b8">Cash Call v7.1 · Secretaría Distrital de Seguridad, Convivencia y Justicia · Dirección de Bienes</div>
+    <div style="font-size:9px;color:#94a3b8">Cash Call v7.2 · Secretaría Distrital de Seguridad, Convivencia y Justicia · Dirección de Bienes</div>
     <div style="font-size:9px;color:#94a3b8">Generado: ${new Date().toLocaleString('es-CO')}</div>
   </div>
 </div>
@@ -9857,7 +10048,7 @@ function exportCashCallJSON() {
   const filename = `CashCall_${fecha}.json`;
   const payload = {
     meta: {
-      app: 'Cash Call v7.1',
+      app: 'Cash Call v7.2',
       exportedBy: currentUser || '—',
       exportedAt: new Date().toISOString(),
       filename,
@@ -10186,7 +10377,7 @@ document.addEventListener('keydown', e => {
 });
 
 /* ═══════════════════════════════════════════════════════════
-   C-DZP-21-000-A — Tablero de Control v7.1
+   C-DZP-21-000-A — Tablero de Control v7.2
    ═══════════════════════════════════════════════════════════ */
 
 const DZP_PROJECT_ID = 'C-DZP-21-000-A';
@@ -11161,7 +11352,7 @@ function exportDZPpdf() {
   </style></head><body>
   <div class="hdr">
     <div><div class="hdr-title">⛏ C-DZP-21-000-A — Reporte por Proveedor</div>
-    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v7.1</div></div>
+    <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas · Cash Call v7.2</div></div>
     <div class="hdr-meta">Generado: ${now}<br>Filtro: ${filterDesc}</div>
   </div>
   <div class="kpi-row">
@@ -11185,7 +11376,7 @@ function exportDZPpdf() {
       <tbody>${tableRows||'<tr><td colspan="9" style="text-align:center;padding:20px;color:#94a3b8">Sin datos</td></tr>'}</tbody>
     </table>
   </div>
-  <div class="footer"><span>Cash Call v7.1 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
+  <div class="footer"><span>Cash Call v7.2 · C-DZP-21-000-A</span><span>${provList.length} proveedores · ${totalAlertas} alertas totales</span></div>
   <div class="no-print" style="text-align:center;padding:16px">
     <button onclick="window.print()" style="padding:10px 28px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
     <button onclick="window.close()" style="margin-left:10px;padding:10px 20px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
@@ -11270,7 +11461,7 @@ function exportDZPSP2pdf() {
   </style></head><body>
   <div class="hdr">
     <div><div class="hdr-title">⛏ C-DZP-21-000-A — Órdenes de Compra por Proveedor</div>
-    <div class="hdr-sub">Tablero de Control · Cash Call v7.1</div></div>
+    <div class="hdr-sub">Tablero de Control · Cash Call v7.2</div></div>
     <div class="hdr-meta">Generado: ${now}</div>
   </div>
   <div class="kpi-row">
@@ -11290,7 +11481,7 @@ function exportDZPSP2pdf() {
       <tbody>${tableRows}</tbody>
     </table>
   </div>
-  <div class="footer"><span>Cash Call v7.1 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
+  <div class="footer"><span>Cash Call v7.2 · C-DZP-21-000-A</span><span>${ocList.length} OC's · ${totalAlertas} alertas</span></div>
   <div class="no-print" style="text-align:center;padding:14px">
     <button onclick="window.print()" style="padding:9px 26px;background:#0f2544;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
     <button onclick="window.close()" style="margin-left:8px;padding:9px 18px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕ Cerrar</button>
@@ -11470,7 +11661,7 @@ function exportDZPSP3pdf() {
   <div class="hdr">
     <div class="hdr-left">
       <div class="hdr-title">⛏ C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</div>
-      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v7.1</div>
+      <div class="hdr-sub">Tablero de Control de Actas, Recepciones y Facturas &nbsp;·&nbsp; Cash Call v7.2</div>
     </div>
     <div class="hdr-right">Generado: ${now}<br>${data.length} registros exportados</div>
   </div>
@@ -11518,7 +11709,7 @@ function exportDZPSP3pdf() {
   </div>
 
   <div class="footer">
-    <span>Cash Call v7.1 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
+    <span>Cash Call v7.2 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; Análisis Acta / Factura</span>
     <span>${data.length} registros &nbsp;·&nbsp; Filtro: ${filterDesc}</span>
   </div>
 
@@ -11541,7 +11732,7 @@ function exportDZPSP3pdf() {
       <span style="font-size:22px">📦</span>
       <div style="flex:1">
         <div style="font-size:15px;font-weight:800">Archivos 4 · 5 · 6 — Reportes de Órdenes de Compra</div>
-        <div style="font-size:11px;opacity:0.7;font-family:'IBM Plex Mono',monospace">Cash Call v7.1 · Programación de Pagos</div>
+        <div style="font-size:11px;opacity:0.7;font-family:'IBM Plex Mono',monospace">Cash Call v7.2 · Programación de Pagos</div>
       </div>
       <button onclick="closeModalArchivo4()" style="background:rgba(255,255,255,0.15);border:none;color:white;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px;font-weight:700">✕</button>
     </div>
@@ -11582,7 +11773,7 @@ function exportDZPSP3pdf() {
           <path d="M30 24 L24 19 L32 22 Z" fill="white"/>
         </svg>
         <div>
-          <div style="font-size:9.5px;font-weight:700;color:rgba(0,180,200,0.85);letter-spacing:2.2px;text-transform:uppercase;margin-bottom:3px">ARIS MINING · CASH CALL v7.1</div>
+          <div style="font-size:9.5px;font-weight:700;color:rgba(0,180,200,0.85);letter-spacing:2.2px;text-transform:uppercase;margin-bottom:3px">ARIS MINING · CASH CALL v7.2</div>
           <div style="font-size:17px;font-weight:800;color:white">Informe Gerencial Ejecutivo</div>
           <div style="font-size:10px;color:rgba(255,255,255,0.45);margin-top:3px">C-DZP-21-000-A &nbsp;·&nbsp; <kbd style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:4px;padding:1px 6px;font-size:9px;font-family:monospace;color:rgba(255,255,255,0.7)">Ctrl+G</kbd> para abrir</div>
         </div>
@@ -12160,7 +12351,7 @@ function exportInformeGerencialPDF() {
   // ══ HTML DEL INFORME ══════════════════════════════════════
   const pw=window.open('','_blank','width=1100,height=860');
   pw.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
-  <title>Informe Gerencial v7.1 — ARIS MINING · C-DZP-21-000-A</title>
+  <title>Informe Gerencial v7.2 — ARIS MINING · C-DZP-21-000-A</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
     @page { size:A4 portrait; margin:0; @bottom-right { content:"Pág. " counter(page) " de " counter(pages); font-size:8px; font-family:"IBM Plex Mono",monospace; color:#94a3b8; margin-right:16mm; margin-bottom:8mm; } }
@@ -12329,7 +12520,7 @@ function exportInformeGerencialPDF() {
         </svg>
         <div class="cover-brand-txt">
           <div class="cover-brand-name">ARIS MINING</div>
-          <div class="cover-brand-sub">Cash Call v7.1 · Control Financiero</div>
+          <div class="cover-brand-sub">Cash Call v7.2 · Control Financiero</div>
         </div>
       </div>
       <div class="cover-div"></div>
@@ -12393,7 +12584,7 @@ function exportInformeGerencialPDF() {
 
   <!-- ░░ TABLA DE CONTENIDO ░░ -->
   <div class="toc-page">
-    <div class="co-row"><div class="co-badge">ARIS MINING</div><span style="font-size:10.5px;color:#64748b">C-DZP-21-000-A · Cash Call v7.1 · ${periodo}</span></div>
+    <div class="co-row"><div class="co-badge">ARIS MINING</div><span style="font-size:10.5px;color:#64748b">C-DZP-21-000-A · Cash Call v7.2 · ${periodo}</span></div>
     <div class="toc-hdr"><div class="toc-ic">📑</div><div class="toc-ti">Tabla de Contenido</div></div>
     ${[
       ['1','Introducción','Contexto, alcance metodológico y definiciones del proyecto'],
@@ -12410,7 +12601,7 @@ function exportInformeGerencialPDF() {
   <!-- ░░ CAP 1: INTRODUCCIÓN ░░ -->
   <div class="chapter-break">
     <div class="phs"></div><h2 class="cht">1. Introducción</h2><div class="chr"></div>
-    <p class="it">Informe preparado para la Alta Dirección de <strong>ARIS MINING</strong> sobre el estado financiero y operativo del proyecto <strong>C-DZP-21-000-A</strong> · período <strong>${periodo}</strong>. Desarrollado mediante el sistema <strong>Cash Call v7.1</strong>, plataforma de control que integra actas, recepciones Oracle y cuentas por pagar (CxP).</p>
+    <p class="it">Informe preparado para la Alta Dirección de <strong>ARIS MINING</strong> sobre el estado financiero y operativo del proyecto <strong>C-DZP-21-000-A</strong> · período <strong>${periodo}</strong>. Desarrollado mediante el sistema <strong>Cash Call v7.2</strong>, plataforma de control que integra actas, recepciones Oracle y cuentas por pagar (CxP).</p>
     <p class="it">Se analizan <strong>${total} actas/facturas</strong>, cruces con Oracle REC, validación CxP, flujo de caja, tendencias mensuales y análisis de Pareto de alertas. Se incluye comparativo vs <strong>${fechaPrev}</strong>.</p>
     <div class="hb ${cumpl>=80?'hb-g':cumpl>=60?'hb-a':'hb-r'}">
       <strong>📌 Hallazgo Principal — ${periodo}:</strong> Cumplimiento <strong>${cumpl}%</strong> (${conFac}/${total} actas con CxP). <strong>${alertas} alertas activas</strong> — ${sinRec} sin REC Oracle · ${recRevisar} con REC a revisar · ${sinFac} sin factura CxP.
@@ -12420,7 +12611,7 @@ function exportInformeGerencialPDF() {
       <div><p class="it"><strong>Definiciones:</strong> <strong>REC:</strong> Recepción Oracle ERP · <strong>CxP:</strong> Cuenta por Pagar registrada · <strong>Alerta:</strong> Acta sin pago con alguna brecha · <strong>Cumplimiento:</strong> Actas c/CxP / Total</p></div>
     </div>
     <p class="it" style="color:#64748b;font-size:8.5px"><strong>Desarrollado por:</strong> GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc &nbsp;·&nbsp; <strong>Elaborado:</strong> ${autor}${cargo?' — '+cargo:''} &nbsp;·&nbsp; <strong>Fecha:</strong> ${fechaFmt}</p>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v7.1 · C-DZP-21-000-A</span><span>${periodo} · ${fechaFmt}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v7.2 · C-DZP-21-000-A</span><span>${periodo} · ${fechaFmt}</span></div>
   </div>
 
   <!-- ░░ CAP 2: RESUMEN EJECUTIVO ░░ -->
@@ -12477,7 +12668,7 @@ function exportInformeGerencialPDF() {
         ? '⚠️ <strong>Cumplimiento en riesgo ('+cumpl+'%)</strong>: por debajo de la meta del 90%. Acelerar registro de facturas CxP.'
         : '❌ <strong>Cumplimiento crítico ('+cumpl+'%)</strong>: intervención gerencial urgente requerida. Meta: ≥90%.'}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v7.1 · C-DZP-21-000-A</span><span>Cap. 2 — Resumen Ejecutivo · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v7.2 · C-DZP-21-000-A</span><span>Cap. 2 — Resumen Ejecutivo · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 3: ANÁLISIS FINANCIERO ░░ -->
@@ -12540,7 +12731,7 @@ function exportInformeGerencialPDF() {
         : 'Las facturas CxP cubren la totalidad del valor de actas — sin brecha de registro.'}
       El proveedor con mayor participación es <strong>${topProvVal[0]?.[0]||'—'}</strong> con ${igFmtCOP(topProvVal[0]?.[1]||0)}.
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v7.1 · C-DZP-21-000-A</span><span>Cap. 3 — Análisis Financiero · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v7.2 · C-DZP-21-000-A</span><span>Cap. 3 — Análisis Financiero · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 4: GESTIÓN MENSUAL ░░ -->
@@ -12588,7 +12779,7 @@ function exportInformeGerencialPDF() {
             : '📉 La tendencia del valor facturado presenta <strong style="color:#d97706">variaciones descendentes</strong> que requieren seguimiento.')
         : ''}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v7.1 · C-DZP-21-000-A</span><span>Cap. 4 — Gestión Mensual · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v7.2 · C-DZP-21-000-A</span><span>Cap. 4 — Gestión Mensual · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 5: PARETO ░░ -->
@@ -12630,7 +12821,7 @@ function exportInformeGerencialPDF() {
       liberaría el 80% de las alertas bloqueadas.
     </div>
     <div class="hb hb-r" style="font-size:9px"><strong>📌 Regla de Pareto:</strong> ${paretoRows.filter(d=>d.acum<=80).length} proveedores concentran el 80% de las ${alertas} alertas. Priorizar gestión con: <strong>${paretoRows.filter(d=>d.acum<=80).map(d=>d.p.slice(0,20)).join(', ')}</strong>.</div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v7.1 · C-DZP-21-000-A</span><span>Cap. 5 — Diagrama de Pareto · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v7.2 · C-DZP-21-000-A</span><span>Cap. 5 — Diagrama de Pareto · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 6: DETALLE ALERTAS ░░ -->
@@ -12671,7 +12862,7 @@ function exportInformeGerencialPDF() {
       <thead><tr><th>#</th><th>OC</th><th>Proveedor</th><th>Factura</th><th class="tc">REC</th><th>Estado</th><th class="num">Val.Factura CxP</th><th>Mes</th></tr></thead>
       <tbody>${rowsDetAlertas}</tbody>
     </table>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v7.1 · C-DZP-21-000-A</span><span>Cap. 6 — Detalle Alertas · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v7.2 · C-DZP-21-000-A</span><span>Cap. 6 — Detalle Alertas · ${periodo}</span></div>
   </div>
 
   <!-- ░░ CAP 7: COMPARATIVO ░░ -->
@@ -12722,22 +12913,22 @@ function exportInformeGerencialPDF() {
         ? '💰 Valor pagado: <strong style="color:#059669">creció '+igFmtCOP(sumPagado-prevSumPag)+'</strong> vs período anterior.'
         : '💰 Valor pagado: <strong style="color:#dc2626">disminuyó '+igFmtCOP(prevSumPag-sumPagado)+'</strong> vs período anterior — revisar causas.'}
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v7.1 · C-DZP-21-000-A</span><span>Cap. 7 — Comparativo de Períodos · ${periodo}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v7.2 · C-DZP-21-000-A</span><span>Cap. 7 — Comparativo de Períodos · ${periodo}</span></div>
   </div>
 
   <!-- ░░ FIRMAS ░░ -->
   <div class="chapter-break">
     <div class="phs"></div><h2 class="cht">Firmas y Cierre del Informe</h2><div class="chr"></div>
-    <p class="it">Informe generado por <strong>Cash Call v7.1 — ARIS MINING</strong> · período <strong>${periodo}</strong> · ${total} registros procesados · Cumplimiento: ${cumpl}%.</p>
-    <div class="hb hb-g">✅ Generado: ${now} &nbsp;·&nbsp; ARIS MINING / Cash Call v7.1 &nbsp;·&nbsp; Desarrollado por GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc</div>
+    <p class="it">Informe generado por <strong>Cash Call v7.2 — ARIS MINING</strong> · período <strong>${periodo}</strong> · ${total} registros procesados · Cumplimiento: ${cumpl}%.</p>
+    <div class="hb hb-g">✅ Generado: ${now} &nbsp;·&nbsp; ARIS MINING / Cash Call v7.2 &nbsp;·&nbsp; Desarrollado por GREEN ENGINEERING CONSULTING · Ing. Johan Manuel Cárdenas Leal, MSc</div>
     <div class="fs">
       <div class="fb"><div style="height:38px"></div><div class="fl"></div><div class="fn">${autor}</div><div class="fr">${cargo||'Analista / Elaborado por'}</div></div>
       <div class="fb"><div style="height:38px"></div><div class="fl"></div><div class="fn">_________________________</div><div class="fr">Gerencia ARIS MINING / Aprobado por</div></div>
     </div>
     <div style="margin-top:26px;padding:12px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;font-size:8.5px;color:#94a3b8;text-align:center">
-      ARIS MINING &nbsp;·&nbsp; Cash Call v7.1 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; ${periodo} &nbsp;·&nbsp; Desarrollado: GREEN ENGINEERING CONSULTING &nbsp;·&nbsp; Confidencial
+      ARIS MINING &nbsp;·&nbsp; Cash Call v7.2 &nbsp;·&nbsp; C-DZP-21-000-A &nbsp;·&nbsp; ${periodo} &nbsp;·&nbsp; Desarrollado: GREEN ENGINEERING CONSULTING &nbsp;·&nbsp; Confidencial
     </div>
-    <div class="page-footer"><span>ARIS MINING · Cash Call v7.1 · GREEN ENGINEERING CONSULTING</span><span>Ing. Johan Manuel Cárdenas Leal, MSc · ${fechaFmt}</span></div>
+    <div class="page-footer"><span>ARIS MINING · Cash Call v7.2 · GREEN ENGINEERING CONSULTING</span><span>Ing. Johan Manuel Cárdenas Leal, MSc · ${fechaFmt}</span></div>
   </div>
 
   <div class="no-print" style="margin-top:24px;text-align:center;padding:16px;background:#f8fafc;border-top:1px solid #e2e8f0">
@@ -12754,9 +12945,7 @@ function exportInformeGerencialPDF() {
 // ═══════════════════════════════════════════════════════════════
 function showM5FacturasPopup(encodedKey) {
   const k = decodeURIComponent(encodedKey);
-  // Find the current provider from the select
-  const sel5 = document.getElementById('m5prov-select');
-  const provName = sel5 && sel5.selectedIndex > 0 ? (sel5.options[sel5.selectedIndex].getAttribute('data-prov') || '') : '';
+  const provName = _m5GetProv();   // v7.2 — proveedor del buscador
   if (!provName) return;
   const provNorm = provName.trim().toLowerCase();
   const yearSel = document.getElementById('m5year-select')?.value || '';
@@ -12843,32 +13032,28 @@ function showM5FacturasPopup(encodedKey) {
 function _navigateM5ByProv(prov) {
   if (!prov || !prov.trim()) return;
   try {
-    const sel5 = document.getElementById('m5prov-select');
-    if (!sel5 || sel5.options.length <= 1) return;
+    if (!window._m5ProvIndex || !window._m5ProvIndex.length) _m5BuildIndex();
+    const idx = window._m5ProvIndex || [];
+    if (!idx.length) return;
     const provNorm = prov.trim().toLowerCase();
-    let bestIdx = -1, bestScore = 0;
-    for (let i = 1; i < sel5.options.length; i++) {
-      const dp = (sel5.options[i].getAttribute('data-prov') || '').toLowerCase().trim();
-      // Exact match wins immediately
-      if (dp === provNorm) { bestIdx = i; break; }
-      // Calculate similarity score
+    let best = null, bestScore = 0;
+    for (const e of idx) {
+      const dp = e.name.toLowerCase().trim();
+      if (dp === provNorm) { best = e; break; }   // match exacto gana
       let score = 0;
       if (dp.includes(provNorm) || provNorm.includes(dp)) {
         score = Math.min(dp.length, provNorm.length) * 2;
       } else {
-        // Word-level overlap
         const dpWords = dp.split(/[\s,&\-\.]+/).filter(w => w.length > 2);
         const pvWords = provNorm.split(/[\s,&\-\.]+/).filter(w => w.length > 2);
         const matched = dpWords.filter(w => pvWords.some(pw => pw.startsWith(w.substring(0,5)) || w.startsWith(pw.substring(0,5)))).length;
         score = matched * 15;
       }
-      if (score > bestScore) { bestScore = score; bestIdx = i; }
+      if (score > bestScore) { bestScore = score; best = e; }
     }
-    if (bestIdx > 0) {
-      sel5.selectedIndex = bestIdx;
-      // Switch to M5 tab and render
+    if (best) {
       switchTab('modulo5');
-      setTimeout(() => { try { renderM5(); } catch(e) { console.warn('renderM5:', e); } }, 80);
+      setTimeout(() => { try { m5PickProv(best.name); } catch(e) { console.warn('m5PickProv:', e); } }, 80);
     }
   } catch(e) { console.warn('_navigateM5ByProv:', e); }
 }
@@ -13038,7 +13223,7 @@ function exportPersonFacturasExcel() {
   const totalRec = facts.reduce((s,r) => s + (r.totalRec||0), 0);
 
   const aoa = [
-    [`CASH CALL v7.1 — ARIS MINING · C-DZP-21-000-A`],
+    [`CASH CALL v7.2 — ARIS MINING · C-DZP-21-000-A`],
     [`Responsable: ${person}`],
     [`Período: ${mNames[+mn]||mn} ${yr}  |  Facturas: ${facts.length}  |  Generado: ${new Date().toLocaleString('es-CO')}`],
     [],
@@ -13142,7 +13327,7 @@ function exportPersonFacturasPDF() {
 </head><body>
 <div class="cover-bar">
   <div>
-    <h1>⛏ CASH CALL v7.1 — ARIS MINING · C-DZP-21-000-A</h1>
+    <h1>⛏ CASH CALL v7.2 — ARIS MINING · C-DZP-21-000-A</h1>
     <div class="sub">Reporte de Facturas por Responsable · Exportado: ${new Date().toLocaleString('es-CO')}</div>
   </div>
   <div class="badge">PDF · ${facts.length} FACTURAS</div>
@@ -13188,7 +13373,7 @@ function exportPersonFacturasPDF() {
   </tr></tfoot>
 </table>
 <div class="footer-bar">
-  <span>Cash Call v7.1 · C-DZP-21-000-A · GREEN Engineering Consulting</span>
+  <span>Cash Call v7.2 · C-DZP-21-000-A · GREEN Engineering Consulting</span>
   <span>${person} · ${mesLabel} · ${facts.length} facturas</span>
 </div>
 </body></html>`;
@@ -13744,7 +13929,7 @@ function exportCashCallJSONBitacora() {
 
   const payload = {
     meta: {
-      app: 'Cash Call v7.1',
+      app: 'Cash Call v7.2',
       exportedBy: currentUser || '—',
       exportedAt: new Date().toISOString(),
       filename,
@@ -15252,7 +15437,7 @@ INSTRUCTIVOS.discrepancias = {
 };
 
 INSTRUCTIVOS.auditorias = {
-  icon: '🗂️', title: 'Auditorías — Bitácora Persistente v7.1',
+  icon: '🗂️', title: 'Auditorías — Bitácora Persistente v7.2',
   html: `
     <div class="inst-section-title">¿Qué es la Bitácora Persistente?</div>
     <p>La <b>Bitácora Persistente</b> acumula el historial de cambios en el propio JSON exportado. Cada vez que exporta, el sistema detecta qué cambió factura por factura y lo registra como novedad. El JSON va creciendo con el histórico completo.</p>
